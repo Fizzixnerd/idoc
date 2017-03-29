@@ -36,7 +36,11 @@ ghc-options: -Wall
 github: Fizzixnerd/idoc
 library:
   dependencies:
-  - base
+  - base-noprelude
+  - classy-prelude
+  - vector
+  - megaparsec
+  - containers
   source-dirs: library
 license: MIT
 maintainer: Matt Walker
