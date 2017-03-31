@@ -8,19 +8,19 @@ main main4,5
 main main5,6
 
 ./executable/Main.hs,30
-main main5,6
 main main6,7
+main main7,8
 
-./library/Example.hs,58
-module Example Example1,2
-main main4,5
-main main5,6
+./library/Example.hs,62
+module Example Example3,4
+main main13,14
+main main14,15
 
 ./library/Text/IDoc/Render/IDoc.hs,135
-module Text.IDoc.Render.IDoc Text.IDoc.Render.IDoc17,18
-class Render Render22,23
-class Render Render22,23
-  render render23,24
+module Text.IDoc.Render.IDoc Text.IDoc.Render.IDoc18,19
+class Render Render23,24
+class Render Render23,24
+  render render24,25
 
 ./library/Text/IDoc/Render/Tex.hs,883
 module Text.IDoc.Render.Tex Text.IDoc.Render.Tex20,21

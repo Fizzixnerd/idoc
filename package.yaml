@@ -41,6 +41,7 @@ library:
   - vector
   - megaparsec
   - containers
+  - text
   source-dirs: library
 license: MIT
 maintainer: Matt Walker

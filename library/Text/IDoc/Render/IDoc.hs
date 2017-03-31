@@ -4,6 +4,7 @@
 -- Created: Mar 29, 2017
 -- Summary: Render a Doc to IDoc.
 
+{-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE Arrows #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
