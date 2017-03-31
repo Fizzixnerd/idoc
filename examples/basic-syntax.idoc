@@ -1,6 +1,6 @@
-= Doc Title -- Only one is allowed per document.
+= Doc Title
 
-[prerex]
+@ prerex
 --
 prereqs would go in here, but this is not finished yet.
 --
@@ -25,18 +25,14 @@ talking about lists.
 
 - This is an unordered list
 - It will look like bullet points in the final render
--- This is a sub item for the second item
---- Sub-subitem
 - Third main item
 
 . This is a numbered list
 . This is the second guy
-.. Can be nested too...
 . And so on...
 
 First Item:: This is a list where the items have labels
 Second Item:: Another item
-SubItem::: This is a subitem.
 And So On:: ...
 
 === Math
@@ -44,28 +40,22 @@ And So On:: ...
 Inline math is done just using normal latex by doing $f(x) = \exp
 (-x^2)$.  Display mode is done by using a _math block_, like so:
 
-[math]
+@ math
 --
 f(x) = \int_x^\infty g(t) dt
 --
-[[eqn:f-defn]]
+[[#eqn:f-defn]]
 
 Note that that $d$ will not be upright as it should be.  We'll fix
 that later.  Also note that we added an _ID_ to the equation.  IDs can
 be added to many things.  They always appear immediately following the
 thing they identify.
 
-We can also use the shorthand double-dollar sign notation:
-
-$$f(x) = \int_x^\infty g(t) dt$$
-
-But I just wanted to help illustrate block notation.
-
 === Blocks
 
 We can do other types of blocks.  They all look the same, basically.
 
-[quote]
+@ quote
 --
 The internet is the most important invention since gravity.
 --
@@ -73,12 +63,12 @@ The internet is the most important invention since gravity.
 Somehow later I'll add attribution to the author.  That one is from
 Einstein though.
 
-[warning]
+@ admonition
 --
 This will show a little warning symbol next to it.
 --
 
-[aside]
+@ aside
 --
 This is basically a sub-document that is allowed to have extra prereqs
 --
@@ -90,12 +80,10 @@ an "outlink" -- a link to an external site -- and so wouldn't actually
 be allowed in the main body of the document like this.  We can also
 link to <<#Blocks>>[headings] in the current document, or
 <<#eqn:f-defn>>[anything else] which has an ID.  And we can even link
-to headings in <</Physics/Classical/Mechanics/Newtonian#Second
-Law>>[other documents], as long as they are a prerequisite of this
-one.  The same applies to ID'd items in those docs, including this
-paragraph.
+to headings in <</Physics/Classical/Mechanics/Newtonian#Second Law>>[other documents],
+as long as they are a prerequisite of this one.  The same applies to
+ID'd items in those docs, including this paragraph. 
 
-[[par:links]]
 
 == Conclusion
 
