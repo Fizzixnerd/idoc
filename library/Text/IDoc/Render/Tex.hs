@@ -1,3 +1,5 @@
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
 -- | Tex.hs
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause
@@ -33,7 +35,7 @@ tween beg end x = beg <> x <> end
 begEnd :: Text -> Tex -> Tex
 begEnd env x = tween 
                ((macro1 "begin" $ render env) <> renderT "\n")
-               ((macro1 "end" $ render env) <> renderT "\n")
+               (renderT "\n" <> (macro1 "end" $ render env))
                x
 
 renderT :: Text -> Tex
@@ -59,26 +61,26 @@ esc (Tex xs) = Tex $
                xs
 
 macro0 :: Text -> Tex
-macro0 com = Tex $ " \\" <> com
+macro0 com = Tex $ "\\" <> com
   
 macro1 :: Text -> Tex -> Tex
-macro1 com x = Tex $ " \\" <> com <> "{" <> unTex x <> "}"
+macro1 com x = Tex $ "\\" <> com <> "{" <> unTex x <> "}"
 
 macro1' :: Text -> Tex -> Tex
-macro1' com x = Tex $ " \\" <> com <> "[" <> unTex x <> "]"
+macro1' com x = Tex $ "\\" <> com <> "[" <> unTex x <> "]"
 
 macro2 :: Text -> Tex -> Tex -> Tex
-macro2 com x y = Tex $ " \\" <> com <> "{" <> unTex x <> "}{" <> unTex y <> "}"
+macro2 com x y = Tex $ "\\" <> com <> "{" <> unTex x <> "}{" <> unTex y <> "}"
 
 label :: IDHash -> Tex
 label (IDHash labelName) = macro1 "label" $ render labelName
 
 href :: Tex -> Tex -> Tex
-href = macro2 "href" 
+href = macro2 "href"
 
 instance Monoid Tex where
   mappend = (<>)
-  mempty = render ("" :: Text)
+  mempty = renderT ""
 
 instance Semigroup Tex where
   (Tex x) <> (Tex y) = Tex (x <> y)
@@ -120,7 +122,7 @@ instance Render InlineMath where
   render (InlineMath x) = Tex $ " $" <> utRender x <> "$"
 
 instance Render CommentLine where
-  render (CommentLine x) = Tex "%" <> render x
+  render (CommentLine x) = Tex "% " <> render x
 
 instance Render Protocol where
   render (Protocol x) = render x
@@ -131,7 +133,7 @@ instance Render URI where
 instance Render CommonLink where
   render (CommonLink ("http", u)) = Tex $ "http://" <> utRender u
   render (CommonLink ("https", u)) = Tex $ "https://" <> utRender u
-  render (CommonLink (p, _)) = error $ unpack $ "can't render CommonLink of type: " <> utRender p
+  render (CommonLink (p, _)) = error $ unpack $ "cannot render CommonLink of type: " <> utRender p
 
 instance Render Back where
   render (Back x) = render x
@@ -194,32 +196,28 @@ instance Render SimpleContent where
   render (SCFootnote x) = render x
   render (SCFootnoteRef x) = render x
   render (SCQText x) = render x
-  render (SCPlainText x) = render x
+
+instance Render ParagraphContent where
+  render (PCSimpleContent x) = render x
+  render (PCPlainText x) = render x
 
 instance Render Paragraph where
   render (Paragraph (xs, _)) = concat $ render <$> xs
-
-testRParagraph :: (Either (ParseError Char Dec) Tex)
-testRParagraph = render <$> 
-                 (runParser 
-                   (parseDoc :: ParsecT Dec String Identity Paragraph) 
-                   ""
-                   "Inline math is done just using normal latex by doing $f(x) = \\exp\n(-x^2)$ like that.  Display mode is done by using a _math block_, like so:\n\n")
 
 instance Render labelType => 
   Render (ListItem labelType) where
   render (ListItem {..}) = 
     let lbl = render listItemLabel
-        lnk = maybe (render ("" :: Text)) render listItemID
-        cnts = concat $ render <$> listItemContents
+        lnk = maybe (renderT "") render listItemID
+        cnts = render listItemContents
     in
       lbl <> lnk <> cnts
 
 instance Render Unordered where 
-  render _ = macro0 "item" <> render (" " :: Text)
+  render _ = macro0 "item" <> renderT " "
 
 instance Render Ordered where
-  render _ = macro0 "item" <> render (" " :: Text)
+  render _ = macro0 "item" <> renderT " "
 
 instance Render Labelled where
   render (Labelled x) = (macro1 "item" $ render x) <> renderT " "
@@ -242,56 +240,64 @@ instance Render VideoLink where render (VideoLink x) = macro1 "href" $ render x
 instance Render YouTubeLink where render (YouTubeLink x) = macro1 "href" $ render x
 instance Render BibliographyContent where render (BibliographyContent x) = render x
 
-instance Render Math where
-  render (Math x) = Tex "\\[" <> Tex x <> Tex "\\]"
+renderBid :: (Maybe SetID) -> Tex
+renderBid bid = maybe mempty (\x -> render x <> renderT " ") bid
 
-instance Render EqnArray where
-  render (EqnArray x) = begEnd "eqnarray" $ concat $ intersperse (renderT "\\\n") $ render <$> x
+class RenderLabelled a l | a -> l where
+  renderL :: l -> a -> Tex
 
-instance Render Theorem where
-  render (Theorem x) = begEnd "Theorem" $ renderManyCC x
+instance RenderLabelled Math (Maybe SetID) where
+  renderL bid (Math x) = begEnd "displaymath" $ renderBid bid <> Tex x
 
-instance Render Proof where
-  render (Proof x) = begEnd "Proof" $ renderManyCC x
+instance RenderLabelled EqnArray (Maybe SetID) where
+  renderL bid (EqnArray xs) = begEnd "eqnarray" $ renderBid bid <> (concat $ intersperse (renderT "\\\n") $ renderL Nothing <$> xs)
 
-instance Render Quote where
-  render (Quote x) = begEnd "quote" $ render x
+instance RenderLabelled Theorem (Maybe SetID) where
+  renderL bid (Theorem x) = begEnd "Theorem" $ renderBid bid <> renderManyCC x
 
-instance Render Code where
-  render (Code x) = begEnd "verbatim" $ render x
+instance RenderLabelled Proof (Maybe SetID) where
+  renderL bid (Proof x) = begEnd "Proof" $ renderBid bid <> renderManyCC x
 
--- | FIXME
-instance Render Image where
-  render (Image x) = render x
+instance RenderLabelled Quote (Maybe SetID) where
+  renderL bid (Quote x) = begEnd "quote" $ renderBid bid <> render x
 
--- | FIXME
-instance Render Video where
-  render (Video x) = render x
+instance RenderLabelled Code (Maybe SetID) where
+  renderL bid (Code x) = begEnd "verbatim" $ renderBid bid <> render x
 
 -- | FIXME
-instance Render YouTube where
-  render (YouTube x) = render x
+instance RenderLabelled Image (Maybe SetID) where
+  renderL bid (Image x) = renderBid bid <> render x
+
+-- | FIXME
+instance RenderLabelled Video (Maybe SetID) where
+  renderL bid (Video x) = renderBid bid <> render x
+
+-- | FIXME
+instance RenderLabelled YouTube (Maybe SetID) where
+  renderL bid (YouTube x) = renderBid bid <> render x
 
 renderManyCC :: Vector ComplexContent -> Tex
 renderManyCC = concat . (fmap render)
 
--- | FIXME
-instance Render Aside where render (Aside (mpb, cnts)) = maybe (renderT "") render mpb <> renderManyCC cnts
-instance Render Admonition where render (Admonition xs) = renderManyCC xs
-instance Render Sidebar where render (Sidebar xs) = renderManyCC xs
-instance Render Example where render (Example xs) = renderManyCC xs
-instance Render Exercise where render (Exercise xs) = renderManyCC xs
-instance Render Bibliography where render (Bibliography xs) = concat $ fmap render xs
-instance Render Prerex where render _ = renderT "\n"
+renderLManyCC :: (Maybe SetID) -> Vector ComplexContent -> Tex
+renderLManyCC bid = ((renderBid bid) <>) . renderManyCC
 
-instance Render blockType => 
+-- | FIXME
+instance RenderLabelled Aside (Maybe SetID) where renderL bid (Aside (mpb, cnts)) = renderBid bid <> maybe (renderT "") render mpb <> renderManyCC cnts
+instance RenderLabelled Admonition (Maybe SetID) where renderL bid (Admonition xs) = renderLManyCC bid xs
+instance RenderLabelled Sidebar (Maybe SetID) where renderL bid (Sidebar xs) = renderLManyCC bid xs
+instance RenderLabelled Example (Maybe SetID) where renderL bid (Example xs) = renderLManyCC bid xs
+instance RenderLabelled Exercise (Maybe SetID) where renderL bid (Exercise xs) = renderLManyCC bid xs
+instance RenderLabelled Bibliography (Maybe SetID) where renderL bid (Bibliography xs) = renderBid bid <> (concat $ fmap render xs)
+instance RenderLabelled Prerex (Maybe SetID) where renderL _ _ = renderT "\n"
+
+instance RenderLabelled blockType (Maybe SetID) => 
   Render (BlockT blockType) where
   render (BlockT {..}) = 
-    let title = maybe (renderT "") render blockTitle <> renderT "\n"
-        lbl   = maybe (renderT "") render blockID
-        cnts  = render blockContents
+    let title = maybe (renderT "") (\x -> render x <> renderT "\n") blockTitle
+        cnts  = renderL blockID blockContents
     in
-      title <> lbl <> cnts
+      title <> cnts
 
 instance Render Block where
   render (BMathBlock x) = render x
@@ -329,8 +335,9 @@ instance Render ComplexContent where
 
 instance Render TopLevelContent where
   render (TLCSubsectionHeading x) = render x
-  render (TLCSectionHeading x) = render x
-  render (TLCComplexContent x) = render x
+  render (TLCSectionHeading x)    = render x
+  render (TLCCommentLine x)       = render x
+  render (TLCComplexContent x)    = render x
 
 instance Render Doc where
   render (Doc {..}) = 

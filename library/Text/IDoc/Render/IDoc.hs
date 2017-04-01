@@ -19,7 +19,6 @@
 module Text.IDoc.Render.IDoc where
 
 import ClassyPrelude
-import Text.IDoc.Parse
 
 class Render a where
   render :: a -> Text

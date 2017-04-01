@@ -67,6 +67,9 @@ class Markup2 a where
 class MarkupTuple a b | a -> b where
   fromMarkupTuple :: (AttrList, b, Maybe IDHash) -> a
 
+paraDelim :: (ErrorComponent e, Stream s, Token s ~ Char) => ParsecT e s m ()
+paraDelim = void $ string "\n\n" <|> string "\n+\n"
+
 parseTwin :: forall e s m a b. ( ErrorComponent e
                                , Stream s
                                , Token s ~ Char
@@ -104,7 +107,7 @@ parseSeparated :: forall e s m a. ( ErrorComponent e
                                   , Separated a) => ParsecT e s m (Vector a)
 parseSeparated = do
   let (Sep s :: Sep a) = sep
-  ret <- sepBy parseDoc $ string s
+  ret <- sepBy1 parseDoc $ string s
   return $ fromList ret
 
 parseContentsBetween :: forall e s m a. ( ErrorComponent e
@@ -151,7 +154,10 @@ parseMarkup1 = do
   
 optionalAttrList :: (ErrorComponent e, Stream s, Token s ~ Char) => ParsecT e s m AttrList
 optionalAttrList = do
-  mal <- optional parseDoc
+  mal <- optional $ do
+    al <- parseDoc
+    void $ optional newline
+    return al
   return $ maybe (AttrList empty) id mal
 
 gobbleSpace :: (ErrorComponent e, Stream s, Token s ~ Char) => ParsecT e s m ()
@@ -163,7 +169,7 @@ instance Separated IDPathComponent where
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   IDoc e s m IDPathComponent where
   parseDoc = do
-    ipc <- many $ satisfy (\c ->    c /= '/'
+    ipc <- some $ satisfy (\c ->    c /= '/'
                                  && c /= ']'
                                  && c /= '#'
                                  && c /= '>'
@@ -175,6 +181,7 @@ newtype IDPath = IDPath (Vector IDPathComponent) deriving (Eq, Show)
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   IDoc e s m IDPath where
   parseDoc = do
+    void $ char '/'
     comps <- parseSeparated
     return $ IDPath $ comps
 
@@ -389,24 +396,29 @@ data QTextT style = QTextT { qtextText :: Text
                            , qtextAttrs :: AttrList
                            } deriving (Eq, Show)
 
+instance ( ErrorComponent e
+         , Stream s
+         , Token s ~ Char
+         , Escapable (QTextT style)
+         , Between (QTextT style)
+         , Textlike (QTextT style)) =>
+  IDoc e s m (QTextT style) where
+  parseDoc = do
+    al <- optionalAttrList
+    qt <- parseEscapableTextBetween :: ParsecT e s m (QTextT style)
+    return $ qt { qtextAttrs = al }
+
+instance Textlike (QTextT style) where
+  fromText t = QTextT { qtextText = t 
+                      , qtextAttrs = AttrList empty
+                      }
+
 instance Between (QTextT Bold) where
   opener = "*"
   closer = "*"
 
 instance Escapable (QTextT Bold) where
   escape = fromList [ Escape '*' ]
-
-instance Textlike (QTextT a) where
-  fromText t = QTextT { qtextText = t 
-                      , qtextAttrs = AttrList empty
-                      }
-
-instance (ErrorComponent e, Stream s, Token s ~ Char) =>
-  IDoc e s m (QTextT Bold) where
-  parseDoc = do
-    al <- optionalAttrList
-    qt <- parseEscapableTextBetween :: ParsecT e s m (QTextT Bold)
-    return $ qt { qtextAttrs = al }
 
 instance Between (QTextT Italic) where
   opener = "_"
@@ -415,26 +427,12 @@ instance Between (QTextT Italic) where
 instance Escapable (QTextT Italic) where
   escape = fromList [ Escape '_' ]
 
-instance (ErrorComponent e, Stream s, Token s ~ Char) =>
-  IDoc e s m (QTextT Italic) where
-  parseDoc = do
-    al <- optionalAttrList
-    qt <- parseEscapableTextBetween :: ParsecT e s m (QTextT Italic)
-    return $ qt { qtextAttrs = al }
-
 instance Between (QTextT Monospace) where
   opener = "`"
   closer = "`"
 
 instance Escapable (QTextT Monospace) where
   escape = fromList [ Escape '`' ]
-
-instance (ErrorComponent e, Stream s, Token s ~ Char) =>
-  IDoc e s m (QTextT Monospace) where
-  parseDoc = do
-    al <- optionalAttrList
-    qt <- parseEscapableTextBetween :: ParsecT e s m (QTextT Monospace)
-    return $ qt { qtextAttrs = al }
 
 instance Between (QTextT Superscript) where
   opener = "^"
@@ -443,26 +441,12 @@ instance Between (QTextT Superscript) where
 instance Escapable (QTextT Superscript) where
   escape = fromList [ Escape '^' ]
 
-instance (ErrorComponent e, Stream s, Token s ~ Char) =>
-  IDoc e s m (QTextT Superscript) where
-  parseDoc = do
-    al <- optionalAttrList
-    qt <- parseEscapableTextBetween :: ParsecT e s m (QTextT Superscript)
-    return $ qt { qtextAttrs = al }
-
 instance Between (QTextT Subscript) where
   opener = "~"
   closer = "~"
 
 instance Escapable (QTextT Subscript) where
   escape = fromList [ Escape '~' ]
-
-instance (ErrorComponent e, Stream s, Token s ~ Char) =>
-  IDoc e s m (QTextT Subscript) where
-  parseDoc = do
-    al <- optionalAttrList
-    qt <- parseEscapableTextBetween :: ParsecT e s m (QTextT Subscript)
-    return $ qt { qtextAttrs = al }
 
 type BoldText = QTextT Bold
 type ItalicText = QTextT Italic
@@ -542,36 +526,14 @@ instance Escapable TextWord where
                     , Escape '>'
                     ]
 
-instance (ErrorComponent e, Stream s, Token s ~ Char) => 
-  IDoc e s m TextWord where
-  parseDoc = do
-    let es = (\(Escape e :: Escape TextWord) -> e) <$> escape
-    cs <- someTill (do
-      choice [ foldl' (<|>) empty $
-               fromList [ char '\\' >> char '\\' ]
-               <> (fmap (\e -> char '\\' >> char e) es)
-             , do
-                 satisfy (\c -> not (elem c es) && isPrint c)
-             ])
-          spaceChar
-    return $ TextWord $ fromString cs
-
-testTW :: IO ()
-testTW = parseTest (parseDoc :: ParsecT Dec String Identity TextWord) "*hello* neighbor"
-
-parseTextWordsNoNewPara :: (ErrorComponent e, Stream s, Token s ~ Char) => ParsecT e s m (Vector TextWord)
-parseTextWordsNoNewPara = do
-  tws <- some parseDoc
-  return $ fromList tws
-  
 newtype PlainText = PlainText Text deriving (Eq, Show, IsString)
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m PlainText where
-  parseDoc = label "some plain text" $ 
-             PlainText 
-             <$> unwords 
-             <$> (fmap (\(TextWord tw) -> tw)) 
-             <$> parseTextWordsNoNewPara
+  parseDoc = label "some plain text" $ do
+    pt <- some $ do
+      notFollowedBy (paraDelim <|> (void (parseDoc :: ParsecT e s m SimpleContent)))
+      printChar <|> spaceChar
+    return $ PlainText $ fromString pt
 
 testPT :: IO ()
 testPT = parseTest ((parseDoc :: ParsecT Dec String Identity PlainText) >> (parseDoc :: ParsecT Dec String Identity BoldText)) "hello neighbor *there*"
@@ -580,18 +542,16 @@ data SimpleContent = SCInlineMath InlineMath
                    | SCLink Link
                    | SCFootnote Footnote
                    | SCFootnoteRef FootnoteRef
-                   | SCQText QText 
-                   | SCPlainText PlainText deriving (Eq, Show)
+                   | SCQText QText deriving (Eq, Show)
 
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   IDoc e s m SimpleContent where
   parseDoc = label "one of: some InlineMath, a Link, a Footnote, a FootnoteRef, some QText, some PlainText" $ do
-    sc <- eitherP (parseDoc :: ParsecT e s m InlineMath) $ 
-          eitherP (parseDoc :: ParsecT e s m Link) $ 
-          eitherP (parseDoc :: ParsecT e s m Footnote) $
-          eitherP (parseDoc :: ParsecT e s m FootnoteRef) $
-          eitherP (parseDoc :: ParsecT e s m QText) $
-                  (parseDoc :: ParsecT e s m PlainText)
+    sc <- eitherP (TM.try parseDoc :: ParsecT e s m InlineMath) $ 
+          eitherP (TM.try parseDoc :: ParsecT e s m Link) $ 
+          eitherP (TM.try parseDoc :: ParsecT e s m Footnote) $
+          eitherP (TM.try parseDoc :: ParsecT e s m FootnoteRef) $
+                  (parseDoc :: ParsecT e s m QText)
     case sc of
       Left im -> return $ SCInlineMath im
       Right nim ->
@@ -603,22 +563,28 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
               Right nfn ->
                 case nfn of 
                   Left fnr -> return $ SCFootnoteRef fnr
-                  Right nfnr ->
-                    case nfnr of
-                      Left qt -> return $ SCQText qt
-                      Right pt -> return $ SCPlainText pt
+                  Right qt -> return $ SCQText qt
 
-testSC :: IO ()
-testSC = mapM_ (parseTest (parseDoc :: ParsecT Dec String Identity SimpleContent)) [ "hello neighbor\n\n" ]
+data ParagraphContent = PCSimpleContent SimpleContent 
+                      | PCPlainText PlainText deriving (Eq, Show)
 
-newtype Paragraph = Paragraph (Vector SimpleContent, Maybe SetID) deriving (Eq, Show)
+instance (ErrorComponent e, Stream s, Token s ~ Char) => 
+  IDoc e s m ParagraphContent where
+  parseDoc = do
+    pc <-eitherP (TM.try parseDoc :: ParsecT e s m SimpleContent) $
+                 (parseDoc :: ParsecT e s m PlainText)
+    case pc of
+      Left sc -> return $ PCSimpleContent sc
+      Right pt -> return $ PCPlainText pt
+
+newtype Paragraph = Paragraph (Vector ParagraphContent, Maybe SetID) deriving (Eq, Show)
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   IDoc e s m Paragraph where
   parseDoc = do
-    scs <- some parseDoc
-    oid <- optional parseDoc
+    pcs <- some parseDoc
     gobbleSpace
-    return $ Paragraph (fromList scs, oid)
+    oid <- optional parseDoc
+    return $ Paragraph (fromList pcs, oid)
 
 testParagraph :: IO ()
 testParagraph = mapM_ 
@@ -646,12 +612,14 @@ newtype Labelled = Labelled (Text) deriving (Eq, Show, IsString)
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   IDoc e s m Labelled where
   parseDoc = do
-    l <- manyTill (do
-                      notFollowedBy $ string "::"
-                      printChar) (string "::")
+    void $ string ": "
+    l <- some $ do
+      notFollowedBy $ string ":: "
+      printChar
+    void $ string ":: "
     return $ Labelled $ fromString l
 
-data ListItem labelType = ListItem { listItemContents :: Vector ComplexContent
+data ListItem labelType = ListItem { listItemContents :: Paragraph
                                    , listItemAttrs    :: AttrList
                                    , listItemID       :: Maybe SetID
                                    , listItemLabel    :: labelType
@@ -661,13 +629,16 @@ instance (ErrorComponent e, Stream s, Token s ~ Char, IDoc e s m labelType) =>
   parseDoc = do
     al <- optionalAttrList
     il <- parseDoc
-    ic <- fromList <$> (sepBy parseDoc (string "+\n"))
+    ic <- some parseDoc
     oid <- optional parseDoc
-    return $ ListItem { listItemContents = ic
+    return $ ListItem { listItemContents = Paragraph (fromList ic, Nothing)
                       , listItemAttrs = al
                       , listItemID = oid
                       , listItemLabel = il
                       }
+
+listDelim :: (ErrorComponent e, Stream s, Token s ~ Char) => ParsecT e s m ()
+listDelim = void $ string "\n+\n"
 
 data ListT labelType = ListT { listItems :: Vector (ListItem labelType)
                              , listAttrs :: AttrList
@@ -680,7 +651,7 @@ instance (ErrorComponent e, Stream s, Token s ~ Char, IDoc e s m labelType) =>
       oal <- optionalAttrList
       void $ optional newline
       return oal
-    li <- some parseDoc
+    li <- sepBy1 parseDoc listDelim
     oid <- optional parseDoc
     return $ ListT { listItems = fromList li
                    , listAttrs = al
@@ -707,9 +678,9 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
         Right ll -> return $ LLList ll
 
 randomText :: (ErrorComponent e, Stream s, Token s ~ Char) => ParsecT e s m Text
-randomText = fromString <$> (many $ do 
-                                notFollowedBy blockDelim
-                                printChar <|> newline)
+randomText = fmap (fromString . initEx) $ some $ do 
+  notFollowedBy blockEnd
+  printChar <|> spaceChar
 
 newtype ImageLink = ImageLink Text deriving (Eq, Show, IsString)
 newtype VideoLink = VideoLink Text deriving (Eq, Show, IsString)
@@ -731,9 +702,16 @@ newtype BlockType a = BlockType Text deriving (Eq, Show, IsString)
 instance Line (BlockType a) where lineStarter = "@"
 instance Textlike (BlockType a) where fromText = BlockType
 
-instance (ErrorComponent e, Stream s, Token s ~ Char) => 
+instance (ErrorComponent e, Stream s, Token s ~ Char, BlockName a) => 
   IDoc e s m (BlockType a) where
-  parseDoc = (\(BlockType x) -> BlockType $ drop 1 x) <$> parseLineText
+  parseDoc = do
+    let (LineStarter ls) :: LineStarter (BlockType a) = lineStarter
+        (BlockType   n)  :: BlockType   a = name
+    void $ string ls
+    void $ space
+    bt <- string $ unpack n
+    void $ newline
+    return $ BlockType $ fromString bt
 
 class BlockName a where
   name :: BlockType a
@@ -743,16 +721,18 @@ instance BlockName Prerex where name = "prerex"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   IDoc e s m Prerex where
   parseDoc = do
-    pis <- many $ do
-      notFollowedBy blockDelim
-      gobbleSpace
+    pis <- some $ do
+      notFollowedBy blockEnd
       pii <- parseDoc
-      gobbleSpace
+      void $ newline
       return pii
     return $ Prerex $ fromList pis
 
-blockDelim :: (ErrorComponent e, Stream s, Token s ~ Char) =>  ParsecT e s m String
-blockDelim = string "--\n"
+blockBeg :: (ErrorComponent e, Stream s, Token s ~ Char) =>  ParsecT e s m ()
+blockBeg = void $ string "--\n"
+
+blockEnd :: (ErrorComponent e, Stream s, Token s ~ Char) =>  ParsecT e s m ()
+blockEnd = void $ string "--\n"
 
 newtype Math = Math Text deriving (Eq, Show, IsString)
 instance BlockName Math where name = "math"
@@ -767,28 +747,29 @@ instance BlockName EqnArray where name = "eqnarray"
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m EqnArray where
   parseDoc = do
-    es <- many $ do
-      notFollowedBy blockDelim
-      e <- manyTill printChar newline
+    es <- some $ do
+      notFollowedBy blockEnd
+      e <- some printChar
+      void $ newline
       return $ Math $ fromString e
     return $ EqnArray $ fromList es
 
-manyCC :: (ErrorComponent e, Stream s, Token s ~ Char) => ParsecT e s m (Vector ComplexContent)
-manyCC = fromList <$> (many $ do
-                          notFollowedBy blockDelim
-                          parseDoc)
+someCC :: (ErrorComponent e, Stream s, Token s ~ Char) => ParsecT e s m (Vector ComplexContent)
+someCC = fmap fromList $ some $ do
+  notFollowedBy blockEnd
+  parseDoc
 
 newtype Theorem = Theorem (Vector ComplexContent) deriving (Eq, Show)
 instance BlockName Theorem where name = "theorem"
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m Theorem where
-  parseDoc = Theorem <$> manyCC
+  parseDoc = Theorem <$> someCC
 
 newtype Proof = Proof (Vector ComplexContent) deriving (Eq, Show)
 instance BlockName Proof where name = "proof"
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m Proof where
-  parseDoc = Proof <$> manyCC
+  parseDoc = Proof <$> someCC
 
 newtype Quote = Quote Text deriving (Eq, Show, IsString)
 instance BlockName Quote where name = "quote"
@@ -825,42 +806,41 @@ instance BlockName Aside where name = "aside"
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m Aside where
   parseDoc = do
-    gobbleSpace
     mpb <- optional parseDoc
-    ccs <- manyCC
+    ccs <- someCC
     return $ Aside (mpb, ccs)
 
 newtype Admonition = Admonition (Vector ComplexContent) deriving (Eq, Show)
 instance BlockName Admonition where name = "admonition"
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m Admonition where
-  parseDoc = Admonition <$> manyCC
+  parseDoc = Admonition <$> someCC
 
 newtype Sidebar = Sidebar (Vector ComplexContent) deriving (Eq, Show)
 instance BlockName Sidebar where name = "sidebar"
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m Sidebar where
-  parseDoc = Sidebar <$> manyCC
+  parseDoc = Sidebar <$> someCC
 
 newtype Example = Example (Vector ComplexContent) deriving (Eq, Show)
 instance BlockName Example where name = "example"
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m Example where
-  parseDoc = Example <$> manyCC
+  parseDoc = Example <$> someCC
 
 newtype Exercise = Exercise (Vector ComplexContent) deriving (Eq, Show)
 instance BlockName Exercise where name = "exercise"
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m Exercise where
-  parseDoc = Exercise <$> manyCC
+  parseDoc = Exercise <$> someCC
 
 newtype Bibliography = Bibliography (Vector BibliographyContent) deriving (Eq, Show)
 instance BlockName Bibliography where name = "bibliography"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   IDoc e s m Bibliography where
   parseDoc = do
-    bibs <- many $ do
-      notFollowedBy blockDelim
+    bibs <- some $ do
+      notFollowedBy blockEnd
       parseDoc
     return $ Bibliography $ fromList bibs
 
@@ -870,13 +850,13 @@ data BlockT blockType = BlockT { blockContents :: blockType
                                , blockTitle :: Maybe BlockTitle
                                , blockID    :: Maybe SetID
                                } deriving (Eq, Show)
-instance (ErrorComponent e, Stream s, Token s ~ Char, IDoc e s m bType) =>
+instance (ErrorComponent e, Stream s, Token s ~ Char, IDoc e s m bType, BlockName bType) =>
   IDoc e s m (BlockT bType) where
   parseDoc = do
     al <- optionalAttrList
     bty <- parseDoc
     bt <- optional parseDoc
-    bc <- between blockDelim blockDelim parseDoc
+    bc <- between blockBeg blockEnd parseDoc
     bi <- optional parseDoc
     return $ BlockT { blockContents = bc
                     , blockType = bty
@@ -1019,18 +999,21 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
 
 data TopLevelContent = TLCSubsectionHeading SubsectionHeading 
                      | TLCSectionHeading SectionHeading
+                     | TLCCommentLine CommentLine
                      | TLCComplexContent ComplexContent deriving (Eq, Show)
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   IDoc e s m TopLevelContent where
   parseDoc = do
     tlc <- eitherP (TM.try parseDoc :: ParsecT e s m SubsectionHeading) $
            eitherP (TM.try parseDoc :: ParsecT e s m SectionHeading) $
+           eitherP (TM.try parseDoc :: ParsecT e s m CommentLine) $
                    (parseDoc :: ParsecT e s m ComplexContent)
     case tlc of
       Left ssh -> return $ TLCSubsectionHeading ssh
-      Right nssh ->
-        case nssh of 
-          Left sh -> return $ TLCSectionHeading sh
+      Right nssh -> case nssh of 
+        Left sh -> return $ TLCSectionHeading sh
+        Right nsh -> case nsh of
+          Left cl -> return $ TLCCommentLine cl
           Right cc -> return $ TLCComplexContent cc
 
 data Doc = Doc { docTitle :: Heading Title

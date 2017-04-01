@@ -17,5 +17,6 @@ main = (withFile "source.idoc" ReadMode
             withFile "target.idoc" WriteMode 
             (\tgt -> do
                 cnts <- System.IO.hGetContents src
-                let (Right (Tex x)) = render <$> (parse (parseDoc :: ParsecT Dec String Identity Doc) "source.idoc" cnts)
-                System.IO.hPutStr tgt (Data.Text.unpack x))))
+                case render <$> (parse (parseDoc :: ParsecT Dec String Identity Doc) "source.idoc" cnts) of
+                  (Right (Tex x)) -> System.IO.hPutStr tgt (Data.Text.unpack x)
+                  (Left err) -> System.IO.print err)))

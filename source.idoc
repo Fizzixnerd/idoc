@@ -2,7 +2,7 @@
 
 @ prerex
 --
-prereqs would go in here, but this is not finished yet.
+/prereqs/would/go/in/here/but/this/is/not/finished/yet
 --
 
 == Section 1 Title
@@ -24,16 +24,22 @@ talking about lists.
 === Lists
 
 - This is an unordered list
++
 - It will look like bullet points in the final render
++
 - Third main item
 
 . This is a numbered list
++
 . This is the second guy
++
 . And so on...
 
-First Item:: This is a list where the items have labels
-Second Item:: Another item
-And So On:: ...
+: First Item:: This is a list where the items have labels
++
+: Second Item:: Another item
++
+: And So On:: ...
 
 === Math
 
@@ -44,7 +50,7 @@ Inline math is done just using normal latex by doing $f(x) = \exp
 --
 f(x) = \int_x^\infty g(t) dt
 --
-[[#eqn:f-defn]]
+[[#eq:f-defn]]
 
 Note that that $d$ will not be upright as it should be.  We'll fix
 that later.  Also note that we added an _ID_ to the equation.  IDs can
@@ -66,11 +72,13 @@ Einstein though.
 @ admonition
 --
 This will show a little warning symbol next to it.
+
 --
 
 @ aside
 --
 This is basically a sub-document that is allowed to have extra prereqs
+
 --
 
 === Links

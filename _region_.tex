@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\message{ !name(target.tex)}\documentclass[12pt]{article}
 
 \usepackage{amsmath,amsthm,amssymb}
 \usepackage{geometry}
@@ -12,6 +12,9 @@
 
 
 \begin{document}
+
+\message{ !name(target.tex) !offset(-3) }
+
 \maketitle
 \tableofcontents
 
@@ -38,20 +41,20 @@ talking about lists.
 
 \begin{itemize}
 \item This is an unordered list
-\item It will look like bullet points in the final render
-\item Third main item
+- It will look like bullet points in the final render
+- Third main item
 \end{itemize}
 
 \begin{enumerate}
 \item This is a numbered list
-\item This is the second guy
-\item And so on...
+. This is the second guy
+. And so on...
 \end{enumerate}
 
 \begin{description}
 \item{First Item} This is a list where the items have labels
-\item{Second Item} Another item
-\item{And So On} ...
+: Second Item:: Another item
+: And So On:: ...
 \end{description}
 
 \subsection{Math}
@@ -60,8 +63,9 @@ talking about lists.
 Inline math is done just using normal latex by doing  $f(x) = \exp
 (-x^2)$.  Display mode is done by using a \emph{math block}, like so:
 
-\begin{displaymath}
-\label{eq:f-defn} f(x) = \int_x^\infty g(t) dt
+
+\label{eqn:f-defn}\begin{displaymath}
+f(x) = \int_x^\infty g(t) dt
 \end{displaymath}
 
 Note that that  $d$ will not be upright as it should be.  We'll fix
@@ -74,6 +78,7 @@ thing they identify.
 
 We can do other types of blocks.  They all look the same, basically.
 
+
 \begin{quote}
 The internet is the most important invention since gravity.
 \end{quote}
@@ -81,7 +86,9 @@ The internet is the most important invention since gravity.
 Somehow later I'll add attribution to the author.  That one is from
 Einstein though.
 
+
 This will show a little warning symbol next to it.
+
 
 This is basically a sub-document that is allowed to have extra prereqs
 
@@ -92,14 +99,7 @@ Links look like \href{https://learn.independentlearning.science/https://www.goog
 an "outlink" -- a link to an external site -- and so wouldn't actually
 be allowed in the main body of the document like this.  We can also
 link to \href{Blocks}{headings} in the current document, or
-\href{eqn:f-defn}{anything else} which has an ID.  And we can even link
-to headings in \href{Physics/Classical/Mechanics/Newtonian#Second Law}{other documents},
-as long as they are a prerequisite of this one.  The same applies to
-ID'd items in those docs, including this paragraph. 
 
-\section{Conclusion}
-
-
-That's about it for the basic syntax.  We can fix the rest later.
+\message{ !name(target.tex) !offset(4) }
 
 \end{document}
