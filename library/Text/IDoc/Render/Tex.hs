@@ -23,9 +23,7 @@
 module Text.IDoc.Render.Tex where
 
 import ClassyPrelude
-import Text.Megaparsec
 import Text.IDoc.Parse
-import System.IO
 
 newtype Tex = Tex Text deriving (Eq, Show, IsString)
 
@@ -113,7 +111,7 @@ instance Render AttrList where
   render (AttrList xs) = Tex $ "[" <> (concat $ intersperse "," $ utRender <$> xs) <> "]"
 
 instance Render BlockTitle where
-  render (BlockTitle x) = macro1 "subsubsection" $ render x
+  render (BlockTitle x) = macro1 "minisec" $ render x
 
 instance Render MathText where
   render (MathText x) = Tex x -- note: DO NOT ESCAPE
@@ -185,7 +183,7 @@ instance Render Footnote where
       mLabel = maybe (renderT "") (macro1 "label") (render <$> footnoteID)
 
 instance Render FootnoteRef where
-  render (FootnoteRef {..}) = macro1' "footnotemark" $ macro1 "ref" (render footnoteRefID)
+  render (FootnoteRef {..}) = macro1 "footref" $ render footnoteRefID
 
 instance Render PlainText where
   render (PlainText x) = render x
@@ -220,20 +218,40 @@ instance Render Ordered where
   render _ = macro0 "item" <> renderT " "
 
 instance Render Labelled where
-  render (Labelled x) = (macro1 "item" $ render x) <> renderT " "
+  render (Labelled x) = (macro1' "item" $ render x) <> renderT " "
 
-instance Render labelType =>
-  Render (ListT labelType) where
+longestLabel :: ListT Labelled -> Tex
+longestLabel (ListT {..}) = 
+   (\(ListItem {listItemLabel = Labelled x}) -> renderT x) 
+   $ maximumByEx (\(ListItem {listItemLabel = Labelled x}) 
+                   (ListItem {listItemLabel = Labelled y}) -> compare (length x) (length y)) listItems
+
+
+instance Render (ListT Unordered) where
   render (ListT {..}) = 
     let itms = concat $ intersperse (renderT "\n") $ render <$> listItems
         lid  = maybe (renderT "") render listID
     in
       itms <> lid
 
+instance Render (ListT Ordered) where
+  render (ListT {..}) = 
+    let itms = concat $ intersperse (renderT "\n") $ render <$> listItems
+        lid  = maybe (renderT "") render listID
+    in
+      itms <> lid
+
+instance Render (ListT Labelled) where
+  render (l@ListT {..}) = 
+    let itms = concat $ intersperse (renderT "\n") $ render <$> listItems
+        lid  = maybe (renderT "") render listID
+    in
+      Tex "{" <> longestLabel l <> Tex "}" <>itms <> lid
+
 instance Render List where
   render (LUList l) = begEnd "itemize" $ render l
   render (LOList l) = begEnd "enumerate" $ render l
-  render (LLList l) = begEnd "description" $ render l
+  render (LLList l) = begEnd "labeling" $ render l
 
 instance Render ImageLink where render (ImageLink x) = macro1 "href" $ render x
 instance Render VideoLink where render (VideoLink x) = macro1 "href" $ render x
@@ -285,7 +303,7 @@ renderLManyCC bid = ((renderBid bid) <>) . renderManyCC
 -- | FIXME
 instance RenderLabelled Aside (Maybe SetID) where renderL bid (Aside (mpb, cnts)) = renderBid bid <> maybe (renderT "") render mpb <> renderManyCC cnts
 instance RenderLabelled Admonition (Maybe SetID) where renderL bid (Admonition xs) = renderLManyCC bid xs
-instance RenderLabelled Sidebar (Maybe SetID) where renderL bid (Sidebar xs) = renderLManyCC bid xs
+instance RenderLabelled Sidebar (Maybe SetID) where renderL bid (Sidebar xs) = macro1 "Margin" $ renderLManyCC bid xs
 instance RenderLabelled Example (Maybe SetID) where renderL bid (Example xs) = renderLManyCC bid xs
 instance RenderLabelled Exercise (Maybe SetID) where renderL bid (Exercise xs) = renderLManyCC bid xs
 instance RenderLabelled Bibliography (Maybe SetID) where renderL bid (Bibliography xs) = renderBid bid <> (concat $ fmap render xs)
@@ -343,27 +361,31 @@ instance Render Doc where
   render (Doc {..}) = 
     preamble <> begEnd "document" cnts
     where
-      preamble = Tex $ unlines [ "\\documentclass[12pt]{article}"
+      preamble = Tex $ unlines [ "\\documentclass[mpinclude=true]{scrartcl}"
                                , ""
                                , "\\usepackage{amsmath,amsthm,amssymb}"
-                               , "\\usepackage{geometry}"
+                               , ""
+                               , "\\usepackage[utf8]{inputenc}"
+                               , "\\usepackage{scrlayer-notecolumn}"
+                               , "\\usepackage{setspace}"
                                , "\\usepackage{hyperref}"
                                , "\\usepackage{braket}"
                                , ""
                                , "\\newtheorem{Theorem}{Theorem}"
-                               , "\\newtheorem{Example}{Example}"
+                               , ""
+                               , "\\setlength{\\marginparwidth}{2.67\\marginparwidth}"
+                               , "\\KOMAoption{headings}{normal}"
+                               , "\\KOMAoption{captions}{outerbeside}"
+                               , "\\setkomafont{labelinglabel}{\\sffamily\\bfseries}"
+                               , "\\newcommand{\\Margin}[1]{\\makenote{#1}}"
                                , ""
                                , utRender docTitle
+                               , "\\subtitle{An \\href{https://www.independentlearning.science}{ILS} Document}"
                                , ""
                                ]
       cnts = Tex (unlines [ "\\maketitle"
                           , "\\tableofcontents"
+                          , "\\pagestyle{headings}"
                           , ""
                           ])
              <> (concat $ intersperse (Tex "\n\n") $ fmap render $ docContents)
-
-testRenderDoc = (withFile "/home/matt/src/idoc/examples/basic-syntax.idoc" ReadMode 
-                 (\h -> do
-                     c <- System.IO.hGetContents h
-                     System.IO.print $ (fmap render) (parse (parseDoc :: ParsecT Dec String Identity Doc) "../../../../examples/basic-syntax.idoc" c)))
-                                                                                              

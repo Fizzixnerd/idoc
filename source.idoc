@@ -69,6 +69,15 @@ The internet is the most important invention since gravity.
 Somehow later I'll add attribution to the author.  That one is from
 Einstein though.
 
+@ sidebar
+--
+This content will be rendered in the margin of the document.  An
+equation:
+
+$F = \frac{dp}{dt}$
+
+--
+
 @ admonition
 --
 This will show a little warning symbol next to it.

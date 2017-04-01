@@ -16,48 +16,49 @@ module Example Example3,4
 main main13,14
 main main14,15
 
-./library/Text/IDoc/Render/Tex.hs,1054
+./library/Text/IDoc/Render/Tex.hs,1087
 module Text.IDoc.Render.Tex Text.IDoc.Render.Tex22,23
-newtype Tex Tex29,30
-newtype Tex = Tex Tex29,30
-tween tween31,32
-tween tween32,33
-begEnd begEnd34,35
-begEnd begEnd35,36
-renderT renderT40,41
-renderT renderT41,42
-unTex unTex43,44
-unTex unTex44,45
-utRender utRender46,47
-utRender utRender47,48
-esc esc49,50
-esc esc50,51
-macro0 macro062,63
-macro0 macro063,64
-macro1 macro165,66
-macro1 macro166,67
-macro1' macro1'68,69
-macro1' macro1'69,70
-macro2 macro271,72
-macro2 macro272,73
-label label74,75
-label label75,76
-href href77,78
-href href78,79
-instance instance80,81
-class Render Render87,88
-class Render Render87,88
-  render render88,89
-renderBid renderBid242,243
-renderBid renderBid243,244
-class RenderLabelled RenderLabelled245,246
-class RenderLabelled RenderLabelled245,246
-  renderL renderL246,247
-renderManyCC renderManyCC278,279
-renderManyCC renderManyCC279,280
-renderLManyCC renderLManyCC281,282
-renderLManyCC renderLManyCC282,283
-testRenderDoc testRenderDoc364,365
+newtype Tex Tex27,28
+newtype Tex = Tex Tex27,28
+tween tween29,30
+tween tween30,31
+begEnd begEnd32,33
+begEnd begEnd33,34
+renderT renderT38,39
+renderT renderT39,40
+unTex unTex41,42
+unTex unTex42,43
+utRender utRender44,45
+utRender utRender45,46
+esc esc47,48
+esc esc48,49
+macro0 macro060,61
+macro0 macro061,62
+macro1 macro163,64
+macro1 macro164,65
+macro1' macro1'66,67
+macro1' macro1'67,68
+macro2 macro269,70
+macro2 macro270,71
+label label72,73
+label label73,74
+href href75,76
+href href76,77
+instance instance78,79
+class Render Render85,86
+class Render Render85,86
+  render render86,87
+longestLabel longestLabel222,223
+longestLabel longestLabel223,224
+renderBid renderBid260,261
+renderBid renderBid261,262
+class RenderLabelled RenderLabelled263,264
+class RenderLabelled RenderLabelled263,264
+  renderL renderL264,265
+renderManyCC renderManyCC296,297
+renderManyCC renderManyCC297,298
+renderLManyCC renderLManyCC299,300
+renderLManyCC renderLManyCC300,301
 
 ./library/Text/IDoc/Render/IDoc.hs,135
 module Text.IDoc.Render.IDoc Text.IDoc.Render.IDoc18,19
