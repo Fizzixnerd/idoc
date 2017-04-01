@@ -30,12 +30,10 @@ newtype Tex = Tex Text deriving (Eq, Show, IsString)
 tween :: Tex -> Tex -> Tex -> Tex
 tween beg end x = beg <> x <> end 
 
-
-
 begEnd :: Text -> Tex -> Tex
 begEnd env x = tween 
-               (macro1 "begin" $ render env <> renderT "\n") 
-               (macro1 "end" $ render env <> renderT "\n")
+               ((macro1 "begin" $ render env) <> renderT "\n")
+               ((macro1 "end" $ render env) <> renderT "\n")
                x
 
 renderT :: Text -> Tex
@@ -104,7 +102,7 @@ instance Render ID where
   render (ID { .. }) = Tex $ utRender idPath <> "#" <> utRender idHash
 
 instance Render SetID where
-  render (SetID x) = macro1 "label" $ render x
+  render (SetID (IDHash x)) = macro1 "label" $ render $ IDHash $ drop 1 x
 
 instance Render AttrName where
   render (AttrName x) = esc $ Tex x
@@ -182,7 +180,7 @@ instance Render QText where
 instance Render Footnote where
   render (Footnote {..}) = macro1 "footnote" $ mLabel <> (render $ footnoteContent)
     where
-      mLabel = maybe (render ("" :: Text)) (macro1 "label") (render <$> footnoteID)
+      mLabel = maybe (renderT "") (macro1 "label") (render <$> footnoteID)
 
 instance Render FootnoteRef where
   render (FootnoteRef {..}) = macro1' "footnotemark" $ macro1 "ref" (render footnoteRefID)
@@ -199,8 +197,7 @@ instance Render SimpleContent where
   render (SCPlainText x) = render x
 
 instance Render Paragraph where
-  render (Paragraph (xs, _)) = (concat $ render <$> xs) 
-                               <> (render ("\n\n" :: Text))
+  render (Paragraph (xs, _)) = concat $ render <$> xs
 
 testRParagraph :: (Either (ParseError Char Dec) Tex)
 testRParagraph = render <$> 
@@ -225,13 +222,13 @@ instance Render Ordered where
   render _ = macro0 "item" <> render (" " :: Text)
 
 instance Render Labelled where
-  render (Labelled x) = (macro1' "item" $ render x) <> render (" " :: Text)
+  render (Labelled x) = (macro1 "item" $ render x) <> renderT " "
 
 instance Render labelType =>
   Render (ListT labelType) where
   render (ListT {..}) = 
-    let itms = concat $ intersperse (render ("\n" :: Text)) $ render <$> listItems
-        lid  = maybe (render ("" :: Text)) render listID
+    let itms = concat $ intersperse (renderT "\n") $ render <$> listItems
+        lid  = maybe (renderT "") render listID
     in
       itms <> lid
 
@@ -246,16 +243,16 @@ instance Render YouTubeLink where render (YouTubeLink x) = macro1 "href" $ rende
 instance Render BibliographyContent where render (BibliographyContent x) = render x
 
 instance Render Math where
-  render (Math x) = renderT "\\[" <> Tex x <> renderT "\\]"
+  render (Math x) = Tex "\\[" <> Tex x <> Tex "\\]"
 
 instance Render EqnArray where
   render (EqnArray x) = begEnd "eqnarray" $ concat $ intersperse (renderT "\\\n") $ render <$> x
 
 instance Render Theorem where
-  render (Theorem x) = begEnd "Theorem" $ concat $ render <$> x
+  render (Theorem x) = begEnd "Theorem" $ renderManyCC x
 
 instance Render Proof where
-  render (Proof x) = begEnd "Proof" $ concat $ render <$> x
+  render (Proof x) = begEnd "Proof" $ renderManyCC x
 
 instance Render Quote where
   render (Quote x) = begEnd "quote" $ render x
@@ -323,7 +320,7 @@ instance Render htype =>
   render (Heading {..}) = cnts <> renderT "\n" <> sid
     where
       cnts = render hContents
-      sid = maybe (renderT "") render hID <> renderT "\n\n"
+      sid = maybe (renderT "") render hID
 
 instance Render ComplexContent where
   render (CCBlock x) = render x
@@ -331,15 +328,15 @@ instance Render ComplexContent where
   render (CCParagraph x) = render x
 
 instance Render TopLevelContent where
-  render (TLCSubsectionHeading x) = render x <> renderT "\n\n"
-  render (TLCSectionHeading x) = render x <> renderT "\n\n"
-  render (TLCComplexContent x) = render x <> renderT "\n\n"
+  render (TLCSubsectionHeading x) = render x
+  render (TLCSectionHeading x) = render x
+  render (TLCComplexContent x) = render x
 
 instance Render Doc where
   render (Doc {..}) = 
     preamble <> begEnd "document" cnts
     where
-      preamble = Tex $ unlines [ "documentclass[12pt]{article}"
+      preamble = Tex $ unlines [ "\\documentclass[12pt]{article}"
                                , ""
                                , "\\usepackage{amsmath,amsthm,amssymb}"
                                , "\\usepackage{geometry}"
@@ -356,7 +353,7 @@ instance Render Doc where
                           , "\\tableofcontents"
                           , ""
                           ])
-             <> (concat $ fmap render docContents)
+             <> (concat $ intersperse (Tex "\n\n") $ fmap render $ docContents)
 
 testRenderDoc = (withFile "/home/matt/src/idoc/examples/basic-syntax.idoc" ReadMode 
                  (\h -> do

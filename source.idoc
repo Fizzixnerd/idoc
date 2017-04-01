@@ -1,0 +1,90 @@
+= Doc Title
+
+@ prerex
+--
+prereqs would go in here, but this is not finished yet.
+--
+
+== Section 1 Title
+
+=== Paragraphs
+
+This is a paragraph.  You just type like normal.  They are separated
+by a blank line.  For example:
+
+This is now a new paragraph.  I can italicize text with _underscores_
+and bold it with *asterisks*.  I can make it `monospace` using
+backticks.
+
+I will end this paragraph with another blank line and then start
+talking about lists.
+
+// This is a comment line.  It will not be rendered.
+
+=== Lists
+
+- This is an unordered list
+- It will look like bullet points in the final render
+- Third main item
+
+. This is a numbered list
+. This is the second guy
+. And so on...
+
+First Item:: This is a list where the items have labels
+Second Item:: Another item
+And So On:: ...
+
+=== Math
+
+Inline math is done just using normal latex by doing $f(x) = \exp
+(-x^2)$.  Display mode is done by using a _math block_, like so:
+
+@ math
+--
+f(x) = \int_x^\infty g(t) dt
+--
+[[#eqn:f-defn]]
+
+Note that that $d$ will not be upright as it should be.  We'll fix
+that later.  Also note that we added an _ID_ to the equation.  IDs can
+be added to many things.  They always appear immediately following the
+thing they identify.
+
+=== Blocks
+
+We can do other types of blocks.  They all look the same, basically.
+
+@ quote
+--
+The internet is the most important invention since gravity.
+--
+
+Somehow later I'll add attribution to the author.  That one is from
+Einstein though.
+
+@ admonition
+--
+This will show a little warning symbol next to it.
+--
+
+@ aside
+--
+This is basically a sub-document that is allowed to have extra prereqs
+--
+
+=== Links
+
+Links look like <<https://www.google.com>>[this].  Note that this is
+an "outlink" -- a link to an external site -- and so wouldn't actually
+be allowed in the main body of the document like this.  We can also
+link to <<#Blocks>>[headings] in the current document, or
+<<#eqn:f-defn>>[anything else] which has an ID.  And we can even link
+to headings in <</Physics/Classical/Mechanics/Newtonian#Second Law>>[other documents],
+as long as they are a prerequisite of this one.  The same applies to
+ID'd items in those docs, including this paragraph. 
+
+
+== Conclusion
+
+That's about it for the basic syntax.  We can fix the rest later.

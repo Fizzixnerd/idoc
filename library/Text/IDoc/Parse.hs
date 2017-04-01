@@ -128,6 +128,7 @@ parseLineText :: forall e s m a. ( ErrorComponent e
 parseLineText = do
   let (LineStarter ls :: LineStarter a) = lineStarter
   void $ string ls
+  void $ space
   l <- many $ satisfy (\c -> isPrint c) -- automatically doesn't include '\n'
   void $ newline
   return $ fromText $ fromString l
