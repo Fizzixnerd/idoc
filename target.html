@@ -1,0 +1,260 @@
+<!DOCTYPE HTML>
+
+<html>
+    <head>
+      <link rel="stylesheet" type="text/css" href="prerex.lucius">
+      <script async="true" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
+    </head>
+    <body>
+        <article class="idoc">
+            <h1 class="title">
+                Doc Title
+            </h1>
+            <div class="block" class="prerexBlock">
+                
+                <div class="prerexContents">
+                    <ol class="prerexList">
+                        <li class="prerexItem">
+                            <a class="prerexItemLink" href="/prereqs/would/go/in/here/but/this/is/not/finished/yet">
+                                /prereqs/would/go/in/here/but/this/is/not/finished/yet
+                            </a>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+            <h2 class="sectionTitle">
+                Section 1 Title
+            </h2>
+            <h3 class="subsectionTitle">
+                Paragraphs
+            </h3>
+            <p>
+                This is a paragraph.  You just type like normal.  They are separated
+by a blank line.  For example:
+            </p>
+            <p>
+                This is now a new paragraph.  I can italicize text with 
+                <em class="italicText">
+                    underscores
+                </em>
+                
+and bold it with 
+                <strong class="boldText">
+                    asterisks
+                </strong>
+                .  I can make it 
+                <code class="monospaceText">
+                    monospace
+                </code>
+                 using
+backticks.
+            </p>
+            <p>
+                I will end this paragraph with another blank line and then start
+talking about lists.
+            </p>
+            <!-- This is a comment line.  It will not be rendered. -->
+            <h3 class="subsectionTitle">
+                Lists
+            </h3>
+            <ul class="unorderedList">
+                <li class="unorderedListItem">
+                    <p>
+                        This is an unordered list
+                    </p>
+                </li>
+                <li class="unorderedListItem">
+                    <p>
+                        It will look like bullet points in the final render
+                    </p>
+                </li>
+                <li class="unorderedListItem">
+                    <p>
+                        Third main item
+                    </p>
+                </li>
+            </ul>
+            <ol class="orderedList">
+                <li class="orderedListItem">
+                    <p>
+                        This is a numbered list
+                    </p>
+                </li>
+                <li class="orderedListItem">
+                    <p>
+                        This is the second guy
+                    </p>
+                </li>
+                <li class="orderedListItem">
+                    <p>
+                        And so on...
+                    </p>
+                </li>
+            </ol>
+            <dl class="labelledList">
+                <dt class="labelledListLabel">
+                    First Item
+                </dt>
+                <dd class="labelledListItem">
+                    <p>
+                        This is a list where the items have labels
+                    </p>
+                </dd>
+                <dt class="labelledListLabel">
+                    Second Item
+                </dt>
+                <dd class="labelledListItem">
+                    <p>
+                        Another item
+                    </p>
+                </dd>
+                <dt class="labelledListLabel">
+                    And So On
+                </dt>
+                <dd class="labelledListItem">
+                    <p>
+                        ...
+                    </p>
+                </dd>
+            </dl>
+            <h3 class="subsectionTitle">
+                Math
+            </h3>
+            <p>
+                Inline math is done just using normal latex by doing 
+                <span class="inlineMath">
+                    \(
+                    f(x) = \exp
+(-x^2)
+                    \)
+                </span>
+                .  Display mode is done by using a 
+                <em class="italicText">
+                    math block
+                </em>
+                , like so:
+            </p>
+            <div class="block" class="mathBlock" id="#eq:f-defn">
+                
+                <div class="mathContents">
+                    <div class="displayMath">
+                        \[
+                        f(x) = \int_x^\infty g(t) dt
+                        \]
+                    </div>
+                </div>
+            </div>
+            <p>
+                Note that that 
+                <span class="inlineMath">
+                    \(
+                    d
+                    \)
+                </span>
+                 will not be upright as it should be.  We&#39;ll fix
+that later.  Also note that we added an 
+                <em class="italicText">
+                    ID
+                </em>
+                 to the equation.  IDs can
+be added to many things.  They always appear immediately following the
+thing they identify.
+            </p>
+            <h3 class="subsectionTitle">
+                Blocks
+            </h3>
+            <p>
+                We can do other types of blocks.  They all look the same, basically.
+            </p>
+            <div class="block" class="quoteBlock">
+                
+                <div class="quoteContents">
+                    <blockquote class="quote">
+                        The internet is the most important invention since gravity.
+                    </blockquote>
+                </div>
+            </div>
+            <p>
+                Somehow later I&#39;ll add attribution to the author.  That one is from
+Einstein though.
+            </p>
+            <div class="block" class="sidebarBlock">
+                
+                <div class="sidebarContents">
+                    <aside class="sidebar">
+                        <p>
+                            This content will be rendered in the margin of the document.  An
+equation:
+                        </p>
+                        <p>
+                            <span class="inlineMath">
+                                \(
+                                F = \frac{dp}{dt}
+                                \)
+                            </span>
+                        </p>
+                    </aside>
+                </div>
+            </div>
+            <div class="block" class="admonitionBlock">
+                
+                <div class="admonitionContents">
+                    <aside class="admonition">
+                        <p>
+                            This will show a little warning symbol next to it.
+                        </p>
+                    </aside>
+                </div>
+            </div>
+            <div class="block" class="asideBlock">
+                
+                <div class="asideContents">
+                    <aside class="aside">
+                        
+                        <section class="asideSection">
+                            <p>
+                                This is basically a sub-document that is allowed to have extra prereqs
+                            </p>
+                        </section>
+                    </aside>
+                </div>
+            </div>
+            <h3 class="subsectionTitle">
+                Links
+            </h3>
+            <p>
+                Links look like 
+                <a class="outLink" href="httpswww.google.com">
+                    this
+                </a>
+                .  Note that this is
+an &quot;outlink&quot; -- a link to an external site -- and so wouldn&#39;t actually
+be allowed in the main body of the document like this.  We can also
+link to 
+                <a class="internalLink" href="Blocks">
+                    headings
+                </a>
+                 in the current document, or
+
+                <a class="internalLink" href="eqn:f-defn">
+                    anything else
+                </a>
+                 which has an ID.  And we can even link
+to headings in 
+                <a class="backLink" href="/Physics/Classical/Mechanics/Newtonian#Second Law">
+                    other documents
+                </a>
+                ,
+as long as they are a prerequisite of this one.  The same applies to
+ID&#39;d items in those docs, including this paragraph. 
+            </p>
+            <h2 class="sectionTitle">
+                Conclusion
+            </h2>
+            <p>
+                That&#39;s about it for the basic syntax.  We can fix the rest later.
+
+            </p>
+        </article>
+    </body>
+</html>

@@ -7,6 +7,7 @@ import ClassyPrelude
 import System.IO
 import Text.IDoc.Parse
 import Text.IDoc.Render.Tex
+import Text.IDoc.Render.Hamlet
 import Text.Megaparsec
 import Data.Text
 
@@ -14,9 +15,14 @@ import Data.Text
 main :: IO ()
 main = (withFile "source.idoc" ReadMode 
         (\src ->
-            withFile "target.idoc" WriteMode 
-            (\tgt -> do
-                cnts <- System.IO.hGetContents src
-                case render <$> (parse (parseDoc :: ParsecT Dec String Identity Doc) "source.idoc" cnts) of
-                  (Right (Tex x)) -> System.IO.hPutStr tgt (Data.Text.unpack x)
-                  (Left err) -> System.IO.print err)))
+            withFile "target.tex" WriteMode 
+            (\tex -> 
+               withFile "target.html" WriteMode
+               (\html -> do
+                   cnts <- System.IO.hGetContents src
+                   case parse (parseDoc :: ParsecT Dec String Identity Doc) "source.idoc" cnts of
+                     (Right x) -> do
+                       System.IO.hPutStr tex (Data.Text.unpack $ utRender x)
+                       System.IO.hPutStr html (renderPretty x)
+                     (Left err) -> System.IO.print err))))
+         

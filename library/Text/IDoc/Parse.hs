@@ -483,7 +483,7 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
 
 data Footnote = Footnote { footnoteContent :: Paragraph
                          , footnoteAttrs   :: AttrList
-                         , footnoteID      :: Maybe IDHash
+                         , footnoteID      :: Maybe SetID
                          } deriving (Eq, Show)
 instance Markup1 Footnote where
   markup1 = "footnote"
@@ -491,7 +491,7 @@ instance Markup1 Footnote where
 instance MarkupTuple Footnote Paragraph where
   fromMarkupTuple (al, cont, oid) = Footnote { footnoteContent = cont
                                              , footnoteAttrs = al
-                                             , footnoteID = oid }
+                                             , footnoteID = SetID <$> oid }
 
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m Footnote where
@@ -499,7 +499,7 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
 
 data FootnoteRef = FootnoteRef { footnoteRefID :: ILink
                                , footnoteRefAttrs :: AttrList
-                               , footnoteRefIDID :: Maybe IDHash
+                               , footnoteRefIDID :: Maybe SetID
                                } deriving (Eq, Show)
 instance Markup1 FootnoteRef where
   markup1 = "footnoteref"
@@ -507,7 +507,7 @@ instance Markup1 FootnoteRef where
 instance MarkupTuple FootnoteRef ILink where
   fromMarkupTuple (al, cont, oid) = FootnoteRef { footnoteRefID = cont
                                                 , footnoteRefAttrs = al
-                                                , footnoteRefIDID = oid }
+                                                , footnoteRefIDID = SetID <$> oid }
 
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m FootnoteRef where
@@ -738,11 +738,11 @@ newtype Math = Math Text deriving (Eq, Show, IsString)
 instance BlockName Math where name = "math"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   IDoc e s m Math where
-  parseDoc = do
-    m <- randomText
-    return $ Math $ m
+  parseDoc = Math <$> randomText
 
-newtype EqnArray = EqnArray (Vector Math) deriving (Eq, Show)
+type Equation = Text
+
+newtype EqnArray = EqnArray (Vector Equation) deriving (Eq, Show)
 instance BlockName EqnArray where name = "eqnarray"
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m EqnArray where
@@ -751,7 +751,7 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
       notFollowedBy blockEnd
       e <- some printChar
       void $ newline
-      return $ Math $ fromString e
+      return $ fromString e
     return $ EqnArray $ fromList es
 
 someCC :: (ErrorComponent e, Stream s, Token s ~ Char) => ParsecT e s m (Vector ComplexContent)

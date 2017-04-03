@@ -42,6 +42,8 @@ library:
   - megaparsec
   - containers
   - text
+  - shakespeare
+  - blaze-html
   source-dirs: library
 license: MIT
 maintainer: Matt Walker

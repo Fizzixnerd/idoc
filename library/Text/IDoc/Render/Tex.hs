@@ -117,7 +117,7 @@ instance Render MathText where
   render (MathText x) = Tex x -- note: DO NOT ESCAPE
 
 instance Render InlineMath where
-  render (InlineMath x) = Tex $ " $" <> utRender x <> "$"
+  render (InlineMath x) = Tex $ "$" <> utRender x <> "$"
 
 instance Render CommentLine where
   render (CommentLine x) = Tex "% " <> render x
@@ -129,15 +129,13 @@ instance Render URI where
   render (URI x) = render x
 
 instance Render CommonLink where
-  render (CommonLink ("http", u)) = Tex $ "http://" <> utRender u
-  render (CommonLink ("https", u)) = Tex $ "https://" <> utRender u
-  render (CommonLink (p, _)) = error $ unpack $ "cannot render CommonLink of type: " <> utRender p
+  render (CommonLink (p, u)) = render p <> render u
 
 instance Render Back where
-  render (Back x) = render x
+  render (Back x) = Tex $ "https://learn.independentlearning.science/" <> utRender x
 
 instance Render Out where
-  render (Out x) = Tex $ "https://learn.independentlearning.science/" <> utRender x
+  render (Out x) = render x
 
 instance Render Internal where
   render (Internal x) = render x
@@ -268,7 +266,7 @@ instance RenderLabelled Math (Maybe SetID) where
   renderL bid (Math x) = begEnd "displaymath" $ renderBid bid <> Tex x
 
 instance RenderLabelled EqnArray (Maybe SetID) where
-  renderL bid (EqnArray xs) = begEnd "eqnarray" $ renderBid bid <> (concat $ intersperse (renderT "\\\n") $ renderL Nothing <$> xs)
+  renderL bid (EqnArray xs) = begEnd "eqnarray" $ renderBid bid <> (concat $ intersperse (renderT "\\\n") $ render <$> xs)
 
 instance RenderLabelled Theorem (Maybe SetID) where
   renderL bid (Theorem x) = begEnd "Theorem" $ renderBid bid <> renderManyCC x
