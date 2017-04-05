@@ -73,26 +73,26 @@ attributeT attributeT31,32
 setidT setidT33,34
 setidT setidT34,35
 instance instance36,37
-idPathT idPathT39,40
-idPathT idPathT40,41
-idHashT idHashT47,48
-idHashT idHashT48,49
-idT idT50,51
-idT idT51,52
-commonLinkT commonLinkT69,70
-commonLinkT commonLinkT70,71
-backT backT72,73
-backT backT73,74
-outT outT75,76
-outT outT76,77
-internalT internalT78,79
-internalT internalT79,80
-mID mID194,195
-mID mID195,196
-mIDV mIDV216,217
-mIDV mIDV217,218
-renderPretty renderPretty473,474
-renderPretty renderPretty474,475
+idPathT idPathT46,47
+idPathT idPathT47,48
+idHashT idHashT54,55
+idHashT idHashT55,56
+idT idT57,58
+idT idT58,59
+commonLinkT commonLinkT78,79
+commonLinkT commonLinkT79,80
+backT backT81,82
+backT backT82,83
+outT outT84,85
+outT outT85,86
+internalT internalT87,88
+internalT internalT88,89
+mID mID217,218
+mID mID218,219
+mIDV mIDV242,243
+mIDV mIDV243,244
+renderPretty renderPretty516,517
+renderPretty renderPretty517,518
 
 ./library/Text/IDoc/Parse.hs,14917
 module Text.IDoc.Parse Text.IDoc.Parse20,21

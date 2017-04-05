@@ -35,7 +35,14 @@ setidT :: SetID -> Text
 setidT (SetID x) = idHashT x
 
 instance ToValue SetID where
-  toValue (SetID (IDHash x)) = toValue ("#" <> x)
+  toValue (SetID (IDHash x)) = toValue x
+
+instance ToValue IDPathComponent where
+  toValue (IDPathComponent x) = toValue x
+
+instance ToValue IDPath where
+  toValue (IDPath xs) =
+    concatMap toValue $ intersperse (IDPathComponent "-") xs
 
 idPathT :: IDPath -> Text
 idPathT x = concat $ 
@@ -53,7 +60,9 @@ idT (ID {..}) = idPathT idPath <> idHashT idHash
 
 instance ToMarkup BlockTitle where
   toMarkup (BlockTitle x) = 
-    B.h4 B.! A.class_ "idoc-block-title" B.! A.id (toValue x) $
+    B.h4 B.! A.class_ "idoc-block-title" 
+         B.! A.class_ "h4"
+         B.! A.id (toValue x) $
     toMarkup x
 
 instance ToMarkup MathText where
@@ -61,7 +70,7 @@ instance ToMarkup MathText where
 
 instance ToMarkup InlineMath where
   toMarkup (InlineMath x) = 
-    B.span B.! A.class_ "idoc-inline-math" $ 
+    B.span B.! A.class_ "idoc-inline-math" $
     text "\\(" ++ toMarkup x ++ text "\\)"
 
 instance ToMarkup CommentLine where
@@ -87,21 +96,27 @@ instance ToMarkup LinkText where
 
 instance ToMarkup (LinkT Back) where
   toMarkup (LinkT {..}) = 
-    B.a B.! A.class_ "idoc-back-link" B.! href (attributeT $ backT $ linkLocation) $ 
+    B.a B.! A.class_ "idoc-back-link" 
+        B.! B.dataAttribute "toggle" "tooltip"
+        B.! href (attributeT $ backT $ linkLocation) $ 
     lt
     where
       lt = maybe (toMarkup $ backT linkLocation) toMarkup linkText
 
 instance ToMarkup (LinkT Out) where
   toMarkup (LinkT {..}) = 
-    B.a B.! A.class_ "idoc-out-link" B.! href (attributeT $ outT $ linkLocation) $
+    B.a B.! A.class_ "idoc-out-link"
+        B.! B.dataAttribute "toggle" "tooltip"
+        B.! href (attributeT $ outT $ linkLocation) $
     lt
     where
       lt = maybe (toMarkup $ outT linkLocation) toMarkup linkText
 
 instance ToMarkup (LinkT Internal) where
   toMarkup (LinkT {..}) = 
-    B.a B.! A.class_ "idoc-internal-link" B.! href (attributeT $ internalT $ linkLocation) $ 
+    B.a B.! A.class_ "idoc-internal-link" 
+        B.! B.dataAttribute "toggle" "tooltip"
+        B.! href (attributeT $ internalT $ linkLocation) $ 
     lt
     where
       lt = maybe (toMarkup $ internalT linkLocation) toMarkup linkText
@@ -145,12 +160,17 @@ instance ToMarkup QText where
 
 instance ToMarkup Footnote where
   toMarkup (Footnote {..}) = 
-    B.div B.! A.class_ "idoc-footnote-contents" $ concat $ 
+    B.div B.! A.class_ "idoc-footnote-contents" 
+          B.! A.class_ "container"
+    $ concat $
     [ B.cite B.! A.class_ "idoc-footnote-cite" $ 
-      B.a B.! A.class_ "idoc-footnote-link" B.! href "#" $ 
-      B.sup B.! A.class_ "idoc-footnote-marker" $
-      B.text "fn"
-    , mIDV footnoteID $ B.footer B.! A.class_ "idoc-footnote-text" $
+      B.a B.! A.class_ "idoc-footnote-link" 
+          B.! href "#" $ 
+      B.sup B.! A.class_ "idoc-footnote-marker"
+            B.! B.dataAttribute "toggle" "tooltip" $
+      B.text "note"
+    , mIDV footnoteID $ 
+      B.footer B.! A.class_ "idoc-footnote-text" $
       toMarkup footnoteContent
     ]
 
@@ -158,9 +178,11 @@ instance ToMarkup FootnoteRef where
   toMarkup (FootnoteRef {..}) = 
     B.div B.! A.class_ "idoc-footnote-ref-contents" $
     B.cite B.! A.class_ "idoc-footnote-ref-cite" $ 
-    B.a B.! A.class_ "idoc-footnote-ref-link" B.! href "#" $
+    B.a B.! A.class_ "idoc-footnote-ref-link" 
+        B.! B.dataAttribute "toggle" "tooltip"
+        B.! href "#" $
     B.sup B.! A.class_ "idoc-footnote-ref-marker" $
-    B.text "fnr"
+    B.text "note"
 
 instance ToMarkup PlainText where
   toMarkup (PlainText x) = toMarkup x
@@ -189,7 +211,8 @@ instance ToMarkup Ordered where
 
 instance ToMarkup Labelled where
   toMarkup (Labelled x) = 
-    B.dt B.! A.class_ "idoc-labelled-list-label" $
+    B.dt B.! A.class_ "idoc-labelled-list-label"
+         B.! A.class_ "list-group-item-heading" $
     text x
 
 mID :: Maybe SetID -> AttributeValue
@@ -198,20 +221,23 @@ mID = attributeT . (maybe "#" setidT)
 instance ToMarkup (ListItem Unordered) where
   toMarkup (ListItem {..}) =
     mIDV listItemID $
-    B.li B.! A.class_ "idoc-unordered-list-item" $
+    B.li B.! A.class_ "idoc-unordered-list-item"
+         B.! A.class_ "list-group-item" $
     toMarkup listItemContents
 
 instance ToMarkup (ListItem Ordered) where
   toMarkup (ListItem {..}) =
     mIDV listItemID $ 
-    B.li B.! A.class_ "idoc-ordered-list-item" $
+    B.li B.! A.class_ "idoc-ordered-list-item"
+         B.! A.class_ "list-group-item" $
     toMarkup listItemContents
 
 instance ToMarkup (ListItem Labelled) where
   toMarkup (ListItem {..}) =
     toMarkup listItemLabel ++
     (mIDV listItemID $
-     B.dd B.! A.class_ "idoc-labelled-list-item" $
+     B.dd B.! A.class_ "idoc-labelled-list-item"
+          B.! A.class_ "list-group-item-info"$
      toMarkup listItemContents)
 
 mIDV :: Maybe SetID -> Html -> Html
@@ -220,19 +246,25 @@ mIDV id_ = maybe ClassyPrelude.id (\x -> (B.! A.id (toValue x))) id_
 instance ToMarkup (ListT Unordered) where
   toMarkup (ListT {..}) =
     mIDV listID $
-    B.ul B.! A.class_ "idoc-unordered-list" $
+    B.ul B.! A.class_ "idoc-unordered-list"
+         B.! A.class_ "list-unstyled"
+         B.! A.class_ "list-group" $
     concatMap toMarkup listItems
 
 instance ToMarkup (ListT Ordered) where
   toMarkup (ListT {..}) =
     mIDV listID $
-    B.ol B.! A.class_ "idoc-ordered-list" $
+    B.ol B.! A.class_ "idoc-ordered-list" 
+         B.! A.class_ "list-unstyled"
+         B.! A.class_ "list-group" $
     concatMap toMarkup listItems
 
 instance ToMarkup (ListT Labelled) where
   toMarkup (ListT {..}) =
     mIDV listID $
-    B.dl B.! A.class_ "idoc-labelled-list" $
+    B.dl B.! A.class_ "idoc-labelled-list"
+         B.! A.class_ "list-unstyled"
+         B.! A.class_ "dl-horizontal" $
     concatMap toMarkup listItems
 
 instance ToMarkup List where
@@ -256,9 +288,20 @@ instance ToMarkup BibliographyItem where
 
 instance ToMarkup PrerexItem where
   toMarkup (PrerexItem x) = 
-    B.li B.! A.class_ "idoc-prerex-item" $ 
-    B.a B.! A.class_ "idoc-prerex-item-link" B.! (A.href $ attributeT $ idPathT x) $ 
-    toMarkup $ idPathT x
+    B.div B.! A.class_ "idoc-prerex-item panel panel-info" $
+          (B.div B.! A.class_ "panel-heading" $
+                 B.h3 B.! A.class_ "panel-title" $
+                      B.a B.! B.dataAttribute "toggle" "collapse"
+                          B.! href ("#" ++ toValue x) $
+                          toMarkup $ idPathT x) ++
+          (B.div B.! A.class_ "panel-collapse collapse"
+                 B.! A.id (toValue x) $
+                 (B.div B.! A.class_ "idoc-prerex-item-content panel-body" $
+                        "Default Prerex Content Description.") ++
+                 (B.div B.! A.class_ "idoc-prerex-item-footer panel-footer" $
+                        B.a B.! A.class_ "idoc-prerex-item-link"
+                            B.! A.href (toValue $ idPathT x) $
+                            toMarkup $ idPathT x))
 
 instance ToMarkup (BlockType a) where
   toMarkup (BlockType x) = 
@@ -266,21 +309,22 @@ instance ToMarkup (BlockType a) where
 
 instance ToMarkup PrerexContents where
   toMarkup (PrerexContents xs) =
-    B.div B.! A.class_ "idoc-prerex-contents" $
-    B.ol B.! A.class_ "idoc-prerex-list" $
+    B.div B.! A.class_ "idoc-prerex-list panel-group" $
     concatMap toMarkup xs
 instance ToMarkup Prerex where toMarkup (Prerex x _) = toMarkup x
 
 instance ToMarkup MathContents where
   toMarkup (MathContents x) = 
-    B.div B.! A.class_ "idoc-math-contents" $
+    B.div B.! A.class_ "idoc-math-contents center-block flex" $
     B.div B.! A.class_ "idoc-display-math" $
     text "\\[" ++ toMarkup x ++ text "\\]"
 instance ToMarkup Math where toMarkup (Math x _) = toMarkup x
 
 instance ToMarkup EqnArrayContents where
   toMarkup (EqnArrayContents xs) =
-    B.div B.! A.class_ "idoc-eqn-array-contents" $
+    B.div B.! A.class_ "idoc-eqn-array-contents"
+          B.! A.class_ "bg-info"
+          B.! A.class_ "center-block" $
     B.div B.! A.class_ "idoc-display-math" $
     text "$$\\begin{eqnarray}\n" ++ 
     (concatMap (\x -> toMarkup $ x <> "\\\\\n") xs) ++ 
@@ -304,9 +348,8 @@ instance ToMarkup Proof where toMarkup (Proof x _) = toMarkup x
 instance ToMarkup Quote where
   toMarkup (Quote (QuoteContents x) (AttrList al)) =
     B.div B.! A.class_ "idoc-blockquote-contents" $
-    B.blockquote B.! A.class_ "idoc-blockquote" $
-    mCite $
-    toMarkup x
+          B.blockquote B.! A.class_ "idoc-blockquote" $
+                       mCite $ toMarkup x
     where
       mCite = maybe ClassyPrelude.id (\mAuthor -> 
                                         maybe ClassyPrelude.id 
@@ -397,9 +440,9 @@ instance ToMarkup Exercise where toMarkup (Exercise x _) = toMarkup x
 instance ToMarkup BibliographyContents where
   toMarkup (BibliographyContents xs) =
     B.div B.! A.class_ "idoc-bibliography-contents" $
-    B.section B.! A.class_ "idoc-bibliography" $
-    B.ol B.! A.class_ "idoc-bibliography-list" $
-    concatMap toMarkup xs
+          B.section B.! A.class_ "idoc-bibliography" $
+                    B.ol B.! A.class_ "idoc-bibliography-list" $
+                         concatMap toMarkup xs
 instance ToMarkup Bibliography where toMarkup (Bibliography x _) = toMarkup x
 
 instance ToMarkup bType =>
@@ -466,7 +509,7 @@ instance ToMarkup TopLevelContent where
 
 instance ToMarkup Doc where
   toMarkup (Doc {..}) = 
-    B.article B.! A.class_ "idoc-doc" $
+    B.article B.! A.class_ "idoc-doc container" $
     toMarkup docTitle ++
     toMarkup docPrerex ++
     concatMap toMarkup docContents
@@ -474,15 +517,27 @@ instance ToMarkup Doc where
 renderPretty :: Doc -> String
 renderPretty x = 
   S.renderHtml $ 
-  B.docTypeHtml $
-  (B.head $ (B.script B.! A.async "true" 
-                      B.! A.type_ "text/javascript" 
+  B.docTypeHtml $ B.html $
+  (B.head $ (B.meta B.! A.charset "utf-8") ++
+            (B.meta B.! A.name "viewport"
+                    B.! A.content "width=device-width, initial-scale=1, shrink-to-fit=no") ++
+            (B.script B.! A.async "true" 
                       B.! A.src "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML") (text "") ++
-            (B.link B.! A.rel "stylesheet"
-                    B.! A.href "idoc.css") ++
-            (B.link B.! A.rel "stylesheet"
-                    B.! A.href "https://fonts.googleapis.com/css?family=Roboto")) ++
-  (B.body $
-   toMarkup $
-   x)
+            (B.link B.! A.rel "stylesheet" 
+                    B.! A.href "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+--                    B.! integrity "sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" 
+                    B.! crossorigin "anonymous")) ++
+   (B.body $ (toMarkup x) ++
+             (B.script B.! A.src "https://code.jquery.com/jquery-3.1.1.slim.min.js"
+--                       B.! integrity "sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
+                       B.! crossorigin "anonymous") (text "") ++
+--             (B.script B.! A.src "https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
+--                       B.! integrity "sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+--                       B.! crossorigin "anonymous") (text "") ++
+             (B.script B.! A.src "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+--                       B.! integrity "sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
+                       B.! crossorigin "anonymous") (text ""))
+  where
+    integrity = B.customAttribute "integrity"
+    crossorigin = B.customAttribute "crossorigin"
   
