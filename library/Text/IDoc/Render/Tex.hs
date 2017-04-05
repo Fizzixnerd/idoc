@@ -1,24 +1,24 @@
-{-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE FunctionalDependencies #-}
 -- | Tex.hs
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause
 -- Created: Mar 29, 2017
 -- Summary: Render an Doc to LaTeX.
 
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+-- {-# LANGUAGE QuasiQuotes #-}
+-- {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE Arrows #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
--- {-# LANGUAGE TemplateHaskell #-}
--- {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Text.IDoc.Render.Tex where
 
@@ -102,13 +102,7 @@ instance Render ID where
   render (ID { .. }) = Tex $ utRender idPath <> "#" <> utRender idHash
 
 instance Render SetID where
-  render (SetID (IDHash x)) = macro1 "label" $ render $ IDHash $ drop 1 x
-
-instance Render AttrName where
-  render (AttrName x) = esc $ Tex x
-
-instance Render AttrList where
-  render (AttrList xs) = Tex $ "[" <> (concat $ intersperse "," $ utRender <$> xs) <> "]"
+  render (SetID x) = macro1 "label" $ render $ x
 
 instance Render BlockTitle where
   render (BlockTitle x) = macro1 "minisec" $ render x
@@ -254,7 +248,7 @@ instance Render List where
 instance Render ImageLink where render (ImageLink x) = macro1 "href" $ render x
 instance Render VideoLink where render (VideoLink x) = macro1 "href" $ render x
 instance Render YouTubeLink where render (YouTubeLink x) = macro1 "href" $ render x
-instance Render BibliographyContent where render (BibliographyContent x) = render x
+instance Render BibliographyItem where render (BibliographyItem x) = render x
 
 renderBid :: (Maybe SetID) -> Tex
 renderBid bid = maybe mempty (\x -> render x <> renderT " ") bid
@@ -262,35 +256,53 @@ renderBid bid = maybe mempty (\x -> render x <> renderT " ") bid
 class RenderLabelled a l | a -> l where
   renderL :: l -> a -> Tex
 
+instance RenderLabelled MathContents (Maybe SetID) where
+  renderL bid (MathContents x) = begEnd "displaymath" $ renderBid bid <> Tex x
 instance RenderLabelled Math (Maybe SetID) where
-  renderL bid (Math x) = begEnd "displaymath" $ renderBid bid <> Tex x
+  renderL bid (Math x _) = renderL bid x
 
+instance RenderLabelled EqnArrayContents (Maybe SetID) where
+  renderL bid (EqnArrayContents xs) = begEnd "eqnarray" $ renderBid bid <> (concat $ intersperse (renderT "\\\n") $ render <$> xs)
 instance RenderLabelled EqnArray (Maybe SetID) where
-  renderL bid (EqnArray xs) = begEnd "eqnarray" $ renderBid bid <> (concat $ intersperse (renderT "\\\n") $ render <$> xs)
+  renderL bid (EqnArray x _) = renderL bid x
 
-instance RenderLabelled Theorem (Maybe SetID) where
-  renderL bid (Theorem x) = begEnd "Theorem" $ renderBid bid <> renderManyCC x
+instance RenderLabelled TheoremContents (Maybe SetID) where
+  renderL bid (TheoremContents x) = begEnd "Theorem" $ renderBid bid <> renderManyCC x
+instance RenderLabelled Theorem (Maybe SetID) where 
+  renderL bid (Theorem x _) = renderL bid x
 
+instance RenderLabelled ProofContents (Maybe SetID) where
+  renderL bid (ProofContents x) = begEnd "Proof" $ renderBid bid <> renderManyCC x
 instance RenderLabelled Proof (Maybe SetID) where
-  renderL bid (Proof x) = begEnd "Proof" $ renderBid bid <> renderManyCC x
+  renderL bid (Proof x _) = renderL bid x
 
+instance RenderLabelled QuoteContents (Maybe SetID) where
+  renderL bid (QuoteContents x) = begEnd "quote" $ renderBid bid <> render x
 instance RenderLabelled Quote (Maybe SetID) where
-  renderL bid (Quote x) = begEnd "quote" $ renderBid bid <> render x
+  renderL bid (Quote x _) = renderL bid x
 
+instance RenderLabelled CodeContents (Maybe SetID) where
+  renderL bid (CodeContents x) = begEnd "verbatim" $ renderBid bid <> render x
 instance RenderLabelled Code (Maybe SetID) where
-  renderL bid (Code x) = begEnd "verbatim" $ renderBid bid <> render x
+  renderL bid (Code x _) = renderL bid x
 
 -- | FIXME
+instance RenderLabelled ImageContents (Maybe SetID) where
+  renderL bid (ImageContents x) = renderBid bid <> render x
 instance RenderLabelled Image (Maybe SetID) where
-  renderL bid (Image x) = renderBid bid <> render x
+  renderL bid (Image x _) = renderL bid x
 
 -- | FIXME
+instance RenderLabelled VideoContents (Maybe SetID) where
+  renderL bid (VideoContents x) = renderBid bid <> render x
 instance RenderLabelled Video (Maybe SetID) where
-  renderL bid (Video x) = renderBid bid <> render x
+  renderL bid (Video x _) = renderL bid x
 
 -- | FIXME
+instance RenderLabelled YouTubeContents (Maybe SetID) where
+  renderL bid (YouTubeContents x) = renderBid bid <> render x
 instance RenderLabelled YouTube (Maybe SetID) where
-  renderL bid (YouTube x) = renderBid bid <> render x
+  renderL bid (YouTube x _) = renderL bid x
 
 renderManyCC :: Vector ComplexContent -> Tex
 renderManyCC = concat . (fmap render)
@@ -299,13 +311,30 @@ renderLManyCC :: (Maybe SetID) -> Vector ComplexContent -> Tex
 renderLManyCC bid = ((renderBid bid) <>) . renderManyCC
 
 -- | FIXME
-instance RenderLabelled Aside (Maybe SetID) where renderL bid (Aside (mpb, cnts)) = renderBid bid <> maybe (renderT "") render mpb <> renderManyCC cnts
-instance RenderLabelled Admonition (Maybe SetID) where renderL bid (Admonition xs) = renderLManyCC bid xs
-instance RenderLabelled Sidebar (Maybe SetID) where renderL bid (Sidebar xs) = macro1 "Margin" $ renderLManyCC bid xs
-instance RenderLabelled Example (Maybe SetID) where renderL bid (Example xs) = renderLManyCC bid xs
-instance RenderLabelled Exercise (Maybe SetID) where renderL bid (Exercise xs) = renderLManyCC bid xs
-instance RenderLabelled Bibliography (Maybe SetID) where renderL bid (Bibliography xs) = renderBid bid <> (concat $ fmap render xs)
-instance RenderLabelled Prerex (Maybe SetID) where renderL _ _ = renderT "\n"
+instance RenderLabelled AsideContents (Maybe SetID) where 
+  renderL bid (AsideContents (mpb, cnts)) = renderBid bid <> 
+                                            maybe (renderT "") render mpb 
+                                            <> renderManyCC cnts
+instance RenderLabelled Aside (Maybe SetID) where
+  renderL bid (Aside x _) = renderL bid x
+
+instance RenderLabelled Admonition (Maybe SetID) where 
+  renderL bid (Admonition (AdmonitionContents xs) _) = renderLManyCC bid xs
+
+instance RenderLabelled Sidebar (Maybe SetID) where 
+  renderL bid (Sidebar (SidebarContents xs) _) = macro1 "Margin" $ renderLManyCC bid xs
+
+instance RenderLabelled Example (Maybe SetID) where 
+  renderL bid (Example (ExampleContents xs) _) = renderLManyCC bid xs
+
+instance RenderLabelled Exercise (Maybe SetID) where 
+  renderL bid (Exercise (ExerciseContents xs) _) = renderLManyCC bid xs
+
+instance RenderLabelled Bibliography (Maybe SetID) where 
+  renderL bid (Bibliography (BibliographyContents xs) _) = renderBid bid <> (concat $ fmap render xs)
+
+instance RenderLabelled Prerex (Maybe SetID) where 
+  renderL _ _ = renderT "\n"
 
 instance RenderLabelled blockType (Maybe SetID) => 
   Render (BlockT blockType) where

@@ -1,11 +1,25 @@
-= Doc Title
+= idoc User Guide
 
 @ prerex
+. Prerex
 --
-/prereqs/would/go/in/here/but/this/is/not/finished/yet
+/None
 --
 
-== Section 1 Title
+== Introduction
+
+idoc is a language and a program.  The language is what was used to
+write this document.  The program is what rendered it (in both LaTeX
+and HTML).  It has a number of features that are not found in other
+humane markup languages.  The most critical of these is support for
+allowing prerequisite resolution, though this is technically
+implemented by a static checker after parsing.  idoc was originally
+based on asciidoc, but has since diverged significantly.  You will
+probably want to examine the source for this document along with the
+rendered content.  It can be found
+<<https://www.independentlearning.science/source.idoc>>[here].
+
+== Basics
 
 === Paragraphs
 
@@ -13,44 +27,58 @@ This is a paragraph.  You just type like normal.  They are separated
 by a blank line.  For example:
 
 This is now a new paragraph.  I can italicize text with _underscores_
-and bold it with *asterisks*.  I can make it `monospace` using
-backticks.
+(`_`) and bold it with *asterisks* (`*`).  I can make it `monospace`
+using backticks (`\``).  I will end this paragraph with another blank
+line.
 
-I will end this paragraph with another blank line and then start
-talking about lists.
+=== Comments
 
-// This is a comment line.  It will not be rendered.
+Any line that begins with `//` denotes a comment.  They will be
+rendered as comments upon translation, but will not be displayed in
+the final document.
+
+// This is a comment line.  It will not be rendered.  Block
+// comments are not supported because they are a pain.
 
 === Lists
 
-- This is an unordered list
-+
-- It will look like bullet points in the final render
-+
-- Third main item
+Lists are sometimes useful in documents.  Currently `idoc` does not
+recognize complex content inside lists, though this is subject to
+change.  This means you cannot nest lists.  You may only write a
+single paragraph.  We support unordered lists, ordered lists and
+labelled (description) lists.
 
-. This is a numbered list
+
+- This is an unordered list.  It can contain paragraph contents.
 +
-. This is the second guy
+- It will look like bullet points in the final render.
++
+- Third main item.
+
+. This is a numbered list.
++
+. This is the second guy.
 +
 . And so on...
 
-: First Item:: This is a list where the items have labels
+: First Item:: This is a list where the items have labels.
 +
-: Second Item:: Another item
+: Second Item:: Another item.
 +
 : And So On:: ...
 
 === Math
 
-Inline math is done just using normal latex by doing $f(x) = \exp
-(-x^2)$.  Display mode is done by using a _math block_, like so:
+Inline math is done just using normal latex by doing enclosing text in
+dollar signs. $f(x) = \exp (-x^2)$.  Display mode is done by using a
+_math block_, like so:
 
 @ math
+. Look Ma', I Have Equations!
 --
 f(x) = \int_x^\infty g(t) dt
 --
-[[#eq:f-defn]]
+[[#eqn:f-defn]]
 
 Note that that $d$ will not be upright as it should be.  We'll fix
 that later.  Also note that we added an _ID_ to the equation.  IDs can
@@ -59,34 +87,58 @@ thing they identify.
 
 === Blocks
 
-We can do other types of blocks.  They all look the same, basically.
+We can do other types of blocks beside math blocks.  They all look the
+same, basically.  A block can also have a title, which comes _after_
+the declaration of block type.
+
 
 @ quote
+. A Blockquote from the "Great One".
+[author="Albert Einstein"]
 --
 The internet is the most important invention since gravity.
 --
+[[#q:einstein]]
 
-Somehow later I'll add attribution to the author.  That one is from
-Einstein though.
+Notice above we added an author attribution above as an _attribute_ of
+the quote block contents.  Attribute lists always come _just_ before
+the thing they modify.  In this case, we are modifying the "body" of
+the `@ quote` element, so it comes just before the body.
 
 @ sidebar
+. Please be Aware:
 --
-This content will be rendered in the margin of the document.  An
-equation:
-
-$F = \frac{dp}{dt}$
+This content will be rendered in the margin of the document.  You are
+allowed any amount of complex content here.  An equation: $F =
+\frac{dp}{dt}$.
 
 --
 
 @ admonition
+[type="warning"]
 --
 This will show a little warning symbol next to it.
 
 --
 
 @ aside
+. An aside
 --
-This is basically a sub-document that is allowed to have extra prereqs
+@ prerex
+. Aside Prerex
+--
+/Basics/Logic
+/Basics/Sex
+--
+
+An aside is useful when you have content connected to the main text
+but which isn't super necessary, or requires more advanced techniques
+than the rest of the text.
+
+This is basically a sub-document that is allowed to have extra
+prereqs.
+
+(Sub)sections are _not_ allowed here, since these are meant to be short.
 
 --
 
@@ -95,7 +147,7 @@ This is basically a sub-document that is allowed to have extra prereqs
 Links look like <<https://www.google.com>>[this].  Note that this is
 an "outlink" -- a link to an external site -- and so wouldn't actually
 be allowed in the main body of the document like this.  We can also
-link to <<#Blocks>>[headings] in the current document, or
+link to <<#Introduction>>[headings] in the current document, or
 <<#eqn:f-defn>>[anything else] which has an ID.  And we can even link
 to headings in <</Physics/Classical/Mechanics/Newtonian#Second Law>>[other documents],
 as long as they are a prerequisite of this one.  The same applies to
