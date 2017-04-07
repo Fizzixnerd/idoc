@@ -94,372 +94,422 @@ mIDV mIDV243,244
 renderPretty renderPretty516,517
 renderPretty renderPretty517,518
 
-./library/Text/IDoc/Parse.hs,14917
+./library/Text/IDoc/Parse.hs,16389
 module Text.IDoc.Parse Text.IDoc.Parse20,21
 class IDoc IDoc26,27
 class IDoc IDoc26,27
   parseDoc parseDoc27,28
-newtype Opener Opener29,30
-newtype Opener a = Opener Opener29,30
-newtype Closer Closer30,31
-newtype Closer a = Closer Closer30,31
-class Between Between31,32
-class Between Between31,32
-  opener opener32,33
-  closer closer33,34
-class Contents Contents35,36
-class Contents Contents35,36
-  data Container Container36,37
-  contentsP contentsP37,38
-  wrapperP wrapperP38,39
-newtype Sep Sep40,41
-newtype Sep a = Sep Sep40,41
-class Separated Separated41,42
-class Separated Separated41,42
-  sep sep42,43
-newtype TwinSep TwinSep44,45
-newtype TwinSep a b = TwinSep TwinSep44,45
-class Twin Twin45,46
-class Twin Twin45,46
-  twinSep twinSep46,47
-newtype Escape Escape48,49
-newtype Escape a = Escape Escape48,49
-class Escapable Escapable49,50
-class Escapable Escapable49,50
-  escape escape50,51
-newtype LineStarter LineStarter52,53
-newtype LineStarter a = LineStarter LineStarter52,53
-class Line Line53,54
-class Line Line53,54
-  lineStarter lineStarter54,55
-class Textlike Textlike56,57
-class Textlike Textlike56,57
-  fromText fromText57,58
-newtype Markup Markup59,60
-newtype Markup a = Markup Markup59,60
-class Markup1 Markup160,61
-class Markup1 Markup160,61
-  markup1 markup161,62
-class Markup2 Markup263,64
-class Markup2 Markup263,64
-  markup2 markup264,65
-class MarkupTuple MarkupTuple66,67
-class MarkupTuple MarkupTuple66,67
-  fromMarkupTuple fromMarkupTuple67,68
-paraDelim paraDelim69,70
-paraDelim paraDelim70,71
-parseTwin parseTwin72,73
-parseTwin parseTwin78,79
-parseEscapableTextBetween parseEscapableTextBetween85,86
-parseEscapableTextBetween parseEscapableTextBetween91,92
-parseSeparated parseSeparated106,107
-parseSeparated parseSeparated111,112
-parseContentsBetween parseContentsBetween116,117
-parseContentsBetween parseContentsBetween121,122
-parseLineText parseLineText129,130
-parseLineText parseLineText134,135
-parseMarkup1 parseMarkup1142,143
-parseMarkup1 parseMarkup1148,149
-optionalAttrList optionalAttrList158,159
-optionalAttrList optionalAttrList159,160
-gobbleSpace gobbleSpace166,167
-gobbleSpace gobbleSpace167,168
-newtype IDPathComponent IDPathComponent169,170
-newtype IDPathComponent = IDPathComponent IDPathComponent169,170
-instance instance170,171
-newtype IDPath IDPath183,184
-newtype IDPath = IDPath IDPath183,184
-newtype IDHash IDHash191,192
-newtype IDHash = IDHash IDHash191,192
-data ID ID203,204
-data ID = ID ID203,204
-data ID = ID { idPath idPath203,204
-             , idHash idHash204,205
-newtype SetID SetID214,215
-newtype SetID = SetID SetID214,215
-newtype AttrName AttrName227,228
-newtype AttrName = AttrName AttrName227,228
-newtype AttrValue AttrValue235,236
-newtype AttrValue = AttrValue AttrValue235,236
-newtype Attribute Attribute243,244
-newtype Attribute = Attribute Attribute243,244
-type AttrList AttrList264,265
-newtype BlockTitle BlockTitle274,275
-newtype BlockTitle = BlockTitle BlockTitle274,275
-newtype MathText MathText285,286
-newtype MathText = MathText MathText285,286
-newtype InlineMath InlineMath294,295
-newtype InlineMath = InlineMath InlineMath294,295
-testIM testIM303,304
-testIM testIM304,305
-newtype CommentLine CommentLine306,307
-newtype CommentLine = CommentLine CommentLine306,307
-newtype Protocol Protocol317,318
-newtype Protocol = Protocol Protocol317,318
-newtype URI URI322,323
-newtype URI = URI URI322,323
-newtype CommonLink CommonLink329,330
-newtype CommonLink = CommonLink CommonLink329,330
-newtype Back Back337,338
-newtype Back = Back Back337,338
-newtype Out Out342,343
-newtype Out = Out Out342,343
-newtype Internal Internal347,348
-newtype Internal = Internal Internal347,348
-newtype LinkText LinkText355,356
-newtype LinkText = LinkText LinkText355,356
-data LinkT LinkT370,371
-data LinkT protocol = LinkT LinkT370,371
-data LinkT protocol = LinkT { linkText linkText370,371
-                            , linkAttrs linkAttrs371,372
-                            , linkLocation linkLocation372,373
-type BLink BLink387,388
-type OLink OLink388,389
-type ILink ILink389,390
-data Link Link391,392
-data Link = LBLink LBLink391,392
-          | LOLink LOLink392,393
-          | LILink LILink393,394
-testLink testLink395,396
-testLink testLink396,397
-data BoldBold411,412
-data ItalicItalic412,413
-data MonospaceMonospace413,414
-data SuperscriptSuperscript414,415
-data SubscriptSubscript415,416
-data QTextT QTextT417,418
-data QTextT style = QTextT QTextT417,418
-data QTextT style = QTextT { qtextText qtextText417,418
-                           , qtextAttrs qtextAttrs418,419
-type BoldText BoldText473,474
-type ItalicText ItalicText474,475
-type MonospaceText MonospaceText475,476
-type SuperscriptText SuperscriptText476,477
-type SubscriptText SubscriptText477,478
-data QText QText479,480
-data QText = QTBoldText QTBoldText479,480
-           | QTItalicText QTItalicText480,481
-           | QTMonospaceText QTMonospaceText481,482
-           | QTSuperscriptText QTSuperscriptText482,483
-           | QTSubscriptText QTSubscriptText483,484
-data Footnote Footnote506,507
-data Footnote = Footnote Footnote506,507
-data Footnote = Footnote { footnoteContent footnoteContent506,507
-                         , footnoteAttrs footnoteAttrs507,508
-                         , footnoteID footnoteID508,509
-data FootnoteRef FootnoteRef522,523
-data FootnoteRef = FootnoteRef FootnoteRef522,523
-data FootnoteRef = FootnoteRef { footnoteRefID footnoteRefID522,523
-                               , footnoteRefAttrs footnoteRefAttrs523,524
-                               , footnoteRefIDID footnoteRefIDID524,525
-newtype TextWord TextWord538,539
-newtype TextWord = TextWord TextWord538,539
-newtype PlainText PlainText551,552
-newtype PlainText = PlainText PlainText551,552
-testPT testPT560,561
-testPT testPT561,562
-data SimpleContent SimpleContent563,564
-data SimpleContent = SCInlineMath SCInlineMath563,564
-                   | SCLink SCLink564,565
-                   | SCFootnote SCFootnote565,566
-                   | SCFootnoteRef SCFootnoteRef566,567
-                   | SCQText SCQText567,568
-data ParagraphContent ParagraphContent590,591
-data ParagraphContent = PCSimpleContent PCSimpleContent590,591
-                      | PCPlainText PCPlainText591,592
-newtype Paragraph Paragraph602,603
-newtype Paragraph = Paragraph Paragraph602,603
-testParagraph testParagraph611,612
-testParagraph testParagraph612,613
-data Unordered Unordered619,620
-data Unordered = Unordered Unordered619,620
-data Ordered Ordered626,627
-data Ordered = Ordered Ordered626,627
-newtype Labelled Labelled633,634
-newtype Labelled = Labelled Labelled633,634
-data ListItem ListItem644,645
-data ListItem labelType = ListItem ListItem644,645
-data ListItem labelType = ListItem { listItemContents listItemContents644,645
-                                   , listItemAttrs listItemAttrs645,646
-                                   , listItemID listItemID646,647
-                                   , listItemLabel listItemLabel647,648
-listDelim listDelim662,663
-listDelim listDelim663,664
-data ListT ListT665,666
-data ListT labelType = ListT ListT665,666
-data ListT labelType = ListT { listItems listItems665,666
-                             , listAttrs listAttrs666,667
-                             , listID listID667,668
-type UList UList683,684
-type OList OList684,685
-type LList LList685,686
-data List List687,688
-data List = LUList LUList687,688
-          | LOList LOList688,689
-          | LLList LLList689,690
-randomText randomText702,703
-randomText randomText703,704
-newtype ImageLink ImageLink707,708
-newtype ImageLink = ImageLink ImageLink707,708
-newtype VideoLink VideoLink708,709
-newtype VideoLink = VideoLink VideoLink708,709
-newtype YouTubeLink YouTubeLink709,710
-newtype YouTubeLink = YouTubeLink YouTubeLink709,710
-newtype BibliographyItem BibliographyItem710,711
-newtype BibliographyItem = BibliographyItem BibliographyItem710,711
-newtype PrerexItem PrerexItem718,719
-newtype PrerexItem = PrerexItem PrerexItem718,719
-newtype BlockType BlockType723,724
-newtype BlockType a = BlockType BlockType723,724
-class BlockName BlockName738,739
-class BlockName BlockName738,739
-  name name739,740
-class SetAttrs SetAttrs741,742
-class SetAttrs SetAttrs741,742
-  setAttrs setAttrs742,743
-emptyAL emptyAL744,745
-emptyAL emptyAL745,746
-newtype PrerexContents PrerexContents747,748
-newtype PrerexContents = PrerexContents PrerexContents747,748
-data Prerex Prerex748,749
-data Prerex = Prerex Prerex748,749
-blockBeg blockBeg761,762
-blockBeg blockBeg762,763
-blockEnd blockEnd764,765
-blockEnd blockEnd765,766
-newtype MathContents MathContents767,768
-newtype MathContents = MathContents MathContents767,768
-data Math Math768,769
-data Math = Math Math768,769
-type Equation Equation777,778
-newtype EqnArrayContents EqnArrayContents779,780
-newtype EqnArrayContents = EqnArrayContents EqnArrayContents779,780
-data EqnArray EqnArray780,781
-data EqnArray = EqnArray EqnArray780,781
-someCC someCC793,794
-someCC someCC794,795
-newtype TheoremContents TheoremContents798,799
-newtype TheoremContents = TheoremContents TheoremContents798,799
-data Theorem Theorem799,800
-data Theorem = Theorem Theorem799,800
-newtype ProofContents ProofContents808,809
-newtype ProofContents = ProofContents ProofContents808,809
-data Proof Proof809,810
-data Proof = Proof Proof809,810
-newtype QuoteContents QuoteContents818,819
-newtype QuoteContents = QuoteContents QuoteContents818,819
-data Quote Quote819,820
-data Quote = Quote Quote819,820
-newtype CodeContents CodeContents828,829
-newtype CodeContents = CodeContents CodeContents828,829
-data Code Code829,830
-data Code = Code Code829,830
-newtype ImageContents ImageContents838,839
-newtype ImageContents = ImageContents ImageContents838,839
-data Image Image839,840
-data Image = Image Image839,840
-newtype VideoContents VideoContents848,849
-newtype VideoContents = VideoContents VideoContents848,849
-data Video Video849,850
-data Video = Video Video849,850
-newtype YouTubeContents YouTubeContents858,859
-newtype YouTubeContents = YouTubeContents YouTubeContents858,859
-data YouTube YouTube859,860
-data YouTube = YouTube YouTube859,860
-newtype AsideContents AsideContents868,869
-newtype AsideContents = AsideContents AsideContents868,869
-data Aside Aside869,870
-data Aside = Aside Aside869,870
-newtype AdmonitionContents AdmonitionContents879,880
-newtype AdmonitionContents = AdmonitionContents AdmonitionContents879,880
-data Admonition Admonition880,881
-data Admonition = Admonition Admonition880,881
-newtype SidebarContents SidebarContents889,890
-newtype SidebarContents = SidebarContents SidebarContents889,890
-data Sidebar Sidebar890,891
-data Sidebar = Sidebar Sidebar890,891
-newtype ExampleContents ExampleContents899,900
-newtype ExampleContents = ExampleContents ExampleContents899,900
-data Example Example900,901
-data Example = Example Example900,901
-newtype ExerciseContents ExerciseContents909,910
-newtype ExerciseContents = ExerciseContents ExerciseContents909,910
-data Exercise Exercise910,911
-data Exercise = Exercise Exercise910,911
-newtype BibliographyContents BibliographyContents919,920
-newtype BibliographyContents = BibliographyContents BibliographyContents919,920
-data Bibliography Bibliography920,921
-data Bibliography = Bibliography Bibliography920,921
-data BlockT BlockT931,932
-data BlockT blockType = BlockT BlockT931,932
-data BlockT blockType = BlockT { blockContents blockContents931,932
-                               , blockType blockType932,933
-                               , blockAttrs blockAttrs933,934
-                               , blockTitle blockTitle934,935
-                               , blockID blockID935,936
-type PrerexBlock PrerexBlock953,954
-type MathBlock MathBlock954,955
-type EqnArrayBlock EqnArrayBlock955,956
-type TheoremBlock TheoremBlock956,957
-type ProofBlock ProofBlock957,958
-type QuoteBlock QuoteBlock958,959
-type CodeBlock CodeBlock959,960
-type ImageBlock ImageBlock960,961
-type VideoBlock VideoBlock961,962
-type YouTubeBlock YouTubeBlock962,963
-type AsideBlock AsideBlock963,964
-type AdmonitionBlock AdmonitionBlock964,965
-type SidebarBlock SidebarBlock965,966
-type ExampleBlock ExampleBlock966,967
-type ExerciseBlock ExerciseBlock967,968
-type BibliographyBlock BibliographyBlock968,969
-data Block Block970,971
-data Block = BMathBlock BMathBlock970,971
-           | BEqnArrayBlock BEqnArrayBlock971,972
-           | BTheoremBlock BTheoremBlock972,973
-           | BProofBlock BProofBlock973,974
-           | BPrerexBlock BPrerexBlock974,975
-           | BQuoteBlock BQuoteBlock975,976
-           | BCodeBlock BCodeBlock976,977
-           | BImageBlock BImageBlock977,978
-           | BVideoBlock BVideoBlock978,979
-           | BAdmonitionBlock BAdmonitionBlock979,980
-           | BAsideBlock BAsideBlock980,981
-           | BYouTubeBlock BYouTubeBlock981,982
-           | BSidebarBlock BSidebarBlock982,983
-           | BExampleBlock BExampleBlock983,984
-           | BExerciseBlock BExerciseBlock984,985
-           | BBibliographyBlock BBibliographyBlock985,986
-newtype Title Title1038,1039
-newtype Title = Title Title1038,1039
-newtype Section Section1042,1043
-newtype Section = Section Section1042,1043
-newtype Subsection Subsection1046,1047
-newtype Subsection = Subsection Subsection1046,1047
-data Heading Heading1050,1051
-data Heading htype = Heading Heading1050,1051
-data Heading htype = Heading { hContents hContents1050,1051
-                             , hID hID1051,1052
-                             , hAttrs hAttrs1052,1053
-type SectionHeading SectionHeading1055,1056
-type SubsectionHeading SubsectionHeading1056,1057
-data ComplexContent ComplexContent1069,1070
-data ComplexContent = CCBlock CCBlock1069,1070
-                    | CCList CCList1070,1071
-                    | CCParagraph CCParagraph1071,1072
-data TopLevelContent TopLevelContent1085,1086
-data TopLevelContent = TLCSubsectionHeading TLCSubsectionHeading1085,1086
-                     | TLCSectionHeading TLCSectionHeading1086,1087
-                     | TLCCommentLine TLCCommentLine1087,1088
-                     | TLCComplexContent TLCComplexContent1088,1089
-data Doc Doc1104,1105
-data Doc = Doc Doc1104,1105
-data Doc = Doc { docTitle docTitle1104,1105
-               , docPrerex docPrerex1105,1106
-               , docContents docContents1106,1107
+newtype Starters Starters29,30
+newtype Starters a = Starters Starters29,30
+class StartedBy StartedBy30,31
+class StartedBy StartedBy30,31
+  starters starters31,32
+newtype Enders Enders33,34
+newtype Enders a = Enders Enders33,34
+class EndedBy EndedBy34,35
+class EndedBy EndedBy34,35
+  enders enders35,36
+newtype Stoppers Stoppers37,38
+newtype Stoppers a = Stoppers Stoppers37,38
+class StoppedBy StoppedBy38,39
+class StoppedBy StoppedBy38,39
+  stoppers stoppers39,40
+newtype Allowed Allowed41,42
+newtype Allowed e s m a b = Allowed Allowed41,42
+class Allows Allows42,43
+class Allows Allows42,43
+  allowed allowed43,44
+newtype Opener Opener45,46
+newtype Opener a = Opener Opener45,46
+newtype Closer Closer46,47
+newtype Closer a = Closer Closer46,47
+class Between Between47,48
+class Between Between47,48
+  opener opener48,49
+  closer closer49,50
+class Contents Contents51,52
+class Contents Contents51,52
+  data Container Container52,53
+  contentsP contentsP53,54
+  wrapperP wrapperP54,55
+newtype Sep Sep56,57
+newtype Sep a = Sep Sep56,57
+class Separated Separated57,58
+class Separated Separated57,58
+  sep sep58,59
+newtype TwinSep TwinSep60,61
+newtype TwinSep a b = TwinSep TwinSep60,61
+class Twin Twin61,62
+class Twin Twin61,62
+  twinSep twinSep62,63
+newtype Escape Escape64,65
+newtype Escape a = Escape Escape64,65
+class Escapable Escapable65,66
+class Escapable Escapable65,66
+  escape escape66,67
+newtype LineStarter LineStarter68,69
+newtype LineStarter a = LineStarter LineStarter68,69
+class Line Line69,70
+class Line Line69,70
+  lineStarter lineStarter70,71
+class Textlike Textlike72,73
+class Textlike Textlike72,73
+  fromText fromText73,74
+newtype Markup Markup75,76
+newtype Markup a = Markup Markup75,76
+class Markup1 Markup176,77
+class Markup1 Markup176,77
+  markup1 markup177,78
+class Markup2 Markup279,80
+class Markup2 Markup279,80
+  markup2 markup280,81
+class MarkupTuple MarkupTuple82,83
+class MarkupTuple MarkupTuple82,83
+  fromMarkupTuple fromMarkupTuple83,84
+newtype FlexParser FlexParser85,86
+newtype FlexParser e s m a = FlexParser FlexParser85,86
+newtype FlexParser e s m a = FlexParser { unFlex unFlex85,86
+instance instance87,88
+type EndParser EndParser114,115
+type SepParser SepParser115,116
+flexedBy flexedBy117,118
+flexedBy flexedBy119,120
+stop stop121,122
+stop stop123,124
+sep sep127,128
+sep sep129,130
+flexTwin flexTwin131,132
+flexTwin flexTwin133,134
+paraDelim paraDelim138,139
+paraDelim paraDelim139,140
+parseTwin parseTwin146,147
+parseTwin parseTwin153,154
+parseEscapableTextBetween parseEscapableTextBetween160,161
+parseEscapableTextBetween parseEscapableTextBetween166,167
+parseBetween parseBetween181,182
+parseBetween parseBetween186,187
+parseSeparated parseSeparated194,195
+parseSeparated parseSeparated199,200
+parseContentsBetween parseContentsBetween204,205
+parseContentsBetween parseContentsBetween209,210
+parseLineText parseLineText217,218
+parseLineText parseLineText222,223
+parseMarkup1 parseMarkup1230,231
+parseMarkup1 parseMarkup1236,237
+optionalAttrList optionalAttrList246,247
+optionalAttrList optionalAttrList247,248
+gobbleSpace gobbleSpace254,255
+gobbleSpace gobbleSpace255,256
+data ManyOrSome ManyOrSome257,258
+data ManyOrSome = Many Many257,258
+data ManyOrSome = Many | Some Some257,258
+parseAllowsStoppedBy parseAllowsStoppedBy259,260
+parseAllowsStoppedBy parseAllowsStoppedBy265,266
+newtype IDPathComponent IDPathComponent276,277
+newtype IDPathComponent = IDPathComponent IDPathComponent276,277
+newtype IDPath IDPath293,294
+newtype IDPath = IDPath IDPath293,294
+newtype IDHash IDHash301,302
+newtype IDHash = IDHash IDHash301,302
+data ID ID316,317
+data ID = ID ID316,317
+data ID = ID { idPath idPath316,317
+             , idHash idHash317,318
+newtype SetID SetID327,328
+newtype SetID = SetID SetID327,328
+newtype AttrName AttrName339,340
+newtype AttrName = AttrName AttrName339,340
+newtype AttrValue AttrValue347,348
+newtype AttrValue = AttrValue AttrValue347,348
+newtype Attribute Attribute355,356
+newtype Attribute = Attribute Attribute355,356
+type AttrList AttrList376,377
+newtype BlockTitle BlockTitle386,387
+newtype BlockTitle = BlockTitle BlockTitle386,387
+newtype MathText MathText397,398
+newtype MathText = MathText MathText397,398
+newtype InlineMath InlineMath406,407
+newtype InlineMath = InlineMath InlineMath406,407
+testIM testIM415,416
+testIM testIM416,417
+newtype CommentLine CommentLine418,419
+newtype CommentLine = CommentLine CommentLine418,419
+newtype Protocol Protocol429,430
+newtype Protocol = Protocol Protocol429,430
+newtype URI URI434,435
+newtype URI = URI URI434,435
+newtype CommonLink CommonLink441,442
+newtype CommonLink = CommonLink CommonLink441,442
+newtype Back Back449,450
+newtype Back = Back Back449,450
+newtype Out Out454,455
+newtype Out = Out Out454,455
+newtype Internal Internal459,460
+newtype Internal = Internal Internal459,460
+newtype LinkText LinkText467,468
+newtype LinkText = LinkText LinkText467,468
+data LinkT LinkT482,483
+data LinkT protocol = LinkT LinkT482,483
+data LinkT protocol = LinkT { linkText linkText482,483
+                            , linkAttrs linkAttrs483,484
+                            , linkLocation linkLocation484,485
+type BLink BLink499,500
+type OLink OLink500,501
+type ILink ILink501,502
+data Link Link503,504
+data Link = LBLink LBLink503,504
+          | LOLink LOLink504,505
+          | LILink LILink505,506
+testLink testLink507,508
+testLink testLink508,509
+data BoldBold523,524
+data ItalicItalic524,525
+data MonospaceMonospace525,526
+data SuperscriptSuperscript526,527
+data SubscriptSubscript527,528
+data QTextT QTextT529,530
+data QTextT style = QTextT QTextT529,530
+data QTextT style = QTextT { qtextText qtextText529,530
+                           , qtextAttrs qtextAttrs530,531
+type BoldText BoldText585,586
+type ItalicText ItalicText586,587
+type MonospaceText MonospaceText587,588
+type SuperscriptText SuperscriptText588,589
+type SubscriptText SubscriptText589,590
+data QText QText591,592
+data QText = QTBoldText QTBoldText591,592
+           | QTItalicText QTItalicText592,593
+           | QTMonospaceText QTMonospaceText593,594
+           | QTSuperscriptText QTSuperscriptText594,595
+           | QTSubscriptText QTSubscriptText595,596
+data Footnote Footnote618,619
+data Footnote = Footnote Footnote618,619
+data Footnote = Footnote { footnoteContent footnoteContent618,619
+                         , footnoteAttrs footnoteAttrs619,620
+                         , footnoteID footnoteID620,621
+data FootnoteRef FootnoteRef634,635
+data FootnoteRef = FootnoteRef FootnoteRef634,635
+data FootnoteRef = FootnoteRef { footnoteRefID footnoteRefID634,635
+                               , footnoteRefAttrs footnoteRefAttrs635,636
+                               , footnoteRefIDID footnoteRefIDID636,637
+newtype TextWord TextWord650,651
+newtype TextWord = TextWord TextWord650,651
+newtype PlainText PlainText663,664
+newtype PlainText = PlainText PlainText663,664
+testPT testPT672,673
+testPT testPT673,674
+data SimpleContent SimpleContent675,676
+data SimpleContent = SCInlineMath SCInlineMath675,676
+                   | SCLink SCLink676,677
+                   | SCFootnote SCFootnote677,678
+                   | SCFootnoteRef SCFootnoteRef678,679
+                   | SCQText SCQText679,680
+data ParagraphContent ParagraphContent702,703
+data ParagraphContent = PCSimpleContent PCSimpleContent702,703
+                      | PCPlainText PCPlainText703,704
+newtype Paragraph Paragraph714,715
+newtype Paragraph = Paragraph Paragraph714,715
+testParagraph testParagraph723,724
+testParagraph testParagraph724,725
+data Unordered Unordered731,732
+data Unordered = Unordered Unordered731,732
+data Ordered Ordered738,739
+data Ordered = Ordered Ordered738,739
+newtype Labelled Labelled745,746
+newtype Labelled = Labelled Labelled745,746
+data ListItem ListItem756,757
+data ListItem labelType = ListItem ListItem756,757
+data ListItem labelType = ListItem { listItemContents listItemContents756,757
+                                   , listItemAttrs listItemAttrs757,758
+                                   , listItemID listItemID758,759
+                                   , listItemLabel listItemLabel759,760
+listDelim listDelim774,775
+listDelim listDelim775,776
+data ListT ListT777,778
+data ListT labelType = ListT ListT777,778
+data ListT labelType = ListT { listItems listItems777,778
+                             , listAttrs listAttrs778,779
+                             , listID listID779,780
+type UList UList795,796
+type OList OList796,797
+type LList LList797,798
+data List List799,800
+data List = LUList LUList799,800
+          | LOList LOList800,801
+          | LLList LLList801,802
+randomText randomText814,815
+randomText randomText815,816
+newtype ImageLink ImageLink819,820
+newtype ImageLink = ImageLink ImageLink819,820
+newtype VideoLink VideoLink820,821
+newtype VideoLink = VideoLink VideoLink820,821
+newtype YouTubeLink YouTubeLink821,822
+newtype YouTubeLink = YouTubeLink YouTubeLink821,822
+newtype BibliographyItem BibliographyItem822,823
+newtype BibliographyItem = BibliographyItem BibliographyItem822,823
+newtype PrerexItem PrerexItem830,831
+newtype PrerexItem = PrerexItem PrerexItem830,831
+newtype BlockType BlockType835,836
+newtype BlockType a = BlockType BlockType835,836
+class BlockName BlockName850,851
+class BlockName BlockName850,851
+  name name851,852
+class SetAttrs SetAttrs853,854
+class SetAttrs SetAttrs853,854
+  setAttrs setAttrs854,855
+emptyAL emptyAL856,857
+emptyAL emptyAL857,858
+newtype PrerexContents PrerexContents859,860
+newtype PrerexContents = PrerexContents PrerexContents859,860
+data Prerex Prerex860,861
+data Prerex = Prerex Prerex860,861
+blockBeg blockBeg873,874
+blockBeg blockBeg874,875
+blockEnd blockEnd876,877
+blockEnd blockEnd877,878
+newtype MathContents MathContents879,880
+newtype MathContents = MathContents MathContents879,880
+data Math Math880,881
+data Math = Math Math880,881
+type Equation Equation889,890
+newtype EqnArrayContents EqnArrayContents891,892
+newtype EqnArrayContents = EqnArrayContents EqnArrayContents891,892
+data EqnArray EqnArray892,893
+data EqnArray = EqnArray EqnArray892,893
+someCC someCC905,906
+someCC someCC906,907
+newtype TheoremContents TheoremContents910,911
+newtype TheoremContents = TheoremContents TheoremContents910,911
+data Theorem Theorem911,912
+data Theorem = Theorem Theorem911,912
+newtype ProofContents ProofContents920,921
+newtype ProofContents = ProofContents ProofContents920,921
+data Proof Proof921,922
+data Proof = Proof Proof921,922
+newtype QuoteContents QuoteContents930,931
+newtype QuoteContents = QuoteContents QuoteContents930,931
+data Quote Quote931,932
+data Quote = Quote Quote931,932
+newtype CodeContents CodeContents940,941
+newtype CodeContents = CodeContents CodeContents940,941
+data Code Code941,942
+data Code = Code Code941,942
+newtype ImageContents ImageContents950,951
+newtype ImageContents = ImageContents ImageContents950,951
+data Image Image951,952
+data Image = Image Image951,952
+newtype VideoContents VideoContents960,961
+newtype VideoContents = VideoContents VideoContents960,961
+data Video Video961,962
+data Video = Video Video961,962
+newtype YouTubeContents YouTubeContents970,971
+newtype YouTubeContents = YouTubeContents YouTubeContents970,971
+data YouTube YouTube971,972
+data YouTube = YouTube YouTube971,972
+newtype AsideContents AsideContents980,981
+newtype AsideContents = AsideContents AsideContents980,981
+data Aside Aside981,982
+data Aside = Aside Aside981,982
+newtype AdmonitionContents AdmonitionContents991,992
+newtype AdmonitionContents = AdmonitionContents AdmonitionContents991,992
+data Admonition Admonition992,993
+data Admonition = Admonition Admonition992,993
+newtype SidebarContents SidebarContents1001,1002
+newtype SidebarContents = SidebarContents SidebarContents1001,1002
+data Sidebar Sidebar1002,1003
+data Sidebar = Sidebar Sidebar1002,1003
+newtype ExampleContents ExampleContents1011,1012
+newtype ExampleContents = ExampleContents ExampleContents1011,1012
+data Example Example1012,1013
+data Example = Example Example1012,1013
+newtype ExerciseContents ExerciseContents1021,1022
+newtype ExerciseContents = ExerciseContents ExerciseContents1021,1022
+data Exercise Exercise1022,1023
+data Exercise = Exercise Exercise1022,1023
+newtype BibliographyContents BibliographyContents1031,1032
+newtype BibliographyContents = BibliographyContents BibliographyContents1031,1032
+data Bibliography Bibliography1032,1033
+data Bibliography = Bibliography Bibliography1032,1033
+data BlockT BlockT1043,1044
+data BlockT blockType = BlockT BlockT1043,1044
+data BlockT blockType = BlockT { blockContents blockContents1043,1044
+                               , blockType blockType1044,1045
+                               , blockAttrs blockAttrs1045,1046
+                               , blockTitle blockTitle1046,1047
+                               , blockID blockID1047,1048
+type PrerexBlock PrerexBlock1065,1066
+type MathBlock MathBlock1066,1067
+type EqnArrayBlock EqnArrayBlock1067,1068
+type TheoremBlock TheoremBlock1068,1069
+type ProofBlock ProofBlock1069,1070
+type QuoteBlock QuoteBlock1070,1071
+type CodeBlock CodeBlock1071,1072
+type ImageBlock ImageBlock1072,1073
+type VideoBlock VideoBlock1073,1074
+type YouTubeBlock YouTubeBlock1074,1075
+type AsideBlock AsideBlock1075,1076
+type AdmonitionBlock AdmonitionBlock1076,1077
+type SidebarBlock SidebarBlock1077,1078
+type ExampleBlock ExampleBlock1078,1079
+type ExerciseBlock ExerciseBlock1079,1080
+type BibliographyBlock BibliographyBlock1080,1081
+data Block Block1082,1083
+data Block = BMathBlock BMathBlock1082,1083
+           | BEqnArrayBlock BEqnArrayBlock1083,1084
+           | BTheoremBlock BTheoremBlock1084,1085
+           | BProofBlock BProofBlock1085,1086
+           | BPrerexBlock BPrerexBlock1086,1087
+           | BQuoteBlock BQuoteBlock1087,1088
+           | BCodeBlock BCodeBlock1088,1089
+           | BImageBlock BImageBlock1089,1090
+           | BVideoBlock BVideoBlock1090,1091
+           | BAdmonitionBlock BAdmonitionBlock1091,1092
+           | BAsideBlock BAsideBlock1092,1093
+           | BYouTubeBlock BYouTubeBlock1093,1094
+           | BSidebarBlock BSidebarBlock1094,1095
+           | BExampleBlock BExampleBlock1095,1096
+           | BExerciseBlock BExerciseBlock1096,1097
+           | BBibliographyBlock BBibliographyBlock1097,1098
+newtype Title Title1150,1151
+newtype Title = Title Title1150,1151
+newtype Section Section1154,1155
+newtype Section = Section Section1154,1155
+newtype Subsection Subsection1158,1159
+newtype Subsection = Subsection Subsection1158,1159
+data Heading Heading1162,1163
+data Heading htype = Heading Heading1162,1163
+data Heading htype = Heading { hContents hContents1162,1163
+                             , hID hID1163,1164
+                             , hAttrs hAttrs1164,1165
+type SectionHeading SectionHeading1167,1168
+type SubsectionHeading SubsectionHeading1168,1169
+data ComplexContent ComplexContent1181,1182
+data ComplexContent = CCBlock CCBlock1181,1182
+                    | CCList CCList1182,1183
+                    | CCParagraph CCParagraph1183,1184
+data TopLevelContent TopLevelContent1197,1198
+data TopLevelContent = TLCSubsectionHeading TLCSubsectionHeading1197,1198
+                     | TLCSectionHeading TLCSectionHeading1198,1199
+                     | TLCCommentLine TLCCommentLine1199,1200
+                     | TLCComplexContent TLCComplexContent1200,1201
+data Doc Doc1216,1217
+data Doc = Doc Doc1216,1217
+data Doc = Doc { docTitle docTitle1216,1217
+               , docPrerex docPrerex1217,1218
+               , docContents docContents1218,1219
 
-./test-suite/Main.hs,65
-main main8,9
-main main9,10
-spec spec13,14
-spec spec14,15
+./test-suite/Main.hs,68
+main main11,12
+main main12,13
+spec spec18,19
+spec spec19,20
+
+./test-suite/Test/Idoc/Parse.hs,313
+module Test.Idoc.Parse Test.Idoc.Parse20,21
+newtype Separable Separable28,29
+newtype Separable = Separable Separable28,29
+instance instance30,31
+prop_separateThenJoin prop_separateThenJoin52,53
+prop_separateThenJoin prop_separateThenJoin53,54
+parseTests parseTests61,62
+parseTests parseTests62,63

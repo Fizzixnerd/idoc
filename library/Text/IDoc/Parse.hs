@@ -27,6 +27,22 @@ import Data.Char
 class IDoc e s m a where
   parseDoc :: ParsecT e s m a
 
+newtype Starters a = Starters (Vector String) deriving (Eq, Show)
+class StartedBy a where
+  starters :: Starters a
+
+newtype Enders a = Enders (Vector String) deriving (Eq, Show)
+class EndedBy a where
+  enders :: Enders a
+
+newtype Stoppers a = Stoppers (Vector String) deriving (Eq, Show)
+class StoppedBy a where
+  stoppers :: Stoppers a
+
+newtype Allowed e s m a b = Allowed (ParsecT e s m b)
+class Allows e s m a b | a -> b where
+  allowed :: Allowed e s m a b
+
 newtype Opener a = Opener String deriving (Eq, Show, IsString)
 newtype Closer a = Closer String deriving (Eq, Show, IsString)
 class Between a where
@@ -67,15 +83,74 @@ class Markup2 a where
 class MarkupTuple a b | a -> b where
   fromMarkupTuple :: (AttrList, b, Maybe IDHash) -> a
 
+newtype FlexParser e s m a = FlexParser { unFlex :: ParsecT e s m () -> ParsecT e s m a }
+
+instance Functor (FlexParser e s m) where
+  fmap f (FlexParser g) = FlexParser (fmap (fmap f) g)
+-- follows the applicative laws: April 7, 2017
+
+instance (ErrorComponent e, Stream s, Token s ~ Char) =>
+  Applicative (FlexParser e s m) where
+  pure x = FlexParser (\_ -> pure x)
+  (FlexParser f) <*> (FlexParser x) = 
+    FlexParser (\e -> do
+                   f' <- f e
+                   x' <- x e
+                   return $ f' x')
+
+instance (ErrorComponent e, Stream s, Token s ~ Char) => 
+  Monad (FlexParser e s m) where
+  return = pure
+  (FlexParser x) >>= f =
+    FlexParser (\e -> do
+                   x' <- x e
+                   (f x') `flexedBy` e)
+
+instance (ErrorComponent e, Stream s, Token s ~ Char) =>
+  Alternative (FlexParser e s m) where
+  (FlexParser x) <|> (FlexParser y) =
+    FlexParser (\e -> (x e) <|> (y e))
+  empty = FlexParser (\_ -> empty)
+
+type EndParser = FlexParser
+type SepParser = FlexParser
+
+flexedBy :: (ErrorComponent e, Stream s, Token s ~ Char) => 
+  FlexParser e s m a -> ParsecT e s m () -> ParsecT e s m a
+flexedBy (FlexParser fp) ender = fp ender
+
+stop :: (ErrorComponent e, Stream s, Token s ~ Char) => 
+  ParsecT e s m a -> FlexParser e s m a
+stop p = FlexParser (\e -> do
+                        notFollowedBy e 
+                        p)
+
+sep :: (ErrorComponent e, Stream s, Token s ~ Char) =>
+  ParsecT e s m a -> FlexParser e s m [a]
+sep p = many $ stop p
+
+flexTwin :: (ErrorComponent e, Stream s, Token s ~ Char) => 
+  FlexParser e s m a -> FlexParser e s m b -> ParsecT e s m () -> FlexParser e s m (a, b)
+flexTwin a b sep = FlexParser (\e -> do
+                                  a' <- a `flexedBy` sep
+                                  b' <- b `flexedBy` e
+                                  return (a', b'))
+
 paraDelim :: (ErrorComponent e, Stream s, Token s ~ Char) => ParsecT e s m ()
 paraDelim = void $ string "\n\n" <|> string "\n+\n"
+
+-- twin :: forall e s m a b . ( ErrorComponent e
+--                            , Stream s
+--                            , Token s ~ Char ) =>
+--         ParsecT e s m a -> ParsecT e s m b -> 
 
 parseTwin :: forall e s m a b. ( ErrorComponent e
                                , Stream s
                                , Token s ~ Char
                                , IDoc e s m a
                                , IDoc e s m b
-                               , Twin a b ) => ParsecT e s m (a, b)
+                               , Twin a b ) =>
+             ParsecT e s m (a, b)
 parseTwin = do
   let (TwinSep ts :: TwinSep a b) = twinSep
   a <- parseDoc
@@ -103,6 +178,19 @@ parseEscapableTextBetween = do
                              || isSpace c) ]
   void $ string cl
   return $ fromText $ fromString ret
+
+parseBetween :: forall e s m a b. ( ErrorComponent e
+                                  , Stream s
+                                  , Token s ~ Char
+                                  , Between a) => 
+              ParsecT e s m b -> (b -> a) -> ParsecT e s m a
+parseBetween p f = do
+  let (Closer cl :: Closer a) = closer
+      (Opener op :: Opener a) = opener
+  void $ string op
+  ret <- p
+  void $ string cl
+  return $ f ret
 
 parseSeparated :: forall e s m a. ( ErrorComponent e
                                   , Stream s
@@ -167,19 +255,41 @@ optionalAttrList = do
 gobbleSpace :: (ErrorComponent e, Stream s, Token s ~ Char) => ParsecT e s m ()
 gobbleSpace = void $ many spaceChar
 
+data ManyOrSome = Many | Some deriving (Eq, Show)
+
+parseAllowsStoppedBy :: forall e s m a b . ( ErrorComponent e
+                                           , Stream s
+                                           , Token s ~ Char
+                                           , Allows e s m a b
+                                           , StoppedBy a) => 
+                        ManyOrSome -> ([b] -> a) -> ParsecT e s m a
+parseAllowsStoppedBy x f = do
+  let (Stoppers stops :: Stoppers a) = stoppers
+      (Allowed allows :: Allowed e s m a b) = allowed
+  fmap f $ mOrS $ do
+    notFollowedBy $ choice $ string <$> stops
+    allows
+  where
+    mOrS = case x of
+      Many -> many
+      Some -> some
+
 newtype IDPathComponent = IDPathComponent Text deriving (Eq, Show, IsString)
 instance Separated IDPathComponent where 
   sep = "/"
+instance StoppedBy IDPathComponent where
+  stoppers = Stoppers $ fromList [ "/"
+                                 , "]]"
+                                 , "#"
+                                 , ">>" 
+                                 ]
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
+  Allows e s m IDPathComponent Char where
+  allowed = Allowed $ satisfy (\c -> (not $ isSpace c)
+                                     && isPrint c)
+instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m IDPathComponent where
-  parseDoc = do
-    ipc <- some $ satisfy (\c -> c /= '/'
-                              && c /= ']'
-                              && c /= '#'
-                              && c /= '>'
-                              && (not $ isSpace c)
-                              && isPrint c)
-    return $ IDPathComponent $ fromString $ ipc
+  parseDoc = parseAllowsStoppedBy Some fromString
 
 newtype IDPath = IDPath (Vector IDPathComponent) deriving (Eq, Show)
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
@@ -190,13 +300,16 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
     return $ IDPath $ comps
 
 newtype IDHash = IDHash (Text) deriving (Eq, Show, IsString)
+instance StoppedBy IDHash where
+  stoppers = Stoppers $ fromList [ "]]"
+                                 , ">>"
+                                 ]
+instance (ErrorComponent e, Stream s, Token s ~ Char) => 
+  Allows e s m IDHash Char where
+  allowed = Allowed $ printChar
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   IDoc e s m IDHash where
-  parseDoc = do
-    h <- many $ satisfy (\c -> c /= ']' 
-                            && c /= '>' 
-                            && isPrint c)
-    return $ IDHash $ fromString h
+  parseDoc = parseAllowsStoppedBy Many fromString
 
 instance Twin IDPath IDHash where
   twinSep = "#"
@@ -216,14 +329,13 @@ newtype SetID = SetID IDHash deriving (Eq, Show)
 instance Between SetID where
   opener = "[["
   closer = "]]"
-
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   IDoc e s m SetID where
-  parseDoc = do
-    let (Opener op :: Opener SetID) = opener
-        (Closer cl :: Closer SetID) = closer
-    i <- between (string op) (string cl) parseDoc
-    return $ SetID i
+  parseDoc = parseBetween parseDoc SetID
+    -- let (Opener op :: Opener SetID) = opener
+    --     (Closer cl :: Closer SetID) = closer
+    -- i <- between (string op) (string cl) parseDoc
+    -- return $ SetID i
 
 newtype AttrName = AttrName Text deriving (Eq, Show, IsString, Ord)
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 

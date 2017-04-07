@@ -52,10 +52,14 @@ synopsis: AsciiDoc for the Prerex Engine.
 tests:
   idoc-test-suite:
     dependencies:
-    - base
+    - base-noprelude
+    - classy-prelude
     - idoc
     - tasty
     - tasty-hspec
+    - QuickCheck
+    - tasty-quickcheck
+    - megaparsec
     ghc-options:
     - -rtsopts
     - -threaded
