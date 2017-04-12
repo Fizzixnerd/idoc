@@ -1,11 +1,5 @@
 = idoc User Guide
 
-@ prerex
-. Prerex
---
-/None
---
-
 == Introduction
 
 idoc is a language and a program.  The language is what was used to
@@ -17,7 +11,7 @@ implemented by a static checker after parsing.  idoc was originally
 based on asciidoc, but has since diverged significantly.  You will
 probably want to examine the source for this document along with the
 rendered content.  It can be found
-<<http://www.independentlearning.science/source.idoc>>[here].
+<<http://www.independentlearning.science/source.idoc>>{here}.
 
 == Basics
 
@@ -27,7 +21,7 @@ This is a paragraph.  You just type like normal.  They are separated
 by a blank line.  For example:
 
 This is now a new paragraph.  I can italicize text with _underscores_
-(`_`) and bold it with *asterisks* (`*`).  I can make it `monospace`
+(`\_`) and bold it with *asterisks* (`\*`).  I can make it `monospace`
 using backticks (`\``).  I will end this paragraph with another blank
 line.
 
@@ -50,21 +44,15 @@ labelled (description) lists.
 
 
 - This is an unordered list.  It can contain paragraph contents.
-+
 - It will look like bullet points in the final render.
-+
 - Third main item.
 
 . This is a numbered list.
-+
 . This is the second guy.
-+
 . And so on...
 
 : First Item:: This is a list where the items have labels.
-+
 : Second Item:: Another item.
-+
 : And So On:: ...
 
 === Math
@@ -74,10 +62,10 @@ dollar signs. $f(x) = \exp (-x^2)$.  Display mode is done by using a
 _math block_, like so:
 
 @ math
-. Look Ma', I Have Equations!
---
+# Look Ma', I Have Equations!
+---
 f(x) = \int_x^\infty g(t) dt
---
+---
 [[#eqn:f-defn]]
 
 Note that that $d$ will not be upright as it should be.  We'll fix
@@ -93,11 +81,11 @@ the declaration of block type.
 
 
 @ quote
-. A Blockquote from the "Great One".
+# A Blockquote from the "Great One".
 [author="Albert Einstein"]
---
+---
 The internet is the most important invention since gravity.
---
+---
 [[#q:einstein]]
 
 Notice above we added an author attribution above as an _attribute_ of
@@ -106,30 +94,28 @@ the thing they modify.  In this case, we are modifying the "body" of
 the `@ quote` element, so it comes just before the body.
 
 @ sidebar
-. Please be Aware:
---
+# Please be Aware:
+---
 This content will be rendered in the margin of the document.  You are
 allowed any amount of complex content here.  An equation: $F =
 \frac{dp}{dt}$.
-
---
+---
 
 @ admonition
 [type="warning"]
---
+---
 This will show a little warning symbol next to it.
-
---
+---
 
 @ aside
-. An aside
---
+# An aside
+---
 @ prerex
-. Aside Prerex
---
+# Aside Prerex
+---
 /Basics/Logic
 /Basics/Sex
---
+---
 
 An aside is useful when you have content connected to the main text
 but which isn't super necessary, or requires more advanced techniques
@@ -139,17 +125,16 @@ This is basically a sub-document that is allowed to have extra
 prereqs.
 
 (Sub)sections are _not_ allowed here, since these are meant to be short.
-
---
+---
 
 === Links
 
-Links look like <<https://www.google.com>>[this].  Note that this is
+Links look like <<https://www.google.com>>{this}.  Note that this is
 an "outlink" -- a link to an external site -- and so wouldn't actually
 be allowed in the main body of the document like this.  We can also
-link to <<#Introduction>>[headings] in the current document, or
+link to <<#Introduction>>{headings} in the current document, or
 <<#eqn:f-defn>>[anything else] which has an ID.  And we can even link
-to headings in <</Physics/Classical/Mechanics/Newtonian#Second Law>>[other documents],
+to headings in <</Physics/Classical/Mechanics/Newtonian#Second Law>>{other documents},
 as long as they are a prerequisite of this one.  The same applies to
 ID'd items in those docs, including this paragraph. 
 

@@ -58,15 +58,12 @@ idHashT (IDHash x) = "#" <> x
 idT :: ID -> Text
 idT (ID {..}) = idPathT idPath <> idHashT idHash
 
-instance ToMarkup BlockTitle where
-  toMarkup (BlockTitle x) = 
+instance ToMarkup BlockHeading where
+  toMarkup (BlockHeading x) = 
     B.h4 B.! A.class_ "idoc-block-title" 
          B.! A.class_ "h4"
          B.! A.id (toValue x) $
     toMarkup x
-
-instance ToMarkup MathText where
-  toMarkup (MathText x) = toMarkup x
 
 instance ToMarkup InlineMath where
   toMarkup (InlineMath x) = 

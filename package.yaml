@@ -44,6 +44,8 @@ library:
   - text
   - shakespeare
   - blaze-html
+  - pretty
+  - GenericPretty
   source-dirs: library
 license: MIT
 maintainer: Matt Walker
