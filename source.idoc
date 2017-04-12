@@ -1,7 +1,8 @@
 = idoc User Guide
 
-== Introduction
-
+@ introduction
+# Introduction
+---
 idoc is a language and a program.  The language is what was used to
 write this document.  The program is what rendered it (in both LaTeX
 and HTML).  It has a number of features that are not found in other
@@ -12,6 +13,7 @@ based on asciidoc, but has since diverged significantly.  You will
 probably want to examine the source for this document along with the
 rendered content.  It can be found
 <<http://www.independentlearning.science/source.idoc>>{here}.
+---
 
 == Basics
 
@@ -133,7 +135,7 @@ Links look like <<https://www.google.com>>{this}.  Note that this is
 an "outlink" -- a link to an external site -- and so wouldn't actually
 be allowed in the main body of the document like this.  We can also
 link to <<#Introduction>>{headings} in the current document, or
-<<#eqn:f-defn>>[anything else] which has an ID.  And we can even link
+<<#eqn:f-defn>>{anything else} which has an ID.  And we can even link
 to headings in <</Physics/Classical/Mechanics/Newtonian#Second Law>>{other documents},
 as long as they are a prerequisite of this one.  The same applies to
 ID'd items in those docs, including this paragraph. 
