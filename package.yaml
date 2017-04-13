@@ -19,6 +19,8 @@ executables:
   idoc:
     dependencies:
     - base
+    - classy-prelude
+    - optparse-applicative
     - idoc
     ghc-options:
     - -rtsopts

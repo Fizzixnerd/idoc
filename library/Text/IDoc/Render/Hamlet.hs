@@ -339,10 +339,13 @@ quoteBlockMarkup (BlockT {..}) =
                                        (\author -> (++ " " ++ (B.footer $ B.cite B.! A.class_ "idoc-blockquote-author" $
                                                                toMarkup author))) mAuthor) (lookup "author" $ (\case (AttrMap x) -> x) blockAttrs)
 
+instance ToMarkup CodeLine where
+  toMarkup (CodeLine x) = toMarkup x ++ B.br
+
 instance ToMarkup Code where
-  toMarkup (Code x) =
-    B.code B.! A.class_ "idoc-code-contents" $
-           toMarkup x
+  toMarkup (Code xs) =
+          B.code B.! A.class_ "idoc-code-contents code" $
+                 concatMap toMarkup xs
 
 instance ToValue Internal where
   toValue = attributeT . internalT
@@ -524,13 +527,11 @@ instance ToMarkup Block where
       panelStyle = (\case "info"    -> "panel-info"
                           "warning" -> "panel-danger"
                           "caution" -> "panel-warning"
-                          "danger"  -> "panel-danger"
                           "tip"     -> "panel-success"
                           _         -> "panel-info") admonitionType
       faSelect = (\case "info"    -> "fa-info-circle"
                         "warning" -> "fa-exclamation-circle"
                         "caution" -> "fa-exclamation-triangle"
-                        "danger"  -> "fa-fire"
                         "tip"     -> "fa-lightbulb-o"
                         _         -> "fa") admonitionType
 

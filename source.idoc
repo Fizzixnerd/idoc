@@ -1,5 +1,11 @@
 = idoc User Guide
 
+@ prerex
+---
+/None
+---
+
+
 @ introduction
 ---
 idoc is a language and a program.  The language is what was used to
@@ -8,13 +14,44 @@ and HTML).  It has a number of features that are not found in other
 humane markup languages.  The most critical of these is support for
 allowing prerequisite resolution, though this is technically
 implemented by a static checker after parsing.  idoc was originally
-based on asciidoc, but has since diverged significantly.  You will
-probably want to examine the source for this document along with the
-rendered content.  It can be found
-<<http://www.independentlearning.science/source.idoc>>{here}.
+based on asciidoc, but has since diverged significantly.
 ---
 
 == Basics
+
+@ admonition
+# Get the Source!
+[type="tip"]
+---
+You will probably want to examine the source for this document along
+with the rendered content.  It can be found
+<<http://www.independentlearning.science/source.idoc>>{here}.
+---
+[[#source-tip]]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat. Duis aute irure dolor in
+reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat. Duis aute irure dolor in
+reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat. Duis aute irure dolor in
+reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
 
 === Paragraphs
 
@@ -69,6 +106,17 @@ f(x) = \int_x^\infty g(t) dt
 ---
 [[#eqn:f-defn]]
 
+@ code
+[lang="idoc"]
+---
+ @ math
+ # Look Ma', I Have Equations!
+ ---
+ f(x) = \int_x^\infty g(t) dt
+ ---
+ [[#eqn:f-defn]]
+---
+
 Note that that $d$ will not be upright as it should be.  We'll fix
 that later.  Also note that we added an _ID_ to the equation.  IDs can
 be added to many things.  They always appear immediately following the
@@ -89,10 +137,22 @@ The internet is the most important invention since gravity.
 ---
 [[#q:einstein]]
 
-Notice above we added an author attribution above as an _attribute_ of
-the quote block contents.  Attribute lists always come _just_ before
-the thing they modify.  In this case, we are modifying the "body" of
-the `@ quote` element, so it comes just before the body.
+@ code
+[lang="idoc"]
+---
+ @ quote
+ # A Blockquote from the "Great One".
+ [author="Albert Einstein"]
+ ---
+ The internet is the most important invention since gravity.
+ ---
+ [[#q:einstein]]
+---
+
+Notice in the quoteblock we added an author attribution above as an
+_attribute_ of the quote block contents.  Attribute lists always come
+_just_ before the thing they modify.  In this case, we are modifying
+the "body" of the `@ quote` element, so it comes just before the body.
 
 @ sidebar
 # Please be Aware:
@@ -100,6 +160,18 @@ the `@ quote` element, so it comes just before the body.
 This content will be rendered in the margin of the document.  You are
 allowed any amount of complex content here.  An equation: $F =
 \frac{dp}{dt}$.
+---
+
+@ code
+[lang="idoc"]
+---
+ @ sidebar
+ # Please be Aware:
+ ---
+ This content will be rendered in the margin of the document.  You are
+ allowed any amount of complex content here.  An equation: $F =
+ \frac{dp}{dt}$.
+ ---
 ---
 
 @ admonition
@@ -110,6 +182,18 @@ This will show a little warning symbol next to it.
 ---
 [[#warning-admonition]]
 
+@ code
+[lang="idoc"]
+---
+ @ admonition
+ # This is a Warning Block
+ [type="warning"]
+ ---
+ This will show a little warning symbol next to it.
+ ---
+ [[#warning-admonition]]
+---
+
 @ admonition
 # This is an Info Block
 [type="info"]
@@ -117,6 +201,8 @@ This will show a little warning symbol next to it.
 This will show a little info symbol next to it.
 ---
 [[#info-admonition]]
+
+etc...
 
 @ admonition
 # This is a Caution Block
@@ -136,15 +222,7 @@ This will show a little lightbulb symbol next to it.
 
 If you're worried about all the wasted space in the HTML output, don't
 be!  It's only wasted because I didn't put text between each block.
-You would not normally have 1+5 of these things in a row.
-
-@ admonition
-# This is a Danger Block
-[type="danger"]
----
-This will show a little flame symbol next to it.
----
-[[#danger-admonition]]
+You would not normally have $1 + 4$ of these things in a row.
 
 @ aside
 # An aside
@@ -158,14 +236,38 @@ This will show a little flame symbol next to it.
 
 An aside is useful when you have content connected to the main text
 but which isn't super necessary, or requires more advanced techniques
-than the rest of the text.
+than the rest of the text.  This is because Asides are allowed to have
+their own prerequisites, in addition to the main doc's prereqs.
 
-This is basically a sub-document that is allowed to have extra
-prereqs.
+@ admonition
+# Rendering
+[type="info"]
+---
+If you're viewing this full-screen on a computer, you'll notice that
+unlike the other blocks we've seen (with the exception of the math
+block), Asides are rendered across the full screen.  In general, you
+should _never_ rely on the position of something relative to something
+else, or its size.  This is because idoc has been designed to have
+pluggable themes, and the web renderer create _responsive_ html that
+is free to reorganize content to better match the devices size.
+Therefore, whenever you refer to something, please please please use
+an ID.
+---
+[[#rendering-info]]
 
-(Sub)sections are _not_ allowed here, since these are meant to be short.
+Asides are for when you want to connect with an outside idea, but
+don't want to have this interesting connection create new
+prerequisites for your doc.  For example, in the article
+<</Math/Topology/Homeomorphism#>>{on topology}, we might want to talk
+about how is difficult to prove two things are _not_ homeomorphic, and
+how the fundamental group is useful because of its status as a
+topological invariant.  However, we don't know if the readers actually
+know group theory.  This would be the time you would use an aside --
+group theory is not needed to understand homeomorphisms, but it _is_
+needed to understand this small connection.
 ---
 [[#my-aside]]
+
 
 === Links
 

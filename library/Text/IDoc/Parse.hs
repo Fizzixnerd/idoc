@@ -193,19 +193,19 @@ newtype IDHash a = IDHash Text deriving (Eq, Show, IsString, Generic)
 instance GP.Out (IDHash a)
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILS e s m (IDHash SetID) where
-  ils = fmap fromString $ start (char '#') $ some $ stop (oneOfS stops) $ printChar
+  ils = fmap fromString $ start (char '#') $ many $ stop (oneOfS stops) $ printChar
     where
       stops = ["]]"]
 
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILS e s m (IDHash Back) where
-  ils = fmap fromString $ start (char '#') $ some $ stop (oneOfS stops) $ printChar
+  ils = fmap fromString $ start (char '#') $ many $ stop (oneOfS stops) $ printChar
     where
       stops = [">>"]
 
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILS e s m (IDHash Internal) where
-  ils = fmap fromString $ start (char '#') $ some $ stop (oneOfS stops) $ printChar
+  ils = fmap fromString $ start (char '#') $ many $ stop (oneOfS stops) $ printChar
     where
       stops = [">>"]
 
@@ -889,12 +889,19 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ILSBlock e s m Quote where
   ilsBlock = simpleBlock Quote ils
 
-newtype Code = Code Text deriving (Eq, Show, Generic, IsString)
+newtype CodeLine = CodeLine Text deriving (Eq, Show, IsString, Generic)
+instance GP.Out CodeLine
+
+newtype Code = Code (Vector CodeLine) deriving (Eq, Show, Generic)
 instance GP.Out Code
 instance TypedBlock Code where bType = "code"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILSBlock e s m Code where
-  ilsBlock = simpleBlock (Code . fromString) blockText
+  ilsBlock = simpleBlock (Code . fromList) $ sep1 ((notFollowedBy blockDelim) >> newline) codeLine
+    where
+      codeLine = fmap fromString $ some $ do
+        notFollowedBy (blockDelim :: ParsecT e s m String)
+        printChar
 
 newtype Image = Image OLink deriving (Eq, Show, Generic)
 instance GP.Out Image
