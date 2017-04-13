@@ -2,9 +2,8 @@
 
 @ prerex
 ---
-/None
+/None{Someone wanted to see what this looked like, so it's here.  Normally you can just leave the `prerex` block out when there are none.}
 ---
-
 
 @ introduction
 ---
@@ -227,11 +226,12 @@ You would not normally have $1 + 4$ of these things in a row.
 @ aside
 # An aside
 ---
+
 @ prerex
 # Aside Prerex
 ---
-/Basics/Logic
-/Basics/Sex
+/Basics/Logic{Mostly only _first-order_ logic will be used, but some _second-order_ stuff is important for stuff later on, so we put it here.}
+/Basics/Sex{Oh, I think you know. ;)}
 ---
 
 An aside is useful when you have content connected to the main text
@@ -265,6 +265,10 @@ topological invariant.  However, we don't know if the readers actually
 know group theory.  This would be the time you would use an aside --
 group theory is not needed to understand homeomorphisms, but it _is_
 needed to understand this small connection.
+
+When the site is complete, asides will start out open or closed
+depending on if the reader has the necessary prereqs or not.
+
 ---
 [[#my-aside]]
 

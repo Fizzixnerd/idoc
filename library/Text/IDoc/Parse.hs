@@ -178,6 +178,7 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
     where
       stops = [ "/"
               , "\n"
+              , "{"
               ]
 
 newtype IDPath a = IDPath (Vector (IDPathComponent a)) deriving (Eq, Show, Generic)
@@ -763,13 +764,18 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
       printChar
     return $ BibliographyItem $ fromString $ t
 
-newtype PrerexItem = PrerexItem (IDPath PrerexItem) deriving (Eq, Show, Generic)
+data PrerexItem = PrerexItem { prerexPath :: IDPath PrerexItem
+                             , prerexDescription :: Paragraph (Markup, Block) } deriving (Eq, Show, Generic)
 instance GP.Out PrerexItem
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ILS e s m PrerexItem where
-  ils = PrerexItem <$> do
-    space
-    ils
+  ils = do
+    TM.try space
+    p' <- ils
+    d <- tween (char '{') (char '}') ils
+    return $ PrerexItem { prerexPath = p'
+                        , prerexDescription = d
+                        }
 
 newtype BlockType a = BlockType Text deriving (Eq, Show, Generic, IsString)
 instance GP.Out  (BlockType a)
@@ -807,7 +813,8 @@ instance GP.Out Prerex
 instance TypedBlock Prerex where bType = "prerex"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILSBlock e s m Prerex where
-  ilsBlock = simpleBlock (Prerex . fromList) $ some $ stop blockDelim $ do
+  ilsBlock = simpleBlock (Prerex . fromList) $ some $ do 
+    notFollowedBy blockDelim
     ils
 
 newtype Introduction = Introduction (AnonymousSection Block) deriving (Eq, Show, Generic)

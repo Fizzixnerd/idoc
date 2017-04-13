@@ -281,21 +281,21 @@ instance ToMarkup BibliographyItem where
          toMarkup x
 
 instance ToMarkup PrerexItem where
-  toMarkup (PrerexItem x) = 
+  toMarkup (PrerexItem {..}) = 
           B.div B.! A.class_ "idoc-prerex-item panel panel-info" $
                 (B.div B.! A.class_ "panel-heading" $
                        B.h3 B.! A.class_ "panel-title" $
                             B.a B.! B.dataAttribute "toggle" "collapse"
-                                B.! href ("#" ++ toValue x) $
-                                toMarkup $ idPathT x) ++
+                                B.! href ("#" ++ toValue prerexPath) $
+                                toMarkup $ idPathT prerexPath) ++
                 (B.div B.! A.class_ "panel-collapse collapse"
-                       B.! A.id (toValue x) $
+                       B.! A.id (toValue prerexPath) $
                        (B.div B.! A.class_ "idoc-prerex-item-content panel-body" $
-                              "Default Prerex Content Description.") ++
+                              toMarkup prerexDescription) ++
                        (B.div B.! A.class_ "idoc-prerex-item-footer panel-footer" $
                               B.a B.! A.class_ "idoc-prerex-item-link"
-                                  B.! A.href (toValue $ idPathT x) $
-                                  toMarkup $ idPathT x))
+                                  B.! A.href (toValue $ idPathT prerexPath) $
+                                  "Go to " ++ (toMarkup $ idPathT prerexPath)))
 
 instance ToMarkup (BlockType a) where
   toMarkup (BlockType x) = 
