@@ -93,8 +93,8 @@ mIDV mIDV245,246
 mIDV mIDV246,247
 quoteBlockMarkup quoteBlockMarkup331,332
 quoteBlockMarkup quoteBlockMarkup332,333
-renderPretty renderPretty600,601
-renderPretty renderPretty601,602
+renderPretty renderPretty614,615
+renderPretty renderPretty615,616
 
 ./library/Text/IDoc/Parse.hs,15684
 module Text.IDoc.Parse Text.IDoc.Parse23,24

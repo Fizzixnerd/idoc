@@ -331,7 +331,7 @@ instance ToMarkup Proof where
 
 quoteBlockMarkup :: BlockT Quote -> Html
 quoteBlockMarkup (BlockT {..}) =
-  B.blockquote B.! A.class_ "idoc-blockquote-contents" $
+  B.blockquote B.! A.class_ "idoc-blockquote-contents blockquote-reverse" $
                 mCite $ toMarkup $ (\case (Quote x) -> x) blockContents
   where
     mCite = maybe ClassyPrelude.id (\mAuthor -> 
@@ -511,7 +511,7 @@ instance ToMarkup Block where
                       B.a B.! B.dataAttribute "toggle" "collapse"
                           B.! href ("#" ++ (toValue mBID)) $
                           (text admonitionType) ++ ": " ++ mBTitle) ++
-          (B.div B.! A.class_ "panel-collapse"
+          (B.div B.! A.class_ "panel-collapse collapse"
                  B.! A.id (toValue mBID) $
                  B.div B.! A.class_ "panel-body" $ toMarkup blockContents))
     where
@@ -526,7 +526,21 @@ instance ToMarkup Block where
                           "tip"     -> "panel-tip"
                           _         -> "panel-info") admonitionType
 
-  toMarkup (BAsideBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BAsideBlock (BlockT {..})) = (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_  "col-md-12" $
+    B.div B.! A.class_ ("idoc-block idoc-aside-block panel " ++ "panel-primary") $
+          (B.div B.! A.class_ "panel-heading" $
+                 B.h3 B.! A.class_ "panel-title" $ 
+                      B.a B.! B.dataAttribute "toggle" "collapse"
+                          B.! href ("#" ++ (toValue mBID)) $
+                          mBTitle) ++
+          (B.div B.! A.class_ "panel-collapse collapse"
+                 B.! A.id (toValue mBID) $
+                 B.div B.! A.class_ "panel-body" $ toMarkup blockContents))
+    where
+      mBID = maybe (badAside blockContents) ClassyPrelude.id blockID
+      mBTitle = maybe "" (\(BlockHeading p') -> toMarkup p') blockTitle
+      badAside as = error $ "Error: Asides must have an ID!"
+
   toMarkup (BYouTubeBlock x) = toMarkup x
   toMarkup (BSidebarBlock (x@BlockT {..})) = 
     B.div B.! A.class_ "col-md-4" $ 
@@ -575,7 +589,7 @@ instance LineLike a => ToMarkup (Section a) where
 instance LineLike a => ToMarkup (Subsection a) where
   toMarkup (Subsection {..}) =
     mIDV subsectionID $
-    B.div B.! A.class_ "row" $ B.section B.! A.class_ "idoc-subsection" $
+    B.section B.! A.class_ "idoc-subsection" $
               toMarkup subsectionTitle ++
               toMarkup subsectionContents
 
@@ -608,8 +622,11 @@ renderPretty x =
             (B.script B.! A.async "true" 
                       B.! A.src "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML") (text "") ++
             (B.link B.! A.rel "stylesheet" 
-                    B.! A.href "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+                    B.! A.href "https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/paper/bootstrap.min.css"
 --                    B.! integrity "sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" 
+                    B.! crossorigin "anonymous") ++
+            (B.link B.! A.rel "stylesheet"
+                    B.! A.href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
                     B.! crossorigin "anonymous")) ++
    (B.body $ (toMarkup x) ++
              (B.script B.! A.src "https://code.jquery.com/jquery-3.1.1.slim.min.js"
