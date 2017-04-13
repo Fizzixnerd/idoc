@@ -126,6 +126,22 @@ This will show a little caution symbol next to it.
 ---
 [[#caution-admonition]]
 
+@ admonition
+# This is a Tip Block
+[type="tip"]
+---
+This will show a little lightbulb symbol next to it.
+---
+[[#tip-admonition]]
+
+@ admonition
+# This is a Danger Block
+[type="danger"]
+---
+This will show a little flame symbol next to it.
+---
+[[#danger-admonition]]
+
 @ aside
 # An aside
 ---

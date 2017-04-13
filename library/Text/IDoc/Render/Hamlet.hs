@@ -513,7 +513,9 @@ instance ToMarkup Block where
                           (text admonitionType) ++ ": " ++ mBTitle) ++
           (B.div B.! A.class_ "panel-collapse collapse"
                  B.! A.id (toValue mBID) $
-                 B.div B.! A.class_ "panel-body" $ toMarkup blockContents))
+                 B.div B.! A.class_ "panel-body" $
+                       (B.span B.! A.class_ (toValue $ ("fa " :: String) ++ faSelect ++ " fa-4x fa-pull-left fa-border") $ "") ++ 
+                       toMarkup blockContents))
     where
       mBID = maybe (badAdmonition blockContents) ClassyPrelude.id blockID
       mBTitle = maybe "" (\(BlockHeading p') -> toMarkup p') blockTitle
@@ -523,8 +525,14 @@ instance ToMarkup Block where
                           "warning" -> "panel-danger"
                           "caution" -> "panel-warning"
                           "danger"  -> "panel-danger"
-                          "tip"     -> "panel-tip"
+                          "tip"     -> "panel-info"
                           _         -> "panel-info") admonitionType
+      faSelect = (\case "info"    -> "fa-info-circle"
+                        "warning" -> "fa-exclamation-circle"
+                        "caution" -> "fa-exclamation-triangle"
+                        "danger"  -> "fa-fire"
+                        "tip"     -> "fa-lightbulb-o"
+                        _         -> "fa") admonitionType
 
   toMarkup (BAsideBlock (BlockT {..})) = (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_  "col-md-12" $
     B.div B.! A.class_ ("idoc-block idoc-aside-block panel " ++ "panel-primary") $
