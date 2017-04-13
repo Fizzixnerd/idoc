@@ -134,6 +134,10 @@ This will show a little lightbulb symbol next to it.
 ---
 [[#tip-admonition]]
 
+If you're worried about all the wasted space in the HTML output, don't
+be!  It's only wasted because I didn't put text between each block.
+You would not normally have 1+5 of these things in a row.
+
 @ admonition
 # This is a Danger Block
 [type="danger"]

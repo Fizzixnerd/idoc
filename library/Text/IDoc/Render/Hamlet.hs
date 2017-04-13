@@ -504,7 +504,7 @@ instance ToMarkup Block where
   toMarkup (BImageBlock x) = toMarkup x
   toMarkup (BVideoBlock x) = toMarkup x
   toMarkup (BAdmonitionBlock (BlockT {..})) = 
-    B.div B.! A.class_  "col-md-4" $
+    (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_  "col-md-4" $
     (B.div B.! A.class_ ("idoc-block idoc-admonition-block panel " ++ panelStyle) $
           (B.div B.! A.class_ "panel-heading" $
                  B.h3 B.! A.class_ "panel-title" $ 
@@ -515,7 +515,7 @@ instance ToMarkup Block where
                  B.! A.id (toValue mBID) $
                  B.div B.! A.class_ "panel-body" $
                        (B.span B.! A.class_ (toValue $ ("fa " :: String) ++ faSelect ++ " fa-4x fa-pull-left fa-border") $ "") ++ 
-                       toMarkup blockContents))
+                       toMarkup blockContents)))
     where
       mBID = maybe (badAdmonition blockContents) ClassyPrelude.id blockID
       mBTitle = maybe "" (\(BlockHeading p') -> toMarkup p') blockTitle
@@ -550,13 +550,13 @@ instance ToMarkup Block where
       badAside as = error $ "Error: Asides must have an ID!"
 
   toMarkup (BYouTubeBlock x) = toMarkup x
-  toMarkup (BSidebarBlock (x@BlockT {..})) = 
-    B.div B.! A.class_ "col-md-4" $ 
+  toMarkup (BSidebarBlock (BlockT {..})) = 
+    (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_ "col-md-4" $ 
           mIDV blockID $ 
           B.div B.! A.class_ "panel panel-default" $
                 mbTitle $
                 B.div B.! A.class_ "panel-body" $
-                      toMarkup blockContents
+                      toMarkup blockContents)
     where
       mbTitle = maybe ClassyPrelude.id (\(BlockHeading x) -> (((B.div B.! A.class_ "panel-heading" $ (B.h4 B.! A.class_ "panel-title") $ toMarkup x) ++))) blockTitle
 
