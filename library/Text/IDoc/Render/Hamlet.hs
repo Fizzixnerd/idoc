@@ -511,7 +511,7 @@ instance ToMarkup Block where
                       B.a B.! B.dataAttribute "toggle" "collapse"
                           B.! href ("#" ++ (toValue mBID)) $
                           (text admonitionType) ++ ": " ++ mBTitle) ++
-          (B.div B.! A.class_ "panel-collapse collapse"
+          (B.div B.! A.class_ "panel-collapse collapse in"
                  B.! A.id (toValue mBID) $
                  B.div B.! A.class_ "panel-body" $
                        (B.span B.! A.class_ (toValue $ ("fa " :: String) ++ faSelect ++ " fa-4x fa-pull-left fa-border") $ "") ++ 
