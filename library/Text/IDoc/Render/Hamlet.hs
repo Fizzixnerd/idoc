@@ -542,7 +542,7 @@ instance ToMarkup Block where
                       B.a B.! B.dataAttribute "toggle" "collapse"
                           B.! href ("#" ++ (toValue mBID)) $
                           mBTitle) ++
-          (B.div B.! A.class_ "panel-collapse collapse"
+          (B.div B.! A.class_ "panel-collapse collapse in"
                  B.! A.id (toValue mBID) $
                  B.div B.! A.class_ "panel-body" $ toMarkup blockContents))
     where
