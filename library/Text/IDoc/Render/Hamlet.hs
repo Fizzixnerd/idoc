@@ -525,7 +525,7 @@ instance ToMarkup Block where
                           "warning" -> "panel-danger"
                           "caution" -> "panel-warning"
                           "danger"  -> "panel-danger"
-                          "tip"     -> "panel-info"
+                          "tip"     -> "panel-success"
                           _         -> "panel-info") admonitionType
       faSelect = (\case "info"    -> "fa-info-circle"
                         "warning" -> "fa-exclamation-circle"
