@@ -614,11 +614,20 @@ instance LineLike a => ToMarkup (Content a) where
 instance LineLike a => ToMarkup (Doc a) where
   toMarkup (Doc {..}) = 
     B.article B.! A.class_ "idoc-doc container" $
-              toMarkup docTitle ++
+              (logoInTitle docTitle (B.span B.! A.class_ "ils-logo-small" $ importSVG "ils_logo_april_2.svg")) ++
               dp ++
               concatMap toMarkup docContents
     where
       dp = maybe "" toMarkup docPrerex
+      logoInTitle (DocHeading x) logo =
+        B.h1 B.! A.class_ "idoc-title" $
+             logo ++ toMarkup x
+
+      importSVG filename = 
+        B.object B.! A.data_ filename
+                 B.! A.class_ "ils-logo-container"
+                 B.! A.type_ "image/svg+xml" $ 
+                 ""
 
 renderPretty :: LineLike a => (Doc a) -> String
 renderPretty x = 
@@ -635,7 +644,8 @@ renderPretty x =
                     B.! crossorigin "anonymous") ++
             (B.link B.! A.rel "stylesheet"
                     B.! A.href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-                    B.! crossorigin "anonymous")) ++
+                    B.! crossorigin "anonymous") ++
+            (B.style $ ".ils-logo-small, .ils-logo-container { height: 52px; width: 52px; display: inline-block; }")) ++
    (B.body $ (toMarkup x) ++
              (B.script B.! A.src "https://code.jquery.com/jquery-3.1.1.slim.min.js"
 --                       B.! integrity "sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
