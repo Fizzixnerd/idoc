@@ -3,6 +3,7 @@
 -- License: https://opensource.org/licenses/BSD-2-Clause
 -- Created: Mar 23, 2017
 -- Summary: 
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 {-# LANGUAGE Arrows #-}
 {-# LANGUAGE DataKinds #-}
@@ -392,9 +393,12 @@ instance LineLike Markup where
 instance LineLike Block
 instance LineLike Line where
   lineLike = LikeLine True
-instance LineLike Unordered
-instance LineLike Ordered
-instance LineLike Labelled
+instance LineLike Unordered where
+  lineLike = LikeLine True
+instance LineLike Ordered where
+  lineLike = LikeLine True
+instance LineLike Labelled where
+  lineLike = LikeLine True
 instance LineLike Label where
   lineLike = LikeLine True
 instance LineLike LinkText where

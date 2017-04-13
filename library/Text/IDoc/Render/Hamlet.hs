@@ -4,6 +4,8 @@
 -- Created: Apr 02, 2017
 -- Summary: 
 
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+
 {-# LANGUAGE Arrows #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -73,7 +75,7 @@ instance ToMarkup InlineMath where
 --   toMarkup (CommentLine x) = textComment x
 
 commonLinkT :: CommonLink -> Text
-commonLinkT (CommonLink ((Protocol p), (URI u))) = p <> "://" <> u
+commonLinkT (CommonLink ((Protocol p'), (URI u))) = p' <> "://" <> u
 
 backT :: Back -> Text
 backT (Back x) = idT x
@@ -219,7 +221,7 @@ instance ToMarkup Ordered where
 
 instance ToMarkup Labelled where
   toMarkup (Labelled x) = 
-    B.dt B.! A.class_ "idoc-labelled-list-label list-group-item-heading" $
+    B.dt B.! A.class_ "idoc-labelled-list-label" $
          toMarkup x
 
 mID :: Maybe SetID -> AttributeValue
@@ -227,18 +229,18 @@ mID = attributeT . (maybe "#" setidT)
 
 instance LineLike a => ToMarkup (ListItem a Unordered) where
   toMarkup (ListItem {..}) =
-    B.li B.! A.class_ "idoc-unordered-list-item list-group-item" $
+    B.li B.! A.class_ "idoc-unordered-list-item" $
          toMarkup listItemContents
 
 instance LineLike a => ToMarkup (ListItem a Ordered) where
   toMarkup (ListItem {..}) =
-    B.li B.! A.class_ "idoc-ordered-list-item list-group-item" $
+    B.li B.! A.class_ "idoc-ordered-list-item" $
          toMarkup listItemContents
 
 instance LineLike a => ToMarkup (ListItem a Labelled) where
   toMarkup (ListItem {..}) =
     toMarkup listItemLabel ++
-     (B.dd B.! A.class_ "idoc-labelled-list-item list-group-item" $
+     (B.dd B.! A.class_ "idoc-labelled-list-item" $
            toMarkup listItemContents)
 
 mIDV :: Maybe SetID -> Html -> Html
@@ -246,12 +248,12 @@ mIDV id_ = maybe ClassyPrelude.id (\x -> (B.! A.id (toValue x))) id_
 
 instance LineLike a => ToMarkup (ListT a Unordered) where
   toMarkup (ListT {..}) =
-    B.ul B.! A.class_ "idoc-unordered-list list-group" $
+    B.ul B.! A.class_ "idoc-unordered-list" $
          concatMap toMarkup listItems
 
 instance LineLike a => ToMarkup (ListT a Ordered) where
   toMarkup (ListT {..}) =
-    B.ol B.! A.class_ "idoc-ordered-list list-group" $
+    B.ol B.! A.class_ "idoc-ordered-list" $
          concatMap toMarkup listItems
 
 instance LineLike a => ToMarkup (ListT a Labelled) where
@@ -280,20 +282,20 @@ instance ToMarkup BibliographyItem where
 
 instance ToMarkup PrerexItem where
   toMarkup (PrerexItem x) = 
-    B.div B.! A.class_ "idoc-prerex-item panel panel-info" $
-          (B.div B.! A.class_ "panel-heading" $
-                 B.h3 B.! A.class_ "panel-title" $
-                      B.a B.! B.dataAttribute "toggle" "collapse"
-                          B.! href ("#" ++ toValue x) $
-                          toMarkup $ idPathT x) ++
-          (B.div B.! A.class_ "panel-collapse collapse"
-                 B.! A.id (toValue x) $
-                 (B.div B.! A.class_ "idoc-prerex-item-content panel-body" $
-                        "Default Prerex Content Description.") ++
-                 (B.div B.! A.class_ "idoc-prerex-item-footer panel-footer" $
-                        B.a B.! A.class_ "idoc-prerex-item-link"
-                            B.! A.href (toValue $ idPathT x) $
-                            toMarkup $ idPathT x))
+          B.div B.! A.class_ "idoc-prerex-item panel panel-info" $
+                (B.div B.! A.class_ "panel-heading" $
+                       B.h3 B.! A.class_ "panel-title" $
+                            B.a B.! B.dataAttribute "toggle" "collapse"
+                                B.! href ("#" ++ toValue x) $
+                                toMarkup $ idPathT x) ++
+                (B.div B.! A.class_ "panel-collapse collapse"
+                       B.! A.id (toValue x) $
+                       (B.div B.! A.class_ "idoc-prerex-item-content panel-body" $
+                              "Default Prerex Content Description.") ++
+                       (B.div B.! A.class_ "idoc-prerex-item-footer panel-footer" $
+                              B.a B.! A.class_ "idoc-prerex-item-link"
+                                  B.! A.href (toValue $ idPathT x) $
+                                  toMarkup $ idPathT x))
 
 instance ToMarkup (BlockType a) where
   toMarkup (BlockType x) = 
@@ -307,21 +309,19 @@ instance ToMarkup Prerex where
 
 instance ToMarkup Math where
   toMarkup (Math x) = 
-    B.div B.! A.class_ "idoc-math-contents center-block flex" $
-          B.div B.! A.class_ "idoc-display-math" $
-                text "\\[" ++ toMarkup x ++ text "\\]"
+    B.div B.! A.class_ "idoc-math-contents center-block flex idoc-display-math" $
+          text "\\[" ++ toMarkup x ++ text "\\]"
 
 instance ToMarkup EqnArray where
   toMarkup (EqnArray xs) =
-    B.div B.! A.class_ "idoc-eqn-array-contents bg-info center-block" $
-          B.div B.! A.class_ "idoc-display-math" $
-                text "$$\\begin{eqnarray}\n" ++ 
-                (concatMap (\(Equation x) -> toMarkup $ x <> "\\\\\n") xs) ++ 
-                text "\\end{eqnarray}$$"
+    B.div B.! A.class_ "idoc-eqn-array-contents bg-info center-block idoc-display-math" $
+          text "$$\\begin{eqnarray}\n" ++ 
+          (concatMap (\(Equation x) -> toMarkup $ x <> "\\\\\n") xs) ++ 
+          text "\\end{eqnarray}$$"
 
 instance ToMarkup Theorem where
   toMarkup (Theorem x) =
-    B.div B.! A.class_ "idoc-theorem-contents" $
+    B.div B.! A.class_ "idoc-theorem-contents idoc-theorem-like" $
           toMarkup x
     
 instance ToMarkup Proof where
@@ -331,20 +331,18 @@ instance ToMarkup Proof where
 
 quoteBlockMarkup :: BlockT Quote -> Html
 quoteBlockMarkup (BlockT {..}) =
-  B.div B.! A.class_ "idoc-blockquote-contents" $
-        B.blockquote B.! A.class_ "idoc-blockquote" $
-                     mCite $ toMarkup $ (\case (Quote x) -> x) blockContents
+  B.blockquote B.! A.class_ "idoc-blockquote-contents" $
+                mCite $ toMarkup $ (\case (Quote x) -> x) blockContents
   where
     mCite = maybe ClassyPrelude.id (\mAuthor -> 
                                        maybe ClassyPrelude.id 
-                                       (\author -> (++ " " ++ (B.cite B.! A.class_ "idoc-blockquote-author" $
-                                                                toMarkup author))) mAuthor) (lookup "author" $ (\case (AttrMap x) -> x) blockAttrs)
+                                       (\author -> (++ " " ++ (B.footer $ B.cite B.! A.class_ "idoc-blockquote-author" $
+                                                               toMarkup author))) mAuthor) (lookup "author" $ (\case (AttrMap x) -> x) blockAttrs)
 
 instance ToMarkup Code where
   toMarkup (Code x) =
-    B.div B.! A.class_ "idoc-code-contents" $
-          B.code B.! A.class_ "idoc-code" $
-                 toMarkup x
+    B.code B.! A.class_ "idoc-code-contents" $
+           toMarkup x
 
 instance ToValue Internal where
   toValue = attributeT . internalT
@@ -364,7 +362,6 @@ instance ToMarkup Image where
       mLabel = ClassyPrelude.id
 --      mLabel = maybe ClassyPrelude.id (\(LinkText x) -> (B.! A.alt (textValue x))) linkText
 
-
 instance ToMarkup Video where
   toMarkup (Video (LinkT {..})) =
     B.div B.! A.class_ "idoc-video-contents" $
@@ -379,34 +376,31 @@ instance ToMarkup Video where
 instance ToMarkup YouTube where
   toMarkup (YouTube (LinkT {..})) = 
     B.div B.! A.class_ "idoc-youtube-contents" $
-          mLabel $ video B.! A.class_ "idoc-youtube-block-youtube"
-                         B.! A.src (toValue linkLocation) $ 
-                         text ""
+          mLabel $ iframe B.! A.class_ "idoc-youtube-block-youtube"
+                          B.! A.src (toValue linkLocation) $ 
+                          text ""
     where
       mLabel = ClassyPrelude.id
 --      mLabel = maybe ClassyPrelude.id (\(LinkText x) -> (B.! A.alt (textValue x))) linkText
 
 instance ToMarkup Aside where
   toMarkup (Aside mpb x) = 
-    B.div B.! A.class_ "idoc-aside-contents" $
-          B.aside B.! A.class_ "idoc-aside" $
-                  (toMarkup pb) B.! A.class_ "idoc-aside-prerex" ++
-                  (B.section B.! A.class_ "idoc-aside-section" $ 
-                             toMarkup x)
+    (B.aside B.! A.class_ "idoc-aside-contents" $
+            (toMarkup pb) B.! A.class_ "idoc-aside-prerex" ++
+            (B.section B.! A.class_ "idoc-aside-section" $ 
+                       toMarkup x))
     where
       pb = maybe "" toMarkup mpb
 
 instance ToMarkup Admonition where
   toMarkup (Admonition x) =
-    B.div B.! A.class_ "idoc-admonition-contents" $
-          B.aside B.! A.class_ "idoc-admonition" $
-                  toMarkup x
+    B.aside B.! A.class_ "idoc-admonition-contents" $
+            toMarkup x
 
 instance ToMarkup Sidebar where
   toMarkup (Sidebar x) =
-    B.div B.! A.class_ "idoc-sidebar-contents" $
-          B.aside B.! A.class_ "idoc-sidebar" $
-                  toMarkup x
+    B.aside B.! A.class_ "idoc-sidebar-contents" $
+            toMarkup x
 
 instance ToMarkup Example where
   toMarkup (Example x) =
@@ -420,39 +414,133 @@ instance ToMarkup Exercise where
 
 instance ToMarkup Bibliography where
   toMarkup (Bibliography xs) =
-    B.div B.! A.class_ "idoc-bibliography-contents" $
-          B.section B.! A.class_ "idoc-bibliography" $
-                    B.ol B.! A.class_ "idoc-bibliography-list" $
-                         concatMap toMarkup xs
+    B.section B.! A.class_ "idoc-bibliography-contents" $
+              B.ol B.! A.class_ "idoc-bibliography-list" $
+                   concatMap toMarkup xs
+
+instance ToMarkup Introduction where
+  toMarkup (Introduction x) = 
+    B.section B.! A.class_ "idoc-introduction-contents lead" $
+              B.h2 "Introduction" ++
+              toMarkup x
+
+instance ToMarkup Lemma where
+  toMarkup (Lemma x) = 
+    B.div B.! A.class_ "idoc-lemma-contents idoc-theorem-like" $
+          toMarkup x
+
+instance ToMarkup Corollary where
+  toMarkup (Corollary x) = 
+    B.div B.! A.class_ "idoc-corollary-contents idoc-theorem-like" $
+          toMarkup x
+
+instance ToMarkup Proposition where
+  toMarkup (Proposition x) = 
+    B.div B.! A.class_ "idoc-proposition-contents idoc-theorem-like" $
+          toMarkup x
+
+instance ToMarkup Conjecture where
+  toMarkup (Conjecture x) = 
+    B.div B.! A.class_ "idoc-conjecture-contents idoc-theorem-like" $
+          toMarkup x
+
+instance ToMarkup Definition where
+  toMarkup (Definition x) =
+    B.div B.! A.class_ "idoc-definition-contents" $
+          toMarkup x
+
+instance ToMarkup Intuition where
+  toMarkup (Intuition x) = 
+    B.section B.! A.class_ "idoc-intuition-contents" $
+              toMarkup x
+
+instance ToMarkup FurtherReading where
+  toMarkup (FurtherReading x) =
+    B.section B.! A.class_ "idoc-further-reading-contents" $
+              toMarkup x
+
+instance ToMarkup Summary where
+  toMarkup (Summary x) = 
+    B.section B.! A.class_ "idoc-summary-contents" $
+              toMarkup x
+
+instance ToMarkup Recall where
+  toMarkup (Recall {..}) =
+    B.div B.! A.class_ "idoc-recall-contents" $
+          (B.a B.! A.class_ "idoc-recall-link"
+               B.! A.href (toValue $ backT $ linkLocation recallLink) $
+               "Recall:") ++
+          toMarkup recallContents
 
 instance (TypedBlock bType, ToMarkup bType) =>
   ToMarkup (BlockT bType) where
   toMarkup (BlockT {..}) =
     mIDV blockID $ 
     B.div B.! A.class_ ("idoc-block " ++ "idoc-" ++ bt ++ "-block") $
-    mBTitle ++
-    toMarkup blockContents
+          mBTitle ++
+          toMarkup blockContents
     where
       bt = case (bType :: BlockType bType) of (BlockType bt) -> toValue bt
       mBTitle = maybe "" toMarkup blockTitle
 
 instance ToMarkup Block where
+  toMarkup (BIntroductionBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BLemmaBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BCorollaryBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BPropositionBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BConjectureBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BDefinitionBlock x) = toMarkup x
+  toMarkup (BIntuitionBlock x) = toMarkup x
+  toMarkup (BFurtherReadingBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BSummaryBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BRecallBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BMathBlock x) = toMarkup x
   toMarkup (BEqnArrayBlock x) = toMarkup x
-  toMarkup (BTheoremBlock x) = toMarkup x
-  toMarkup (BProofBlock x) = toMarkup x
+  toMarkup (BTheoremBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BProofBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BPrerexBlock x) = toMarkup x
-  toMarkup (BQuoteBlock x) = quoteBlockMarkup x
+  toMarkup (BQuoteBlock x) = B.div B.! A.class_ "col-md-6" $ quoteBlockMarkup x
   toMarkup (BCodeBlock x) = toMarkup x
   toMarkup (BImageBlock x) = toMarkup x
   toMarkup (BVideoBlock x) = toMarkup x
-  toMarkup (BAdmonitionBlock x) = toMarkup x
-  toMarkup (BAsideBlock x) = toMarkup x
+  toMarkup (BAdmonitionBlock (BlockT {..})) = 
+    B.div B.! A.class_  "col-md-4" $
+    (B.div B.! A.class_ ("idoc-block idoc-admonition-block panel " ++ panelStyle) $
+          (B.div B.! A.class_ "panel-heading" $
+                 B.h3 B.! A.class_ "panel-title" $ 
+                      B.a B.! B.dataAttribute "toggle" "collapse"
+                          B.! href ("#" ++ (toValue mBID)) $
+                          (text admonitionType) ++ ": " ++ mBTitle) ++
+          (B.div B.! A.class_ "panel-collapse"
+                 B.! A.id (toValue mBID) $
+                 B.div B.! A.class_ "panel-body" $ toMarkup blockContents))
+    where
+      mBID = maybe (badAdmonition blockContents) ClassyPrelude.id blockID
+      mBTitle = maybe "" (\(BlockHeading p') -> toMarkup p') blockTitle
+      badAdmonition ad = error $ "Error: Admonitions must have an ID!"
+      admonitionType = maybe "info" (\(AttrValue s) -> s) (join $ lookup "type" $ (\(AttrMap am) -> am) blockAttrs)
+      panelStyle = (\case "info"    -> "panel-info"
+                          "warning" -> "panel-danger"
+                          "caution" -> "panel-warning"
+                          "danger"  -> "panel-danger"
+                          "tip"     -> "panel-tip"
+                          _         -> "panel-info") admonitionType
+
+  toMarkup (BAsideBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BYouTubeBlock x) = toMarkup x
-  toMarkup (BSidebarBlock x) = toMarkup x
-  toMarkup (BExampleBlock x) = toMarkup x
-  toMarkup (BExerciseBlock x) = toMarkup x
-  toMarkup (BBibliographyBlock x) = toMarkup x
+  toMarkup (BSidebarBlock (x@BlockT {..})) = 
+    B.div B.! A.class_ "col-md-4" $ 
+          mIDV blockID $ 
+          B.div B.! A.class_ "panel panel-default" $
+                mbTitle $
+                B.div B.! A.class_ "panel-body" $
+                      toMarkup blockContents
+    where
+      mbTitle = maybe ClassyPrelude.id (\(BlockHeading x) -> (((B.div B.! A.class_ "panel-heading" $ (B.h4 B.! A.class_ "panel-title") $ toMarkup x) ++))) blockTitle
+
+  toMarkup (BExampleBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BExerciseBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BBibliographyBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
 
 instance ToMarkup DocHeading where
   toMarkup (DocHeading x) =
@@ -487,13 +575,14 @@ instance LineLike a => ToMarkup (Section a) where
 instance LineLike a => ToMarkup (Subsection a) where
   toMarkup (Subsection {..}) =
     mIDV subsectionID $
-    B.section B.! A.class_ "idoc-subsection" $
+    B.div B.! A.class_ "row" $ B.section B.! A.class_ "idoc-subsection" $
               toMarkup subsectionTitle ++
               toMarkup subsectionContents
 
 instance LineLike a => ToMarkup (AnonymousSection a) where
   toMarkup (AnonymousSection xs) =
-    concatMap toMarkup xs
+    (concatMap toMarkup xs) ++
+    (B.div B.! A.class_ "clearfix" $ "")
 
 instance LineLike a => ToMarkup (Content a) where
   toMarkup (TLCSubsection x) = toMarkup x

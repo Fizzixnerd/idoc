@@ -1,7 +1,6 @@
 = idoc User Guide
 
 @ introduction
-# Introduction
 ---
 idoc is a language and a program.  The language is what was used to
 write this document.  The program is what rendered it (in both LaTeX
@@ -104,10 +103,28 @@ allowed any amount of complex content here.  An equation: $F =
 ---
 
 @ admonition
+# This is a Warning Block
 [type="warning"]
 ---
 This will show a little warning symbol next to it.
 ---
+[[#warning-admonition]]
+
+@ admonition
+# This is an Info Block
+[type="info"]
+---
+This will show a little info symbol next to it.
+---
+[[#info-admonition]]
+
+@ admonition
+# This is a Caution Block
+[type="caution"]
+---
+This will show a little caution symbol next to it.
+---
+[[#caution-admonition]]
 
 @ aside
 # An aside
