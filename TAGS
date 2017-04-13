@@ -22,8 +22,8 @@ main main24,25
 
 ./library/Example.hs,62
 module Example Example3,4
-main main37,38
-main main38,39
+main main35,36
+main main36,37
 
 ./library/Text/IDoc/Render/Tex.hs,1087
 module Text.IDoc.Render.Tex Text.IDoc.Render.Tex22,23

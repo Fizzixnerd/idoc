@@ -226,7 +226,6 @@ You would not normally have $1 + 4$ of these things in a row.
 @ aside
 # An aside
 ---
-
 @ prerex
 # Aside Prerex
 ---
@@ -268,7 +267,6 @@ needed to understand this small connection.
 
 When the site is complete, asides will start out open or closed
 depending on if the reader has the necessary prereqs or not.
-
 ---
 [[#my-aside]]
 

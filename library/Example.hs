@@ -10,8 +10,6 @@ import Text.IDoc.Parse
 import Text.IDoc.Render.Hamlet
 import Text.Megaparsec
 
-
-
 -- main :: IO ()
 -- main = (withFile "source.idoc" ReadMode
 --          (\src -> do

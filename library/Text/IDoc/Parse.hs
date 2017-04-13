@@ -389,9 +389,9 @@ instance (LineLike a, LineLike b) => LineLike (a, b) where
       LikeLine (a || b)
 
 instance LineLike Main
+instance LineLike Block
 instance LineLike Markup where
   lineLike = LikeLine True
-instance LineLike Block
 instance LineLike Line where
   lineLike = LikeLine True
 instance LineLike Unordered where
@@ -770,7 +770,7 @@ instance GP.Out PrerexItem
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ILS e s m PrerexItem where
   ils = do
-    TM.try space
+    space
     p' <- ils
     d <- tween (char '{') (char '}') ils
     return $ PrerexItem { prerexPath = p'
