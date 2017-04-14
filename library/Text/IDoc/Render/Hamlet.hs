@@ -378,18 +378,18 @@ instance ToMarkup Video where
 
 instance ToMarkup YouTube where
   toMarkup (YouTube x) = 
-    B.div B.! A.class_ "idoc-youtube-contents" $
-          mLabel $ iframe B.! A.class_ "idoc-youtube-block-youtube"
-                          B.! A.width "560"
-                          B.! A.height "315"
-                          B.! frameborder "0"
-                          B.! allowfullscreen "true"
-                          B.! A.src ("https://www.youtube.com/embed/" ++ (toValue x)) $
-                          text ""
-    where
-      mLabel = ClassyPrelude.id
-      frameborder = B.customAttribute "frameborder"
-      allowfullscreen = B.customAttribute "allowfullscreen"
+    B.div B.! A.class_ "idoc-youtube-contents panel panel-default" $
+          (B.div B.! A.class_ "panel-heading" $
+                 B.h3 B.! A.class_ "panel-title" $
+                      B.a B.! B.dataAttribute "toggle" "collapse"
+                          B.! href ("#" ++ toValue x) $
+                          "YouTube Video") ++
+          (B.div B.! A.class_ "panel-collapse collapse"
+                 B.! A.id (toValue x) $
+                 B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
+                 iframe B.! A.class_ "idoc-youtube-embed embed-responsive-item"
+                        B.! A.src ("https://www.youtube.com/embed/" ++ (toValue x)) $
+                        text "")
 --      mLabel = maybe ClassyPrelude.id (\(LinkText x) -> (B.! A.alt (textValue x))) linkText
 
 instance ToMarkup Aside where
