@@ -387,16 +387,19 @@ instance ToMarkup YouTube where
           (B.div B.! A.class_ "panel-collapse collapse"
                  B.! A.id (toValue x) $
                  B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
-                 iframe B.! A.class_ "idoc-youtube-embed embed-responsive-item"
-                        B.! A.src ("https://www.youtube.com/embed/" ++ (toValue x)) $
-                        text "")
+                       iframe B.! A.class_ "idoc-youtube-embed embed-responsive-item"
+                              B.! allowfullscreen "true"
+                              B.! A.src ("https://www.youtube.com/embed/" ++ (toValue x)) $
+                              text "")
+    where
+      allowfullscreen = B.customAttribute "allowfullscreen"
 --      mLabel = maybe ClassyPrelude.id (\(LinkText x) -> (B.! A.alt (textValue x))) linkText
 
 instance ToMarkup Aside where
   toMarkup (Aside mpb x) = 
     (B.aside B.! A.class_ "idoc-aside-contents" $
             (toMarkup pb) B.! A.class_ "idoc-aside-prerex" ++
-            (B.section B.! A.class_ "idoc-aside-section" $ 
+            (B.section B.! A.class_ "idoc-aside-section" $
                        toMarkup x))
     where
       pb = maybe "" toMarkup mpb
