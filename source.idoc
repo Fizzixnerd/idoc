@@ -292,6 +292,15 @@ not abuse this feature.
 <<FdU8oqCbvzo>>
 ---
 
+=== Images
+
+We can embed important images too.
+
+@ image
+---
+<<http://www.independentlearning.science/uusBbd5.jpg>>
+---
+
 == Conclusion
 
 That's about it for the basic syntax.  We can fix the rest later.
