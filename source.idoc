@@ -153,10 +153,10 @@ _attribute_ of the quote block contents.  Attribute lists always come
 _just_ before the thing they modify.  In this case, we are modifying
 the "body" of the `@ quote` element, so it comes just before the body.
 
-@ sidebar
+@ sidenote
 # Please be Aware:
 ---
-This content will be rendered in the margin of the document.  You are
+This content will be rendered off to the side of the document.  You are
 allowed any amount of complex content here.  An equation: $F =
 \frac{dp}{dt}$.
 ---
@@ -164,10 +164,10 @@ allowed any amount of complex content here.  An equation: $F =
 @ code
 [lang="idoc"]
 ---
- @ sidebar
+ @ sidenote
  # Please be Aware:
  ---
- This content will be rendered in the margin of the document.  You are
+ This content will be rendered off to the side of the document.  You are
  allowed any amount of complex content here.  An equation: $F =
  \frac{dp}{dt}$.
  ---
@@ -223,19 +223,19 @@ If you're worried about all the wasted space in the HTML output, don't
 be!  It's only wasted because I didn't put text between each block.
 You would not normally have $1 + 4$ of these things in a row.
 
-@ aside
-# An aside
+@ connection
+# A connection
 ---
 @ prerex
-# Aside Prerex
+# Connection Prerex
 ---
 /Basics/Logic{Mostly only _first-order_ logic will be used, but some _second-order_ stuff is important for stuff later on, so we put it here.}
 /Basics/Sex{Oh, I think you know. ;)}
 ---
 
-An aside is useful when you have content connected to the main text
+A `connection` is useful when you have content connected to the main text
 but which isn't super necessary, or requires more advanced techniques
-than the rest of the text.  This is because Asides are allowed to have
+than the rest of the text.  This is because connections are allowed to have
 their own prerequisites, in addition to the main doc's prereqs.
 
 @ admonition
@@ -244,31 +244,31 @@ their own prerequisites, in addition to the main doc's prereqs.
 ---
 If you're viewing this full-screen on a computer, you'll notice that
 unlike the other blocks we've seen (with the exception of the math
-block), Asides are rendered across the full screen.  In general, you
+block), connections are rendered across the full screen.  In general, you
 should _never_ rely on the position of something relative to something
 else, or its size.  This is because idoc has been designed to have
-pluggable themes, and the web renderer create _responsive_ html that
+pluggable themes, and the web renderer creates _responsive_ html that
 is free to reorganize content to better match the devices size.
 Therefore, whenever you refer to something, please please please use
 an ID.
 ---
 [[#rendering-info]]
 
-Asides are for when you want to connect with an outside idea, but
+Connections are for when you want to connect with an outside idea, but
 don't want to have this interesting connection create new
 prerequisites for your doc.  For example, in the article
 <</Math/Topology/Homeomorphism#>>{on topology}, we might want to talk
 about how is difficult to prove two things are _not_ homeomorphic, and
 how the fundamental group is useful because of its status as a
 topological invariant.  However, we don't know if the readers actually
-know group theory.  This would be the time you would use an aside --
+know group theory.  This would be the time you would use a connection --
 group theory is not needed to understand homeomorphisms, but it _is_
-needed to understand this small connection.
+needed to understand this small aside.
 
-When the site is complete, asides will start out open or closed
+When the site is complete, connections will start out open or closed
 depending on if the reader has the necessary prereqs or not.
 ---
-[[#my-aside]]
+[[#my-connection]]
 
 
 === Links

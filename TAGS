@@ -105,7 +105,7 @@ quoteBlockMarkup quoteBlockMarkup332,333
 renderPretty renderPretty645,646
 renderPretty renderPretty646,647
 
-./library/Text/IDoc/Parse.hs,15911
+./library/Text/IDoc/Parse.hs,16005
 module Text.IDoc.Parse Text.IDoc.Parse23,24
 instance instance31,32
 class ILS ILS39,40
@@ -356,18 +356,18 @@ newtype Video Video925,926
 newtype Video = Video Video925,926
 data YouTube YouTube932,933
 data YouTube = YouTube YouTube932,933
-data Aside Aside939,940
-data Aside = Aside Aside939,940
-data Aside = Aside { asidePrerex asidePrerex939,940
-                   , asideContents asideContents940,941
+data Connection Connection939,940
+data Connection = Connection Connection939,940
+data Connection = Connection { connectionPrerex connectionPrerex939,940
+                             , connectionContents connectionContents940,941
 newtype Definition Definition950,951
 newtype Definition = Definition Definition950,951
 newtype Intuition Intuition957,958
 newtype Intuition = Intuition Intuition957,958
 newtype Admonition Admonition964,965
 newtype Admonition = Admonition Admonition964,965
-newtype Sidebar Sidebar971,972
-newtype Sidebar = Sidebar Sidebar971,972
+newtype Sidenote Sidenote971,972
+newtype Sidenote = Sidenote Sidenote971,972
 newtype Example Example978,979
 newtype Example = Example Example978,979
 newtype Exercise Exercise985,986
@@ -405,11 +405,11 @@ type CodeBlock CodeBlock1055,1056
 type ImageBlock ImageBlock1056,1057
 type VideoBlock VideoBlock1057,1058
 type YouTubeBlock YouTubeBlock1058,1059
-type AsideBlock AsideBlock1059,1060
+type ConnectionBlock ConnectionBlock1059,1060
 type DefinitionBlock DefinitionBlock1060,1061
 type IntuitionBlock IntuitionBlock1061,1062
 type AdmonitionBlock AdmonitionBlock1062,1063
-type SidebarBlock SidebarBlock1063,1064
+type SidenoteBlock SidenoteBlock1063,1064
 type ExampleBlock ExampleBlock1064,1065
 type ExerciseBlock ExerciseBlock1065,1066
 type BibliographyBlock BibliographyBlock1066,1067
@@ -432,11 +432,11 @@ data Block = BPrerexBlock BPrerexBlock1071,1072
            | BImageBlock BImageBlock1083,1084
            | BVideoBlock BVideoBlock1084,1085
            | BYouTubeBlock BYouTubeBlock1085,1086
-           | BAsideBlock BAsideBlock1086,1087
+           | BConnectionBlock BConnectionBlock1086,1087
            | BDefinitionBlock BDefinitionBlock1087,1088
            | BIntuitionBlock BIntuitionBlock1088,1089
            | BAdmonitionBlock BAdmonitionBlock1089,1090
-           | BSidebarBlock BSidebarBlock1090,1091
+           | BSidenoteBlock BSidenoteBlock1090,1091
            | BExampleBlock BExampleBlock1091,1092
            | BExerciseBlock BExerciseBlock1092,1093
            | BBibliographyBlock BBibliographyBlock1093,1094

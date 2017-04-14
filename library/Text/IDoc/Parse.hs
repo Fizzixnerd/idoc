@@ -937,13 +937,13 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ILSBlock e s m YouTube where
   ilsBlock = simpleBlock YouTube ils
 
-data Aside = Aside { asidePrerex :: Maybe PrerexBlock
-                   , asideContents :: AnonymousSection Block } deriving (Eq, Show, Generic)
-instance GP.Out Aside
-instance TypedBlock Aside where bType = "aside"
+data Connection = Connection { connectionPrerex :: Maybe PrerexBlock
+                             , connectionContents :: AnonymousSection Block } deriving (Eq, Show, Generic)
+instance GP.Out Connection
+instance TypedBlock Connection where bType = "connection"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
-  ILSBlock e s m Aside where
-  ilsBlock = simpleBlock (\(pb, c) -> Aside pb c) $ do
+  ILSBlock e s m Connection where
+  ilsBlock = simpleBlock (\(pb, c) -> Connection pb c) $ do
     pb <- optional $ TM.try ils
     c <- ils
     return (pb, c)
@@ -969,12 +969,12 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ILSBlock e s m Admonition where
   ilsBlock = simpleBlock Admonition ils
 
-newtype Sidebar = Sidebar (Paragraph Block) deriving (Eq, Show, Generic)
-instance GP.Out Sidebar
-instance TypedBlock Sidebar where bType = "sidebar"
+newtype Sidenote = Sidenote (Paragraph Block) deriving (Eq, Show, Generic)
+instance GP.Out Sidenote
+instance TypedBlock Sidenote where bType = "sidenote"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
-  ILSBlock e s m Sidebar where
-  ilsBlock = simpleBlock Sidebar ils
+  ILSBlock e s m Sidenote where
+  ilsBlock = simpleBlock Sidenote ils
 
 newtype Example = Example (AnonymousSection Block) deriving (Eq, Show, Generic)
 instance GP.Out Example
@@ -1057,11 +1057,11 @@ type CodeBlock = BlockT Code
 type ImageBlock = BlockT Image
 type VideoBlock = BlockT Video
 type YouTubeBlock = BlockT YouTube
-type AsideBlock = BlockT Aside
+type ConnectionBlock = BlockT Connection
 type DefinitionBlock = BlockT Definition
 type IntuitionBlock = BlockT Intuition
 type AdmonitionBlock = BlockT Admonition
-type SidebarBlock = BlockT Sidebar
+type SidenoteBlock = BlockT Sidenote
 type ExampleBlock = BlockT Example
 type ExerciseBlock = BlockT Exercise
 type BibliographyBlock = BlockT Bibliography
@@ -1084,11 +1084,11 @@ data Block = BPrerexBlock PrerexBlock
            | BImageBlock ImageBlock
            | BVideoBlock VideoBlock
            | BYouTubeBlock YouTubeBlock
-           | BAsideBlock AsideBlock
+           | BConnectionBlock ConnectionBlock
            | BDefinitionBlock DefinitionBlock
            | BIntuitionBlock IntuitionBlock
            | BAdmonitionBlock AdmonitionBlock
-           | BSidebarBlock SidebarBlock
+           | BSidenoteBlock SidenoteBlock
            | BExampleBlock ExampleBlock
            | BExerciseBlock ExerciseBlock
            | BBibliographyBlock BibliographyBlock
@@ -1113,11 +1113,11 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
         (TM.try $ BImageBlock <$> ils) <|>
         (TM.try $ BVideoBlock <$> ils) <|>
         (TM.try $ BYouTubeBlock <$> ils) <|>
-        (TM.try $ BAsideBlock <$> ils) <|>
+        (TM.try $ BConnectionBlock <$> ils) <|>
         (TM.try $ BDefinitionBlock <$> ils) <|>
         (TM.try $ BIntuitionBlock <$> ils) <|>
         (TM.try $ BAdmonitionBlock <$> ils) <|>
-        (TM.try $ BSidebarBlock <$> ils) <|>
+        (TM.try $ BSidenoteBlock <$> ils) <|>
         (TM.try $ BExampleBlock <$> ils) <|>
         (TM.try $ BExerciseBlock <$> ils) <|>
         (TM.try $ BBibliographyBlock <$> ils) <|>

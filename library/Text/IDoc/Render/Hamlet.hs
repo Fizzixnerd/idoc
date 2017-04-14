@@ -399,11 +399,11 @@ instance ToMarkup YouTube where
       allowfullscreen = B.customAttribute "allowfullscreen"
 --      mLabel = maybe ClassyPrelude.id (\(LinkText x) -> (B.! A.alt (textValue x))) linkText
 
-instance ToMarkup Aside where
-  toMarkup (Aside mpb x) = 
-    (B.aside B.! A.class_ "idoc-aside-contents" $
-            (toMarkup pb) B.! A.class_ "idoc-aside-prerex" ++
-            (B.section B.! A.class_ "idoc-aside-section" $
+instance ToMarkup Connection where
+  toMarkup (Connection mpb x) = 
+    (B.aside B.! A.class_ "idoc-connection-contents" $
+            (toMarkup pb) B.! A.class_ "idoc-connection-prerex" ++
+            (B.section B.! A.class_ "idoc-connection-section" $
                        toMarkup x))
     where
       pb = maybe "" toMarkup mpb
@@ -413,9 +413,9 @@ instance ToMarkup Admonition where
     B.aside B.! A.class_ "idoc-admonition-contents" $
             toMarkup x
 
-instance ToMarkup Sidebar where
-  toMarkup (Sidebar x) =
-    B.aside B.! A.class_ "idoc-sidebar-contents" $
+instance ToMarkup Sidenote where
+  toMarkup (Sidenote x) =
+    B.aside B.! A.class_ "idoc-sidenote-contents" $
             toMarkup x
 
 instance ToMarkup Example where
@@ -548,8 +548,8 @@ instance ToMarkup Block where
                         "tip"     -> "fa-lightbulb-o"
                         _         -> "fa") admonitionType
 
-  toMarkup (BAsideBlock (BlockT {..})) = (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_  "col-md-12" $
-    B.div B.! A.class_ ("idoc-block idoc-aside-block panel " ++ "panel-primary") $
+  toMarkup (BConnectionBlock (BlockT {..})) = (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_  "col-md-12" $
+    B.div B.! A.class_ ("idoc-block idoc-connection-block panel " ++ "panel-primary") $
           (B.div B.! A.class_ "panel-heading" $
                  B.h3 B.! A.class_ "panel-title" $ 
                       B.a B.! B.dataAttribute "toggle" "collapse"
@@ -564,7 +564,7 @@ instance ToMarkup Block where
       badAside as = error $ "Error: Asides must have an ID!"
 
   toMarkup (BYouTubeBlock x) = toMarkup x
-  toMarkup (BSidebarBlock (BlockT {..})) = 
+  toMarkup (BSidenoteBlock (BlockT {..})) = 
     (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_ "col-md-4" $ 
           mIDV blockID $ 
           B.div B.! A.class_ "panel panel-default" $
@@ -660,16 +660,16 @@ renderPretty x =
                     B.! A.href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
                     B.! crossorigin "anonymous") ++
             (B.style $ ".ils-logo-small, .ils-logo-container { height: 52px; width: 52px; display: inline-block; }")) ++
-   (B.body $ (toMarkup x) ++
-             (B.script B.! A.src "https://code.jquery.com/jquery-3.1.1.slim.min.js"
+  (B.body $ (toMarkup x) ++
+            (B.script B.! A.src "https://code.jquery.com/jquery-3.1.1.slim.min.js"
 --                       B.! integrity "sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
-                       B.! crossorigin "anonymous") (text "") ++
+                      B.! crossorigin "anonymous") (text "") ++
 --             (B.script B.! A.src "https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
 --                       B.! integrity "sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
 --                       B.! crossorigin "anonymous") (text "") ++
-             (B.script B.! A.src "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            (B.script B.! A.src "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
 --                       B.! integrity "sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
-                       B.! crossorigin "anonymous") (text ""))
+                      B.! crossorigin "anonymous") (text ""))
   where
     integrity = B.customAttribute "integrity"
     crossorigin = B.customAttribute "crossorigin"
