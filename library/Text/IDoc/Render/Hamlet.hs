@@ -358,12 +358,16 @@ instance ToValue Back where
 
 instance ToMarkup Image where
   toMarkup (Image (LinkT {..})) = 
-    B.div B.! A.class_ "idoc-image-contents" $
-          mLabel $ B.img B.! A.class_ "idoc-image-block-image"
-                         B.! A.src (toValue linkLocation)
-    where
-      mLabel = ClassyPrelude.id
---      mLabel = maybe ClassyPrelude.id (\(LinkText x) -> (B.! A.alt (textValue x))) linkText
+    B.div B.! A.class_ "md-col-6" $
+    B.div B.! A.class_ "idoc-youtube-contents panel panel-default" $
+          (B.div B.! A.class_ "panel-heading" $
+                 B.h3 B.! A.class_ "panel-title" $
+                      B.a B.! B.dataAttribute "toggle" "collapse"
+                          B.! href ("#" ++ (toValue linkLocation)) $
+                          "Image") ++
+          (B.div B.! A.class_ "panel-collapse collapse in" $
+                 B.img B.! A.class_ "idoc-image-block-image img-responsive"
+                       B.! A.src (toValue linkLocation))
 
 instance ToMarkup Video where
   toMarkup (Video (LinkT {..})) =
@@ -384,7 +388,7 @@ instance ToMarkup YouTube where
                       B.a B.! B.dataAttribute "toggle" "collapse"
                           B.! href ("#" ++ toValue x) $
                           "YouTube Video") ++
-          (B.div B.! A.class_ "panel-collapse collapse"
+          (B.div B.! A.class_ "panel-collapse collapse in"
                  B.! A.id (toValue x) $
                  B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
                        iframe B.! A.class_ "idoc-youtube-embed embed-responsive-item"
