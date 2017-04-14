@@ -753,6 +753,12 @@ newtype VideoLink = VideoLink Text deriving (Eq, Show, Generic, IsString)
 instance GP.Out VideoLink
 newtype YouTubeLink = YouTubeLink Text deriving (Eq, Show, Generic, IsString)
 instance GP.Out YouTubeLink
+instance (ErrorComponent e, Stream s, Token s ~ Char) =>
+  ILS e s m YouTubeLink where
+  ils = do
+    space
+    fmap fromString $ someTween (string "<<") (string ">>") printChar
+
 newtype BibliographyItem = BibliographyItem Text deriving (Eq, Show, Generic, IsString)
 instance GP.Out BibliographyItem
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
@@ -924,7 +930,7 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ILSBlock e s m Video where
   ilsBlock = simpleBlock Video ils
 
-data YouTube = YouTube OLink deriving (Eq, Show, Generic)
+data YouTube = YouTube YouTubeLink deriving (Eq, Show, Generic)
 instance GP.Out YouTube
 instance TypedBlock YouTube where bType = "youtube"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 

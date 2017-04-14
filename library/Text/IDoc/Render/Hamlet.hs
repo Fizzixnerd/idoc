@@ -167,7 +167,7 @@ instance ToMarkup Footnote where
     B.div B.! A.class_ "idoc-footnote-contents" $
           concat $
           [ B.cite B.! A.class_ "idoc-footnote-cite" $ 
-                   B.a B.! A.class_ "idoc-footnote-link" 
+                   B.a B.! A.class_ "idoc-footnote-link"
                        B.! href "#" $ 
                        B.sup B.! A.class_ "idoc-footnote-marker"
                              B.! B.dataAttribute "toggle" "tooltip" $
@@ -180,8 +180,8 @@ instance ToMarkup Footnote where
 instance ToMarkup FootnoteRef where
   toMarkup (FootnoteRef {..}) = 
     B.div B.! A.class_ "idoc-footnote-ref-contents" $
-          B.cite B.! A.class_ "idoc-footnote-ref-cite" $ 
-                 B.a B.! A.class_ "idoc-footnote-ref-link" 
+          B.cite B.! A.class_ "idoc-footnote-ref-cite" $
+                 B.a B.! A.class_ "idoc-footnote-ref-link"
                      B.! B.dataAttribute "toggle" "tooltip"
                      B.! href "#" $
                      B.sup B.! A.class_ "idoc-footnote-ref-marker" $
@@ -272,8 +272,8 @@ instance ToMarkup ImageLink where
 instance ToMarkup VideoLink where
   toMarkup (VideoLink x) = toMarkup x
 
-instance ToMarkup YouTubeLink where
-  toMarkup (YouTubeLink x) = toMarkup x
+instance ToValue YouTubeLink where
+  toValue (YouTubeLink x) = toValue x
 
 instance ToMarkup BibliographyItem where
   toMarkup (BibliographyItem x) = 
@@ -377,13 +377,19 @@ instance ToMarkup Video where
 --      mLabel = maybe ClassyPrelude.id (\(LinkText x) -> (B.! A.alt (textValue x))) linkText
 
 instance ToMarkup YouTube where
-  toMarkup (YouTube (LinkT {..})) = 
+  toMarkup (YouTube x) = 
     B.div B.! A.class_ "idoc-youtube-contents" $
           mLabel $ iframe B.! A.class_ "idoc-youtube-block-youtube"
-                          B.! A.src (toValue linkLocation) $ 
+                          B.! A.width "560"
+                          B.! A.height "315"
+                          B.! frameborder "0"
+                          B.! allowfullscreen "true"
+                          B.! A.src ("https://www.youtube.com/embed/" ++ (toValue x)) $
                           text ""
     where
       mLabel = ClassyPrelude.id
+      frameborder = B.customAttribute "frameborder"
+      allowfullscreen = B.customAttribute "allowfullscreen"
 --      mLabel = maybe ClassyPrelude.id (\(LinkText x) -> (B.! A.alt (textValue x))) linkText
 
 instance ToMarkup Aside where

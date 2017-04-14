@@ -282,6 +282,15 @@ to headings in <</Physics/Classical/Mechanics/Newtonian#Second Law>>{other docum
 as long as they are a prerequisite of this one.  The same applies to
 ID'd items in those docs, including this paragraph. 
 
+=== YouTube
+
+We can embed YouTube videos if we think they are important.  Please do
+not abuse this feature.
+
+@ youtube
+---
+<<FdU8oqCbvzo>>
+---
 
 == Conclusion
 
