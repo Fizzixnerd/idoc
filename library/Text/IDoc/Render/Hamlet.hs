@@ -164,18 +164,11 @@ instance LineLike a => ToMarkup (QText a) where
 
 instance ToMarkup Footnote where
   toMarkup (Footnote {..}) = 
-    B.div B.! A.class_ "idoc-footnote-contents" $
-          concat $
-          [ B.cite B.! A.class_ "idoc-footnote-cite" $ 
-                   B.a B.! A.class_ "idoc-footnote-link"
-                       B.! href "#" $ 
-                       B.sup B.! A.class_ "idoc-footnote-marker"
-                             B.! B.dataAttribute "toggle" "tooltip" $
-                             B.text "note"
-          , mIDV footnoteID $ 
-            B.footer B.! A.class_ "idoc-footnote-text" $
-                     toMarkup footnoteContent
-          ]
+    B.a B.! A.class_ "idoc-footnote-link"
+        B.! href "#" $ 
+        B.sup B.! A.class_ "idoc-footnote-marker"
+              B.! B.dataAttribute "toggle" "tooltip" $
+              B.span B.! A.class_ "footnote" $ ""
 
 instance ToMarkup FootnoteRef where
   toMarkup (FootnoteRef {..}) = 
@@ -202,7 +195,7 @@ instance LineLike a => ToMarkup (ParagraphContent a) where
   toMarkup (PCPlainText x) = toMarkup x
 
 instance LineLike a => ToMarkup (Paragraph a) where
-  toMarkup (Paragraph xs pid) = 
+  toMarkup (Paragraph xs _) = 
     spanOrP $ concatMap toMarkup xs
     where
       spanOrP = 
@@ -258,7 +251,7 @@ instance LineLike a => ToMarkup (ListT a Ordered) where
 
 instance LineLike a => ToMarkup (ListT a Labelled) where
   toMarkup (ListT {..}) =
-    B.dl B.! A.class_ "idoc-labelled-list dl-horizontal" $
+    B.dl B.! A.class_ "idoc-labelled-list dl-vertical" $
          concatMap toMarkup listItems
 
 instance LineLike a => ToMarkup (List a) where
@@ -380,24 +373,75 @@ instance ToMarkup Video where
       mLabel = ClassyPrelude.id
 --      mLabel = maybe ClassyPrelude.id (\(LinkText x) -> (B.! A.alt (textValue x))) linkText
 
+
+data DefaultCollapseState = Collapsed 
+                          | Uncollapsed deriving (Eq, Show)
+instance ToValue DefaultCollapseState where
+  toValue Collapsed = ""
+  toValue Uncollapsed = "in"
+
+data PanelType = Default 
+               | Primary 
+               | Info 
+               | Warning
+               | Danger deriving (Eq, Show)
+instance ToValue PanelType where
+  toValue Default = "panel-default"
+  toValue Primary = "pnael-primary"
+  toValue Info = "panel-info"
+  toValue Warning = "panel-warning"
+  toValue Danger = "panel-danger"
+
+data GridWidth = GridFour
+               | GridSix
+               | GridEight
+               | GridTwelve deriving (Eq, Show)
+
+instance ToValue GridWidth where
+  toValue GridFour = "col-md-4"
+  toValue GridSix = "col-md-6"
+  toValue GridEight = "col-md-8"
+  toValue GridTwelve = "col-md-12"
+
+data PanelOptions = PanelOptions { panelDefaultCollapseState :: DefaultCollapseState
+                                 , panelType :: PanelType
+                                 , panelGridWidth :: GridWidth
+                                 } deriving (Eq, Show)
+
+defaultPanelOptions :: PanelOptions
+defaultPanelOptions = PanelOptions Uncollapsed Default GridTwelve
+
+panel :: ToValue a => PanelOptions -> Html -> Maybe a -> Html -> Html
+panel (PanelOptions {..}) title_ id_ body_ = 
+  B.div B.! A.class_ (toValue panelGridWidth) $
+  B.div B.! A.class_ ("panel " ++ (toValue panelType)) $
+        (B.div B.! A.class_ "panel-heading" $
+               B.h3 B.! A.class_ "panel-title" $
+                    (mHrefV id_ $ 
+                     B.a B.! B.dataAttribute "toggle" "collapse" $
+                      title_)) ++
+         (mID' id_ $ 
+          B.div B.! A.class_ ("panel-collapse collapse " ++ (toValue panelDefaultCollapseState)) $
+           body_)
+  where
+    mHrefV (Just i') = (B.! href ("#" ++ (toValue i')))
+    mHrefV Nothing  = ClassyPrelude.id
+    mID' (Just i') = (B.! A.id (toValue i'))
+    mID' Nothing = ClassyPrelude.id
+
+defaultPanel :: ToValue a => Html -> Maybe a -> Html -> Html
+defaultPanel = panel defaultPanelOptions
+
 instance ToMarkup YouTube where
-  toMarkup (YouTube x) = 
-    B.div B.! A.class_ "idoc-youtube-contents panel panel-default" $
-          (B.div B.! A.class_ "panel-heading" $
-                 B.h3 B.! A.class_ "panel-title" $
-                      B.a B.! B.dataAttribute "toggle" "collapse"
-                          B.! href ("#" ++ toValue x) $
-                          "YouTube Video") ++
-          (B.div B.! A.class_ "panel-collapse collapse in"
-                 B.! A.id (toValue x) $
-                 B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
-                       iframe B.! A.class_ "idoc-youtube-embed embed-responsive-item"
-                              B.! allowfullscreen "true"
-                              B.! A.src ("https://www.youtube.com/embed/" ++ (toValue x)) $
-                              text "")
+  toMarkup (YouTube x) =
+    defaultPanel "YouTube Video" (Just x) $ 
+    B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
+          iframe B.! A.class_ "idoc-youtube-embed embed-responsive-item"
+                 B.! allowfullscreen "true"
+                 B.! A.src ("https://www.youtube.com/embed/" ++ (toValue x)) $
+                 text ""
     where
       allowfullscreen = B.customAttribute "allowfullscreen"
---      mLabel = maybe ClassyPrelude.id (\(LinkText x) -> (B.! A.alt (textValue x))) linkText
 
 instance ToMarkup Connection where
   toMarkup (Connection mpb x) = 
@@ -496,7 +540,7 @@ instance (TypedBlock bType, ToMarkup bType) =>
           mBTitle ++
           toMarkup blockContents
     where
-      bt = case (bType :: BlockType bType) of (BlockType bt) -> toValue bt
+      bt = case (bType :: BlockType bType) of (BlockType bt') -> toValue bt'
       mBTitle = maybe "" toMarkup blockTitle
 
 instance ToMarkup Block where
@@ -519,7 +563,7 @@ instance ToMarkup Block where
   toMarkup (BCodeBlock x) = toMarkup x
   toMarkup (BImageBlock x) = toMarkup x
   toMarkup (BVideoBlock x) = toMarkup x
-  toMarkup (BAdmonitionBlock (BlockT {..})) = 
+  toMarkup (BAdmonitionBlock (BlockT {..})) =
     (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_  "col-md-4" $
     (B.div B.! A.class_ ("idoc-block idoc-admonition-block panel " ++ panelStyle) $
           (B.div B.! A.class_ "panel-heading" $
@@ -535,7 +579,7 @@ instance ToMarkup Block where
     where
       mBID = maybe (badAdmonition blockContents) ClassyPrelude.id blockID
       mBTitle = maybe "" (\(BlockHeading p') -> toMarkup p') blockTitle
-      badAdmonition ad = error $ "Error: Admonitions must have an ID!"
+      badAdmonition _ = error $ "Error: Admonitions must have an ID!"
       admonitionType = maybe "info" (\(AttrValue s) -> s) (join $ lookup "type" $ (\(AttrMap am) -> am) blockAttrs)
       panelStyle = (\case "info"    -> "panel-info"
                           "warning" -> "panel-danger"
@@ -561,7 +605,7 @@ instance ToMarkup Block where
     where
       mBID = maybe (badAside blockContents) ClassyPrelude.id blockID
       mBTitle = maybe "" (\(BlockHeading p') -> toMarkup p') blockTitle
-      badAside as = error $ "Error: Asides must have an ID!"
+      badAside _ = error $ "Error: Asides must have an ID!"
 
   toMarkup (BYouTubeBlock x) = toMarkup x
   toMarkup (BSidenoteBlock (BlockT {..})) = 
@@ -659,7 +703,10 @@ renderPretty x =
             (B.link B.! A.rel "stylesheet"
                     B.! A.href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
                     B.! crossorigin "anonymous") ++
-            (B.style $ ".ils-logo-small, .ils-logo-container { height: 52px; width: 52px; display: inline-block; }")) ++
+            (B.style $ toMarkup $ unlines $ [ ".ils-logo-small, .ils-logo-container { height: 52px; width: 52px; display: inline-block; }" :: String
+                                            , "span.footnote:before { counter-increment: footnotecounter; content: counter(footnotecounter); position: relative; }"
+                                            , "body { counter-reset: footnotecounter; }"
+                                 ])) ++
   (B.body $ (toMarkup x) ++
             (B.script B.! A.src "https://code.jquery.com/jquery-3.1.1.slim.min.js"
 --                       B.! integrity "sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
@@ -671,6 +718,6 @@ renderPretty x =
 --                       B.! integrity "sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
                       B.! crossorigin "anonymous") (text ""))
   where
-    integrity = B.customAttribute "integrity"
+    -- integrity = B.customAttribute "integrity"
     crossorigin = B.customAttribute "crossorigin"
   

@@ -75,7 +75,7 @@ class Render Render22,23
 class Render Render22,23
   render render23,24
 
-./library/Text/IDoc/Render/Hamlet.hs,725
+./library/Text/IDoc/Render/Hamlet.hs,1880
 module Text.IDoc.Render.Hamlet Text.IDoc.Render.Hamlet22,23
 attributeT attributeT31,32
 attributeT attributeT32,33
@@ -96,14 +96,39 @@ outT outT82,83
 outT outT83,84
 internalT internalT85,86
 internalT internalT86,87
-mID mID226,227
-mID mID227,228
-mIDV mIDV245,246
-mIDV mIDV246,247
-quoteBlockMarkup quoteBlockMarkup331,332
-quoteBlockMarkup quoteBlockMarkup332,333
-renderPretty renderPretty645,646
-renderPretty renderPretty646,647
+mID mID219,220
+mID mID220,221
+mIDV mIDV238,239
+mIDV mIDV239,240
+quoteBlockMarkup quoteBlockMarkup324,325
+quoteBlockMarkup quoteBlockMarkup325,326
+data DefaultCollapseState DefaultCollapseState376,377
+data DefaultCollapseState = CollapsedCollapsed376,377
+                          | Uncollapsed Uncollapsed377,378
+data PanelType PanelType382,383
+data PanelType = DefaultDefault382,383
+               | PrimaryPrimary383,384
+               | InfoInfo384,385
+               | WarningWarning385,386
+               | Danger Danger386,387
+data GridWidth GridWidth394,395
+data GridWidth = GridFourGridFour394,395
+               | GridSixGridSix395,396
+               | GridEightGridEight396,397
+               | GridTwelve GridTwelve397,398
+data PanelOptions PanelOptions405,406
+data PanelOptions = PanelOptions PanelOptions405,406
+data PanelOptions = PanelOptions { panelDefaultCollapseState panelDefaultCollapseState405,406
+                                 , panelType panelType406,407
+                                 , panelGridWidth panelGridWidth407,408
+defaultPanelOptions defaultPanelOptions410,411
+defaultPanelOptions defaultPanelOptions411,412
+panel panel413,414
+panel panel414,415
+defaultPanel defaultPanel431,432
+defaultPanel defaultPanel432,433
+renderPretty renderPretty689,690
+renderPretty renderPretty690,691
 
 ./library/Text/IDoc/Parse.hs,16005
 module Text.IDoc.Parse Text.IDoc.Parse23,24
