@@ -103,35 +103,35 @@ mIDV mIDV236,237
 mBlockHeading mBlockHeading321,322
 quoteBlockMarkup quoteBlockMarkup324,325
 quoteBlockMarkup quoteBlockMarkup325,326
-data DefaultCollapseState DefaultCollapseState377,378
-data DefaultCollapseState = CollapsedCollapsed377,378
-                          | Uncollapsed Uncollapsed378,379
-data PanelType PanelType383,384
-data PanelType = DefaultDefault383,384
-               | PrimaryPrimary384,385
-               | InfoInfo385,386
-               | WarningWarning386,387
-               | Danger Danger387,388
-data GridWidth GridWidth395,396
-data GridWidth = GridFourGridFour395,396
-               | GridSixGridSix396,397
-               | GridEightGridEight397,398
-               | GridTwelve GridTwelve398,399
-data PanelOptions PanelOptions406,407
-data PanelOptions = PanelOptions PanelOptions406,407
-data PanelOptions = PanelOptions { panelDefaultCollapseState panelDefaultCollapseState406,407
-                                 , panelType panelType407,408
-                                 , panelGridWidth panelGridWidth408,409
-defaultPanelOptions defaultPanelOptions411,412
-defaultPanelOptions defaultPanelOptions412,413
-panel panel414,415
-panel panel415,416
-defaultPanel defaultPanel432,433
-defaultPanel defaultPanel433,434
-renderPretty renderPretty690,691
-renderPretty renderPretty691,692
+data DefaultCollapseState DefaultCollapseState379,380
+data DefaultCollapseState = CollapsedCollapsed379,380
+                          | Uncollapsed Uncollapsed380,381
+data PanelType PanelType385,386
+data PanelType = DefaultDefault385,386
+               | PrimaryPrimary386,387
+               | InfoInfo387,388
+               | WarningWarning388,389
+               | Danger Danger389,390
+data GridWidth GridWidth397,398
+data GridWidth = GridFourGridFour397,398
+               | GridSixGridSix398,399
+               | GridEightGridEight399,400
+               | GridTwelve GridTwelve400,401
+data PanelOptions PanelOptions408,409
+data PanelOptions = PanelOptions PanelOptions408,409
+data PanelOptions = PanelOptions { panelDefaultCollapseState panelDefaultCollapseState408,409
+                                 , panelType panelType409,410
+                                 , panelGridWidth panelGridWidth410,411
+defaultPanelOptions defaultPanelOptions413,414
+defaultPanelOptions defaultPanelOptions414,415
+panel panel416,417
+panel panel417,418
+defaultPanel defaultPanel434,435
+defaultPanel defaultPanel435,436
+renderPretty renderPretty692,693
+renderPretty renderPretty693,694
 
-./library/Text/IDoc/Parse.hs,16005
+./library/Text/IDoc/Parse.hs,16007
 module Text.IDoc.Parse Text.IDoc.Parse23,24
 instance instance31,32
 class ILS ILS39,40
@@ -376,141 +376,141 @@ newtype CodeLine CodeLine904,905
 newtype CodeLine = CodeLine CodeLine904,905
 newtype Code Code907,908
 newtype Code = Code Code907,908
-newtype Image Image918,919
-newtype Image = Image Image918,919
-newtype Video Video925,926
-newtype Video = Video Video925,926
-data YouTube YouTube932,933
-data YouTube = YouTube YouTube932,933
-data Connection Connection939,940
-data Connection = Connection Connection939,940
-data Connection = Connection { connectionPrerex connectionPrerex939,940
-                             , connectionContents connectionContents940,941
-newtype Definition Definition950,951
-newtype Definition = Definition Definition950,951
-newtype Intuition Intuition957,958
-newtype Intuition = Intuition Intuition957,958
-newtype Admonition Admonition964,965
-newtype Admonition = Admonition Admonition964,965
-newtype Sidenote Sidenote971,972
-newtype Sidenote = Sidenote Sidenote971,972
-newtype Example Example978,979
-newtype Example = Example Example978,979
-newtype Exercise Exercise985,986
-newtype Exercise = Exercise Exercise985,986
-newtype Bibliography Bibliography992,993
-newtype Bibliography = Bibliography Bibliography992,993
-newtype FurtherReading FurtherReading999,1000
-newtype FurtherReading = FurtherReading FurtherReading999,1000
-newtype Summary Summary1006,1007
-newtype Summary = Summary Summary1006,1007
-data Recall Recall1013,1014
-data Recall = Recall Recall1013,1014
-data Recall = Recall { recallContents recallContents1013,1014
-                     , recallLink recallLink1014,1015
-data BlockT BlockT1025,1026
-data BlockT blockType = BlockT BlockT1025,1026
-data BlockT blockType = BlockT { blockContents blockContents1025,1026
-                               , blockTitle blockTitle1026,1027
-                               , blockAttrs blockAttrs1027,1028
-                               , blockID blockID1028,1029
-blockType blockType1041,1042
-blockType blockType1042,1043
-type PrerexBlock PrerexBlock1044,1045
-type IntroductionBlock IntroductionBlock1045,1046
-type MathBlock MathBlock1046,1047
-type EqnArrayBlock EqnArrayBlock1047,1048
-type TheoremBlock TheoremBlock1048,1049
-type LemmaBlock LemmaBlock1049,1050
-type CorollaryBlock CorollaryBlock1050,1051
-type PropositionBlock PropositionBlock1051,1052
-type ConjectureBlock ConjectureBlock1052,1053
-type ProofBlock ProofBlock1053,1054
-type QuoteBlock QuoteBlock1054,1055
-type CodeBlock CodeBlock1055,1056
-type ImageBlock ImageBlock1056,1057
-type VideoBlock VideoBlock1057,1058
-type YouTubeBlock YouTubeBlock1058,1059
-type ConnectionBlock ConnectionBlock1059,1060
-type DefinitionBlock DefinitionBlock1060,1061
-type IntuitionBlock IntuitionBlock1061,1062
-type AdmonitionBlock AdmonitionBlock1062,1063
-type SidenoteBlock SidenoteBlock1063,1064
-type ExampleBlock ExampleBlock1064,1065
-type ExerciseBlock ExerciseBlock1065,1066
-type BibliographyBlock BibliographyBlock1066,1067
-type FurtherReadingBlock FurtherReadingBlock1067,1068
-type SummaryBlock SummaryBlock1068,1069
-type RecallBlock RecallBlock1069,1070
-data Block Block1071,1072
-data Block = BPrerexBlock BPrerexBlock1071,1072
-           | BIntroductionBlock BIntroductionBlock1072,1073
-           | BMathBlock BMathBlock1073,1074
-           | BEqnArrayBlock BEqnArrayBlock1074,1075
-           | BTheoremBlock BTheoremBlock1075,1076
-           | BLemmaBlock BLemmaBlock1076,1077
-           | BCorollaryBlock BCorollaryBlock1077,1078
-           | BPropositionBlock BPropositionBlock1078,1079
-           | BConjectureBlock BConjectureBlock1079,1080
-           | BProofBlock BProofBlock1080,1081
-           | BQuoteBlock BQuoteBlock1081,1082
-           | BCodeBlock BCodeBlock1082,1083
-           | BImageBlock BImageBlock1083,1084
-           | BVideoBlock BVideoBlock1084,1085
-           | BYouTubeBlock BYouTubeBlock1085,1086
-           | BConnectionBlock BConnectionBlock1086,1087
-           | BDefinitionBlock BDefinitionBlock1087,1088
-           | BIntuitionBlock BIntuitionBlock1088,1089
-           | BAdmonitionBlock BAdmonitionBlock1089,1090
-           | BSidenoteBlock BSidenoteBlock1090,1091
-           | BExampleBlock BExampleBlock1091,1092
-           | BExerciseBlock BExerciseBlock1092,1093
-           | BBibliographyBlock BBibliographyBlock1093,1094
-           | BFurtherReadingBlock BFurtherReadingBlock1094,1095
-           | BSummaryBlock BSummaryBlock1095,1096
-           | BRecallBlock BRecallBlock1096,1097
-data Section Section1127,1128
-data Section a = Section Section1127,1128
-data Section a = Section { sectionTitle sectionTitle1127,1128
-                         , sectionContents sectionContents1128,1129
-                         , sectionID sectionID1129,1130
-data Subsection Subsection1147,1148
-data Subsection a = Subsection Subsection1147,1148
-data Subsection a = Subsection { subsectionTitle subsectionTitle1147,1148
-                               , subsectionContents subsectionContents1148,1149
-                               , subsectionID subsectionID1149,1150
-newtype SectionEnder SectionEnder1163,1164
-newtype SectionEnder e s m a = SectionEnder SectionEnder1163,1164
-class (ErrorComponent e, Stream s, Token s ~ Char) => SectionEnd SectionEnd1164,1165
-class (ErrorComponent e, Stream s, Token s ~ Char) => SectionEnd SectionEnd1164,1165
-  sectionEnd sectionEnd1165,1166
-  sectionEnd sectionEnd1166,1167
-newtype AnonymousSection AnonymousSection1172,1173
-newtype AnonymousSection a = AnonymousSection AnonymousSection1172,1173
-heading heading1185,1186
+newtype Image Image920,921
+newtype Image = Image Image920,921
+newtype Video Video927,928
+newtype Video = Video Video927,928
+data YouTube YouTube934,935
+data YouTube = YouTube YouTube934,935
+data Connection Connection941,942
+data Connection = Connection Connection941,942
+data Connection = Connection { connectionPrerex connectionPrerex941,942
+                             , connectionContents connectionContents942,943
+newtype Definition Definition952,953
+newtype Definition = Definition Definition952,953
+newtype Intuition Intuition959,960
+newtype Intuition = Intuition Intuition959,960
+newtype Admonition Admonition966,967
+newtype Admonition = Admonition Admonition966,967
+newtype Sidenote Sidenote973,974
+newtype Sidenote = Sidenote Sidenote973,974
+newtype Example Example980,981
+newtype Example = Example Example980,981
+newtype Exercise Exercise987,988
+newtype Exercise = Exercise Exercise987,988
+newtype Bibliography Bibliography994,995
+newtype Bibliography = Bibliography Bibliography994,995
+newtype FurtherReading FurtherReading1001,1002
+newtype FurtherReading = FurtherReading FurtherReading1001,1002
+newtype Summary Summary1008,1009
+newtype Summary = Summary Summary1008,1009
+data Recall Recall1015,1016
+data Recall = Recall Recall1015,1016
+data Recall = Recall { recallContents recallContents1015,1016
+                     , recallLink recallLink1016,1017
+data BlockT BlockT1027,1028
+data BlockT blockType = BlockT BlockT1027,1028
+data BlockT blockType = BlockT { blockContents blockContents1027,1028
+                               , blockTitle blockTitle1028,1029
+                               , blockAttrs blockAttrs1029,1030
+                               , blockID blockID1030,1031
+blockType blockType1043,1044
+blockType blockType1044,1045
+type PrerexBlock PrerexBlock1046,1047
+type IntroductionBlock IntroductionBlock1047,1048
+type MathBlock MathBlock1048,1049
+type EqnArrayBlock EqnArrayBlock1049,1050
+type TheoremBlock TheoremBlock1050,1051
+type LemmaBlock LemmaBlock1051,1052
+type CorollaryBlock CorollaryBlock1052,1053
+type PropositionBlock PropositionBlock1053,1054
+type ConjectureBlock ConjectureBlock1054,1055
+type ProofBlock ProofBlock1055,1056
+type QuoteBlock QuoteBlock1056,1057
+type CodeBlock CodeBlock1057,1058
+type ImageBlock ImageBlock1058,1059
+type VideoBlock VideoBlock1059,1060
+type YouTubeBlock YouTubeBlock1060,1061
+type ConnectionBlock ConnectionBlock1061,1062
+type DefinitionBlock DefinitionBlock1062,1063
+type IntuitionBlock IntuitionBlock1063,1064
+type AdmonitionBlock AdmonitionBlock1064,1065
+type SidenoteBlock SidenoteBlock1065,1066
+type ExampleBlock ExampleBlock1066,1067
+type ExerciseBlock ExerciseBlock1067,1068
+type BibliographyBlock BibliographyBlock1068,1069
+type FurtherReadingBlock FurtherReadingBlock1069,1070
+type SummaryBlock SummaryBlock1070,1071
+type RecallBlock RecallBlock1071,1072
+data Block Block1073,1074
+data Block = BPrerexBlock BPrerexBlock1073,1074
+           | BIntroductionBlock BIntroductionBlock1074,1075
+           | BMathBlock BMathBlock1075,1076
+           | BEqnArrayBlock BEqnArrayBlock1076,1077
+           | BTheoremBlock BTheoremBlock1077,1078
+           | BLemmaBlock BLemmaBlock1078,1079
+           | BCorollaryBlock BCorollaryBlock1079,1080
+           | BPropositionBlock BPropositionBlock1080,1081
+           | BConjectureBlock BConjectureBlock1081,1082
+           | BProofBlock BProofBlock1082,1083
+           | BQuoteBlock BQuoteBlock1083,1084
+           | BCodeBlock BCodeBlock1084,1085
+           | BImageBlock BImageBlock1085,1086
+           | BVideoBlock BVideoBlock1086,1087
+           | BYouTubeBlock BYouTubeBlock1087,1088
+           | BConnectionBlock BConnectionBlock1088,1089
+           | BDefinitionBlock BDefinitionBlock1089,1090
+           | BIntuitionBlock BIntuitionBlock1090,1091
+           | BAdmonitionBlock BAdmonitionBlock1091,1092
+           | BSidenoteBlock BSidenoteBlock1092,1093
+           | BExampleBlock BExampleBlock1093,1094
+           | BExerciseBlock BExerciseBlock1094,1095
+           | BBibliographyBlock BBibliographyBlock1095,1096
+           | BFurtherReadingBlock BFurtherReadingBlock1096,1097
+           | BSummaryBlock BSummaryBlock1097,1098
+           | BRecallBlock BRecallBlock1098,1099
+data Section Section1129,1130
+data Section a = Section Section1129,1130
+data Section a = Section { sectionTitle sectionTitle1129,1130
+                         , sectionContents sectionContents1130,1131
+                         , sectionID sectionID1131,1132
+data Subsection Subsection1149,1150
+data Subsection a = Subsection Subsection1149,1150
+data Subsection a = Subsection { subsectionTitle subsectionTitle1149,1150
+                               , subsectionContents subsectionContents1150,1151
+                               , subsectionID subsectionID1151,1152
+newtype SectionEnder SectionEnder1165,1166
+newtype SectionEnder e s m a = SectionEnder SectionEnder1165,1166
+class (ErrorComponent e, Stream s, Token s ~ Char) => SectionEnd SectionEnd1166,1167
+class (ErrorComponent e, Stream s, Token s ~ Char) => SectionEnd SectionEnd1166,1167
+  sectionEnd sectionEnd1167,1168
+  sectionEnd sectionEnd1168,1169
+newtype AnonymousSection AnonymousSection1174,1175
+newtype AnonymousSection a = AnonymousSection AnonymousSection1174,1175
 heading heading1187,1188
-newtype DocHeading DocHeading1191,1192
-newtype DocHeading = DocHeading DocHeading1191,1192
-newtype SectionHeading SectionHeading1197,1198
-newtype SectionHeading = SectionHeading SectionHeading1197,1198
-newtype SubsectionHeading SubsectionHeading1203,1204
-newtype SubsectionHeading = SubsectionHeading SubsectionHeading1203,1204
-newtype BlockHeading BlockHeading1209,1210
-newtype BlockHeading = BlockHeading BlockHeading1209,1210
-data ComplexContent ComplexContent1215,1216
-data ComplexContent a = CCBlock CCBlock1215,1216
-                      | CCList CCList1216,1217
-                      | CCParagraph CCParagraph1217,1218
-data Content Content1225,1226
-data Content a = TLCSubsection TLCSubsection1225,1226
-               | TLCSection TLCSection1226,1227
-               | TLCAnonymousSection TLCAnonymousSection1227,1228
-data MainMain1235,1236
-data Doc Doc1237,1238
-data Doc a = Doc Doc1237,1238
-data Doc a = Doc { docTitle docTitle1237,1238
-                 , docPrerex docPrerex1238,1239
-                 , docContents docContents1239,1240
+heading heading1189,1190
+newtype DocHeading DocHeading1193,1194
+newtype DocHeading = DocHeading DocHeading1193,1194
+newtype SectionHeading SectionHeading1199,1200
+newtype SectionHeading = SectionHeading SectionHeading1199,1200
+newtype SubsectionHeading SubsectionHeading1205,1206
+newtype SubsectionHeading = SubsectionHeading SubsectionHeading1205,1206
+newtype BlockHeading BlockHeading1211,1212
+newtype BlockHeading = BlockHeading BlockHeading1211,1212
+data ComplexContent ComplexContent1217,1218
+data ComplexContent a = CCBlock CCBlock1217,1218
+                      | CCList CCList1218,1219
+                      | CCParagraph CCParagraph1219,1220
+data Content Content1227,1228
+data Content a = TLCSubsection TLCSubsection1227,1228
+               | TLCSection TLCSection1228,1229
+               | TLCAnonymousSection TLCAnonymousSection1229,1230
+data MainMain1237,1238
+data Doc Doc1239,1240
+data Doc a = Doc Doc1239,1240
+data Doc a = Doc { docTitle docTitle1239,1240
+                 , docPrerex docPrerex1240,1241
+                 , docContents docContents1241,1242
 
 ./test-suite/Main.hs,68
 main main11,12

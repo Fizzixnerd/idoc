@@ -910,11 +910,13 @@ instance GP.Out Code
 instance TypedBlock Code where bType = "code"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILSBlock e s m Code where
-  ilsBlock = simpleBlock (Code . fromList) $ sep1 ((notFollowedBy blockDelim) >> newline) codeLine
+  ilsBlock = simpleBlock (Code . fromList) $ 
+             (fmap (\x -> fmap fromString x)) $ 
+             lines <$> codeLines
     where
-      codeLine = fmap fromString $ some $ do
+      codeLines = fmap fromString $ some $ do
         notFollowedBy (blockDelim :: ParsecT e s m String)
-        printChar
+        printChar <|> spaceChar
 
 newtype Image = Image OLink deriving (Eq, Show, Generic)
 instance GP.Out Image

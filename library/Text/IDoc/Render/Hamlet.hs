@@ -304,7 +304,7 @@ instance ToMarkup Math where
 
 instance ToMarkup EqnArray where
   toMarkup (EqnArray xs) =
-    B.div B.! A.class_ "idoc-eqn-array-contents bg-info center-block idoc-display-math" $
+    B.div B.! A.class_ "idoc-eqn-array-contents center-block idoc-display-math" $
           text "$$\\begin{eqnarray}\n" ++ 
           (concatMap (\(Equation x) -> toMarkup $ x <> "\\\\\n") xs) ++ 
           text "\\end{eqnarray}$$"
@@ -326,7 +326,8 @@ quoteBlockMarkup :: BlockT Quote -> Html
 quoteBlockMarkup (BlockT {..}) =
   panel (defaultPanelOptions { panelGridWidth = GridSix }) (mBlockHeading (text "Quote") (toMarkup <$> blockTitle)) blockID $
   B.blockquote B.! A.class_ "idoc-blockquote-contents blockquote-reverse" $
-                mCite $ toMarkup $ (\case (Quote x) -> x) blockContents
+               mCite $ 
+               toMarkup $ (\case (Quote x) -> x) blockContents
   where
     mCite = maybe ClassyPrelude.id (\mAuthor -> 
                                        maybe ClassyPrelude.id 
@@ -338,6 +339,7 @@ instance ToMarkup CodeLine where
 
 instance ToMarkup Code where
   toMarkup (Code xs) =
+    panel defaultPanelOptions "Code" (Nothing :: Maybe String) $
           B.code B.! A.class_ "idoc-code-contents code" $
                  concatMap toMarkup xs
 
@@ -695,8 +697,9 @@ renderPretty x =
   (B.head $ (B.meta B.! A.charset "utf-8") ++
             (B.meta B.! A.name "viewport"
                     B.! A.content "width=device-width, initial-scale=1, shrink-to-fit=no") ++
-            (B.script B.! A.async "true" 
-                      B.! A.src "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML") (text "") ++
+            (B.script $ text $ unlines $ [ "window.MathJax = { TeX: {equationNumbers: {autoNumber: \"AMS\"}}}"
+                                         ]) ++
+            (B.script B.! A.src "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML-full,http://independentlearning.science/MathJax/config/local/local.js") (text "") ++
             (B.link B.! A.rel "stylesheet" 
                     B.! A.href "https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/paper/bootstrap.min.css"
 --                    B.! integrity "sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" 
@@ -704,10 +707,10 @@ renderPretty x =
             (B.link B.! A.rel "stylesheet"
                     B.! A.href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
                     B.! crossorigin "anonymous") ++
-            (B.style $ toMarkup $ unlines $ [ ".ils-logo-small, .ils-logo-container { height: 52px; width: 52px; display: inline-block; }" :: String
-                                            , "span.footnote:before { counter-increment: footnotecounter; content: counter(footnotecounter); position: relative; }"
-                                            , "body { counter-reset: footnotecounter; }"
-                                 ])) ++
+            (B.style $ text $ unlines $ [ ".ils-logo-small, .ils-logo-container { height: 52px; width: 52px; display: inline-block; }"
+                                        , "span.footnote:before { counter-increment: footnotecounter; content: counter(footnotecounter); position: relative; }"
+                                        , "body { counter-reset: footnotecounter; }"
+                                        ])) ++
   (B.body $ (toMarkup x) ++
             (B.script B.! A.src "https://code.jquery.com/jquery-3.1.1.slim.min.js"
 --                       B.! integrity "sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"

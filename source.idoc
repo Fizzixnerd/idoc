@@ -8,12 +8,12 @@
 @ introduction
 ---
 idoc is a language and a program.  The language is what was used to
-write this document.  The program is what rendered it (in both $\LaTeX$
-and HTML).  It has a number of features that are not found in other
-humane markup languages.  The most critical of these is support for
-allowing prerequisite resolution, though this is technically
-implemented by a static checker after parsing.  idoc was originally
-based on asciidoc, but has since diverged significantly.
+write this document.  The program is what rendered it (in both
+$\LaTeX$ and HTML5).  It has a number of features that are not found
+in other humane markup languages.  The most critical of these is
+support for allowing prerequisite resolution, though this is
+technically implemented by a static checker after parsing.  idoc was
+originally based on asciidoc, but has since diverged significantly.
 ---
 
 == Goals
@@ -65,7 +65,7 @@ to make _changes_ to the source confidently, based on what you already
 see in it.  Most edits to sites like Wikipedia are small ones; users
 like that don't want to learn the entirety of a markup language.  They
 just want to get in, make their edit, and get out.  Hopefully idoc
-allows them to do this
+allows them to do this.
 : Power with Limitations:: Asciidoc and Markdown allow you to insert
 inline HTML into your documents.  While this sounds nice, it means
 that it's unsuitable for content on a shared website.  This is because
@@ -86,21 +86,58 @@ have to write our own implementation of another markup language
 anyway, it was not a major extra investment to write an implementation
 of a new one instead.
 
-=== Paragraphs
+Hopefully you can forgive us for forcing you to use an untested
+language!
 
-This is a paragraph.  You just type like normal.  They are separated
-by a blank line.  For example:
+== Features
 
-This is now a new paragraph.  I can italicize text with _underscores_
-(`\_`) and bold it with *asterisks* (`\*`).  I can make it `monospace`
-using backticks (`\``).  I will end this paragraph with another blank
-line.
+=== Basics
+
+idoc is a _humane_ markup language, which basically means it doesn't
+suck to write in it.  For example, this is a *paragraph*.  You just
+type like normal.  They are separated by a blank line, as is every
+other *complex content* in idoc.  Complex content is one of a
+paragraph, a list or a block.
+
+This is now a new paragraph.  I can *italicize* text by surrounding it
+with with _underscores_ (`\_`) and *bold* it with *asterisks* (`\*`).
+I can make it *monospace* (like "computer code") using `backticks`
+(`\``).
+
+Every idoc document must have a *title*, which is the first line of
+the document and looks like this: `= Title`.  The space between the
+`=` and the title text is important.  To make new *sections*, type `==
+Section Name`.  Note that the section title must be separated from the
+previous content by a newline.  For example,
+
+@ code
+[lang="idoc"]
+---
+I am a paragraph!  Hear me roar!
+
+== New Section!
+
+Another paragraph.  RAAAAAAAAAAAWR!
+---
+
+is correct, while
+
+@ code
+[lang="idoc"]
+---
+I am a paragraph!  Hear me roar!
+== New Section!
+
+Another paragraph.  RAAAAAAAAAAAWR!
+---
+
+would not display what you want correctly.
 
 === Comments
 
 Any line that begins with `//` denotes a comment.  They will be
 rendered as comments upon translation, but will not be displayed in
-the final document.
+the final document.  These are not yet implemented, but will be soon.
 
 // This is a comment line.  It will not be rendered.  Block
 // comments are not supported because they are a pain.
@@ -154,6 +191,15 @@ Note that that $d$ will not be upright as it should be.  We'll fix
 that later.  Also note that we added an _ID_ to the equation.  IDs can
 be added to many things.  They always appear immediately following the
 thing they identify.
+
+There is also a more specialized `eqnarray` block, which numbers equations
+
+@ eqnarray
+---
+f(x) &=& 2x + 3
+g(y) &=& y^2
+\implies (f \circ g) (x) &=& 2 x^2 + 3
+---
 
 === Blocks
 
@@ -256,8 +302,6 @@ This will show a little lightbulb symbol next to it.
 If you're worried about all the wasted space in the HTML output, don't
 be!  It's only wasted because I didn't put text between each block.
 You would not normally have $1 + 4$ of these things in a row.
-
-lets try a footnote! footnote:{hello.}[[#my-footnote]]
 
 @ connection
 # A connection
