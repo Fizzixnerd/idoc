@@ -8,7 +8,7 @@
 @ introduction
 ---
 idoc is a language and a program.  The language is what was used to
-write this document.  The program is what rendered it (in both LaTeX
+write this document.  The program is what rendered it (in both $\LaTeX$
 and HTML).  It has a number of features that are not found in other
 humane markup languages.  The most critical of these is support for
 allowing prerequisite resolution, though this is technically
@@ -128,7 +128,7 @@ labelled (description) lists.
 
 === Math
 
-Inline math is done just using normal latex syntax by doing enclosing
+Inline math is done just using normal $\LaTeX$ syntax by doing enclosing
 text in dollar signs. $f(x) = \exp (-x^2)$.  Display mode is done by
 using a _math block_, like so:
 

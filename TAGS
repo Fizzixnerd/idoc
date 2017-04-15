@@ -75,7 +75,7 @@ class Render Render22,23
 class Render Render22,23
   render render23,24
 
-./library/Text/IDoc/Render/Hamlet.hs,1880
+./library/Text/IDoc/Render/Hamlet.hs,1917
 module Text.IDoc.Render.Hamlet Text.IDoc.Render.Hamlet22,23
 attributeT attributeT31,32
 attributeT attributeT32,33
@@ -88,47 +88,48 @@ idHashT idHashT55,56
 idHashT idHashT56,57
 idT idT58,59
 idT idT59,60
-commonLinkT commonLinkT76,77
-commonLinkT commonLinkT77,78
-backT backT79,80
-backT backT80,81
-outT outT82,83
-outT outT83,84
-internalT internalT85,86
-internalT internalT86,87
-mID mID219,220
-mID mID220,221
-mIDV mIDV238,239
-mIDV mIDV239,240
+commonLinkT commonLinkT73,74
+commonLinkT commonLinkT74,75
+backT backT76,77
+backT backT77,78
+outT outT79,80
+outT outT80,81
+internalT internalT82,83
+internalT internalT83,84
+mID mID216,217
+mID mID217,218
+mIDV mIDV235,236
+mIDV mIDV236,237
+mBlockHeading mBlockHeading321,322
 quoteBlockMarkup quoteBlockMarkup324,325
 quoteBlockMarkup quoteBlockMarkup325,326
-data DefaultCollapseState DefaultCollapseState376,377
-data DefaultCollapseState = CollapsedCollapsed376,377
-                          | Uncollapsed Uncollapsed377,378
-data PanelType PanelType382,383
-data PanelType = DefaultDefault382,383
-               | PrimaryPrimary383,384
-               | InfoInfo384,385
-               | WarningWarning385,386
-               | Danger Danger386,387
-data GridWidth GridWidth394,395
-data GridWidth = GridFourGridFour394,395
-               | GridSixGridSix395,396
-               | GridEightGridEight396,397
-               | GridTwelve GridTwelve397,398
-data PanelOptions PanelOptions405,406
-data PanelOptions = PanelOptions PanelOptions405,406
-data PanelOptions = PanelOptions { panelDefaultCollapseState panelDefaultCollapseState405,406
-                                 , panelType panelType406,407
-                                 , panelGridWidth panelGridWidth407,408
-defaultPanelOptions defaultPanelOptions410,411
+data DefaultCollapseState DefaultCollapseState377,378
+data DefaultCollapseState = CollapsedCollapsed377,378
+                          | Uncollapsed Uncollapsed378,379
+data PanelType PanelType383,384
+data PanelType = DefaultDefault383,384
+               | PrimaryPrimary384,385
+               | InfoInfo385,386
+               | WarningWarning386,387
+               | Danger Danger387,388
+data GridWidth GridWidth395,396
+data GridWidth = GridFourGridFour395,396
+               | GridSixGridSix396,397
+               | GridEightGridEight397,398
+               | GridTwelve GridTwelve398,399
+data PanelOptions PanelOptions406,407
+data PanelOptions = PanelOptions PanelOptions406,407
+data PanelOptions = PanelOptions { panelDefaultCollapseState panelDefaultCollapseState406,407
+                                 , panelType panelType407,408
+                                 , panelGridWidth panelGridWidth408,409
 defaultPanelOptions defaultPanelOptions411,412
-panel panel413,414
+defaultPanelOptions defaultPanelOptions412,413
 panel panel414,415
-defaultPanel defaultPanel431,432
+panel panel415,416
 defaultPanel defaultPanel432,433
-renderPretty renderPretty689,690
+defaultPanel defaultPanel433,434
 renderPretty renderPretty690,691
+renderPretty renderPretty691,692
 
 ./library/Text/IDoc/Parse.hs,16005
 module Text.IDoc.Parse Text.IDoc.Parse23,24

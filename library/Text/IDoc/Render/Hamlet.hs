@@ -61,9 +61,6 @@ idT (ID {..}) = idPathT idPath <> idHashT idHash
 
 instance ToMarkup BlockHeading where
   toMarkup (BlockHeading x) = 
-    B.h4 B.! A.class_ "idoc-block-title" 
-         B.! A.class_ "h4" $
---         B.! A.id (toValue x) $
     toMarkup x
 
 instance ToMarkup InlineMath where
@@ -322,15 +319,19 @@ instance ToMarkup Proof where
     B.div B.! A.class_ "idoc-proof-contents" $
           toMarkup x
 
+mBlockHeading _ (Just x) = x
+mBlockHeading y Nothing = y
+
 quoteBlockMarkup :: BlockT Quote -> Html
 quoteBlockMarkup (BlockT {..}) =
+  panel (defaultPanelOptions { panelGridWidth = GridSix }) (mBlockHeading (text "Quote") (toMarkup <$> blockTitle)) blockID $
   B.blockquote B.! A.class_ "idoc-blockquote-contents blockquote-reverse" $
                 mCite $ toMarkup $ (\case (Quote x) -> x) blockContents
   where
     mCite = maybe ClassyPrelude.id (\mAuthor -> 
                                        maybe ClassyPrelude.id 
-                                       (\author -> (++ " " ++ (B.footer $ B.cite B.! A.class_ "idoc-blockquote-author" $
-                                                               toMarkup author))) mAuthor) (lookup "author" $ (\case (AttrMap x) -> x) blockAttrs)
+                                       (\author -> (++ (B.footer $ B.cite B.! A.class_ "idoc-blockquote-author" $
+                                                         toMarkup author))) mAuthor) (lookup "author" $ (\case (AttrMap x) -> x) blockAttrs)
 
 instance ToMarkup CodeLine where
   toMarkup (CodeLine x) = toMarkup x ++ B.br
@@ -559,7 +560,7 @@ instance ToMarkup Block where
   toMarkup (BTheoremBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BProofBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BPrerexBlock x) = toMarkup x
-  toMarkup (BQuoteBlock x) = B.div B.! A.class_ "col-md-6" $ quoteBlockMarkup x
+  toMarkup (BQuoteBlock x) = quoteBlockMarkup x
   toMarkup (BCodeBlock x) = toMarkup x
   toMarkup (BImageBlock x) = toMarkup x
   toMarkup (BVideoBlock x) = toMarkup x
