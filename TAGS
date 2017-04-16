@@ -75,7 +75,7 @@ class Render Render22,23
 class Render Render22,23
   render render23,24
 
-./library/Text/IDoc/Render/Hamlet.hs,1917
+./library/Text/IDoc/Render/Hamlet.hs,2705
 module Text.IDoc.Render.Hamlet Text.IDoc.Render.Hamlet22,23
 attributeT attributeT31,32
 attributeT attributeT32,33
@@ -100,36 +100,61 @@ mID mID216,217
 mID mID217,218
 mIDV mIDV235,236
 mIDV mIDV236,237
+icon_ icon_272,273
+icon_ icon_273,274
+prerexItemIcon prerexItemIcon275,276
+prerexItemIcon prerexItemIcon276,277
 mBlockHeading mBlockHeading321,322
-quoteBlockMarkup quoteBlockMarkup324,325
-quoteBlockMarkup quoteBlockMarkup325,326
-data DefaultCollapseState DefaultCollapseState380,381
-data DefaultCollapseState = CollapsedCollapsed380,381
-                          | Uncollapsed Uncollapsed381,382
-data PanelType PanelType386,387
-data PanelType = DefaultDefault386,387
-               | PrimaryPrimary387,388
-               | InfoInfo388,389
-               | WarningWarning389,390
-               | Danger Danger390,391
-data GridWidth GridWidth398,399
-data GridWidth = GridFourGridFour398,399
-               | GridSixGridSix399,400
-               | GridEightGridEight400,401
-               | GridTwelve GridTwelve401,402
-data PanelOptions PanelOptions409,410
-data PanelOptions = PanelOptions PanelOptions409,410
-data PanelOptions = PanelOptions { panelDefaultCollapseState panelDefaultCollapseState409,410
-                                 , panelType panelType410,411
-                                 , panelGridWidth panelGridWidth411,412
-defaultPanelOptions defaultPanelOptions414,415
-defaultPanelOptions defaultPanelOptions415,416
-panel panel417,418
-panel panel418,419
-defaultPanel defaultPanel436,437
-defaultPanel defaultPanel437,438
-renderPretty renderPretty697,698
-renderPretty renderPretty698,699
+mBlockHeading mBlockHeading322,323
+quoteIcon quoteIcon325,326
+quoteIcon quoteIcon326,327
+quoteBlockMarkup quoteBlockMarkup328,329
+quoteBlockMarkup quoteBlockMarkup329,330
+codeIcon codeIcon343,344
+codeIcon codeIcon344,345
+data DefaultCollapseState DefaultCollapseState387,388
+data DefaultCollapseState = CollapsedCollapsed387,388
+                          | Uncollapsed Uncollapsed388,389
+data PanelType PanelType393,394
+data PanelType = DefaultDefault393,394
+               | PrimaryPrimary394,395
+               | InfoInfo395,396
+               | SuccessSuccess396,397
+               | WarningWarning397,398
+               | Danger Danger398,399
+data GridWidth GridWidth408,409
+data GridWidth = GridFourGridFour408,409
+               | GridSixGridSix409,410
+               | GridEightGridEight410,411
+               | GridTwelve GridTwelve411,412
+data PanelOptions PanelOptions419,420
+data PanelOptions = PanelOptions PanelOptions419,420
+data PanelOptions = PanelOptions { panelDefaultCollapseState panelDefaultCollapseState419,420
+                                 , panelType panelType420,421
+                                 , panelGridWidth panelGridWidth421,422
+defaultPanelOptions defaultPanelOptions424,425
+defaultPanelOptions defaultPanelOptions425,426
+type Icon Icon427,428
+panel panel429,430
+panel panel430,431
+defaultPanel defaultPanel450,451
+defaultPanel defaultPanel451,452
+youtubeIcon youtubeIcon453,454
+youtubeIcon youtubeIcon454,455
+intuitionIcon intuitionIcon567,568
+intuitionIcon intuitionIcon568,569
+connectionIcon connectionIcon570,571
+connectionIcon connectionIcon571,572
+cautionIcon cautionIcon573,574
+cautionIcon cautionIcon574,575
+warningIcon warningIcon576,577
+warningIcon warningIcon577,578
+tipIcon tipIcon579,580
+tipIcon tipIcon580,581
+infoIcon infoIcon582,583
+infoIcon infoIcon583,584
+renderPretty renderPretty710,711
+renderPretty renderPretty711,712
 
 ./library/Text/IDoc/Parse.hs,16007
 module Text.IDoc.Parse Text.IDoc.Parse23,24

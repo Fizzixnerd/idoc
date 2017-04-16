@@ -270,22 +270,22 @@ instance ToMarkup BibliographyItem where
     B.li B.! A.class_ "idoc-bibliography-item" $
          toMarkup x
 
+icon_ :: AttributeValue -> Icon
+icon_ x = B.span B.! A.class_ ("fa " ++ x) $ ""
+
+prerexItemIcon :: Icon
+prerexItemIcon = icon_ "fa-question-circle"
+
 instance ToMarkup PrerexItem where
   toMarkup (PrerexItem {..}) = 
-          B.div B.! A.class_ "idoc-prerex-item panel panel-info" $
-                (B.div B.! A.class_ "panel-heading" $
-                       B.h3 B.! A.class_ "panel-title" $
-                            B.a B.! B.dataAttribute "toggle" "collapse"
-                                B.! href ("#" ++ toValue prerexPath) $
-                                toMarkup $ idPathT prerexPath) ++
-                (B.div B.! A.class_ "panel-collapse collapse"
-                       B.! A.id (toValue prerexPath) $
-                       (B.div B.! A.class_ "idoc-prerex-item-content panel-body" $
-                              toMarkup prerexDescription) ++
-                       (B.div B.! A.class_ "idoc-prerex-item-footer panel-footer" $
-                              B.a B.! A.class_ "idoc-prerex-item-link"
-                                  B.! A.href (toValue $ idPathT prerexPath) $
-                                  "Go to " ++ (toMarkup $ idPathT prerexPath)))
+    panel (defaultPanelOptions { panelType = Info, panelDefaultCollapseState = Collapsed }) 
+          (toMarkup $ idPathT prerexPath) 
+          (Just prerexPath) 
+          prerexItemIcon
+          (Just $ B.a B.! A.class_ "idoc-prerex-item-link"
+                      B.! A.href (toValue $ idPathT prerexPath) $
+                      "Go to " ++ (toMarkup $ idPathT prerexPath)) $
+          toMarkup prerexDescription
 
 instance ToMarkup (BlockType a) where
   toMarkup (BlockType x) = 
@@ -319,12 +319,16 @@ instance ToMarkup Proof where
     B.div B.! A.class_ "idoc-proof-contents" $
           toMarkup x
 
+mBlockHeading :: a -> Maybe a -> a
 mBlockHeading _ (Just x) = x
 mBlockHeading y Nothing = y
 
+quoteIcon :: Icon
+quoteIcon = B.span B.! A.class_ "fa fa-quote-left" $ ""
+
 quoteBlockMarkup :: BlockT Quote -> Html
 quoteBlockMarkup (BlockT {..}) =
-  panel (defaultPanelOptions { panelGridWidth = GridSix }) (mBlockHeading (text "Quote") (toMarkup <$> blockTitle)) blockID $
+  panel (defaultPanelOptions { panelGridWidth = GridSix }) (mBlockHeading (text "Quote") (toMarkup <$> blockTitle)) blockID quoteIcon Nothing $
   B.blockquote B.! A.class_ "idoc-blockquote-contents blockquote-reverse" $
                mCite $ 
                toMarkup $ (\case (Quote x) -> x) blockContents
@@ -337,10 +341,13 @@ quoteBlockMarkup (BlockT {..}) =
 instance ToMarkup CodeLine where
   toMarkup (CodeLine x) = toMarkup x ++ B.br
 
+codeIcon :: Icon
+codeIcon = B.span B.! A.class_ "fa fa-code" $ ""
+
 -- | FIXME: This should do titles and IDs correctly!
 instance ToMarkup Code where
   toMarkup (Code xs) =
-    panel defaultPanelOptions "Code" (Nothing :: Maybe String) $
+    panel defaultPanelOptions "Code" (Nothing :: Maybe String) codeIcon Nothing $
           B.code B.! A.class_ "idoc-code-contents code" $
                  concatMap toMarkup xs
 
@@ -387,14 +394,17 @@ instance ToValue DefaultCollapseState where
 data PanelType = Default 
                | Primary 
                | Info 
+               | Success
                | Warning
                | Danger deriving (Eq, Show)
+
 instance ToValue PanelType where
   toValue Default = "panel-default"
   toValue Primary = "pnael-primary"
-  toValue Info = "panel-info"
+  toValue Info    = "panel-info"
+  toValue Success = "panel-success"
   toValue Warning = "panel-warning"
-  toValue Danger = "panel-danger"
+  toValue Danger  = "panel-danger"
 
 data GridWidth = GridFour
                | GridSix
@@ -415,31 +425,38 @@ data PanelOptions = PanelOptions { panelDefaultCollapseState :: DefaultCollapseS
 defaultPanelOptions :: PanelOptions
 defaultPanelOptions = PanelOptions Uncollapsed Default GridTwelve
 
-panel :: ToValue a => PanelOptions -> Html -> Maybe a -> Html -> Html
-panel (PanelOptions {..}) title_ id_ body_ = 
+type Icon = Html
+
+panel :: ToValue a => PanelOptions -> Html -> Maybe a -> Icon -> Maybe Html ->  Html -> Html
+panel (PanelOptions {..}) title_ id_ icon_ footer_ body_= 
   B.div B.! A.class_ (toValue panelGridWidth) $
   B.div B.! A.class_ ("panel " ++ (toValue panelType)) $
         (B.div B.! A.class_ "panel-heading" $
-               B.h3 B.! A.class_ "panel-title" $
+               (B.h3 B.! A.class_ "panel-title" $
                     (mHrefV id_ $ 
                      B.a B.! B.dataAttribute "toggle" "collapse" $
-                     title_)) ++
+                     (icon_ ++ " " ++ title_ ++ " " ++ (B.span B.! A.class_ "fa fa-angle-double-down" $ ""))))) ++
          (mID' id_ $ 
           B.div B.! A.class_ ("panel-collapse collapse " ++ (toValue panelDefaultCollapseState)) $
-                B.div B.! A.class_ "panel-body" $
-                      body_)
+                mfooterify footer_ $ (B.div B.! A.class_ "panel-body" $
+                                            body_))
   where
+    mfooterify Nothing = ClassyPrelude.id
+    mfooterify (Just f) = ((flip (++)) (B.div B.! A.class_ "panel-footer" $ f))
     mHrefV (Just i') = (B.! href ("#" ++ (toValue i')))
     mHrefV Nothing  = ClassyPrelude.id
     mID' (Just i') = (B.! A.id (toValue i'))
     mID' Nothing = ClassyPrelude.id
 
-defaultPanel :: ToValue a => Html -> Maybe a -> Html -> Html
+defaultPanel :: ToValue a => Html -> Maybe a -> Icon -> Maybe Html -> Html -> Html
 defaultPanel = panel defaultPanelOptions
+
+youtubeIcon :: Icon
+youtubeIcon = B.span B.! A.class_ "fa fa-youtube" $ ""
 
 instance ToMarkup YouTube where
   toMarkup (YouTube x) =
-    defaultPanel "YouTube Video" (Just x) $ 
+    defaultPanel "YouTube Video" (Just x) youtubeIcon Nothing $ 
     B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
           iframe B.! A.class_ "idoc-youtube-embed embed-responsive-item"
                  B.! allowfullscreen "true"
@@ -548,6 +565,24 @@ instance (TypedBlock bType, ToMarkup bType) =>
       bt = case (bType :: BlockType bType) of (BlockType bt') -> toValue bt'
       mBTitle = maybe "" toMarkup blockTitle
 
+intuitionIcon :: Icon
+intuitionIcon = B.span B.! A.class_ "fa fa-puzzle-piece" $ ""
+
+connectionIcon :: Icon
+connectionIcon = B.span B.! A.class_ "fa fa-link" $ ""
+
+cautionIcon :: Icon
+cautionIcon = B.span B.! A.class_ "fa fa-life-ring" $ ""
+
+warningIcon :: Icon
+warningIcon = B.span B.! A.class_ "fa fa-life-ring" $ ""
+
+tipIcon :: Icon
+tipIcon = B.span B.! A.class_ "fa fa-thumbs-up" $ ""
+
+infoIcon :: Icon
+infoIcon = B.span B.! A.class_ "fa fa-info" $ ""
+
 instance ToMarkup Block where
   toMarkup (BIntroductionBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BLemmaBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
@@ -557,7 +592,7 @@ instance ToMarkup Block where
   toMarkup (BDefinitionBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BIntuitionBlock (BlockT {..})) = 
     (B.div B.! A.class_ "clearfix" $ "") ++ 
-    (panel (defaultPanelOptions { panelType = Info }) (mBlockHeading "Intuition" (toMarkup <$> blockTitle)) blockID $ 
+    (panel (defaultPanelOptions { panelType = Info }) (mBlockHeading "Intuition" (toMarkup <$> blockTitle)) blockID intuitionIcon Nothing $ 
      toMarkup blockContents)
   toMarkup (BFurtherReadingBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BSummaryBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
@@ -572,48 +607,26 @@ instance ToMarkup Block where
   toMarkup (BImageBlock x) = toMarkup x
   toMarkup (BVideoBlock x) = toMarkup x
   toMarkup (BAdmonitionBlock (BlockT {..})) =
-    (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_  "col-md-4" $
-    (B.div B.! A.class_ ("idoc-block idoc-admonition-block panel " ++ panelStyle) $
-          (B.div B.! A.class_ "panel-heading" $
-                 B.h3 B.! A.class_ "panel-title" $ 
-                      B.a B.! B.dataAttribute "toggle" "collapse"
-                          B.! href ("#" ++ (toValue mBID)) $
-                          (text admonitionType) ++ ": " ++ mBTitle) ++
-          (B.div B.! A.class_ "panel-collapse collapse in"
-                 B.! A.id (toValue mBID) $
-                 B.div B.! A.class_ "panel-body" $
-                       (B.span B.! A.class_ (toValue $ ("fa " :: String) ++ faSelect ++ " fa-4x fa-pull-left fa-border") $ "") ++ 
-                       toMarkup blockContents)))
+    (B.div B.! A.class_ "clearfix" $ "") ++ 
+    (panel (defaultPanelOptions {panelType = panelStyle, panelGridWidth = GridFour}) 
+           (mBlockHeading (text admonitionType) (toMarkup <$> blockTitle))
+           blockID 
+           icon_ 
+           Nothing $ 
+           (B.span B.! A.class_ (toValue $ ("fa " :: String) ++ faSelect ++ " fa-4x fa-pull-left fa-border") $ "") ++ 
+           toMarkup blockContents)
     where
-      mBID = maybe (badAdmonition blockContents) ClassyPrelude.id blockID
-      mBTitle = maybe "" (\(BlockHeading p') -> toMarkup p') blockTitle
-      badAdmonition _ = error $ "Error: Admonitions must have an ID!"
+      (panelStyle, faSelect, icon_) = (\case "info"    -> (Info, "fa-info-circle", infoIcon)
+                                             "warning" -> (Danger, "fa-exclamation-circle", warningIcon)
+                                             "caution" -> (Warning, "fa-exclamation-triangle", cautionIcon)
+                                             "tip"     -> (Success, "fa-lightbulb-o", tipIcon)
+                                             _         -> (Info, "", "")) admonitionType
       admonitionType = maybe "info" (\(AttrValue s) -> s) (join $ lookup "type" $ (\(AttrMap am) -> am) blockAttrs)
-      panelStyle = (\case "info"    -> "panel-info"
-                          "warning" -> "panel-danger"
-                          "caution" -> "panel-warning"
-                          "tip"     -> "panel-success"
-                          _         -> "panel-info") admonitionType
-      faSelect = (\case "info"    -> "fa-info-circle"
-                        "warning" -> "fa-exclamation-circle"
-                        "caution" -> "fa-exclamation-triangle"
-                        "tip"     -> "fa-lightbulb-o"
-                        _         -> "fa") admonitionType
 
-  toMarkup (BConnectionBlock (BlockT {..})) = (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_ "col-md-12" $
-    B.div B.! A.class_ ("idoc-block idoc-connection-block panel " ++ "panel-primary") $
-          (B.div B.! A.class_ "panel-heading" $
-                 B.h3 B.! A.class_ "panel-title" $
-                      B.a B.! B.dataAttribute "toggle" "collapse"
-                          B.! href ("#" ++ (toValue mBID)) $
-                          mBTitle) ++
-          (B.div B.! A.class_ "panel-collapse collapse in"
-                 B.! A.id (toValue mBID) $
-                 B.div B.! A.class_ "panel-body" $ toMarkup blockContents))
-    where
-      mBID = maybe (badAside blockContents) ClassyPrelude.id blockID
-      mBTitle = maybe "" (\(BlockHeading p') -> toMarkup p') blockTitle
-      badAside _ = error $ "Error: Asides must have an ID!"
+  toMarkup (BConnectionBlock (BlockT {..})) = 
+    (B.div B.! A.class_ "clearfix" $ "") ++ 
+    (panel (defaultPanelOptions {panelType = Primary}) (mBlockHeading (text "Connection") (toMarkup <$> blockTitle)) blockID connectionIcon Nothing $ 
+     toMarkup blockContents)
 
   toMarkup (BYouTubeBlock x) = toMarkup x
   toMarkup (BSidenoteBlock (BlockT {..})) = 
