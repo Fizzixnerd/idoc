@@ -337,7 +337,7 @@ allowed any amount of complex content here.  An equation: $F =
  ---
 ---
 
-For more specialized blocks similar to `sidenote`s, use an
+For more specialized blocks similar to `sidenotes`, use an
 `admonition` instead.  They look nicer and are more eye catching.
 Here are some examples; notice how again we use an attribute list to
 specify the type of admonition.
