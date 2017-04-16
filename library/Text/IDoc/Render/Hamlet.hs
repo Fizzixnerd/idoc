@@ -518,6 +518,11 @@ instance ToMarkup Conjecture where
     B.div B.! A.class_ "idoc-conjecture-contents idoc-theorem-like" $
           toMarkup x
 
+instance ToMarkup Axiom where
+  toMarkup (Axiom x) = 
+    B.div B.! A.class_ "idoc-conjecture-contents idoc-theorem-like" $
+          toMarkup x
+
 instance ToMarkup Definition where
   toMarkup (Definition x) =
     B.div B.! A.class_ "idoc-definition-contents" $
@@ -576,29 +581,52 @@ infoIcon :: Icon
 infoIcon = icon_ "fa-info-circle"
 
 sidenoteIcon :: Icon
-sidenoteIcon = icon_ "fa-sticky-note"
+sidenoteIcon = icon_ "fa-sticky-note-o"
 
 imageIcon :: Icon
 imageIcon = icon_ "fa-image"
 
+theoremIcon :: Icon
+theoremIcon = icon_ "fa-star-o"
+
+definitionIcon :: Icon
+definitionIcon = icon_ "fa-book"
+
+conjectureIcon :: Icon
+conjectureIcon = icon_ "fa-question"
+
+proofIcon :: Icon
+proofIcon = icon_ "fa-star"
+
+axiomIcon :: Icon
+axiomIcon = icon_ "fa-cube"
+
+simplePanelBlock :: ToMarkup a => PanelType -> Text -> Icon -> BlockT a -> Html
+simplePanelBlock panelType_ defaultHeading icon__ (BlockT {..}) =
+  (B.div B.! A.class_ "clearfix" $ "") ++
+  (panel (defaultPanelOptions { panelType = panelType_ })
+         (mBlockHeading (text defaultHeading) (toMarkup <$> blockTitle))
+         blockID
+         icon__
+         Nothing $
+         toMarkup blockContents)
+
 instance ToMarkup Block where
   toMarkup (BIntroductionBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
-  toMarkup (BLemmaBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
-  toMarkup (BCorollaryBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
-  toMarkup (BPropositionBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
-  toMarkup (BConjectureBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
-  toMarkup (BDefinitionBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
-  toMarkup (BIntuitionBlock (BlockT {..})) = 
-    (B.div B.! A.class_ "clearfix" $ "") ++ 
-    (panel (defaultPanelOptions { panelType = Primary }) (mBlockHeading "Intuition" (toMarkup <$> blockTitle)) blockID intuitionIcon Nothing $ 
-     toMarkup blockContents)
+  toMarkup (BLemmaBlock x) = simplePanelBlock Primary "Lemma" theoremIcon x
+  toMarkup (BCorollaryBlock x) = simplePanelBlock Primary "Corollary" theoremIcon x
+  toMarkup (BPropositionBlock x) = simplePanelBlock Primary "Proposition" theoremIcon x
+  toMarkup (BConjectureBlock x) = simplePanelBlock Primary "Conjecture" theoremIcon x
+  toMarkup (BDefinitionBlock x) = simplePanelBlock Primary "Definition" definitionIcon x
+  toMarkup (BIntuitionBlock x) = simplePanelBlock Info "Intuition" intuitionIcon x
   toMarkup (BFurtherReadingBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BSummaryBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BRecallBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BMathBlock x) = toMarkup x
   toMarkup (BEqnArrayBlock x) = toMarkup x
-  toMarkup (BTheoremBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
-  toMarkup (BProofBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BTheoremBlock x) = simplePanelBlock Primary "Theorem" theoremIcon x
+  toMarkup (BAxiomBlock x) = simplePanelBlock Primary "Axiom" axiomIcon x
+  toMarkup (BProofBlock x) = simplePanelBlock Primary "Proof" proofIcon x
   toMarkup (BPrerexBlock x) = toMarkup x
   toMarkup (BQuoteBlock x) = quoteBlockMarkup x
   toMarkup (BCodeBlock x) = toMarkup x ++ (B.div B.! A.class_ "clearfix" $ "")
@@ -609,7 +637,6 @@ instance ToMarkup Block where
           imageIcon
           Nothing $
           toMarkup blockContents
-
   toMarkup (BVideoBlock x) = toMarkup x
   toMarkup (BAdmonitionBlock (BlockT {..})) =
     (B.div B.! A.class_ "clearfix" $ "") ++ 
@@ -627,12 +654,14 @@ instance ToMarkup Block where
                                               "tip"     -> (Success, "fa-lightbulb-o", tipIcon)
                                               _         -> (Info, "", "")) admonitionType
       admonitionType = maybe "info" (\(AttrValue s) -> s) (join $ lookup "type" $ (\(AttrMap am) -> am) blockAttrs)
-
   toMarkup (BConnectionBlock (BlockT {..})) = 
     (B.div B.! A.class_ "clearfix" $ "") ++ 
-    (panel (defaultPanelOptions {panelType = Primary}) (mBlockHeading (text "Connection") (toMarkup <$> blockTitle)) blockID connectionIcon Nothing $ 
-     toMarkup blockContents)
-
+    (panel (defaultPanelOptions {panelType = Info}) 
+           (mBlockHeading (text "Connection") (toMarkup <$> blockTitle))
+           blockID
+           connectionIcon
+           Nothing $ 
+           toMarkup blockContents)
   toMarkup (BYouTubeBlock x) = toMarkup x
   toMarkup (BSidenoteBlock (BlockT {..})) = 
     (B.div B.! A.class_ "clearfix" $ "") ++ 
@@ -642,7 +671,6 @@ instance ToMarkup Block where
            sidenoteIcon 
            Nothing $ 
      toMarkup blockContents)
-
   toMarkup (BExampleBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BExerciseBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BBibliographyBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x

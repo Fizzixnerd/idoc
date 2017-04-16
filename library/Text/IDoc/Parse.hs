@@ -893,6 +893,13 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ILSBlock e s m Conjecture where
   ilsBlock = simpleBlock Conjecture ils
 
+newtype Axiom = Axiom (AnonymousSection Block) deriving (Eq, Show, Generic)
+instance GP.Out Axiom
+instance TypedBlock Axiom where bType = "axiom"
+instance (ErrorComponent e, Stream s, Token s ~ Char) =>
+  ILSBlock e s m Axiom where
+  ilsBlock = simpleBlock Axiom ils
+
 newtype Proof = Proof (AnonymousSection Block) deriving (Eq, Show, Generic)
 instance GP.Out Proof
 instance TypedBlock Proof where bType = "proof"
@@ -1041,7 +1048,7 @@ instance (ErrorComponent e, Stream s, Token s ~ Char, ILSBlock e s m blockType, 
   ils = do
     void $ many $ spaceChar
     bty <- ils :: ParsecT e s m (BlockType blockType)
-    guard $ bty == blockType (undefined :: BlockT blockType)
+    guard $ bty == blockType (error "error from ils :: BlockT: when guarding for blocktype." :: BlockT blockType)
     bt <- optional $ TM.try ils
     am <- optionalAttrMap
     ilsBlock bt am
@@ -1058,6 +1065,7 @@ type LemmaBlock = BlockT Lemma
 type CorollaryBlock = BlockT Corollary
 type PropositionBlock = BlockT Proposition
 type ConjectureBlock = BlockT Conjecture
+type AxiomBlock = BlockT Axiom
 type ProofBlock = BlockT Proof
 type QuoteBlock = BlockT Quote
 type CodeBlock = BlockT Code
@@ -1085,6 +1093,7 @@ data Block = BPrerexBlock PrerexBlock
            | BCorollaryBlock CorollaryBlock
            | BPropositionBlock PropositionBlock
            | BConjectureBlock ConjectureBlock
+           | BAxiomBlock AxiomBlock
            | BProofBlock ProofBlock
            | BQuoteBlock QuoteBlock
            | BCodeBlock CodeBlock
@@ -1114,6 +1123,7 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
         (TM.try $ BCorollaryBlock <$> ils) <|>
         (TM.try $ BPropositionBlock <$> ils) <|>
         (TM.try $ BConjectureBlock <$> ils) <|>
+        (TM.try $ BAxiomBlock <$> ils) <|>
         (TM.try $ BProofBlock <$> ils) <|>
         (TM.try $ BQuoteBlock <$> ils) <|>
         (TM.try $ BCodeBlock <$> ils) <|>
