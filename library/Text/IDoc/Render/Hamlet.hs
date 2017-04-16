@@ -234,7 +234,7 @@ instance LineLike a => ToMarkup (ListItem a Labelled) where
            toMarkup listItemContents)
 
 mIDV :: Maybe SetID -> Html -> Html
-mIDV id_ = maybe ClassyPrelude.id (\x -> (B.! A.id (toValue x))) id_
+mIDV id_ = maybe ClassyPrelude.id (\x y -> (y B.! A.id (toValue x))) id_
 
 instance LineLike a => ToMarkup (ListT a Unordered) where
   toMarkup (ListT {..}) =
@@ -392,7 +392,7 @@ data PanelType = Default
 
 instance ToValue PanelType where
   toValue Default = "panel-default"
-  toValue Primary = "pnael-primary"
+  toValue Primary = "panel-primary"
   toValue Info    = "panel-info"
   toValue Success = "panel-success"
   toValue Warning = "panel-warning"
@@ -590,7 +590,7 @@ instance ToMarkup Block where
   toMarkup (BDefinitionBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BIntuitionBlock (BlockT {..})) = 
     (B.div B.! A.class_ "clearfix" $ "") ++ 
-    (panel (defaultPanelOptions { panelType = Info }) (mBlockHeading "Intuition" (toMarkup <$> blockTitle)) blockID intuitionIcon Nothing $ 
+    (panel (defaultPanelOptions { panelType = Primary }) (mBlockHeading "Intuition" (toMarkup <$> blockTitle)) blockID intuitionIcon Nothing $ 
      toMarkup blockContents)
   toMarkup (BFurtherReadingBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BSummaryBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
@@ -616,16 +616,16 @@ instance ToMarkup Block where
     (panel (defaultPanelOptions {panelType = panelStyle, panelGridWidth = GridFour}) 
            (mBlockHeading (text admonitionType) (toMarkup <$> blockTitle))
            blockID 
-           icon_ 
+           icon__
            Nothing $ 
            (B.span B.! A.class_ (toValue $ ("fa " :: String) ++ faSelect ++ " fa-4x fa-pull-left fa-border") $ "") ++ 
            toMarkup blockContents)
     where
-      (panelStyle, faSelect, icon_) = (\case "info"    -> (Info, "fa-info-circle", infoIcon)
-                                             "warning" -> (Danger, "fa-exclamation-circle", warningIcon)
-                                             "caution" -> (Warning, "fa-exclamation-triangle", cautionIcon)
-                                             "tip"     -> (Success, "fa-lightbulb-o", tipIcon)
-                                             _         -> (Info, "", "")) admonitionType
+      (panelStyle, faSelect, icon__) = (\case "info"    -> (Info, "fa-info-circle", infoIcon)
+                                              "warning" -> (Danger, "fa-exclamation-circle", warningIcon)
+                                              "caution" -> (Warning, "fa-exclamation-triangle", cautionIcon)
+                                              "tip"     -> (Success, "fa-lightbulb-o", tipIcon)
+                                              _         -> (Info, "", "")) admonitionType
       admonitionType = maybe "info" (\(AttrValue s) -> s) (join $ lookup "type" $ (\(AttrMap am) -> am) blockAttrs)
 
   toMarkup (BConnectionBlock (BlockT {..})) = 
@@ -669,9 +669,8 @@ instance LineLike a => ToMarkup (ComplexContent a) where
 
 instance LineLike a => ToMarkup (Section a) where
   toMarkup (Section {..}) =
-    mIDV sectionID $
     B.section B.! A.class_ "idoc-section" $
-              toMarkup sectionTitle ++
+              (mIDV sectionID $ toMarkup sectionTitle) ++
               as ++
               (concatMap toMarkup $ snd sectionContents)
     where
@@ -679,9 +678,8 @@ instance LineLike a => ToMarkup (Section a) where
 
 instance LineLike a => ToMarkup (Subsection a) where
   toMarkup (Subsection {..}) =
-    mIDV subsectionID $
     B.section B.! A.class_ "idoc-subsection" $
-              toMarkup subsectionTitle ++
+              (mIDV subsectionID $ toMarkup subsectionTitle) ++
               toMarkup subsectionContents
 
 instance LineLike a => ToMarkup (AnonymousSection a) where

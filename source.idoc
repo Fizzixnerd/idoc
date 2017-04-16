@@ -131,7 +131,8 @@ I am a paragraph!  Hear me roar!
 Another paragraph.  RAAAAAAAAAAAWR!
 ---
 
-would not display what you want correctly.
+would not display what you want correctly.  Subsections are the same
+deal: use `=== Subsection Name`.
 
 Any line that begins with `//` denotes a comment.  They will be
 rendered as comments upon translation, but will not be displayed in
@@ -139,6 +140,26 @@ the final document.  These are not yet implemented, but will be soon.
 
 // This is a comment line.  It will not be rendered.  Block
 // comments are not supported because they are a pain.
+
+Nearly everything in idoc can be given an identifier (or *ID*) using
+the syntax `[[#id-name]]`.  This immediately follows the thing you
+wish to identify.  For example, we can identify this paragraph like
+so:
+
+[[#example-paragraph]]
+
+@ code
+[lang="idoc"]
+---
+Nearly everything in idoc can be given an identifier using the syntax
+`[[#id-name]]`.  This immediately follows the thing you wish to
+identify.  For example, we can identify this paragraph like so:
+
+[[#example-paragraph]]
+---
+
+To see how to refer to IDs and link to them, check out the
+<<#sec-links>>{section on links}.
 
 === Lists
 
@@ -184,11 +205,26 @@ lists, ordered lists and labelled (description) lists.
 : And So On:: ...
 ---
 
+== Blocks
+
+*Blocks* are a fundamental construct in idoc.  They all look the same,
+basically.  They begin with `@ blocktype` on a line by itself,
+separated by the previous content by a blank line.  A block can also
+have a title, which comes _after_ the declaration of block type; it
+looks like `# Block Title`.  Titles are optional, and a default title
+will be chosen based on the block type if not included.  Next, we have
+the attribute list, which I'll talk more on below.  Basically it looks
+like `[key="value",key-no-value,key2="value-2",...]`, and gives a list
+of *attributes* and optionally their *values*.  Finally, we have the
+actual block itself, which is enclosed by the delimiters `---`.  The
+syntax inside the block is block dependent, and we'll explore them all
+below.
+
 === Math
 
 Inline math is done just using normal $\LaTeX$ syntax by doing enclosing
 text in dollar signs. $f(x) = \exp (-x^2)$.  Display mode is done by
-using a _math block_, like so:
+using a `math` block, like so:
 
 @ math
 # Look Ma', I Have Equations!
@@ -217,7 +253,7 @@ There is also a more specialized `eqnarray` block, which numbers
 equations.  Note however that _unlike_ the $\LaTeX$ eqnarray, you do
 not put a linebreak (`\\ `) at the end of each line.  The ampersands
 (`&`) tell MathJax where to align line to.  So, for example, the
-equations below have a "left side", and "equals sign" in the middle,
+equations below have a "left side", an "equals sign" in the middle,
 and a "right side".
 
 @ eqnarray
@@ -276,11 +312,7 @@ R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}
  ---
 ---
 
-== Blocks
-
-We can do other types of blocks beside `math`.  They all look the
-same, basically.  A block can also have a title, which comes _after_
-the declaration of block type; it looks like `# Block Title`.
+We can do other types of blocks besides `math`.  
 
 === Emphasis Blocks
 
@@ -568,6 +600,7 @@ the cube!
 ---
 
 === Links
+[[#sec-links]]
 
 Links come in three flavours.  The first is your standard link, called
 an *out link* or *olink* in idoc.  It's written like
@@ -626,6 +659,8 @@ We can embed important images too.
 ---
 <<http://www.independentlearning.science/uusBbd5.jpg>>
 ---
+
+Bunnies make everything better.
 
 == Conclusion
 

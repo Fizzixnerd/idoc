@@ -659,14 +659,18 @@ data Paragraph a = Paragraph { paragraphContent :: Vector (ParagraphContent a)
                              } deriving (Eq, Show, Generic)
 instance GP.Out (Paragraph a)
 
-instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a) =>
+instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, LineLike a) =>
   ILS e s m (Paragraph a) where
   ils = do
-    notFollowedBy $ (TM.try $ void $ (ils :: ParsecT e s m (SectionHeading))) <|>
-                    (         void $ (ils :: ParsecT e s m (SubsectionHeading)))
+    let (LikeLine ll :: LikeLine a) = lineLike
+    notFollowedBy $ TM.try $ void (ils :: ParsecT e s m (SectionHeading)) <|>
+                             void (ils :: ParsecT e s m (SubsectionHeading))
     void $ many $ spaceChar
     scs <- some ils
-    pid <- optional $ TM.try ils
+    pid <- if ll then
+             return Nothing
+           else
+             optional $ TM.try ils
     return $ Paragraph { paragraphContent = fromList scs
                        , paragraphID = pid
                        }
@@ -692,7 +696,7 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
     void $ string "::" >> spaceChar
     return l
 
-listItem :: forall e s m labelType a . (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m (a, labelType), BadEnd e s m (a, labelType), ILS e s m labelType) => 
+listItem :: forall e s m labelType a . (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m (a, labelType), BadEnd e s m (a, labelType), ILS e s m labelType, LineLike labelType, LineLike a) => 
   Char -> ParsecT e s m (ListItem a labelType)
 listItem s = do
   void $ char s >> spaceChar
@@ -706,15 +710,15 @@ data ListItem a labelType = ListItem { listItemContents :: Paragraph (a, labelTy
                                      , listItemLabel    :: labelType
                                      } deriving (Eq, Show, Generic)
 instance GP.Out labelType => GP.Out (ListItem a labelType)
-instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a) => 
+instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, LineLike a) => 
   ILS e s m (ListItem a Unordered) where
   ils = listItem '-'
 
-instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a) => 
+instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, LineLike a) => 
   ILS e s m (ListItem a Ordered) where
   ils = listItem '.'
 
-instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a) => 
+instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, LineLike a) => 
   ILS e s m (ListItem a Labelled) where
   ils = listItem ':'
 
@@ -742,7 +746,7 @@ data List a = LUList (UList a)
             | LOList (OList a)
             | LLList (LList a) deriving (Eq, Show, Generic)
 instance GP.Out (List a)
-instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a) =>
+instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, LineLike a) =>
   ILS e s m (List a) where
   ils = (TM.try $ LUList <$> ils) <|>
         (TM.try $ LOList <$> ils) <|>
@@ -1133,10 +1137,10 @@ data Section a = Section { sectionTitle :: SectionHeading
                          , sectionID :: Maybe SetID
                          } deriving (Eq, Show, Generic)
 instance GP.Out (Section a)
-instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, SectionEnd e s m a) =>
+instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, SectionEnd e s m a, LineLike a) =>
   ILS e s m (Section a) where
   ils = do
-    st <- TM.try ils
+    st <- ils
     sid <- optional $ TM.try ils
     manon <- optional $ TM.try ils
     sc <- many $ TM.try ils
@@ -1153,10 +1157,10 @@ data Subsection a = Subsection { subsectionTitle :: SubsectionHeading
                                , subsectionID :: Maybe SetID
                                } deriving (Eq, Show, Generic)
 instance GP.Out (Subsection a)
-instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, SectionEnd e s m a) =>
+instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, SectionEnd e s m a, LineLike a) =>
   ILS e s m (Subsection a) where
   ils = do
-    st <- TM.try ils
+    st <- ils
     sid <- optional $ TM.try ils
     sc <- TM.try ils
     return $ Subsection { subsectionTitle = st
@@ -1175,7 +1179,7 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) => SectionEnd e s m Block 
 
 newtype AnonymousSection a = AnonymousSection (Vector (ComplexContent a)) deriving (Eq, Show, Generic)
 instance GP.Out (AnonymousSection a)
-instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, SectionEnd e s m a) =>
+instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, SectionEnd e s m a, LineLike a) =>
   ILS e s m (AnonymousSection a) where
   ils = do
     let (SectionEnder se :: SectionEnder e s m a) = sectionEnd
@@ -1220,7 +1224,7 @@ data ComplexContent a = CCBlock Block
                       | CCList (List a)
                       | CCParagraph (Paragraph a) deriving (Eq, Show, Generic)
 instance GP.Out (ComplexContent a)
-instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a) =>
+instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, LineLike a) =>
   ILS e s m (ComplexContent a) where
   ils = (TM.try $ CCBlock <$> ils) <|>
         (TM.try $ CCList <$> ils) <|>
@@ -1230,7 +1234,7 @@ data Content a = TLCSubsection (Subsection a)
                | TLCSection (Section a)
                | TLCAnonymousSection (AnonymousSection a) deriving (Eq, Show, Generic)
 instance GP.Out (Content a)
-instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, SectionEnd e s m a) =>
+instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, SectionEnd e s m a, LineLike a) =>
   ILS e s m (Content a) where
   ils = (TM.try $ TLCSection <$> ils) <|>
         (TM.try $ TLCSubsection <$> ils) <|>
@@ -1243,7 +1247,7 @@ data Doc a = Doc { docTitle :: DocHeading
                  , docContents :: Vector (Content a)
                  } deriving (Eq, Show, Generic)
 instance GP.Out (Doc a)
-instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, SectionEnd e s m a) =>
+instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, SectionEnd e s m a, LineLike a) =>
   ILS e s m (Doc a) where
   ils = do
     dt <- ils
