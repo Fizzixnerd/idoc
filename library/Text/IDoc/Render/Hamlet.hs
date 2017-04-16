@@ -337,6 +337,7 @@ quoteBlockMarkup (BlockT {..}) =
 instance ToMarkup CodeLine where
   toMarkup (CodeLine x) = toMarkup x ++ B.br
 
+-- | FIXME: This should do titles and IDs correctly!
 instance ToMarkup Code where
   toMarkup (Code xs) =
     panel defaultPanelOptions "Code" (Nothing :: Maybe String) $
@@ -422,10 +423,11 @@ panel (PanelOptions {..}) title_ id_ body_ =
                B.h3 B.! A.class_ "panel-title" $
                     (mHrefV id_ $ 
                      B.a B.! B.dataAttribute "toggle" "collapse" $
-                      title_)) ++
+                     title_)) ++
          (mID' id_ $ 
           B.div B.! A.class_ ("panel-collapse collapse " ++ (toValue panelDefaultCollapseState)) $
-           body_)
+                B.div B.! A.class_ "panel-body" $
+                      body_)
   where
     mHrefV (Just i') = (B.! href ("#" ++ (toValue i')))
     mHrefV Nothing  = ClassyPrelude.id
@@ -552,8 +554,11 @@ instance ToMarkup Block where
   toMarkup (BCorollaryBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BPropositionBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BConjectureBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
-  toMarkup (BDefinitionBlock x) = toMarkup x
-  toMarkup (BIntuitionBlock x) = toMarkup x
+  toMarkup (BDefinitionBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BIntuitionBlock (BlockT {..})) = 
+    (B.div B.! A.class_ "clearfix" $ "") ++ 
+    (panel (defaultPanelOptions { panelType = Info }) (mBlockHeading "Intuition" (toMarkup <$> blockTitle)) blockID $ 
+     toMarkup blockContents)
   toMarkup (BFurtherReadingBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BSummaryBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BRecallBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
@@ -563,7 +568,7 @@ instance ToMarkup Block where
   toMarkup (BProofBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BPrerexBlock x) = toMarkup x
   toMarkup (BQuoteBlock x) = quoteBlockMarkup x
-  toMarkup (BCodeBlock x) = toMarkup x
+  toMarkup (BCodeBlock x) = toMarkup x ++ (B.div B.! A.class_ "clearfix" $ "")
   toMarkup (BImageBlock x) = toMarkup x
   toMarkup (BVideoBlock x) = toMarkup x
   toMarkup (BAdmonitionBlock (BlockT {..})) =
@@ -595,10 +600,10 @@ instance ToMarkup Block where
                         "tip"     -> "fa-lightbulb-o"
                         _         -> "fa") admonitionType
 
-  toMarkup (BConnectionBlock (BlockT {..})) = (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_  "col-md-12" $
+  toMarkup (BConnectionBlock (BlockT {..})) = (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_ "col-md-12" $
     B.div B.! A.class_ ("idoc-block idoc-connection-block panel " ++ "panel-primary") $
           (B.div B.! A.class_ "panel-heading" $
-                 B.h3 B.! A.class_ "panel-title" $ 
+                 B.h3 B.! A.class_ "panel-title" $
                       B.a B.! B.dataAttribute "toggle" "collapse"
                           B.! href ("#" ++ (toValue mBID)) $
                           mBTitle) ++
@@ -697,9 +702,9 @@ renderPretty x =
   (B.head $ (B.meta B.! A.charset "utf-8") ++
             (B.meta B.! A.name "viewport"
                     B.! A.content "width=device-width, initial-scale=1, shrink-to-fit=no") ++
-            (B.script $ text $ unlines $ [ "window.MathJax = { TeX: {equationNumbers: {autoNumber: \"AMS\"}}}"
+            (B.script $ text $ unlines $ [ "window.MathJax = { TeX: {equationNumbers: {autoNumber: \"AMS\", formatID: function (n) {return ''+String(n).replace(/[:'\"<>&]/g,\"\")}}}}"
                                          ]) ++
-            (B.script B.! A.src "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML-full,http://independentlearning.science/MathJax/config/local/local.js") (text "") ++
+            (B.script B.! A.src "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML-full,Safe,http://independentlearning.science/MathJax/config/local/local.js") (text "") ++
             (B.link B.! A.rel "stylesheet" 
                     B.! A.href "https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/paper/bootstrap.min.css"
 --                    B.! integrity "sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" 

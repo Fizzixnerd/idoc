@@ -97,7 +97,7 @@ idoc is a _humane_ markup language, which basically means it doesn't
 suck to write in it.  For example, this is a *paragraph*.  You just
 type like normal.  They are separated by a blank line, as is every
 other *complex content* in idoc.  Complex content is one of a
-paragraph, a list or a block.
+paragraph, a list, or a block.
 
 This is now a new paragraph.  I can *italicize* text by surrounding it
 with with _underscores_ (`\_`) and *bold* it with *asterisks* (`\*`).
@@ -133,8 +133,6 @@ Another paragraph.  RAAAAAAAAAAAWR!
 
 would not display what you want correctly.
 
-=== Comments
-
 Any line that begins with `//` denotes a comment.  They will be
 rendered as comments upon translation, but will not be displayed in
 the final document.  These are not yet implemented, but will be soon.
@@ -144,24 +142,47 @@ the final document.  These are not yet implemented, but will be soon.
 
 === Lists
 
-Lists are sometimes useful in documents.  Currently `idoc` does not
-recognize complex content inside lists, though this is subject to
-change.  This means you cannot nest lists.  You may only write a
-single paragraph.  We support unordered lists, ordered lists and
-labelled (description) lists.
-
+Lists are of fundamental importance when constructing rich documents.
+However, currently `idoc` does not recognize complex content inside
+lists, though this is subject to change.  This means you cannot nest
+lists.  You may only write a single paragraph.  We support unordered
+lists, ordered lists and labelled (description) lists.
 
 - This is an unordered list.  It can contain paragraph contents.
 - It will look like bullet points in the final render.
 - Third main item.
 
+@ code
+[lang="idoc"]
+---
+- This is an unordered list.  It can contain paragraph contents.
+- It will look like bullet points in the final render.
+- Third main item.
+---
+
 . This is a numbered list.
 . This is the second guy.
 . And so on...
 
+@ code
+[lang="idoc"]
+---
+. This is a numbered list.
+. This is the second guy.
+. And so on...
+---
+
 : First Item:: This is a list where the items have labels.
 : Second Item:: Another item.
 : And So On:: ...
+
+@ code
+[lang="idoc"]
+---
+: First Item:: This is a list where the items have labels.
+: Second Item:: Another item.
+: And So On:: ...
+---
 
 === Math
 
@@ -172,7 +193,7 @@ using a _math block_, like so:
 @ math
 # Look Ma', I Have Equations!
 ---
-f(x) = \int_x^\infty g(t) dt
+f(x) = \int_x^\infty g(t) \mathrm{d}t
 ---
 [[#eqn:f-defn]]
 
@@ -182,17 +203,22 @@ f(x) = \int_x^\infty g(t) dt
  @ math
  # Look Ma', I Have Equations!
  ---
- f(x) = \int_x^\infty g(t) dt
+ f(x) = \int_x^\infty g(t) \d t
  ---
  [[#eqn:f-defn]]
 ---
 
 Note that that $d$ will not be upright as it should be.  We'll fix
-that later.  Also note that we added an _ID_ to the equation.  IDs can
-be added to many things.  They always appear immediately following the
-thing they identify.
+that later.  (Fixed it!  Use `\mathrm{d}`!)  Also note that we added
+an _ID_ to the equation.  IDs can be added to many things.  They
+always appear immediately following the thing they identify.
 
-There is also a more specialized `eqnarray` block, which numbers equations
+There is also a more specialized `eqnarray` block, which numbers
+equations.  Note however that _unlike_ the $\LaTeX$ eqnarray, you do
+not put a linebreak (`\\ `) at the end of each line.  The ampersands
+(`&`) tell MathJax where to align line to.  So, for example, the
+equations below have a "left side", and "equals sign" in the middle,
+and a "right side".
 
 @ eqnarray
 ---
@@ -201,15 +227,68 @@ g(y) &=& y^2
 \implies (f \circ g) (x) &=& 2 x^2 + 3
 ---
 
-=== Blocks
+@ code
+[lang="idoc"]
+---
+ @ eqnarray
+ ---
+ f(x) &=& 2x + 3
+ g(y) &=& y^2
+ \implies (f \circ g) (x) &=& 2 x^2 + 3
+ ---
+---
 
-We can do other types of blocks beside math blocks.  They all look the
+Note that we can use the standard `\label{}` macro within the `math`
+or `eqnarray` environments to assign IDs to individual equations.
+Then we can use `\ref{}` or `<<#id-label>>` syntax to refer to them:
+
+@ eqnarray
+---
+\label{important-equation} y &=& mx + b
+---
+
+@ code
+[lang="idoc"]
+---
+ @ eqnarray
+ ---
+ \label{important-equation} y &=& mx + b
+ ---
+---
+
+Refer to the _important equation_ $\ref{important-equation}$.  Refer
+to <<#important-equation>>{the important equation}.  If you want to
+prevent an equation from being numbered, use `\nonumber` as usual.
+
+@ eqnarray
+[lang="idoc"]
+---
+R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber
+---
+
+@ code
+[lang="idoc"]
+---
+ @ eqnarray
+ [lang="idoc"]
+ ---
+ R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber
+ ---
+---
+
+== Blocks
+
+We can do other types of blocks beside `math`.  They all look the
 same, basically.  A block can also have a title, which comes _after_
-the declaration of block type.
+the declaration of block type; it looks like `# Block Title`.
 
+=== Emphasis Blocks
+
+The following blocks are designed to emphasize certain things within
+the text.  The first is the `quote` block, used for quotations.
 
 @ quote
-# A Blockquote from the "Great One".
+# A Quote from the "Great One".
 [author="Albert Einstein"]
 ---
 The internet is the most important invention since gravity.
@@ -220,7 +299,7 @@ The internet is the most important invention since gravity.
 [lang="idoc"]
 ---
  @ quote
- # A Blockquote from the "Great One".
+ # A Quote from the "Great One".
  [author="Albert Einstein"]
  ---
  The internet is the most important invention since gravity.
@@ -228,10 +307,15 @@ The internet is the most important invention since gravity.
  [[#q:einstein]]
 ---
 
-Notice in the quoteblock we added an author attribution above as an
-_attribute_ of the quote block contents.  Attribute lists always come
-_just_ before the thing they modify.  In this case, we are modifying
-the "body" of the `@ quote` element, so it comes just before the body.
+Notice in the `quote` block we added an author attribution above as an
+_attribute_ of the quote block contents.  *Attribute lists* always
+come _just_ before the thing they modify.  In this case, we are
+modifying the "body" of the `quote` element, so it comes just before
+the body.
+
+The next type of block is the `sidenote`.  It is used to separate a
+paragraph from the main text, perhaps because it is important.  Or
+perhaps it's unimportant... but then why is it there at all!?
 
 @ sidenote
 # Please be Aware:
@@ -252,6 +336,11 @@ allowed any amount of complex content here.  An equation: $F =
  \frac{dp}{dt}$.
  ---
 ---
+
+For more specialized blocks similar to `sidenote`s, use an
+`admonition` instead.  They look nicer and are more eye catching.
+Here are some examples; notice how again we use an attribute list to
+specify the type of admonition.
 
 @ admonition
 # This is a Warning Block
@@ -281,7 +370,17 @@ This will show a little info symbol next to it.
 ---
 [[#info-admonition]]
 
-etc...
+@ code
+[lang="idoc"]
+---
+ @ admonition
+ # This is an Info Block
+ [type="info"]
+ ---
+ This will show a little info symbol next to it.
+ ---
+ [[#info-admonition]]
+---
 
 @ admonition
 # This is a Caution Block
@@ -291,6 +390,18 @@ This will show a little caution symbol next to it.
 ---
 [[#caution-admonition]]
 
+@ code
+[lang="idoc"]
+---
+ @ admonition
+ # This is a Caution Block
+ [type="caution"]
+ ---
+ This will show a little caution symbol next to it.
+ ---
+ [[#caution-admonition]]
+---
+
 @ admonition
 # This is a Tip Block
 [type="tip"]
@@ -299,9 +410,30 @@ This will show a little lightbulb symbol next to it.
 ---
 [[#tip-admonition]]
 
+@ code
+[lang="idoc"]
+---
+ @ admonition
+ # This is a Tip Block
+ [type="tip"]
+ ---
+ This will show a little lightbulb symbol next to it.
+ ---
+ [[#tip-admonition]]
+---
+
 If you're worried about all the wasted space in the HTML output, don't
 be!  It's only wasted because I didn't put text between each block.
 You would not normally have $1 + 4$ of these things in a row.
+
+=== Pedagogical Blocks
+
+These next blocks are useful when you want to offer extra information
+to the reader.  In the case of a `connection`, that information may be
+more advanced than what the reader understands.  In the case of an
+`intuition`, it's information that is technically contained in the
+main text, but is a powerful/neat way of thinking about the material.
+Please use good judgement when deciding when to use these.
 
 @ connection
 # A connection
@@ -323,14 +455,13 @@ their own prerequisites, in addition to the main doc's prereqs.
 [type="info"]
 ---
 If you're viewing this full-screen on a computer, you'll notice that
-unlike the other blocks we've seen (with the exception of the math
-block), connections are rendered across the full screen.  In general, you
-should _never_ rely on the position of something relative to something
-else, or its size.  This is because idoc has been designed to have
-pluggable themes, and the web renderer creates _responsive_ html that
-is free to reorganize content to better match the devices size.
-Therefore, whenever you refer to something, please please please use
-an ID.
+unlike the other some other blocks we've seen, connections are
+rendered across the full screen.  In general, you should _never_ rely
+on the position of something relative to something else, or its size.
+This is because idoc has been designed to have pluggable themes, and
+the web renderer creates _responsive_ html that is free to reorganize
+content to better match the devices size.  Therefore, *whenever you
+refer to something, please please please use an ID*.
 ---
 [[#rendering-info]]
 
@@ -350,6 +481,61 @@ depending on if the reader has the necessary prereqs or not.
 ---
 [[#my-connection]]
 
+@ code
+[lang="idoc"]
+---
+ @ connection
+ # A connection
+ ---
+ @ prerex
+ # Connection Prerex
+ ---
+ /Basics/Logic{Mostly only _first-order_ logic will be used, but some _second-order_ stuff is important for stuff later on, so we put it here.}
+ /Basics/Sex{Oh, I think you know. ;)}
+ ---
+ 
+ A `connection` is useful when you have content connected to the main text
+ but which isn't super necessary, or requires more advanced techniques
+ than the rest of the text.  This is because connections are allowed to have
+ their own prerequisites, in addition to the main doc's prereqs.
+ 
+ @ admonition
+ # Rendering
+ [type="info"]
+ ---
+ If you're viewing this full-screen on a computer, you'll notice that
+ unlike the other some other blocks we've seen, connections are
+ rendered across the full screen.  In general, you should _never_ rely
+ on the position of something relative to something else, or its size.
+ This is because idoc has been designed to have pluggable themes, and
+ the web renderer creates _responsive_ html that is free to reorganize
+ content to better match the devices size.  Therefore, *whenever you
+ refer to something, please please please use an ID*.
+ ---
+ [[#rendering-info]]
+ 
+ Connections are for when you want to connect with an outside idea, but
+ don't want to have this interesting connection create new
+ prerequisites for your doc.  For example, in the article
+ <</Math/Topology/Homeomorphism#>>{on topology}, we might want to talk
+ about how is difficult to prove two things are _not_ homeomorphic, and
+ how the fundamental group is useful because of its status as a
+ topological invariant.  However, we don't know if the readers actually
+ know group theory.  This would be the time you would use a connection --
+ group theory is not needed to understand homeomorphisms, but it _is_
+ needed to understand this small aside.
+ 
+ When the site is complete, connections will start out open or closed
+ depending on if the reader has the necessary prereqs or not.
+ ---
+ [[#my-connection]]
+---
+
+@ intuition
+# But What _is_ the Determinant?!
+---
+The determinant is geometrically an object for talking about _volume_.
+---
 
 === Links
 
