@@ -532,7 +532,7 @@ depending on if the reader has the necessary prereqs or not.
 ---
 
 @ intuition
-# But What _is_ the Determinant?!
+# But What _is_ the Determinant?! -- An Example Intuition Block
 ---
 The determinant from a geometric point of view is used to talk about
 _volume_.  If you grok this, then everything else will fall into
@@ -547,16 +547,66 @@ would be like trying to find a linear function that maps the square to
 the cube!
 ---
 
+@ code
+[lang="idoc"]
+---
+ @ intuition
+ # But What _is_ the Determinant?! -- An Example Intuition Block
+ ---
+ The determinant from a geometric point of view is used to talk about
+ _volume_.  If you grok this, then everything else will fall into
+ place.  For example, the reason a linear transformation is invertible
+ if and only if its determinant is non-zero is because when it _is_
+ zero, the map is going to map a set of basis vectors in your
+ $n$-dimensional space into some smaller $m$-dimensional space.  This
+ $m$-dimensional space has zero "volume" compared to the
+ $n$-dimensional one, and so you're basically losing a whole dimension.
+ There is no way to then map linearly back to the bigger space.  It
+ would be like trying to find a linear function that maps the square to
+ the cube!
+ ---
+---
+
 === Links
 
-Links look like <<https://www.google.com>>{this}.  Note that this is
-an "outlink" -- a link to an external site -- and so wouldn't actually
-be allowed in the main body of the document like this.  We can also
-link to <<#Introduction>>{headings} in the current document, or
-<<#eqn:f-defn>>{anything else} which has an ID.  And we can even link
-to headings in <</Physics/Classical/Mechanics/Newtonian#Second Law>>{other documents},
-as long as they are a prerequisite of this one.  The same applies to
-ID'd items in those docs, including this paragraph. 
+Links come in three flavours.  The first is your standard link, called
+an *out link* or *olink* in idoc.  It's written like
+`<<http://www.example.com>>{this}` and appears like
+<<http://www.example.com>>{this}.  Note that the `http(s)://` part of
+the link is _mandatory_.  Olinks are restricted in idoc to appear in
+only very specific places, for example in `furtherreading` or
+`bibliography` blocks.  This is because the text of a doc should be
+_self-contained_.  You should not _need_ to go to an outside source to
+understand a concept.  However, that doesn't mean that outside sources
+are useless -- Wikipedia is an excellent reference for topics you've
+just learned about.  It just means you don't want to interrupt the
+flow of the document just anywhere.  This is why idoc enforces this
+rule.
+
+The second flavour is a link within the current doc, called an
+*internal link* or *ilink*.  For example, when we used `\ref{}` back
+in the Math section, we were using ilinks.  Refering to anything on
+the page which has an ID is an ilink.  They are written like
+`<<#important-equation>>{this}`, and appear like
+<<#important-equation>>{this}.  That is, they are the `#` symbol
+followed by a valid ID.
+
+The final flavour is the *back link*, or *blink*.  This is a link to
+something contained within the prerequisite tree of the current doc.
+In their most general form, they are written like
+`<</Name/Of/Article#id-in-article>>{this right here}` and display like
+<</Name/Of/Article#id-in-article>>{this right here}.  However, the `#`
+symbol and the ID following it can be left out if you just want to
+refer to the article as a whole.  Notice that you are not allowed to
+link to another article that isn't within the prerequisite tree from
+just anywhere.  This is by design; articles should only depend on the
+knowledge from previous articles.  This restriction allows many of the
+features that the ILS website hopes to deliver, such as automatic
+prerequisite resolution for subjects you want to learn.
+
+In all types of links, you are free to leave out the text inside the
+`{}`.  This will just use the text inside the `<<>>` as the display
+text instead.  Normally this is not what you want, however.
 
 === YouTube
 
