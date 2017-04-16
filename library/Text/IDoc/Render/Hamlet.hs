@@ -590,7 +590,7 @@ theoremIcon :: Icon
 theoremIcon = icon_ "fa-star-o"
 
 definitionIcon :: Icon
-definitionIcon = icon_ "fa-book"
+definitionIcon = icon_ "fa-cube"
 
 conjectureIcon :: Icon
 conjectureIcon = icon_ "fa-question"
