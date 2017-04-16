@@ -75,7 +75,7 @@ class Render Render22,23
 class Render Render22,23
   render render23,24
 
-./library/Text/IDoc/Render/Hamlet.hs,2705
+./library/Text/IDoc/Render/Hamlet.hs,2833
 module Text.IDoc.Render.Hamlet Text.IDoc.Render.Hamlet22,23
 attributeT attributeT31,32
 attributeT attributeT32,33
@@ -112,49 +112,53 @@ quoteBlockMarkup quoteBlockMarkup328,329
 quoteBlockMarkup quoteBlockMarkup329,330
 codeIcon codeIcon343,344
 codeIcon codeIcon344,345
-data DefaultCollapseState DefaultCollapseState387,388
-data DefaultCollapseState = CollapsedCollapsed387,388
-                          | Uncollapsed Uncollapsed388,389
-data PanelType PanelType393,394
-data PanelType = DefaultDefault393,394
-               | PrimaryPrimary394,395
-               | InfoInfo395,396
-               | SuccessSuccess396,397
-               | WarningWarning397,398
-               | Danger Danger398,399
-data GridWidth GridWidth408,409
-data GridWidth = GridFourGridFour408,409
-               | GridSixGridSix409,410
-               | GridEightGridEight410,411
-               | GridTwelve GridTwelve411,412
-data PanelOptions PanelOptions419,420
-data PanelOptions = PanelOptions PanelOptions419,420
-data PanelOptions = PanelOptions { panelDefaultCollapseState panelDefaultCollapseState419,420
-                                 , panelType panelType420,421
-                                 , panelGridWidth panelGridWidth421,422
-defaultPanelOptions defaultPanelOptions424,425
-defaultPanelOptions defaultPanelOptions425,426
-type Icon Icon427,428
-panel panel429,430
-panel panel430,431
-defaultPanel defaultPanel450,451
-defaultPanel defaultPanel451,452
-youtubeIcon youtubeIcon453,454
-youtubeIcon youtubeIcon454,455
-intuitionIcon intuitionIcon567,568
-intuitionIcon intuitionIcon568,569
-connectionIcon connectionIcon570,571
-connectionIcon connectionIcon571,572
-cautionIcon cautionIcon573,574
-cautionIcon cautionIcon574,575
-warningIcon warningIcon576,577
-warningIcon warningIcon577,578
-tipIcon tipIcon579,580
-tipIcon tipIcon580,581
-infoIcon infoIcon582,583
-infoIcon infoIcon583,584
-renderPretty renderPretty710,711
-renderPretty renderPretty711,712
+data DefaultCollapseState DefaultCollapseState379,380
+data DefaultCollapseState = CollapsedCollapsed379,380
+                          | Uncollapsed Uncollapsed380,381
+data PanelType PanelType385,386
+data PanelType = DefaultDefault385,386
+               | PrimaryPrimary386,387
+               | InfoInfo387,388
+               | SuccessSuccess388,389
+               | WarningWarning389,390
+               | Danger Danger390,391
+data GridWidth GridWidth400,401
+data GridWidth = GridFourGridFour400,401
+               | GridSixGridSix401,402
+               | GridEightGridEight402,403
+               | GridTwelve GridTwelve403,404
+data PanelOptions PanelOptions411,412
+data PanelOptions = PanelOptions PanelOptions411,412
+data PanelOptions = PanelOptions { panelDefaultCollapseState panelDefaultCollapseState411,412
+                                 , panelType panelType412,413
+                                 , panelGridWidth panelGridWidth413,414
+defaultPanelOptions defaultPanelOptions416,417
+defaultPanelOptions defaultPanelOptions417,418
+type Icon Icon419,420
+panel panel421,422
+panel panel422,423
+defaultPanel defaultPanel442,443
+defaultPanel defaultPanel443,444
+youtubeIcon youtubeIcon445,446
+youtubeIcon youtubeIcon446,447
+intuitionIcon intuitionIcon559,560
+intuitionIcon intuitionIcon560,561
+connectionIcon connectionIcon562,563
+connectionIcon connectionIcon563,564
+cautionIcon cautionIcon565,566
+cautionIcon cautionIcon566,567
+warningIcon warningIcon568,569
+warningIcon warningIcon569,570
+tipIcon tipIcon571,572
+tipIcon tipIcon572,573
+infoIcon infoIcon574,575
+infoIcon infoIcon575,576
+sidenoteIcon sidenoteIcon577,578
+sidenoteIcon sidenoteIcon578,579
+imageIcon imageIcon580,581
+imageIcon imageIcon581,582
+renderPretty renderPretty714,715
+renderPretty renderPretty715,716
 
 ./library/Text/IDoc/Parse.hs,16007
 module Text.IDoc.Parse Text.IDoc.Parse23,24

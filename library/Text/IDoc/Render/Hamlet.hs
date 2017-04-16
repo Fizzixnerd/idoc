@@ -362,16 +362,8 @@ instance ToValue Back where
 
 instance ToMarkup Image where
   toMarkup (Image (LinkT {..})) = 
-    B.div B.! A.class_ "md-col-6" $
-    B.div B.! A.class_ "idoc-youtube-contents panel panel-default" $
-          (B.div B.! A.class_ "panel-heading" $
-                 B.h3 B.! A.class_ "panel-title" $
-                      B.a B.! B.dataAttribute "toggle" "collapse"
-                          B.! href ("#" ++ (toValue linkLocation)) $
-                          "Image") ++
-          (B.div B.! A.class_ "panel-collapse collapse in" $
-                 B.img B.! A.class_ "idoc-image-block-image img-responsive"
-                       B.! A.src (toValue linkLocation))
+    B.img B.! A.class_ "idoc-image-block-image img-responsive"
+          B.! A.src (toValue linkLocation)
 
 instance ToMarkup Video where
   toMarkup (Video (LinkT {..})) =
@@ -428,14 +420,14 @@ defaultPanelOptions = PanelOptions Uncollapsed Default GridTwelve
 type Icon = Html
 
 panel :: ToValue a => PanelOptions -> Html -> Maybe a -> Icon -> Maybe Html ->  Html -> Html
-panel (PanelOptions {..}) title_ id_ icon_ footer_ body_= 
+panel (PanelOptions {..}) title_ id_ icon__ footer_ body_= 
   B.div B.! A.class_ (toValue panelGridWidth) $
   B.div B.! A.class_ ("panel " ++ (toValue panelType)) $
         (B.div B.! A.class_ "panel-heading" $
                (B.h3 B.! A.class_ "panel-title" $
                     (mHrefV id_ $ 
                      B.a B.! B.dataAttribute "toggle" "collapse" $
-                     (icon_ ++ " " ++ title_ ++ " " ++ (B.span B.! A.class_ "fa fa-angle-double-down" $ ""))))) ++
+                     (icon__ ++ " " ++ title_ ++ " " ++ (B.span B.! A.class_ "fa fa-angle-double-down" $ ""))))) ++
          (mID' id_ $ 
           B.div B.! A.class_ ("panel-collapse collapse " ++ (toValue panelDefaultCollapseState)) $
                 mfooterify footer_ $ (B.div B.! A.class_ "panel-body" $
@@ -566,22 +558,28 @@ instance (TypedBlock bType, ToMarkup bType) =>
       mBTitle = maybe "" toMarkup blockTitle
 
 intuitionIcon :: Icon
-intuitionIcon = B.span B.! A.class_ "fa fa-puzzle-piece" $ ""
+intuitionIcon = icon_ "fa-puzzle-piece"
 
 connectionIcon :: Icon
-connectionIcon = B.span B.! A.class_ "fa fa-link" $ ""
+connectionIcon = icon_ "fa-link"
 
 cautionIcon :: Icon
-cautionIcon = B.span B.! A.class_ "fa fa-life-ring" $ ""
+cautionIcon = icon_ "fa-exclamation-triangle"
 
 warningIcon :: Icon
-warningIcon = B.span B.! A.class_ "fa fa-life-ring" $ ""
+warningIcon = icon_ "fa-exclamation-circle"
 
 tipIcon :: Icon
-tipIcon = B.span B.! A.class_ "fa fa-thumbs-up" $ ""
+tipIcon = icon_ "fa-lightbulb-o"
 
 infoIcon :: Icon
-infoIcon = B.span B.! A.class_ "fa fa-info" $ ""
+infoIcon = icon_ "fa-info-circle"
+
+sidenoteIcon :: Icon
+sidenoteIcon = icon_ "fa-sticky-note"
+
+imageIcon :: Icon
+imageIcon = icon_ "fa-image"
 
 instance ToMarkup Block where
   toMarkup (BIntroductionBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
@@ -604,7 +602,14 @@ instance ToMarkup Block where
   toMarkup (BPrerexBlock x) = toMarkup x
   toMarkup (BQuoteBlock x) = quoteBlockMarkup x
   toMarkup (BCodeBlock x) = toMarkup x ++ (B.div B.! A.class_ "clearfix" $ "")
-  toMarkup (BImageBlock x) = toMarkup x
+  toMarkup (BImageBlock (BlockT {..})) = 
+    panel (defaultPanelOptions {panelGridWidth = GridSix}) 
+          (mBlockHeading (text "Image") (toMarkup <$> blockTitle))
+          blockID
+          imageIcon
+          Nothing $
+          toMarkup blockContents
+
   toMarkup (BVideoBlock x) = toMarkup x
   toMarkup (BAdmonitionBlock (BlockT {..})) =
     (B.div B.! A.class_ "clearfix" $ "") ++ 
@@ -630,14 +635,13 @@ instance ToMarkup Block where
 
   toMarkup (BYouTubeBlock x) = toMarkup x
   toMarkup (BSidenoteBlock (BlockT {..})) = 
-    (B.div B.! A.class_ "clearfix" $ "") ++ (B.div B.! A.class_ "col-md-4" $ 
-          mIDV blockID $ 
-          B.div B.! A.class_ "panel panel-default" $
-                mbTitle $
-                B.div B.! A.class_ "panel-body" $
-                      toMarkup blockContents)
-    where
-      mbTitle = maybe ClassyPrelude.id (\(BlockHeading x) -> (((B.div B.! A.class_ "panel-heading" $ (B.h4 B.! A.class_ "panel-title") $ toMarkup x) ++))) blockTitle
+    (B.div B.! A.class_ "clearfix" $ "") ++ 
+    (panel (defaultPanelOptions {panelGridWidth = GridFour}) 
+           (mBlockHeading "Sidenote" (toMarkup <$> blockTitle))
+           blockID 
+           sidenoteIcon 
+           Nothing $ 
+     toMarkup blockContents)
 
   toMarkup (BExampleBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BExerciseBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x

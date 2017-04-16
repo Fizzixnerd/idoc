@@ -534,7 +534,17 @@ depending on if the reader has the necessary prereqs or not.
 @ intuition
 # But What _is_ the Determinant?!
 ---
-The determinant is geometrically an object for talking about _volume_.
+The determinant from a geometric point of view is used to talk about
+_volume_.  If you grok this, then everything else will fall into
+place.  For example, the reason a linear transformation is invertible
+if and only if its determinant is non-zero is because when it _is_
+zero, the map is going to map a set of basis vectors in your
+$n$-dimensional space into some smaller $m$-dimensional space.  This
+$m$-dimensional space has zero "volume" compared to the
+$n$-dimensional one, and so you're basically losing a whole dimension.
+There is no way to then map linearly back to the bigger space.  It
+would be like trying to find a linear function that maps the square to
+the cube!
 ---
 
 === Links
