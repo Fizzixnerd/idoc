@@ -749,7 +749,7 @@ renderPretty x =
                                          ]) ++
             (B.script B.! A.src "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML-full,Safe,http://independentlearning.science/MathJax/config/local/local.js") (text "") ++
             (B.link B.! A.rel "stylesheet" 
-                    B.! A.href "https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/darkly/bootstrap.min.css"
+                    B.! A.href "https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css"
 --                    B.! integrity "sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" 
                     B.! crossorigin "anonymous") ++
             (B.link B.! A.rel "stylesheet"
