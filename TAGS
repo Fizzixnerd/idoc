@@ -75,7 +75,7 @@ class Render Render22,23
 class Render Render22,23
   render render23,24
 
-./library/Text/IDoc/Render/Hamlet.hs,3455
+./library/Text/IDoc/Render/Hamlet.hs,3517
 module Text.IDoc.Render.Hamlet Text.IDoc.Render.Hamlet22,23
 attributeT attributeT31,32
 attributeT attributeT32,33
@@ -173,10 +173,12 @@ exerciseIcon exerciseIcon606,607
 exerciseIcon exerciseIcon607,608
 exampleIcon exampleIcon609,610
 exampleIcon exampleIcon610,611
-simplePanelBlock simplePanelBlock612,613
-simplePanelBlock simplePanelBlock613,614
-renderPretty renderPretty760,761
-renderPretty renderPretty761,762
+answerIcon answerIcon612,613
+answerIcon answerIcon613,614
+simplePanelBlock simplePanelBlock615,616
+simplePanelBlock simplePanelBlock616,617
+renderPretty renderPretty770,771
+renderPretty renderPretty771,772
 
 ./library/Text/IDoc/Parse.hs,16666
 module Text.IDoc.Parse Text.IDoc.Parse23,24

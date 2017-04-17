@@ -231,7 +231,7 @@ using a `math` block, like so:
 ---
 f(x) = \int_x^\infty g(t) \mathrm{d}t
 ---
-[[#eqn:f-defn]]
+[[#eqn-f-defn]]
 
 @ code
 [lang="idoc"]
@@ -241,7 +241,7 @@ f(x) = \int_x^\infty g(t) \mathrm{d}t
  ---
  f(x) = \int_x^\infty g(t) \d t
  ---
- [[#eqn:f-defn]]
+ [[#eqn-f-defn]]
 ---
 
 Note that that $d$ will not be upright as it should be.  We'll fix
@@ -317,7 +317,7 @@ R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}
 ---
 When two people are doing the Spanky-McHankey, it's also known as *sexy times*.
 ---
-[[#def:sexy-times]]
+[[#def-sexy-times]]
 
 @ code
 [lang="idoc"]
@@ -327,7 +327,7 @@ When two people are doing the Spanky-McHankey, it's also known as *sexy times*.
  ---
  When two people are doing the Spanky-McHankey, it's also known as *sexy times*.
  ---
- [[#def:sexy-times]]
+ [[#def-sexy-times]]
 ---
 
 @ theorem
@@ -339,7 +339,7 @@ When two people are doing the Spanky-McHankey, it's also known as *sexy times*.
 ---
 
 ---
-[[#thm:foil]]
+[[#thm-foil]]
 
 @ code
 [lang="idoc"]
@@ -353,7 +353,7 @@ When two people are doing the Spanky-McHankey, it's also known as *sexy times*.
  ---
 
  ---
- [[#thm:foil]]
+ [[#thm-foil]]
 ---
 
 @ axiom
@@ -395,7 +395,7 @@ x^n + y^n = z^n
 ---
 
 ---
-[[#lem:easy-lemma]]
+[[#lem-easy-lemma]]
 
 @ code
 ---
@@ -412,7 +412,7 @@ x^n + y^n = z^n
  ---
 
  ---
- [[#lem:easy-lemma]]
+ [[#lem-easy-lemma]]
 ---
 
 @ proposition
@@ -458,7 +458,7 @@ The product of any two primes is also prime.
 ---
 
 @ proof
-[theorem="#lem:easy-lemma"]
+[theorem="#lem-easy-lemma"]
 ---
 Just intuit.
 ---
@@ -467,7 +467,7 @@ Just intuit.
 [lang="idoc"]
 ---
  @ proof
- [theorem="#lem:easy-lemma"]
+ [theorem="#lem-easy-lemma"]
  ---
  Just intuit.
  ---
@@ -484,7 +484,7 @@ the text.  The first is the `quote` block, used for quotations.
 ---
 The internet is the most important invention since gravity.
 ---
-[[#q:einstein]]
+[[#q-einstein]]
 
 @ code
 [lang="idoc"]
@@ -495,7 +495,7 @@ The internet is the most important invention since gravity.
  ---
  The internet is the most important invention since gravity.
  ---
- [[#q:einstein]]
+ [[#q-einstein]]
 ---
 
 Notice in the `quote` block we added an author attribution above as an
@@ -768,13 +768,9 @@ Prove that every integer greater than zero is positive.
 
 The proof is pretty simple.  Try to follow along.
 
-@ proof
----
 First, assume not.  But that's not the case.  QED.
 ---
-[[#ex:proof]]
----
-[[#ex:example]]
+[[#ex-example]]
 
 === Links
 [[#sec-links]]
@@ -831,7 +827,9 @@ not abuse this feature.
 
 This is a boss-ass song.
 ---
-[[yt:unlimited-corners]]
+[[yt-unlimited-corners]]
+
+// FIXME: The ID above doesn't work!
 
 === Images
 

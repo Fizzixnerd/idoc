@@ -610,6 +610,9 @@ exerciseIcon = icon_ "fa-question-circle"
 exampleIcon :: Icon
 exampleIcon = icon_ "fa-pencil"
 
+answerIcon :: Icon
+answerIcon = icon_ "fa-pencil-square-o"
+
 simplePanelBlock :: ToMarkup a => PanelType -> Text -> Icon -> BlockT a -> Html
 simplePanelBlock panelType_ defaultHeading icon__ (BlockT {..}) =
   (B.div B.! A.class_ "clearfix" $ "") ++
@@ -686,12 +689,19 @@ instance ToMarkup Block where
           Nothing $ 
           toMarkup blockContents
   toMarkup (BExampleBlock (BlockT {..})) = 
-    panel (defaultPanelOptions {panelType = Info})
-          (mBlockHeading "Example" (toMarkup <$> blockTitle))
-          blockID
-          exampleIcon
-          (Just $ toMarkup $ exampleSolution blockContents) $
-          toMarkup $ exampleQuestion blockContents
+    B.div B.! A.class_ "panel-group" $ 
+    (panel (defaultPanelOptions {panelType = Info})
+           (mBlockHeading "Example" (toMarkup <$> blockTitle))
+           blockID
+           exampleIcon
+           Nothing $
+           toMarkup $ exampleQuestion blockContents) ++
+    (panel (defaultPanelOptions {panelType = Info, panelDefaultCollapseState = Collapsed})
+           "Solution"
+           ((\x -> toValue x ++ "-solution") <$> blockID)
+           answerIcon 
+           Nothing $
+           toMarkup $ exampleSolution blockContents)
   toMarkup (BExerciseBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BBibliographyBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
 
