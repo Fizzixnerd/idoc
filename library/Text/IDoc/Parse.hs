@@ -32,7 +32,7 @@ import qualified Data.List.NonEmpty as NE
 
 instance GP.Out a => GP.Out (Vector a) where
   doc = GP.doc . toList
-  docPrec n  = GP.docPrec n . toList 
+  docPrec n = GP.docPrec n . toList 
 
 instance GP.Out Text where
   doc = GP.doc . unpack
@@ -964,15 +964,31 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ILSBlock e s m Video where
   ilsBlock = simpleBlock Video ils
 
-data YouTube = YouTube YouTubeLink deriving (Eq, Show, Generic)
+spaceThenMultipartSep :: (ErrorComponent e, Stream s, Token s ~ Char) =>
+  ParsecT e s m ()
+spaceThenMultipartSep = do
+  void $ many $ do
+    notFollowedBy multipartSep
+    spaceChar
+  void multipartSep
+
+data YouTube = YouTube { youtubeLink :: YouTubeLink 
+                       , youtubeDescription :: Maybe (AnonymousSection Block)
+                       } deriving (Eq, Show, Generic)
 instance GP.Out YouTube
 instance TypedBlock YouTube where bType = "youtube"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILSBlock e s m YouTube where
-  ilsBlock = simpleBlock YouTube ils
+  ilsBlock = simpleBlock (uncurry YouTube) $ do
+    l <- ils
+    d <- optional $ do
+      TM.try spaceThenMultipartSep
+      ils
+    return (l, d)
 
 data Connection = Connection { connectionPrerex :: Maybe PrerexBlock
-                             , connectionContents :: AnonymousSection Block } deriving (Eq, Show, Generic)
+                             , connectionContents :: AnonymousSection Block
+                             } deriving (Eq, Show, Generic)
 instance GP.Out Connection
 instance TypedBlock Connection where bType = "connection"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
@@ -1003,7 +1019,7 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ILSBlock e s m Admonition where
   ilsBlock = simpleBlock Admonition ils
 
-newtype Sidenote = Sidenote (Paragraph Block) deriving (Eq, Show, Generic)
+newtype Sidenote = Sidenote (AnonymousSection Block) deriving (Eq, Show, Generic)
 instance GP.Out Sidenote
 instance TypedBlock Sidenote where bType = "sidenote"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
@@ -1011,7 +1027,8 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ilsBlock = simpleBlock Sidenote ils
 
 data Example = Example { exampleQuestion :: AnonymousSection (Block, MultipartBlock)
-                       , exampleSolution :: AnonymousSection Block } deriving (Eq, Show, Generic)
+                       , exampleSolution :: AnonymousSection Block
+                       } deriving (Eq, Show, Generic)
 instance GP.Out Example
 instance TypedBlock Example where bType = "example"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
@@ -1303,7 +1320,6 @@ instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e 
   ils = do
     dt <- ils
     dp <- optional $ TM.try ils
-    -- traceShow, bGenericM dp
     dc <- some $ ils
     return $ Doc { docTitle = dt
                  , docContents = fromList dc

@@ -447,12 +447,12 @@ youtubeIcon :: Icon
 youtubeIcon = B.span B.! A.class_ "fa fa-youtube" $ ""
 
 instance ToMarkup YouTube where
-  toMarkup (YouTube x) =
-    defaultPanel "YouTube Video" (Just x) youtubeIcon Nothing $ 
+  toMarkup (YouTube {..}) =
+    defaultPanel "YouTube Video" (Just youtubeLink) youtubeIcon (toMarkup <$> youtubeDescription) $ 
     B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
           iframe B.! A.class_ "idoc-youtube-embed embed-responsive-item"
                  B.! allowfullscreen "true"
-                 B.! A.src ("https://www.youtube.com/embed/" ++ (toValue x)) $
+                 B.! A.src ("https://www.youtube.com/embed/" ++ (toValue youtubeLink)) $
                  text ""
     where
       allowfullscreen = B.customAttribute "allowfullscreen"
