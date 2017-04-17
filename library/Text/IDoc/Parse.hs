@@ -389,8 +389,11 @@ instance (LineLike a, LineLike b) => LineLike (a, b) where
     in
       LikeLine (a || b)
 
+data MultipartBlock
+
 instance LineLike Main
 instance LineLike Block
+instance LineLike MultipartBlock
 instance LineLike Markup where
   lineLike = LikeLine True
 instance LineLike Line where
@@ -421,6 +424,10 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   HardEnd e s m Block where
   hardEnd = HardEnder $ void $ (string "\n\n" <|> string "\n---\n")
+
+instance (ErrorComponent e, Stream s, Token s ~ Char) =>
+  HardEnd e s m MultipartBlock where
+  hardEnd = HardEnder $ void $ (string "\n\n" <|> string "\n***\n" <|> string "\n---\n")
 
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   HardEnd e s m Line where
@@ -465,6 +472,10 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
 
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   BadEnd e s m Block where
+  badEnd = BadEnder empty
+
+instance (ErrorComponent e, Stream s, Token s ~ Char) =>
+  BadEnd e s m MultipartBlock where
   badEnd = BadEnder empty
 
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
@@ -808,6 +819,10 @@ blockDelim :: (ErrorComponent e, Stream s, Token s ~ Char) =>
   ParsecT e s m String
 blockDelim = string "\n---\n"
 
+multipartSep :: (ErrorComponent e, Stream s, Token s ~ Char) =>
+  ParsecT e s m String
+multipartSep = string "\n\n***\n\n"
+
 simpleBlock :: (ErrorComponent e, Stream s, Token s ~ Char) => 
   (a -> b) -> ParsecT e s m a -> Maybe BlockHeading -> AttrMap -> ParsecT e s m (BlockT b)
 simpleBlock f p bt am = do
@@ -818,6 +833,11 @@ simpleBlock f p bt am = do
                   , blockTitle = bt
                   , blockID = bid
                   }
+
+-- | FIXME: Really weird behavior with some blocks.  For example, when
+-- you add an ID to a nested block it must be flush with the outer
+-- closer.  However, if it has no ID, it has to be separated from the
+-- outer closer by a newline.  Like, wtf?
 
 newtype Prerex = Prerex (Vector PrerexItem) deriving (Eq, Show, Generic)
 instance GP.Out Prerex
@@ -990,12 +1010,20 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ILSBlock e s m Sidenote where
   ilsBlock = simpleBlock Sidenote ils
 
-newtype Example = Example (AnonymousSection Block) deriving (Eq, Show, Generic)
+data Example = Example { exampleQuestion :: AnonymousSection (Block, MultipartBlock)
+                       , exampleSolution :: AnonymousSection Block } deriving (Eq, Show, Generic)
 instance GP.Out Example
 instance TypedBlock Example where bType = "example"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILSBlock e s m Example where
-  ilsBlock = simpleBlock Example ils
+  ilsBlock = simpleBlock (\(q, s) -> Example q s) $ do
+    q <- ils
+    void $ many $ do
+      notFollowedBy multipartSep
+      spaceChar
+    void multipartSep
+    s <- ils
+    return (q, s)
 
 newtype Exercise = Exercise (AnonymousSection Block) deriving (Eq, Show, Generic)
 instance GP.Out Exercise
@@ -1183,9 +1211,22 @@ class (ErrorComponent e, Stream s, Token s ~ Char) => SectionEnd e s m a where
   sectionEnd :: SectionEnder e s m a
   sectionEnd = SectionEnder empty
 
-instance (ErrorComponent e, Stream s, Token s ~ Char) => SectionEnd e s m Main
-instance (ErrorComponent e, Stream s, Token s ~ Char) => SectionEnd e s m Block where
-  sectionEnd = SectionEnder (void $ string "\n---\n")
+instance (ErrorComponent e, Stream s, Token s ~ Char) => 
+  SectionEnd e s m Main
+instance (ErrorComponent e, Stream s, Token s ~ Char) => 
+  SectionEnd e s m Block where
+  sectionEnd = SectionEnder $ void blockDelim
+instance (ErrorComponent e, Stream s, Token s ~ Char) => 
+  SectionEnd e s m MultipartBlock where
+  sectionEnd = SectionEnder $ void multipartSep
+
+instance (ErrorComponent e, Stream s, Token s ~ Char, SectionEnd e s m a, SectionEnd e s m b) => 
+  SectionEnd e s m (a, b) where
+  sectionEnd = 
+    let (SectionEnder sea :: SectionEnder e s m a) = sectionEnd
+        (SectionEnder seb :: SectionEnder e s m b) = sectionEnd
+    in
+      SectionEnder (TM.try sea <|> seb)
 
 newtype AnonymousSection a = AnonymousSection (Vector (ComplexContent a)) deriving (Eq, Show, Generic)
 instance GP.Out (AnonymousSection a)

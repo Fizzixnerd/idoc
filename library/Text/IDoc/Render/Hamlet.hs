@@ -476,10 +476,10 @@ instance ToMarkup Sidenote where
     B.aside B.! A.class_ "idoc-sidenote-contents" $
             toMarkup x
 
-instance ToMarkup Example where
-  toMarkup (Example x) =
-    B.div B.! A.class_ "idoc-example-contents" $
-          toMarkup x
+-- instance ToMarkup Example where
+--   toMarkup (Example x) =
+--     B.div B.! A.class_ "idoc-example-contents" $
+--           toMarkup x
 
 instance ToMarkup Exercise where
   toMarkup (Exercise x) =
@@ -601,6 +601,15 @@ proofIcon = icon_ "fa-star"
 axiomIcon :: Icon
 axiomIcon = icon_ "fa-cube"
 
+recallIcon :: Icon
+recallIcon = icon_ "fa-reply"
+
+exerciseIcon :: Icon
+exerciseIcon = icon_ "fa-question-circle"
+
+exampleIcon :: Icon
+exampleIcon = icon_ "fa-pencil"
+
 simplePanelBlock :: ToMarkup a => PanelType -> Text -> Icon -> BlockT a -> Html
 simplePanelBlock panelType_ defaultHeading icon__ (BlockT {..}) =
   (B.div B.! A.class_ "clearfix" $ "") ++
@@ -621,7 +630,13 @@ instance ToMarkup Block where
   toMarkup (BIntuitionBlock x) = simplePanelBlock Info "Intuition" intuitionIcon x
   toMarkup (BFurtherReadingBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BSummaryBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
-  toMarkup (BRecallBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BRecallBlock (BlockT {..})) = 
+    panel defaultPanelOptions
+          (mBlockHeading (text "Recall") (toMarkup <$> blockTitle))
+          blockID
+          recallIcon
+          Nothing $
+          toMarkup blockContents
   toMarkup (BMathBlock x) = toMarkup x
   toMarkup (BEqnArrayBlock x) = toMarkup x
   toMarkup (BTheoremBlock x) = simplePanelBlock Primary "Theorem" theoremIcon x
@@ -664,14 +679,19 @@ instance ToMarkup Block where
            toMarkup blockContents)
   toMarkup (BYouTubeBlock x) = toMarkup x
   toMarkup (BSidenoteBlock (BlockT {..})) = 
-    (B.div B.! A.class_ "clearfix" $ "") ++ 
-    (panel (defaultPanelOptions {panelGridWidth = GridFour}) 
-           (mBlockHeading "Sidenote" (toMarkup <$> blockTitle))
-           blockID 
-           sidenoteIcon 
-           Nothing $ 
-     toMarkup blockContents)
-  toMarkup (BExampleBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+    panel (defaultPanelOptions {panelGridWidth = GridFour}) 
+          (mBlockHeading "Sidenote" (toMarkup <$> blockTitle))
+          blockID 
+          sidenoteIcon 
+          Nothing $ 
+          toMarkup blockContents
+  toMarkup (BExampleBlock (BlockT {..})) = 
+    panel (defaultPanelOptions {panelType = Info})
+          (mBlockHeading "Example" (toMarkup <$> blockTitle))
+          blockID
+          exampleIcon
+          (Just $ toMarkup $ exampleSolution blockContents) $
+          toMarkup $ exampleQuestion blockContents
   toMarkup (BExerciseBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
   toMarkup (BBibliographyBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
 

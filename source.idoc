@@ -758,6 +758,24 @@ the cube!
  ---
 ---
 
+`Examples` and `exercises` are also a key way for people to learn.
+
+@ example
+---
+Prove that every integer greater than zero is positive.
+
+***
+
+The proof is pretty simple.  Try to follow along.
+
+@ proof
+---
+First, assume not.  But that's not the case.  QED.
+---
+[[#ex:proof]]
+---
+[[#ex:example]]
+
 === Links
 [[#sec-links]]
 
