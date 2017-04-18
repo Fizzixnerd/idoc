@@ -309,10 +309,10 @@ instance ToMarkup EqnArray where
           (concatMap (\(Equation x) -> toMarkup $ x <> "\\\\\n") xs) ++ 
           text "\\end{eqnarray}$$"
 
-instance ToMarkup Theorem where
-  toMarkup (Theorem x) =
-    B.div B.! A.class_ "idoc-theorem-contents idoc-theorem-like" $
-          toMarkup x
+-- instance ToMarkup Theorem where
+--   toMarkup (Theorem x) =
+--     B.div B.! A.class_ "idoc-theorem-contents idoc-theorem-like" $
+--           toMarkup x
     
 instance ToMarkup Proof where
   toMarkup (Proof x) =
@@ -498,20 +498,20 @@ instance ToMarkup Introduction where
               B.h2 "Introduction" ++
               toMarkup x
 
-instance ToMarkup Lemma where
-  toMarkup (Lemma x) = 
-    B.div B.! A.class_ "idoc-lemma-contents idoc-theorem-like" $
-          toMarkup x
+-- instance ToMarkup Lemma where
+--   toMarkup (Lemma x) = 
+--     B.div B.! A.class_ "idoc-lemma-contents idoc-theorem-like" $
+--           toMarkup x
 
-instance ToMarkup Corollary where
-  toMarkup (Corollary x) = 
-    B.div B.! A.class_ "idoc-corollary-contents idoc-theorem-like" $
-          toMarkup x
+-- instance ToMarkup Corollary where
+--   toMarkup (Corollary x) = 
+--     B.div B.! A.class_ "idoc-corollary-contents idoc-theorem-like" $
+--           toMarkup x
 
-instance ToMarkup Proposition where
-  toMarkup (Proposition x) = 
-    B.div B.! A.class_ "idoc-proposition-contents idoc-theorem-like" $
-          toMarkup x
+-- instance ToMarkup Proposition where
+--   toMarkup (Proposition x) = 
+--     B.div B.! A.class_ "idoc-proposition-contents idoc-theorem-like" $
+--           toMarkup x
 
 instance ToMarkup Conjecture where
   toMarkup (Conjecture x) = 
@@ -623,11 +623,45 @@ simplePanelBlock panelType_ defaultHeading icon__ (BlockT {..}) =
          Nothing $
          toMarkup blockContents)
 
+mProofAppend :: (ToMarkup a, ToValue b, ToMarkup c) => Maybe a -> Maybe b -> Maybe c -> Html -> Html
+mProofAppend bt bid (Just bc) = ((flip (++))
+                                 (panel (defaultPanelOptions {panelType = Primary, panelDefaultCollapseState = Collapsed})
+                                  (mBlockHeading "Proof" $ (\x -> toMarkup x ++ " (Proof)") <$> bt)
+                                  ((\x -> toValue x ++ "-proof") <$> bid)
+                                  proofIcon 
+                                  Nothing $
+                                  toMarkup bc))
+mProofAppend _ _ Nothing = ClassyPrelude.id
+
 instance ToMarkup Block where
   toMarkup (BIntroductionBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
-  toMarkup (BLemmaBlock x) = simplePanelBlock Primary "Lemma" theoremIcon x
-  toMarkup (BCorollaryBlock x) = simplePanelBlock Primary "Corollary" theoremIcon x
-  toMarkup (BPropositionBlock x) = simplePanelBlock Primary "Proposition" theoremIcon x
+  toMarkup (BLemmaBlock (BlockT {..})) = 
+    B.div B.! A.class_ "panel-group" $ 
+    mProofAppend blockTitle blockID (lemmaProof blockContents) $
+    (panel (defaultPanelOptions {panelType = Primary})
+           (mBlockHeading "Lemma" (toMarkup <$> blockTitle))
+           blockID
+           theoremIcon
+           Nothing $
+           toMarkup $ lemmaStatement blockContents)
+  toMarkup (BCorollaryBlock (BlockT {..})) = 
+    B.div B.! A.class_ "panel-group" $ 
+    mProofAppend blockTitle blockID (corollaryProof blockContents) $
+    (panel (defaultPanelOptions {panelType = Primary})
+           (mBlockHeading "Proposition" (toMarkup <$> blockTitle))
+           blockID
+           theoremIcon
+           Nothing $
+           toMarkup $ corollaryStatement blockContents)
+  toMarkup (BPropositionBlock (BlockT {..})) = 
+    B.div B.! A.class_ "panel-group" $ 
+    mProofAppend blockTitle blockID (propositionProof blockContents) $
+    (panel (defaultPanelOptions {panelType = Primary})
+           (mBlockHeading "Proposition" (toMarkup <$> blockTitle))
+           blockID
+           theoremIcon
+           Nothing $
+           toMarkup $ propositionStatement blockContents)
   toMarkup (BConjectureBlock x) = simplePanelBlock Primary "Conjecture" theoremIcon x
   toMarkup (BDefinitionBlock x) = simplePanelBlock Primary "Definition" definitionIcon x
   toMarkup (BIntuitionBlock x) = simplePanelBlock Info "Intuition" intuitionIcon x
@@ -642,7 +676,16 @@ instance ToMarkup Block where
           toMarkup blockContents
   toMarkup (BMathBlock x) = toMarkup x
   toMarkup (BEqnArrayBlock x) = toMarkup x
-  toMarkup (BTheoremBlock x) = simplePanelBlock Primary "Theorem" theoremIcon x
+  toMarkup (BTheoremBlock (BlockT {..})) =     
+    B.div B.! A.class_ "panel-group" $ 
+    mProofAppend blockTitle blockID (theoremProof blockContents) $
+    (panel (defaultPanelOptions {panelType = Primary})
+           (mBlockHeading "Theorem" (toMarkup <$> blockTitle))
+           blockID
+           theoremIcon
+           Nothing $
+           toMarkup $ theoremStatement blockContents)
+
   toMarkup (BAxiomBlock x) = simplePanelBlock Primary "Axiom" axiomIcon x
   toMarkup (BProofBlock x) = simplePanelBlock Primary "Proof" proofIcon x
   toMarkup (BPrerexBlock x) = toMarkup x
@@ -803,3 +846,4 @@ renderPretty x =
     -- integrity = B.customAttribute "integrity"
     crossorigin = B.customAttribute "crossorigin"
   
+

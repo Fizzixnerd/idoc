@@ -787,7 +787,8 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
     return $ BibliographyItem $ fromString $ t
 
 data PrerexItem = PrerexItem { prerexPath :: IDPath PrerexItem
-                             , prerexDescription :: Paragraph (Markup, Block) } deriving (Eq, Show, Generic)
+                             , prerexDescription :: Paragraph (Markup, Block)
+                             } deriving (Eq, Show, Generic)
 instance GP.Out PrerexItem
 instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ILS e s m PrerexItem where
@@ -821,7 +822,7 @@ blockDelim = string "\n---\n"
 
 multipartSep :: (ErrorComponent e, Stream s, Token s ~ Char) =>
   ParsecT e s m String
-multipartSep = string "\n\n***\n\n"
+multipartSep = string "\n***\n"
 
 simpleBlock :: (ErrorComponent e, Stream s, Token s ~ Char) => 
   (a -> b) -> ParsecT e s m a -> Maybe BlockHeading -> AttrMap -> ParsecT e s m (BlockT b)
@@ -878,33 +879,61 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   ILSBlock e s m EqnArray where
   ilsBlock = simpleBlock (EqnArray . fromList . fmap fromString . lines) $ blockText
 
-newtype Theorem = Theorem (AnonymousSection Block) deriving (Eq, Show, Generic)
+data Theorem = Theorem { theoremStatement :: AnonymousSection (Block, MultipartBlock)
+                       , theoremProof :: Maybe (AnonymousSection Block)
+                       } deriving (Eq, Show, Generic)
 instance GP.Out Theorem
 instance TypedBlock Theorem where bType = "theorem"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILSBlock e s m Theorem where
-  ilsBlock = simpleBlock Theorem ils
+  ilsBlock = simpleBlock (uncurry Theorem) $ do
+    s <- ils
+    p <- optional $ do
+      TM.try spaceThenMultipartSep
+      ils
+    return (s, p)
 
-newtype Lemma = Lemma (AnonymousSection Block) deriving (Eq, Show, Generic)
+data Lemma = Lemma { lemmaStatement :: AnonymousSection (Block, MultipartBlock)
+                   , lemmaProof :: Maybe (AnonymousSection Block)
+                   } deriving (Eq, Show, Generic)
 instance GP.Out Lemma
 instance TypedBlock Lemma where bType = "lemma"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILSBlock e s m Lemma where
-  ilsBlock = simpleBlock Lemma ils
+  ilsBlock = simpleBlock (uncurry Lemma) $ do
+    s <- ils
+    p <- optional $ do
+      TM.try spaceThenMultipartSep
+      ils
+    return (s, p)
 
-newtype Corollary = Corollary (AnonymousSection Block) deriving (Eq, Show, Generic)
+data Corollary = Corollary { corollaryStatement :: AnonymousSection (Block, MultipartBlock)
+                           , corollaryProof :: Maybe (AnonymousSection Block)
+                           } deriving (Eq, Show, Generic)
 instance GP.Out Corollary
 instance TypedBlock Corollary where bType = "corollary"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILSBlock e s m Corollary where
-  ilsBlock = simpleBlock Corollary ils
+  ilsBlock = simpleBlock (uncurry Corollary) $ do
+    s <- ils
+    p <- optional $ do
+      TM.try spaceThenMultipartSep
+      ils
+    return (s, p)
 
-newtype Proposition = Proposition (AnonymousSection Block) deriving (Eq, Show, Generic)
+data Proposition = Proposition { propositionStatement :: AnonymousSection (Block, MultipartBlock)
+                               , propositionProof :: Maybe (AnonymousSection Block)
+                               } deriving (Eq, Show, Generic)
 instance GP.Out Proposition
 instance TypedBlock Proposition where bType = "proposition"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILSBlock e s m Proposition where
-  ilsBlock = simpleBlock Proposition ils
+  ilsBlock = simpleBlock (uncurry Proposition) $ do
+    s <- ils
+    p <- optional $ do
+      TM.try spaceThenMultipartSep
+      ils
+    return $ (s, p)
 
 newtype Conjecture = Conjecture (AnonymousSection Block) deriving (Eq, Show, Generic)
 instance GP.Out Conjecture
@@ -1033,12 +1062,9 @@ instance GP.Out Example
 instance TypedBlock Example where bType = "example"
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   ILSBlock e s m Example where
-  ilsBlock = simpleBlock (\(q, s) -> Example q s) $ do
+  ilsBlock = simpleBlock (uncurry Example) $ do
     q <- ils
-    void $ many $ do
-      notFollowedBy multipartSep
-      spaceChar
-    void multipartSep
+    spaceThenMultipartSep
     s <- ils
     return (q, s)
 
@@ -1251,10 +1277,10 @@ instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e 
   ILS e s m (AnonymousSection a) where
   ils = do
     let (SectionEnder se :: SectionEnder e s m a) = sectionEnd
-    void $ many $ spaceChar
+    space
     fmap (AnonymousSection . fromList) $ some $ do
-      notFollowedBy ((TM.try $ void $ (ils :: ParsecT e s m (SectionHeading))) <|>
-                     (TM.try $ void $ (ils :: ParsecT e s m (SubsectionHeading))) <|>
+      notFollowedBy ((TM.try $ void (ils :: ParsecT e s m SectionHeading)) <|>
+                     (TM.try $ void (ils :: ParsecT e s m SubsectionHeading)) <|>
                      se)
       ils
 

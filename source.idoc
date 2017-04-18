@@ -312,50 +312,6 @@ R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}
  ---
 ---
 
-@ definition
-[term="sexy times"]
----
-When two people are doing the Spanky-McHankey, it's also known as *sexy times*.
----
-[[#def-sexy-times]]
-
-@ code
-[lang="idoc"]
----
- @ definition
- [term="sexy times"]
- ---
- When two people are doing the Spanky-McHankey, it's also known as *sexy times*.
- ---
- [[#def-sexy-times]]
----
-
-@ theorem
----
-
-@ eqnarray
----
-(x + y)^2 = x^2 + 2 xy + y^2.
----
-
----
-[[#thm-foil]]
-
-@ code
-[lang="idoc"]
----
- @ theorem
- ---
-
- @ eqnarray
- ---
- (x + y)^2 = x^2 + 2 xy + y^2.
- ---
-
- ---
- [[#thm-foil]]
----
-
 @ axiom
 ---
 An axiom looks like this.
@@ -382,6 +338,56 @@ x \cdot y = y \cdot x
  ---
 ---
 
+@ definition
+[term="sexy times"]
+---
+When two people are doing the Spanky-McHankey, it's also known as *sexy times*.
+---
+[[#def-sexy-times]]
+
+@ code
+[lang="idoc"]
+---
+ @ definition
+ [term="sexy times"]
+ ---
+ When two people are doing the Spanky-McHankey, it's also known as *sexy times*.
+ ---
+ [[#def-sexy-times]]
+---
+
+@ theorem
+---
+
+@ eqnarray
+---
+(x + y)^2 = x^2 + 2 xy + y^2.
+---
+
+***
+
+Sucky
+---
+[[#thm-foil]]
+
+@ code
+[lang="idoc"]
+---
+ @ theorem
+ ---
+
+ @ eqnarray
+ ---
+ (x + y)^2 = x^2 + 2 xy + y^2.
+ ---
+
+ ***
+
+ Sucky
+ ---
+ [[#thm-foil]]
+---
+
 @ lemma
 # Easy Lemma
 ---
@@ -394,6 +400,9 @@ For $n > 2$ there exists no integer solutions to the equation:
 x^n + y^n = z^n
 ---
 
+***
+
+It's trivial.
 ---
 [[#lem-easy-lemma]]
 
@@ -763,7 +772,6 @@ the cube!
 @ example
 ---
 Prove that every integer greater than zero is positive.
-
 ***
 
 The proof is pretty simple.  Try to follow along.
@@ -827,9 +835,7 @@ not abuse this feature.
 
 This is a boss-ass song.
 ---
-[[yt-unlimited-corners]]
-
-// FIXME: The ID above doesn't work!
+[[#yt-unlimited-corners]]
 
 === Images
 
