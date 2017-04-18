@@ -662,21 +662,22 @@ data ParagraphContent a = PCSimpleContent (SimpleContent a)
 instance GP.Out (ParagraphContent a)
 instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a) =>
   ILS e s m (ParagraphContent a) where
-  ils = (TM.try $ PCSimpleContent <$> ils) <|> 
-        (         PCPlainText <$> ils)
+  ils = do
+    let (HardEnder he :: HardEnder e s m a) = hardEnd
+    notFollowedBy he
+    (TM.try $ PCSimpleContent <$> ils) <|> (PCPlainText <$> ils)
 
 data Paragraph a = Paragraph { paragraphContent :: Vector (ParagraphContent a)
                              , paragraphID :: Maybe SetID
                              } deriving (Eq, Show, Generic)
 instance GP.Out (Paragraph a)
-
 instance (ErrorComponent e, Stream s, Token s ~ Char, HardEnd e s m a, BadEnd e s m a, LineLike a) =>
   ILS e s m (Paragraph a) where
   ils = do
     let (LikeLine ll :: LikeLine a) = lineLike
-    notFollowedBy $ TM.try $ void (ils :: ParsecT e s m (SectionHeading)) <|>
-                             void (ils :: ParsecT e s m (SubsectionHeading))
-    void $ many $ spaceChar
+    notFollowedBy $ (TM.try $ void (ils :: ParsecT e s m (SectionHeading))) <|>
+                    (         void (ils :: ParsecT e s m (SubsectionHeading)))
+    space
     scs <- some ils
     pid <- if ll then
              return Nothing
@@ -818,11 +819,11 @@ blockStart = string "---\n"
 
 blockDelim :: (ErrorComponent e, Stream s, Token s ~ Char) =>
   ParsecT e s m String
-blockDelim = string "\n---\n"
+blockDelim = string "\n---"
 
 multipartSep :: (ErrorComponent e, Stream s, Token s ~ Char) =>
   ParsecT e s m String
-multipartSep = string "\n***\n"
+multipartSep = string "\n***"
 
 simpleBlock :: (ErrorComponent e, Stream s, Token s ~ Char) => 
   (a -> b) -> ParsecT e s m a -> Maybe BlockHeading -> AttrMap -> ParsecT e s m (BlockT b)
@@ -1258,10 +1259,18 @@ instance (ErrorComponent e, Stream s, Token s ~ Char) =>
   SectionEnd e s m Main
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   SectionEnd e s m Block where
-  sectionEnd = SectionEnder $ void blockDelim
+  sectionEnd = SectionEnder $ do
+    void $ many $ do
+      notFollowedBy blockDelim
+      spaceChar
+    void blockDelim
 instance (ErrorComponent e, Stream s, Token s ~ Char) => 
   SectionEnd e s m MultipartBlock where
-  sectionEnd = SectionEnder $ void multipartSep
+  sectionEnd = SectionEnder $ do
+    void $ many $ do
+      notFollowedBy multipartSep
+      spaceChar
+    void multipartSep
 
 instance (ErrorComponent e, Stream s, Token s ~ Char, SectionEnd e s m a, SectionEnd e s m b) => 
   SectionEnd e s m (a, b) where

@@ -320,7 +320,6 @@ An axiom looks like this.
 ---
 x \cdot y = y \cdot x
 ---
-
 ---
 
 @ code
@@ -334,7 +333,6 @@ x \cdot y = y \cdot x
  ---
  x \cdot y = y \cdot x
  ---
-
  ---
 ---
 
@@ -366,7 +364,7 @@ When two people are doing the Spanky-McHankey, it's also known as *sexy times*.
 
 ***
 
-Sucky
+Use geometry.
 ---
 [[#thm-foil]]
 
@@ -383,7 +381,7 @@ Sucky
 
  ***
 
- Sucky
+ Use geometry.
  ---
  [[#thm-foil]]
 ---
@@ -760,18 +758,20 @@ the cube!
  zero, the map is going to map a set of basis vectors in your
  $n$-dimensional space into some smaller $m$-dimensional space.  This
  $m$-dimensional space has zero "volume" compared to the
- $n$-dimensional one, and so you're basically losing a whole dimension.
- There is no way to then map linearly back to the bigger space.  It
- would be like trying to find a linear function that maps the square to
- the cube!
+ $n$-dimensional one, and so you're basically losing a whole
+ dimension.  There is no way to then map linearly back to the bigger
+ space.  It would be like trying to find a linear function that maps
+ the square to the cube!
  ---
 ---
 
-`Examples` and `exercises` are also a key way for people to learn.
+`examples` and `exercises` are also a key way for people to learn.
 
 @ example
 ---
 Prove that every integer greater than zero is positive.
+
+
 ***
 
 The proof is pretty simple.  Try to follow along.
