@@ -312,6 +312,9 @@ R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}
  ---
 ---
 
+// FIXME: you can't have in the `axiom` below a blank line between the
+// `eqnarray` ender and the `axiom` ender.
+
 @ axiom
 ---
 An axiom looks like this.
@@ -417,7 +420,10 @@ It's trivial.
  ---
  x^n + y^n = z^n
  ---
+ 
+ ***
 
+ It's trivial.
  ---
  [[#lem-easy-lemma]]
 ---
@@ -640,7 +646,7 @@ Please use good judgement when deciding when to use these.
 # Connection Prerex
 ---
 /Basics/Logic{Mostly only _first-order_ logic will be used, but some _second-order_ stuff is important for stuff later on, so we put it here.}
-/Basics/Sex{Oh, I think you know. ;)}
+/Basics/Fun{And so on...}
 ---
 
 A `connection` is useful when you have content connected to the main text
@@ -689,7 +695,7 @@ depending on if the reader has the necessary prereqs or not.
  # Connection Prerex
  ---
  /Basics/Logic{Mostly only _first-order_ logic will be used, but some _second-order_ stuff is important for stuff later on, so we put it here.}
- /Basics/Sex{Oh, I think you know. ;)}
+ /Basics/Fun{And so on...}
  ---
  
  A `connection` is useful when you have content connected to the main text

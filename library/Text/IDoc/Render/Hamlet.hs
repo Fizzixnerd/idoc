@@ -648,7 +648,7 @@ instance ToMarkup Block where
     B.div B.! A.class_ "panel-group" $ 
     mProofAppend blockTitle blockID (corollaryProof blockContents) $
     (panel (defaultPanelOptions {panelType = Primary})
-           (mBlockHeading "Proposition" (toMarkup <$> blockTitle))
+           (mBlockHeading "Corollary" (toMarkup <$> blockTitle))
            blockID
            theoremIcon
            Nothing $
