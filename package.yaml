@@ -47,7 +47,8 @@ library:
   - shakespeare
   - blaze-html
   - pretty
-  - GenericPretty
+  - lens
+  - ghci-pretty
   source-dirs: library
 license: MIT
 maintainer: Matt Walker

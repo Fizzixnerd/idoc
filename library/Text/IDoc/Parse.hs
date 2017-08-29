@@ -21,9 +21,13 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE DeriveGeneric #-}
 
+-- | FIXME: Refactor blocks so that they case-match on the blocktype,
+-- not type match afterwards jesus.
+
 module Text.IDoc.Parse where
 
--- | FIXME: if a paragraph ends with a QText, it doesn't get rendered properly.
+-- | FIXME: if a paragraph ends with a QText, it doesn't get rendered
+-- properly.
 import ClassyPrelude
 import Text.Megaparsec as TM
 import Data.Char

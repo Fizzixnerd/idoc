@@ -46,9 +46,9 @@ instance ToValue (IDPath a) where
     concatMap toValue $ intersperse (IDPathComponent "-") xs
 
 idPathT :: (IDPath a) -> Text
-idPathT x = concat $ 
-            cons "/" $ 
-            intersperse "/" $ 
+idPathT x = concat $
+            cons "/" $
+            intersperse "/" $
             fmap (\(IDPathComponent y) -> y) $
             (\(IDPath xs) -> xs) $
             x
@@ -745,7 +745,14 @@ instance ToMarkup Block where
            answerIcon 
            Nothing $
            toMarkup $ exampleSolution blockContents)
-  toMarkup (BExerciseBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
+  toMarkup (BExerciseBlock (BlockT {..})) = 
+    panel (defaultPanelOptions {panelType = Info}) 
+          (mBlockHeading "Exercise" (toMarkup <$> blockTitle))
+          blockID 
+          sidenoteIcon 
+          Nothing $ 
+          toMarkup blockContents
+
   toMarkup (BBibliographyBlock x) = (B.div B.! A.class_ "clearfix" $ "") ++ toMarkup x
 
 instance ToMarkup DocHeading where
