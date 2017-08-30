@@ -51,6 +51,7 @@ data Token =
   | DollarSign
   | PercentSign
   | SemiColon
+  | BSlash
   deriving (Eq, Ord, Show)
 
 data Core = SC SimpleCore
@@ -76,7 +77,10 @@ data Paragraph = Paragraph { _paraContents :: Vector SimpleCore
                            }
   deriving (Eq, Ord, Show)
 
-data Doc = Doc { _docTitle :: Vector SimpleCore
+newtype DocTitle = DocTitle { unDocTitle :: Vector SimpleCore }
+  deriving (Eq, Ord, Show)
+
+data Doc = Doc { _docTitle :: DocTitle
                , _docSections :: Vector Section }
   deriving (Eq, Ord, Show)
 
@@ -85,6 +89,7 @@ data TextType = Strong
               | Monospace
               | Superscript
               | Subscript
+              | Quoted
   deriving (Eq, Ord, Show)
 
 data QText = QText { _qtText :: Vector SimpleCore
@@ -108,7 +113,10 @@ data LinkType = Internal
               | Out
   deriving (Eq, Ord, Show)
 
-data Link = Link { _linkText :: Vector SimpleCore
+newtype LinkText = LinkText { unLinkText :: Vector SimpleCore }
+  deriving (Eq, Ord, Show)
+
+data Link = Link { _linkText :: LinkText
                  , _linkAttrs :: AttrMap
                  , _linkLocation :: ID
                  , _linkType :: LinkType
@@ -132,8 +140,11 @@ data ListType = Unordered
 data List = List { _listContents :: Vector ListItem }
   deriving (Eq, Ord, Show)
 
+newtype ListLabel = ListLabel { unListLabel :: Vector SimpleCore }
+  deriving (Eq, Ord, Show)
+
 data ListItem = ListItem { _liAttrs :: AttrMap
-                         , _liLabel :: Maybe (Vector SimpleCore)
+                         , _liLabel :: Maybe ListLabel
                          , _liContents :: Vector SimpleCore
                          , _liSetID :: Maybe SetID
                          , _liType :: ListType
@@ -188,9 +199,12 @@ data BlockType = PrerexB { _prerex :: Prerex }
                | RecallB { _recall :: Recall }
   deriving (Eq, Ord, Show)
 
+newtype BlockTitle = BlockTitle { unBlockTitle :: Vector SimpleCore }
+  deriving (Eq, Ord, Show)
+
 data Block = Block { _bType :: BlockType
                    , _bAttrs :: AttrMap
-                   , _bTitle :: Maybe (Vector SimpleCore)
+                   , _bTitle :: Maybe BlockTitle
                    , _bSetID :: Maybe SetID
                    }
   deriving (Eq, Ord, Show)
@@ -295,10 +309,13 @@ data SectionType = Preamble
                  | SubSection
   deriving (Eq, Ord, Show)
 
+newtype SectionTitle = SectionTitle { unSectionTitle :: Vector SimpleCore }
+  deriving (Eq, Ord, Show)
+
 data Section = Section { _secType :: SectionType
                        , _secAttrs :: AttrMap
                        , _secContents :: Vector Core
-                       , _secTitle :: Vector SimpleCore
+                       , _secTitle :: SectionTitle
                        , _secSetID :: Maybe SetID
                        }
   deriving (Eq, Ord, Show)

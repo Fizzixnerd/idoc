@@ -26,18 +26,19 @@ You will probably want to examine the source for this document along
 with the rendered content.  It can be found
 <<http://www.independentlearning.science/source.idoc>>{here}.
 ---
-[[#source-tip]]
+[[#sourceTip]]
 
 idoc was created because no other existing markup language had the
 properties we needed for the website.  We describe these properties
 and how the extant humane markup languages failed to have them.
 
-:Prerequisite resolution:: This is the big one.  The website is
+:Prerequisite resolution::This is the big one.  The website is
 designed around the idea of prerequisites, and so prerequisite
 resolution is a necessary thing idoc has to be able to do.  It would
 have been _possible_ to add this to Asciidoc, but not fun.  It would
 have been _impossible_ to add this to Markdown.
-:Typed Blocks:: A "strongly-typed" block is where one declares the
+
+:Typed Blocks::A "strongly-typed" block is where one declares the
 purpose of a section of text explicitly.  idoc uses the strongly-typed
 blocks to enable a bunch of cool features.  One of those features is
 being able to take a doc (or a bunch of docs) and take all the
@@ -46,7 +47,8 @@ stick them all in a new document and basically generate a useful
 review sheet for you automatically.  It also means that you don't
 manually have to describe the formatting of these things; idoc takes
 care of that for you.
-:Extensible Blocks:: On the other hand, having "extensible" blocks
+
+:Extensible Blocks::On the other hand, having "extensible" blocks
 means that we can add new types of blocks -- and new features to them
 -- as needed.  For example, if idoc is use a lot by computer science
 students, it might be necessary to add a block that allows you to
@@ -54,7 +56,8 @@ download example code.  It might even be cool to add that
 functionality to the already existing `code` blocks.  These kind of
 additions are _impossible_ in Markdown, _difficult_ in Asciidoc, and
 _easy_ in idoc.
-:Easy to Learn by Example:: While Asciidoc is a powerful markup
+
+:Easy to Learn by Example::While Asciidoc is a powerful markup
 language, its syntax can be somewhat irregular.  It uses different
 types of delimiters to denote different types of blocks.  Unless you
 have memorized what each style of delimiter means, this makes the
@@ -66,7 +69,8 @@ see in it.  Most edits to sites like Wikipedia are small ones; users
 like that don't want to learn the entirety of a markup language.  They
 just want to get in, make their edit, and get out.  Hopefully idoc
 allows them to do this.
-:Power with Limitations:: Asciidoc and Markdown allow you to insert
+
+:Power with Limitations::Asciidoc and Markdown allow you to insert
 inline HTML into your documents.  While this sounds nice, it means
 that it's unsuitable for content on a shared website.  This is because
 Javascript can be embedded in HTML, and that would mean we were
@@ -76,7 +80,8 @@ abstraction layer the markup languages provide, and makes it much more
 difficult to properly format the result of the markup language
 automatically.  We prefer providing the features users want directly,
 instead of having them rely on such "escape hatches".
-:Haskell Implementation:: We are using the
+
+:Haskell Implementation::We are using the
 <<https://www.haskell.org>>{Haskell programming language} to make the
 site because there is simply no better language out there.  There does
 not exist (at the time of writing) a good implementation of Asciidoc
@@ -142,19 +147,20 @@ the final document.  These are not yet implemented, but will be soon.
 // comments are not supported because they are a pain.
 
 Nearly everything in idoc can be given an identifier (or *ID*) using
-the syntax `[[#id-name]]`.  This immediately follows the thing you
+the syntax `[[#idName]]`.  This immediately follows the thing you
 wish to identify.
 
 [lang=idoc]
 @code
 ---
 Nearly everything in idoc can be given an identifier using the syntax
-`[[#id-name]]`.  This immediately follows the thing you wish to
+`[[#idName]]`.  This immediately follows the thing you wish to
 identify.
+
 ---
 
 To see how to refer to IDs and link to them, check out the
-<<#sec-links>>{section on links}.
+<<#secLinks>>{section on links}.
 
 ===Lists
 
@@ -203,10 +209,10 @@ lists, ordered lists and labelled (description) lists.
 ==Blocks
 
 *Blocks* are a fundamental construct in idoc.  They all look the same,
-basically.  They begin with `@ blocktype` on a line by itself,
+basically.  They begin with `@blocktype` on a line by itself,
 separated by the previous content by a blank line.  A block can also
 have a title, which comes _after_ the declaration of block type; it
-looks like `# Block Title`.  Titles are optional, and a default title
+looks like `#Block Title`.  Titles are optional, and a default title
 will be chosen based on the block type if not included.  Next, we have
 the attribute list, which I'll talk more on below.  Basically it looks
 like `[key=value,key-no-value,key2=value-2,...]`, and gives a list
@@ -226,7 +232,7 @@ using a `math` block, like so:
 ---
 f(x) = \int_x^\infty g(t) \mathrm{d}t
 ---
-[[#eqn-f-defn]]
+[[#eqnFDefn]]
 
 [lang=idoc]
 @code
@@ -236,7 +242,7 @@ f(x) = \int_x^\infty g(t) \mathrm{d}t
  ---
  f(x) = \int_x^\infty g(t) \mathrm{d}t
  ---
- [[#eqn-f-defn]]
+ [[#eqnFDefn]]
 ---
 
 Note that that $d$ will not be upright as it should be.  We'll fix
@@ -271,11 +277,11 @@ g(y) &=& y^2
 
 Note that we can use the standard `\label{}` macro within the `math`
 or `eqnarray` environments to assign IDs to individual equations.
-Then we can use `\ref{}` or `<<#id-label>>` syntax to refer to them:
+Then we can use `\ref{}` or `<<#idLabel>>` syntax to refer to them:
 
 @eqnarray
 ---
-\label{important-equation} y &=& mx + b
+\label{importantEquation} y &=& mx + b
 ---
 
 [lang=idoc]
@@ -283,12 +289,12 @@ Then we can use `\ref{}` or `<<#id-label>>` syntax to refer to them:
 ---
  @eqnarray
  ---
- \label{important-equation} y &=& mx + b
+ \label{importantEquation} y &=& mx + b
  ---
 ---
 
-Refer to the _important equation_ $\ref{important-equation}$.  Refer
-to <<#important-equation>>{the important equation}.  If you want to
+Refer to the _important equation_ $\ref{importantEquation}$.  Refer
+to <<#importantEquation>>{the important equation}.  If you want to
 prevent an equation from being numbered, use `\nonumber` as usual.
 
 @eqnarray
@@ -305,9 +311,6 @@ R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}
  ---
 ---
 
-// FIXME: you can't have in the `axiom` below a blank line between the
-// `eqnarray` ender and the `axiom` ender.
-
 @axiom
 ---
 An axiom looks like this.
@@ -316,6 +319,7 @@ An axiom looks like this.
 ---
 x \cdot y = y \cdot x
 ---
+
 ---
 
 [lang=idoc]
@@ -350,7 +354,7 @@ a *number* is an element of an field.
  [[#def-number]]
 ---
 
-@ theorem
+@theorem
 ---
 
 @eqnarray
@@ -358,7 +362,7 @@ a *number* is an element of an field.
 (x + y)^2 = x^2 + 2 xy + y^2.
 ---
 
-***
+>>>
 
 Use geometry.
 ---
@@ -375,7 +379,7 @@ Use geometry.
  (x + y)^2 = x^2 + 2 xy + y^2.
  ---
 
- ***
+ >>>
 
  Use geometry.
  ---
@@ -389,16 +393,16 @@ This is a lemma.  It's pretty easy to prove.
 
 For $n > 2$ there exists no integer solutions to the equation:
 
-@ eqnarray
+@eqnarray
 ---
 x^n + y^n = z^n
 ---
 
-***
+>>>
 
 It's trivial.
 ---
-[[#lem-easy-lemma]]
+[[#lemEasyLemma]]
 
 @code
 ---
@@ -414,11 +418,11 @@ It's trivial.
  x^n + y^n = z^n
  ---
  
- ***
+ >>>
 
  It's trivial.
  ---
- [[#lem-easy-lemma]]
+ [[#lemEasyLemma]]
 ---
 
 @proposition
@@ -463,7 +467,7 @@ The product of any two primes is also prime.
  ---
 ---
 
-[theorem=#lem-easy-lemma]
+[theorem=lemEasyLemma]
 @proof
 ---
 Just intuit.
@@ -472,7 +476,7 @@ Just intuit.
 [lang=idoc]
 @code
 ---
- [theorem=#lem-easy-lemma]
+ [theorem=lemEasyLemma]
  @proof
  ---
  Just intuit.
@@ -490,7 +494,7 @@ the text.  The first is the `quote` block, used for quotations.
 ---
 The internet is the most important invention since gravity.
 ---
-[[#q-einstein]]
+[[#qEinstein]]
 
 [lang=idoc]
 @code
@@ -501,7 +505,7 @@ The internet is the most important invention since gravity.
  ---
  The internet is the most important invention since gravity.
  ---
- [[#q-einstein]]
+ [[#qEinstein]]
 ---
 
 Notice in the `quote` block we added an author attribution above as an
@@ -522,3 +526,363 @@ allowed any amount of complex content here.  An equation: $F =
 \frac{dp}{dt}$.
 ---
 
+[lang=idoc]
+@code
+---
+ @sidenote
+ #Please be Aware:
+ ---
+ This content will be rendered off to the side of the document.  You are
+ allowed any amount of complex content here.  An equation: $F =
+ \frac{dp}{dt}$.
+ ---
+---
+
+For more specialized blocks similar to `sidenotes`, use an
+`admonition` instead.  They look nicer and are more eye catching.
+Here are some examples; notice how again we use an attribute list to
+specify the type of admonition.
+
+[type=warning]
+@admonition
+#This is a Warning Block
+---
+This will show a little warning symbol next to it.
+---
+[[#warningAdmonition]]
+
+[lang=idoc]
+@code
+---
+ [type=warning]
+ @admonition
+ #This is a Warning Block
+ ---
+ This will show a little warning symbol next to it.
+ ---
+ [[#warningAdmonition]]
+---
+
+[type=info]
+@admonition
+#This is an Info Block
+---
+This will show a little info symbol next to it.
+---
+[[#infoAdmonition]]
+
+[lang=idoc]
+@code
+---
+ [type=info]
+ @admonition
+ #This is an Info Block
+ ---
+ This will show a little info symbol next to it.
+ ---
+ [[#infoAdmonition]]
+---
+
+[type=caution]
+@admonition
+#This is a Caution Block
+---
+This will show a little caution symbol next to it.
+---
+[[#cautionAdmonition]]
+
+[lang=idoc]
+@code
+---
+ [type=caution]
+ @admonition
+ #This is a Caution Block
+ ---
+ This will show a little caution symbol next to it.
+ ---
+ [[#cautionAdmonition]]
+---
+
+[type=tip]
+@admonition
+#This is a Tip Block
+---
+This will show a little lightbulb symbol next to it.
+---
+[[#tipAdmonition]]
+
+[lang=idoc]
+@code
+---
+ [type=tip]
+ @admonition
+ #This is a Tip Block
+ ---
+ This will show a little lightbulb symbol next to it.
+ ---
+ [[#tipAdmonition]]
+---
+
+If you're worried about all the wasted space in the HTML output, don't
+be!  It's only wasted because I didn't put text between each block.
+You would not normally have $1 + 4$ of these things in a row.
+
+===Pedagogical Blocks
+
+These next blocks are useful when you want to offer extra information
+to the reader.  In the case of a `connection`, that information may be
+more advanced than what the reader understands.  In the case of an
+`intuition`, it's information that is technically contained in the
+main text, but is a powerful/neat way of thinking about the material.
+Please use good judgement when deciding when to use these.
+
+@connection
+#A connection
+---
+@prerex
+#Connection Prerex
+---
+/Basics/Logic{Mostly only _first-order_ logic will be used, but some _second-order_ stuff is important for stuff later on, so we put it here.}
+/Basics/Fun{And so on...}
+---
+
+A `connection` is useful when you have content connected to the main text
+but which isn't super necessary, or requires more advanced techniques
+than the rest of the text.  This is because connections are allowed to have
+their own prerequisites, in addition to the main doc's prereqs.
+
+@admonition
+#Rendering
+[type=info]
+---
+If you're viewing this full-screen on a computer, you'll notice that
+unlike the other some other blocks we've seen, connections are
+rendered across the full screen.  In general, you should _never_ rely
+on the position of something relative to something else, or its size.
+This is because idoc has been designed to have pluggable themes, and
+the web renderer creates _responsive_ html that is free to reorganize
+content to better match the devices size.  Therefore, *whenever you
+refer to something, please please please use an ID*.
+---
+[[#renderingInfo]]
+
+Connections are for when you want to connect with an outside idea, but
+don't want to have this interesting connection create new
+prerequisites for your doc.  For example, in the article
+<</Math/Topology/Homeomorphism#>>{on topology}, we might want to talk
+about how is difficult to prove two things are _not_ homeomorphic, and
+how the fundamental group is useful because of its status as a
+topological invariant.  However, we don't know if the readers actually
+know group theory.  This would be the time you would use a connection --
+group theory is not needed to understand homeomorphisms, but it _is_
+needed to understand this small aside.
+
+When the site is complete, connections will start out open or closed
+depending on if the reader has the necessary prereqs or not.
+---
+[[#myConnection]]
+
+[lang=idoc]
+@code
+---
+ @connection
+ #A connection
+ ---
+ @prerex
+ #Connection Prerex
+ ---
+ /Basics/Logic{Mostly only _first-order_ logic will be used, but some _second-order_ stuff is important for stuff later on, so we put it here.}
+ /Basics/Fun{And so on...}
+ ---
+ 
+ A `connection` is useful when you have content connected to the main text
+ but which isn't super necessary, or requires more advanced techniques
+ than the rest of the text.  This is because connections are allowed to have
+ their own prerequisites, in addition to the main doc's prereqs.
+ 
+ @admonition
+ #Rendering
+ [type=info]
+ ---
+ If you're viewing this full-screen on a computer, you'll notice that
+ unlike the other some other blocks we've seen, connections are
+ rendered across the full screen.  In general, you should _never_ rely
+ on the position of something relative to something else, or its size.
+ This is because idoc has been designed to have pluggable themes, and
+ the web renderer creates _responsive_ html that is free to reorganize
+ content to better match the devices size.  Therefore, *whenever you
+ refer to something, please please please use an ID*.
+ ---
+ [[#renderingInfo]]
+ 
+ Connections are for when you want to connect with an outside idea, but
+ don't want to have this interesting connection create new
+ prerequisites for your doc.  For example, in the article
+ <</Math/Topology/Homeomorphism#>>{on topology}, we might want to talk
+ about how is difficult to prove two things are _not_ homeomorphic, and
+ how the fundamental group is useful because of its status as a
+ topological invariant.  However, we don't know if the readers actually
+ know group theory.  This would be the time you would use a connection --
+ group theory is not needed to understand homeomorphisms, but it _is_
+ needed to understand this small aside.
+ 
+ When the site is complete, connections will start out open or closed
+ depending on if the reader has the necessary prereqs or not.
+ ---
+ [[#myConnection]]
+---
+
+@intuition
+#But What _is_ the Determinant?! -- An Example Intuition Block
+---
+The determinant from a geometric point of view is used to talk about
+_volume_.  If you grok this, then everything else will fall into
+place.  For example, the reason a linear transformation is invertible
+if and only if its determinant is non-zero is because when it _is_
+zero, the map is going to map a set of basis vectors in your
+$n$-dimensional space into some smaller $m$-dimensional space.  This
+$m$-dimensional space has zero "volume" compared to the
+$n$-dimensional one, and so you're basically losing a whole dimension.
+There is no way to then map linearly back to the bigger space.  It
+would be like trying to find a linear function that maps the square to
+the cube!
+---
+
+[lang=idoc]
+@code
+---
+ @intuition
+ # But What _is_ the Determinant?! -- An Example Intuition Block
+ ---
+ The determinant from a geometric point of view is used to talk about
+ _volume_.  If you grok this, then everything else will fall into
+ place.  For example, the reason a linear transformation is invertible
+ if and only if its determinant is non-zero is because when it _is_
+ zero, the map is going to map a set of basis vectors in your
+ $n$-dimensional space into some smaller $m$-dimensional space.  This
+ $m$-dimensional space has zero "volume" compared to the
+ $n$-dimensional one, and so you're basically losing a whole
+ dimension.  There is no way to then map linearly back to the bigger
+ space.  It would be like trying to find a linear function that maps
+ the square to the cube!
+ ---
+---
+
+`examples` and `exercises` are also a key way for people to learn.
+The difference between the two is that essentially an exercise is an
+example without a solution.
+
+@example
+---
+Prove that every integer greater than zero is positive.
+
+>>>
+
+The proof is pretty simple.  Try to follow along.
+
+First, assume not.  But that's not the case.  QED.
+---
+[[#exExample]]
+
+[lang=idoc]
+@code
+---
+ @example
+ ---
+ Prove that every integer greater than zero is positive.
+ 
+ >>>
+ 
+ The proof is pretty simple.  Try to follow along.
+ 
+ First, assume not.  But that's not the case.  QED.
+ ---
+ [[#exExample]]
+---
+
+@exercise
+---
+What is largest rational number that can be written as a fraction of
+$5$ and $7$?
+---
+
+@code
+---
+ @exercise
+ ---
+ What is largest rational number that can be written as a fraction of
+ $5$ and $7$?
+ ---
+---
+
+===Links
+[[#secLinks]]
+
+Links come in three flavours.  The first is your standard link, called
+an *out link* or *olink* in idoc.  It's written like
+`<<http://www.example.com>>{this}` and appears like
+<<http://www.example.com>>{this}.  Note that the `http(s)://` part of
+the link is _mandatory_.  Olinks are restricted in idoc to appear in
+only very specific places, for example in `furtherreading` or
+`bibliography` blocks.  This is because the text of a doc should be
+_self-contained_.  You should not _need_ to go to an outside source to
+understand a concept.  However, that doesn't mean that outside sources
+are useless -- Wikipedia is an excellent reference for topics you've
+just learned about.  It just means you don't want to interrupt the
+flow of the document just anywhere.  This is why idoc enforces this
+rule.
+
+The second flavour is a link within the current doc, called an
+*internal link* or *ilink*.  For example, when we used `\ref{}` back
+in the Math section, we were using ilinks.  Refering to anything on
+the page which has an ID is an ilink.  They are written like
+`<<#important-equation>>{this}`, and appear like
+<<#important-equation>>{this}.  That is, they are the `#` symbol
+followed by a valid ID.
+
+The final flavour is the *back link*, or *blink*.  This is a link to
+something contained within the prerequisite tree of the current doc.
+In their most general form, they are written like
+`<</Name/Of/Article#id-in-article>>{this right here}` and display like
+<</Name/Of/Article#id-in-article>>{this right here}.  However, the `#`
+symbol and the ID following it can be left out if you just want to
+refer to the article as a whole.  Notice that you are not allowed to
+link to another article that isn't within the prerequisite tree from
+just anywhere.  This is by design; articles should only depend on the
+knowledge from previous articles.  This restriction allows many of the
+features that the ILS website hopes to deliver, such as automatic
+prerequisite resolution for subjects you want to learn.
+
+In all types of links, you are free to leave out the text inside the
+`{}`.  This will just use the text inside the `<<>>` as the display
+text instead.  Normally this is not what you want, however.
+
+===YouTube
+
+We can embed YouTube videos if we think they are important.  Please do
+not abuse this feature.
+
+@youtube
+---
+<<https://www.youtube.com/FdU8oqCbvzo>>
+
+>>>
+
+Objections are awesome.
+---
+[[#ytUnlimitedCorners]]
+
+===Images
+
+We can embed important images too.
+
+@image
+---
+<<http://www.independentlearning.science/uusBbd5.jpg>>
+---
+
+Bunnies make everything better.
+
+==Conclusion
+
+That's about it for the basic syntax.  We can fix the rest later.

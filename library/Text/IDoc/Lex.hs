@@ -55,13 +55,20 @@ reservedPunctuation = M.fromList [ ('=', Equals)
                                  , ('.', Period)
                                  , ('$', DollarSign)
                                  , ('%', PercentSign)
-                                 , (';', SemiColon) ]
+                                 , (';', SemiColon)
+                                 , ('\\', BSlash) ]
 
 reservedPunctuationL :: [Char]
 reservedPunctuationL = fst <$> (M.toList reservedPunctuation)
 
 reservedPunctuationS :: Set Char
 reservedPunctuationS = S.fromList reservedPunctuationL
+
+-- backslashT :: Parser Token
+-- backslashT = MP.label "Backslash" $ do
+--   void $ MP.char '\\'
+--   nextChar <- MP.anyChar
+--   return $ TextT $ fromList [nextChar]
 
 puncT :: Parser Token
 puncT = MP.label "Punctuation" $ do
@@ -76,7 +83,7 @@ regularTextT = TextT . fromString <$> (some $ MP.satisfy (\c -> c `notElem` rese
 
 token :: Parser Token
 token =  MP.try puncT
-     <|> regularTextT
+     <|>        regularTextT
 
 tokens :: Parser (Vector Token)
 tokens = fromList <$> (many token)
