@@ -178,7 +178,7 @@ renderManyCC renderManyCC307,308
 renderLManyCC renderLManyCC309,310
 renderLManyCC renderLManyCC310,311
 
-./library/Text/IDoc/Render/Html5.hs,1595
+./library/Text/IDoc/Render/Html5.hs,1689
 module Text.IDoc.Render.Html5 Text.IDoc.Render.Html511,12
 mID mID32,33
 mID mID33,34
@@ -213,12 +213,14 @@ vectorBlockToMarkup vectorBlockToMarkup196,197
 vectorBlockToMarkup vectorBlockToMarkup201,202
 verbatimBlockToMarkup verbatimBlockToMarkup206,207
 verbatimBlockToMarkup verbatimBlockToMarkup210,211
-megaMain'' megaMain''502,503
-megaMain'' megaMain''503,504
-renderPretty renderPretty513,514
-renderPretty renderPretty514,515
+decorateAdmonition decorateAdmonition417,418
+decorateAdmonition decorateAdmonition418,419
+megaMain'' megaMain''523,524
+megaMain'' megaMain''524,525
+renderPretty renderPretty534,535
+renderPretty renderPretty535,536
 
-./library/Text/IDoc/Render/Html5/Icons.hs,263
+./library/Text/IDoc/Render/Html5/Icons.hs,483
 module Text.IDoc.Render.Html5.Icons Text.IDoc.Render.Html5.Icons9,10
 type Icon Icon16,17
 icon icon18,19
@@ -227,6 +229,14 @@ prerexItemIcon prerexItemIcon21,22
 prerexItemIcon prerexItemIcon22,23
 youTubeIcon youTubeIcon24,25
 youTubeIcon youTubeIcon25,26
+infoIcon infoIcon27,28
+infoIcon infoIcon28,29
+tipIcon tipIcon30,31
+tipIcon tipIcon31,32
+cautionIcon cautionIcon33,34
+cautionIcon cautionIcon34,35
+warningIcon warningIcon36,37
+warningIcon warningIcon37,38
 
 ./library/Text/IDoc/Lex.hs,604
 module Text.IDoc.Lex Text.IDoc.Lex16,17

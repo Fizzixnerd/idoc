@@ -268,14 +268,22 @@ instance B.ToMarkup Block where
                            intuitionIcon, Nothing, B.toMarkup i)
           YouTubeB y -> (defaultPanelOptions, mTitle "Youtube",
                          youTubeIcon, Nothing, B.toMarkup y)
-          InfoB a -> (defaultPanelOptions, mTitle "Info",
-                      infoIcon, Nothing, B.toMarkup a)
-          TipB a -> (defaultPanelOptions, mTitle "Tip",
-                     tipIcon, Nothing, B.toMarkup a)
-          CautionB a -> (defaultPanelOptions, mTitle "Caution",
-                         cautionIcon, Nothing, B.toMarkup a)
-          WarningB a -> (defaultPanelOptions, mTitle "Warning",
-                         warningIcon, Nothing, B.toMarkup a)
+          InfoB a -> (defaultPanelOptions { panelType = PInfo
+                                          , panelGridWidth = GridFour
+                                          },
+                      mTitle "Info", infoIcon, Nothing, B.toMarkup a)
+          TipB a -> (defaultPanelOptions { panelType = PPrimary
+                                         , panelGridWidth = GridFour
+                                         },
+                     mTitle "Tip", tipIcon, Nothing, B.toMarkup a)
+          CautionB a -> (defaultPanelOptions { panelType = PWarning
+                                             , panelGridWidth = GridFour
+                                             },
+                         mTitle "Caution", cautionIcon, Nothing, B.toMarkup a)
+          WarningB a -> (defaultPanelOptions { panelType = PDanger
+                                             , panelGridWidth = GridFour
+                                             },
+                         mTitle "Warning", warningIcon, Nothing, B.toMarkup a)
           SideNoteB s -> (defaultPanelOptions, mTitle "Side Note", sideNoteIcon,
                           Nothing, B.toMarkup s)
           ExampleB e -> (defaultPanelOptions, mTitle "Example", exampleIcon,
@@ -306,10 +314,6 @@ instance B.ToMarkup Block where
       connectionIcon = icon "fa-link"
       definitionIcon = axiomIcon
       intuitionIcon = icon "fa-puzzle-piece"
-      infoIcon = icon "fa-info-circle"
-      tipIcon = icon "fa-lightbulb-o"
-      cautionIcon = icon "fa-exclamation-triangle"
-      warningIcon = icon "fa-exclamation-circle"
       sideNoteIcon = icon "fa-sticky-note-o"
       exampleIcon = icon "fa-pencil"
       exerciseIcon = icon "fa-question-circle"
@@ -327,7 +331,7 @@ instance B.ToMarkup PrerexItem where
                      prerexItemIcon
                      (Just $ B.a B.! A.class_ "idocPrerexItemLink"
                                  B.! A.href (p^.prerexItemPath.to B.toValue) $
-                                 "Go to" ++ (p^.prerexItemPath.to B.toMarkup))
+                                 "Go to " ++ (p^.prerexItemPath.to B.toMarkup))
                      (concatMap B.toMarkup $ p^.prerexItemDescription)
 
 instance B.ToMarkup Prerex where
@@ -411,17 +415,34 @@ instance B.ToMarkup Definition where
 instance B.ToMarkup Intuition where
   toMarkup (Intuition i) = vectorBlockToMarkup "idocIntuition" id i
 
+decorateAdmonition :: PanelType -> B.Html -> B.Html
+decorateAdmonition pt cnt = (B.span B.! A.class_ 
+                             ("fa " ++
+                              faIcon ++
+                              " fa-4x fa-pull-left fa-border") $ "") ++ cnt
+  where
+    faIcon = case pt of
+      PInfo -> "fa-info-circle"
+      PDanger -> "fa-exclamation-circle"
+      PWarning -> "fa-exclamation-triangle"
+      PPrimary -> "fa-lightbulb-o"
+      _ -> error $ "I can't decorate like that!"
+
 instance B.ToMarkup Info where
-  toMarkup (Info a) = vectorBlockToMarkup "idocInfo" id a
+  toMarkup (Info a) = decorateAdmonition PInfo $
+                      vectorBlockToMarkup "idocInfo" id a
 
 instance B.ToMarkup Tip where
-  toMarkup (Tip a) = vectorBlockToMarkup "idocTip" id a
+  toMarkup (Tip a) = decorateAdmonition PPrimary $ 
+                     vectorBlockToMarkup "idocTip" id a
 
 instance B.ToMarkup Caution where
-  toMarkup (Caution a) = vectorBlockToMarkup "idocCaution" id a
+  toMarkup (Caution a) = decorateAdmonition PWarning $ 
+                         vectorBlockToMarkup "idocCaution" id a
 
 instance B.ToMarkup Warning where
-  toMarkup (Warning a) = vectorBlockToMarkup "idocWarning" id a
+  toMarkup (Warning a) = decorateAdmonition PDanger $ 
+                         vectorBlockToMarkup "idocWarning" id a
 
 instance B.ToMarkup SideNote where
   toMarkup (SideNote s) = vectorBlockToMarkup "idocSideNote" id s

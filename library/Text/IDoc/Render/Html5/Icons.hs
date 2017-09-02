@@ -24,3 +24,15 @@ prerexItemIcon = icon "fa-question-circle"
 
 youTubeIcon :: Icon
 youTubeIcon = icon "fa-youtube"
+
+infoIcon :: Icon
+infoIcon = icon "fa-info-circle"
+
+tipIcon :: Icon
+tipIcon = icon "fa-lightbulb-o"
+
+cautionIcon :: Icon
+cautionIcon = icon "fa-exclamation-triangle"
+
+warningIcon :: Icon
+warningIcon = icon "fa-exclamation-circle"
