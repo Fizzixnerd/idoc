@@ -136,28 +136,29 @@ instance B.ToValue LinkType where
   toValue Back = "idocBackLink"
   toValue Out = "idocOutLink"
 
-instance B.ToMarkup ID where
-  toMarkup id_ = 
-    let (base, hash_) = case (id_^.idProtocol, id_^.idHash) of
-                          (Nothing, Nothing) -> ("http://www.independentlearning.science", "")
-                          (Just (Protocol p), Just (IDHash h)) -> (p ++ "://", h)
-                          (Nothing, Just (IDHash h)) -> ("", h)
+idHelper :: (Text -> t) -> ID -> t
+idHelper decorator id_ = let (base, hash_) =
+                               case (id_^.idProtocol, id_^.idHash) of
+                                 (Just (Protocol "youtube"), Nothing) -> 
+                                   ("https://youtube.com/embed/", "")
+                                 (Just (Protocol "youtube"), Just _) -> 
+                                   error "got youtube protocol with a hash!?"
+                                 (Nothing, Nothing) -> 
+                                   ("http://www.independentlearning.science/", "")
+                                 (Just (Protocol p), Just (IDHash h)) ->
+                                   (p ++ "://", h)
+                                 (Nothing, Just (IDHash h)) -> ("", h)
+                                 (Just (Protocol p), Nothing) -> (p ++ "://", "")
     in
-      B.toMarkup $ base ++
+      decorator $ base ++
       (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
       hash_
 
+instance B.ToMarkup ID where
+  toMarkup id_ = idHelper B.toMarkup id_
+
 instance B.ToValue ID where
-  toValue id_ =
-    let (base, hash_) = case (id_^.idProtocol, id_^.idHash) of
-                          (Nothing, Nothing) -> ("http://www.independentlearning.science", "")
-                          (Just (Protocol p), Just (IDHash h)) -> (p ++ "://", h)
-                          (Nothing, Just (IDHash h)) -> ("", h)
-                          (Just (Protocol p), Nothing) -> (p ++ "://", "")
-    in
-      B.toValue $ base ++
-      (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
-      hash_
+  toValue id_ = idHelper B.toValue id_
 
 instance B.ToValue SetID where
   toValue (SetID (IDHash sid)) = B.toValue sid
@@ -198,7 +199,10 @@ vectorBlockToMarkup :: B.ToMarkup a =>
                     -> (B.Html -> B.Html)
                     -> Vector a 
                     -> B.Html
-vectorBlockToMarkup cls dec vb = B.div B.! A.class_ cls $ dec $ concatMap B.toMarkup vb
+vectorBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
+                                 dec $
+                                 concatMap B.toMarkup
+                                 vb
 
 verbatimBlockToMarkup :: B.AttributeValue 
                       -> (B.Html -> B.Html)
@@ -256,14 +260,14 @@ instance B.ToMarkup Block where
                        Nothing, B.toMarkup i)
           VideoB v -> (defaultPanelOptions, mTitle "Video", videoIcon,
                        Nothing, B.toMarkup v)
-          YouTubeB y -> (defaultPanelOptions, mTitle "YouTube", youTubeIcon,
-                         Nothing, B.toMarkup y)
           ConnectionB c -> (defaultPanelOptions, mTitle "Connection",
                             connectionIcon, Nothing, B.toMarkup c)
           DefinitionB d -> (defaultPanelOptions, mTitle "Defintion",
                             definitionIcon, Nothing, B.toMarkup d)
           IntuitionB i -> (defaultPanelOptions, mTitle "Intuition",
                            intuitionIcon, Nothing, B.toMarkup i)
+          YouTubeB y -> (defaultPanelOptions, mTitle "Youtube",
+                         youTubeIcon, Nothing, B.toMarkup y)
           InfoB a -> (defaultPanelOptions, mTitle "Info",
                       infoIcon, Nothing, B.toMarkup a)
           TipB a -> (defaultPanelOptions, mTitle "Tip",
@@ -286,6 +290,7 @@ instance B.ToMarkup Block where
                          Nothing, B.toMarkup s)
           RecallB r -> (defaultPanelOptions, mTitle "Recall", recallIcon,
                         Nothing, B.toMarkup r)
+          x -> error $ "Unhandled case: " ++ show x
       mTitle defaultTitle = maybe defaultTitle B.toMarkup (b^.bTitle)
       theoremIcon = icon "fa-star-o"
       lemmaIcon = theoremIcon
@@ -298,7 +303,6 @@ instance B.ToMarkup Block where
       codeIcon = icon "fa-code"
       imageIcon = icon "fa-image"
       videoIcon = "" -- FIXME: Find an icon for this
-      youTubeIcon = icon "fa-youtube"
       connectionIcon = icon "fa-link"
       definitionIcon = axiomIcon
       intuitionIcon = icon "fa-puzzle-piece"
@@ -390,16 +394,11 @@ instance B.ToMarkup Video where
                                 ""
 
 instance B.ToMarkup YouTube where
-  toMarkup (YouTube yl) = panel defaultPanelOptions 
-                                "YouTube Video" 
-                                (Just yl)
-                                youTubeIcon 
-                                Nothing $
-                                B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
-                                      B.iframe B.! A.class_ "idocYouTubeEmbed embed-responsive-item"
-                                               B.! allowFullscreen "true"
-                                               B.! A.src (B.toValue yl) $
-                                               ""
+  toMarkup (YouTube yl) =  B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
+                                 B.iframe B.! A.class_ "idocYouTubeEmbed embed-responsive-item"
+                                          B.! allowFullscreen "true"
+                                          B.! A.src (B.toValue yl) $
+                                          ""
     where
       allowFullscreen = B.customAttribute "allowfullscreen"
 
@@ -509,7 +508,7 @@ megaMain'' = (withFile "simple1.idoc" ReadMode
                   (CP.Right x) -> do
                     --System.IO.hPutStr tex (Data.Text.unpack $ utRender x)
                     case MP.parse docP "<tokens>" x of
-                     CP.Right y -> CP.putStr $ fromString $ renderPretty y
+                     CP.Right y -> CP.putStrLn $ fromString $ renderPretty y
                      CP.Left z -> CP.print z))
 
 renderPretty :: B.ToMarkup a => a -> String

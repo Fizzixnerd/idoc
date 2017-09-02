@@ -244,15 +244,16 @@ linkCloserP = do
 
 protocolP :: IDocParser S.Protocol
 protocolP = do
-  x <- satisfy isHttp
+  x <- satisfy isRecognized
   colonP
   fSlashP
   return $ S.Protocol $ unToken x
   where
-    isHttp (S.TextT x) | x == "https" = True
-                       | x == "http"  = True
-                       | otherwise = False
-    isHttp _ = False
+    isRecognized (S.TextT x) | x == "https" = True
+                             | x == "http"  = True
+                             | x == "youtube" = True
+                             | otherwise = False
+    isRecognized _ = False
     colonP = void $ tokenP S.Colon
 
 idBaseP :: IDocParser S.IDBase
