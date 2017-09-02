@@ -2,7 +2,9 @@
 
 @prerex
 ---
-/None{Someone wanted to see what this looked like, so it's here.  Normally you can just leave the `prerex` block out when there are none.}
+/None{Someone wanted to see what this looked like, so it's here.
+      Normally you can just leave the `prerex` block out when
+      there are none.}
 ---
 
 @introduction

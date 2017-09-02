@@ -177,7 +177,7 @@ instance B.ToMarkup LinkText where
   toMarkup (LinkText lt) = concatMap B.toMarkup lt
 
 instance B.ToMarkup InlineMath where
-  toMarkup im = (mID (im^.imSetID) (B.span $ ("$$" ++ concatMap B.toMarkup (im^.imContents) ++ "$$"))) B.! A.class_ "idocInlineMath" 
+  toMarkup im = (mID (im^.imSetID) (B.span $ ("\\(" ++ concatMap B.toMarkup (im^.imContents) ++ "\\)"))) B.! A.class_ "idocInlineMath" 
 
 instance B.ToMarkup Token where
   toMarkup t = B.toMarkup $ unToken t
