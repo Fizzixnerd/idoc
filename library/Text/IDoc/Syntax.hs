@@ -189,7 +189,10 @@ data BlockType = PrerexB { _prerex :: Prerex }
                | ConnectionB { _connection :: Connection }
                | DefinitionB { _definition :: Definition }
                | IntuitionB { _intuition :: Intuition }
-               | AdmonitionB { _admonition :: Admonition }
+               | InfoB { _info :: Info }
+               | TipB { _tip :: Tip }
+               | CautionB { _caution :: Caution }
+               | WarningB { _warning :: Warning }
                | SideNoteB { _sidenote :: SideNote }
                | ExampleB { _example :: Example }
                | ExerciseB { _exercise :: Exercise }
@@ -212,8 +215,8 @@ data Block = Block { _bType :: BlockType
 data Prerex = Prerex { _prerexContents :: Vector PrerexItem }
   deriving (Eq, Ord, Show)
 
-data PrerexItem = PrerexItem { _prerexItemPath :: Vector Text
-                             , _prerexItemDescription :: Maybe (Vector SimpleCore)
+data PrerexItem = PrerexItem { _prerexItemPath :: ID
+                             , _prerexItemDescription :: Vector SimpleCore
                              }
   deriving (Eq, Ord, Show)
 
@@ -274,7 +277,16 @@ data Definition = Definition { _definitionContents :: Vector Core }
 data Intuition = Intuition { _intuitionContents :: Vector Core }
   deriving (Eq, Ord, Show)
 
-data Admonition = Admonition { _admonitionContents :: Vector Core }
+data Info = Info { _infoContents :: Vector Core }
+  deriving (Eq, Ord, Show)
+
+data Tip = Tip { _tipContents :: Vector Core }
+  deriving (Eq, Ord, Show)
+
+data Caution = Caution { _cautionContents :: Vector Core }
+  deriving (Eq, Ord, Show)
+
+data Warning = Warning { _warningContents :: Vector Core }
   deriving (Eq, Ord, Show)
 
 data SideNote = SideNote { _sideNoteContents :: Vector Core }
@@ -326,11 +338,15 @@ makeLenses ''SetID
 makeLenses ''Section
 makeLenses ''Link
 makeLenses ''List
+makeLenses ''ListItem
 makeLenses ''Markup
 makeLenses ''InlineMath
 makeLenses ''BlockType
 makeLenses ''Block
 makeLenses ''Doc
+makeLenses ''Paragraph
+makeLenses ''ID
+makeLenses ''BibItem
 
 makeLenses ''Prerex
 makeLenses ''PrerexItem
@@ -353,7 +369,10 @@ makeLenses ''YouTube
 makeLenses ''Connection
 makeLenses ''Definition
 makeLenses ''Intuition
-makeLenses ''Admonition
+makeLenses ''Info
+makeLenses ''Tip
+makeLenses ''Caution
+makeLenses ''Warning
 makeLenses ''SideNote
 makeLenses ''Example
 makeLenses ''Exercise

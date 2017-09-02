@@ -1,0 +1,415 @@
+<!DOCTYPE HTML>
+<html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><script>window.MathJax = { TeX: {equationNumbers: {autoNumber: "AMS", formatID: function (n) {return ''+String(n).replace(/[:'"<>&]/g,"")}}}}
+</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML-full,Safe,http://independentlearning.science/MathJax/config/local/local.js"></script><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css" crossorigin="anonymous"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin="anonymous"><style>.ils-logo-small, .ils-logo-container { height: 52px; width: 52px; display: inline-block; }
+span.footnote:before { counter-increment: footnotecounter; content: counter(footnotecounter); position: relative; }
+body { counter-reset: footnotecounter; }
+</style></head><body><h1 class="idocDocTitle">idoc User Guide</h1><section class="idocSection"><p class="idocParagraph">@prerex</p><ul class="idocUnorderedList"><li class="idocUnorderedItem">--
+/None{Someone wanted to see what this looked like, so it&#39;s here.  Normally you can just leave the <span class="idocMonospace">prerex</span> block out when there are none.}
+---</li></ul><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"> Introduction <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocIntroduction"><p class="idocParagraph">idoc is a language and a program.  The language is what was used to
+write this document.  The program is what rendered it (in both
+<span class="idocInlineMath">$$\LaTeX$$</span> and HTML5).  It has a number of features that are not found
+in other humane markup languages.  The most critical of these is
+support for allowing prerequisite resolution, though this is
+technically implemented by a static checker after parsing.  idoc was
+originally based on asciidoc, but has since diverged significantly.</p></div></div></div></div></div></section><section class="idocSection"><h2 class="idocTopSectionTitle">Goals</h2><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse" href="##sourceTip"> Get the Source! <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in" id="#sourceTip"><div class="panel-body"><div class="idocAdmonition"><p class="idocParagraph">You will probably want to examine the source for this document along
+with the rendered content.  It can be found
+<a class="idocOutLink" href="http://www.independentlearning.science/source.idoc">here</a>.</p></div></div></div></div></div><p class="idocParagraph">idoc was created because no other existing markup language had the
+properties we needed for the website.  We describe these properties
+and how the extant humane markup languages failed to have them.</p><dl class="idocLabelledList"><dt class="idocLabel">Prerequisite resolution</dt><dd class="idocLabelledItem">This is the big one.  The website is
+designed around the idea of prerequisites, and so prerequisite
+resolution is a necessary thing idoc has to be able to do.  It would
+have been <em class="idocEmphasis">possible</em> to add this to Asciidoc, but not fun.  It would
+have been <em class="idocEmphasis">impossible</em> to add this to Markdown.</dd><dt class="idocLabel">Typed Blocks</dt><dd class="idocLabelledItem">A &quot;strongly-typed&quot; block is where one declares the
+purpose of a section of text explicitly.  idoc uses the strongly-typed
+blocks to enable a bunch of cool features.  One of those features is
+being able to take a doc (or a bunch of docs) and take all the
+theorems, lemmas, propositions, corollaries, definitions and examples,
+stick them all in a new document and basically generate a useful
+review sheet for you automatically.  It also means that you don&#39;t
+manually have to describe the formatting of these things; idoc takes
+care of that for you.</dd><dt class="idocLabel">Extensible Blocks</dt><dd class="idocLabelledItem">On the other hand, having &quot;extensible&quot; blocks
+means that we can add new types of blocks -- and new features to them
+-- as needed.  For example, if idoc is use a lot by computer science
+students, it might be necessary to add a block that allows you to
+download example code.  It might even be cool to add that
+functionality to the already existing <span class="idocMonospace">code</span> blocks.  These kind of
+additions are <em class="idocEmphasis">impossible</em> in Markdown, <em class="idocEmphasis">difficult</em> in Asciidoc, and
+<em class="idocEmphasis">easy</em> in idoc.</dd><dt class="idocLabel">Easy to Learn by Example</dt><dd class="idocLabelledItem">While Asciidoc is a powerful markup
+language, its syntax can be somewhat irregular.  It uses different
+types of delimiters to denote different types of blocks.  Unless you
+have memorized what each style of delimiter means, this makes the
+markup hard to understand as a beginner.  idoc was designed to be more
+regular -- you should be able to figure out what is going on given
+just the source and the output.  More importantly, you should be able
+to make <em class="idocEmphasis">changes</em> to the source confidently, based on what you already
+see in it.  Most edits to sites like Wikipedia are small ones; users
+like that don&#39;t want to learn the entirety of a markup language.  They
+just want to get in, make their edit, and get out.  Hopefully idoc
+allows them to do this.</dd><dt class="idocLabel">Power with Limitations</dt><dd class="idocLabelledItem">Asciidoc and Markdown allow you to insert
+inline HTML into your documents.  While this sounds nice, it means
+that it&#39;s unsuitable for content on a shared website.  This is because
+Javascript can be embedded in HTML, and that would mean we were
+letting people write and run untrusted programs on our user&#39;s
+computers.  This is not acceptable.  Such things also break the
+abstraction layer the markup languages provide, and makes it much more
+difficult to properly format the result of the markup language
+automatically.  We prefer providing the features users want directly,
+instead of having them rely on such &quot;escape hatches&quot;.</dd><dt class="idocLabel">Haskell Implementation</dt><dd class="idocLabelledItem">We are using the
+<a class="idocOutLink" href="https://www.haskell.org">Haskell programming language</a> to make the
+site because there is simply no better language out there.  There does
+not exist (at the time of writing) a good implementation of Asciidoc
+for Haskell, and since Markdown is unsuitable for our purposes it did
+not matter <em class="idocEmphasis">how</em> good the implementation of it was.  Since we would
+have to write our own implementation of another markup language
+anyway, it was not a major extra investment to write an implementation
+of a new one instead.</dd></dl><p class="idocParagraph">Hopefully you can forgive us for forcing you to use an untested
+language!</p></section><section class="idocSection"><h2 class="idocTopSectionTitle">Features</h2></section><section class="idocSection"><h3 class="idocSubSectionTitle">Basics</h3><p class="idocParagraph">idoc is a <em class="idocEmphasis">humane</em> markup language, which basically means it doesn&#39;t
+suck to write in it.  For example, this is a <strong class="idocStrong">paragraph</strong>.  You just
+type like normal.  They are separated by a blank line, as is every
+other <strong class="idocStrong">complex content</strong> in idoc.  Complex content is one of a
+paragraph, a list, or a block.</p><p class="idocParagraph">This is now a new paragraph.  I can <strong class="idocStrong">italicize</strong> text by surrounding it
+with with <em class="idocEmphasis">underscores</em> (<span class="idocMonospace">_</span>) and <strong class="idocStrong">bold</strong> it with <strong class="idocStrong">asterisks</strong> (<span class="idocMonospace">*</span>).
+I can make it <strong class="idocStrong">monospace</strong> (like &quot;computer code&quot;) using <span class="idocMonospace">backticks</span>
+(<span class="idocMonospace">`</span>).</p><p class="idocParagraph">Every idoc document must have a <strong class="idocStrong">title</strong>, which is the first line of
+the document and looks like this: <span class="idocMonospace">= Title</span>.  The space between the
+<span class="idocMonospace">=</span> and the title text is important.  To make new <strong class="idocStrong">sections</strong>, type <span class="idocMonospace">==
+Section Name</span>.  Note that the section title must be separated from the
+previous content by a newline.  For example,</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode">I am a paragraph!  Hear me roar!
+
+==New Section!
+
+Another paragraph.  RAAAAAAAAAAAWR!</div></div></div></div></div><p class="idocParagraph">is correct, while</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode">I am a paragraph!  Hear me roar!
+==New Section!
+
+Another paragraph.  RAAAAAAAAAAAWR!</div></div></div></div></div><p class="idocParagraph">would not display what you want correctly.  Subsections are the same
+deal: use <span class="idocMonospace">=== Subsection Name</span>.</p><p class="idocParagraph">Any line that begins with <span class="idocMonospace">//</span> denotes a comment.  They will be
+rendered as comments upon translation, but will not be displayed in
+the final document.  These are not yet implemented, but will be soon.</p><p class="idocParagraph">// This is a comment line.  It will not be rendered.  Block
+// comments are not supported because they are a pain.</p><p class="idocParagraph">Nearly everything in idoc can be given an identifier (or <strong class="idocStrong">ID</strong>) using
+the syntax <span class="idocMonospace">[[#idName]]</span>.  This immediately follows the thing you
+wish to identify.</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode">Nearly everything in idoc can be given an identifier using the syntax
+`[[#idName]]`.  This immediately follows the thing you wish to
+identify.
+</div></div></div></div></div><p class="idocParagraph">To see how to refer to IDs and link to them, check out the
+<a class="idocInternal" href="http://www.independentlearning.sciencesecLinks">section on links</a>.</p></section><section class="idocSection"><h3 class="idocSubSectionTitle">Lists</h3><p class="idocParagraph">Lists are of fundamental importance when constructing rich documents.
+However, currently <span class="idocMonospace">idoc</span> does not recognize complex content inside
+lists, though this is subject to change.  This means you cannot nest
+lists.  You may only write a single paragraph.  We support unordered
+lists, ordered lists and labelled (description) lists.</p><p class="idocParagraph">-This is an unordered list.  It can contain paragraph contents.
+-It will look like bullet points in the final render.
+-Third main item.</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode">-This is an unordered list.  It can contain paragraph contents.
+-It will look like bullet points in the final render.
+-Third main item.</div></div></div></div></div><p class="idocParagraph">.This is a numbered list.
+.This is the second guy.
+.And so on...</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode">.This is a numbered list.
+.This is the second guy.
+.And so on...</div></div></div></div></div><p class="idocParagraph">:First Item:: This is a list where the items have labels.
+:Second Item:: Another item.
+:And So On:: ...</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode">:First Item:: This is a list where the items have labels.
+:Second Item:: Another item.
+:And So On:: ...</div></div></div></div></div></section><section class="idocSection"><h2 class="idocTopSectionTitle">Blocks</h2><p class="idocParagraph"><strong class="idocStrong">Blocks</strong> are a fundamental construct in idoc.  They all look the same,
+basically.  They begin with <span class="idocMonospace">@blocktype</span> on a line by itself,
+separated by the previous content by a blank line.  A block can also
+have a title, which comes <em class="idocEmphasis">after</em> the declaration of block type; it
+looks like <span class="idocMonospace">#Block Title</span>.  Titles are optional, and a default title
+will be chosen based on the block type if not included.  Next, we have
+the attribute list, which I&#39;ll talk more on below.  Basically it looks
+like <span class="idocMonospace">[key=value,key-no-value,key2=value-2,...]</span>, and gives a list
+of <strong class="idocStrong">attributes</strong> and optionally their <strong class="idocStrong">values</strong>.  Finally, we have the
+actual block itself, which is enclosed by the delimiters <span class="idocMonospace">---</span>.  The
+syntax inside the block is block dependent, and we&#39;ll explore them all
+below.</p></section><section class="idocSection"><h3 class="idocSubSectionTitle">Math</h3><p class="idocParagraph">Inline math is done just using normal <span class="idocInlineMath">$$\LaTeX$$</span> syntax by doing enclosing
+text in dollar signs. <span class="idocInlineMath">$$f(x) = \exp (-x^2)$$</span>.  Display mode is done by
+using a <span class="idocMonospace">math</span> block, like so:</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse" href="##eqnFDefn"> Look Ma&#39;, I Have Equations! <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in" id="#eqnFDefn"><div class="panel-body"><div class="idocMath center-block flex">\[f(x) = \int_x^\infty g(t) \mathrm{d}t\]</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @math
+ #Look Ma&#39;, I Have Equations!
+ ---
+ f(x) = \int_x^\infty g(t) \mathrm{d}t
+ ---
+ [[#eqnFDefn]]</div></div></div></div></div><p class="idocParagraph">Note that that <span class="idocInlineMath">$$d$$</span> will not be upright as it should be.  We&#39;ll fix
+that later.  (Fixed it!  Use <span class="idocMonospace">mathrm{d}</span>!)  Also note that we added
+an <em class="idocEmphasis">ID</em> to the equation.  IDs can be added to many things.  They
+always appear immediately following the thing they identify.</p><p class="idocParagraph">There is also a more specialized <span class="idocMonospace">eqnarray</span> block, which numbers
+equations.  Note however that <em class="idocEmphasis">unlike</em> the <span class="idocInlineMath">$$\LaTeX$$</span> eqnarray, you do
+not put a linebreak (<span class="idocMonospace">\ </span>) at the end of each line.  The ampersands
+(<span class="idocMonospace">&amp;</span>) tell MathJax where to align line to.  So, for example, the
+equations below have a &quot;left side&quot;, an &quot;equals sign&quot; in the middle,
+and a &quot;right side&quot;.</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"> EqnArray <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocEqnArray center-block">$$\begin{eqnarray}
+f(x) &amp;=&amp; 2x + 3
+g(y) &amp;=&amp; y^2
+\implies (f \circ g) (x) &amp;=&amp; 2 x^2 + 3\end{eqnarray}$$</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @eqnarray
+ ---
+ f(x) &amp;=&amp; 2x + 3
+ g(y) &amp;=&amp; y^2
+ \implies (f \circ g) (x) &amp;=&amp; 2 x^2 + 3
+ ---</div></div></div></div></div><p class="idocParagraph">Note that we can use the standard <span class="idocMonospace">label{}</span> macro within the <span class="idocMonospace">math</span>
+or <span class="idocMonospace">eqnarray</span> environments to assign IDs to individual equations.
+Then we can use <span class="idocMonospace">ref{}</span> or <span class="idocMonospace"><a class="idocInternal" href="http://www.independentlearning.scienceidLabel"></a></span> syntax to refer to them:</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"> EqnArray <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocEqnArray center-block">$$\begin{eqnarray}
+\label{importantEquation} y &amp;=&amp; mx + b\end{eqnarray}$$</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @eqnarray
+ ---
+ \label{importantEquation} y &amp;=&amp; mx + b
+ ---</div></div></div></div></div><p class="idocParagraph">Refer to the <em class="idocEmphasis">important equation</em> <span class="idocInlineMath">$$\ref{importantEquation}$$</span>.  Refer
+to <a class="idocInternal" href="http://www.independentlearning.scienceimportantEquation">the important equation</a>.  If you want to
+prevent an equation from being numbered, use <span class="idocMonospace">nonumber</span> as usual.</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"> EqnArray <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocEqnArray center-block">$$\begin{eqnarray}
+R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &amp;=&amp; \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber\end{eqnarray}$$</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @eqnarray
+ ---
+ R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &amp;=&amp; \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber
+ ---</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-cube"></span> Axiom <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocAxiom"><p class="idocParagraph">An axiom looks like this.</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"> EqnArray <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocEqnArray center-block">$$\begin{eqnarray}
+x \cdot y = y \cdot x\end{eqnarray}$$</div></div></div></div></div></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @axiom
+ ---
+ An axiom looks like this.
+ 
+ @eqnarray
+ ---
+ x \cdot y = y \cdot x
+ ---
+ ---</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse" href="##def-number"><span class="fa fa-cube"></span> Defintion <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in" id="#def-number"><div class="panel-body"><div class="idocDefinition"><p class="idocParagraph">a <strong class="idocStrong">number</strong> is an element of an field.</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> [term=number]
+ @definition
+ ---
+ a *number* is an element of an field.
+ ---
+ [[#def-number]]</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse" href="##thm-foil"><span class="fa fa-star-o"></span> Theorem <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in" id="#thm-foil"><div class="panel-body"><div class="idocTheorem"><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"> EqnArray <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocEqnArray center-block">$$\begin{eqnarray}
+(x + y)^2 = x^2 + 2 xy + y^2.\end{eqnarray}$$</div></div></div></div></div><p class="idocParagraph">&gt;&gt;&gt;</p><p class="idocParagraph">Use geometry.</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @theorem
+ ---
+
+ @eqnarray
+ ---
+ (x + y)^2 = x^2 + 2 xy + y^2.
+ ---
+
+ &gt;&gt;&gt;
+
+ Use geometry.
+ ---
+ [[#thm-foil]]</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse" href="##lemEasyLemma"><span class="fa fa-star-o"></span> Easy Lemma <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in" id="#lemEasyLemma"><div class="panel-body"><div class="idocLemma"><p class="idocParagraph">This is a lemma.  It&#39;s pretty easy to prove.</p><p class="idocParagraph">For <span class="idocInlineMath">$$n &gt; 2$$</span> there exists no integer solutions to the equation:</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"> EqnArray <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocEqnArray center-block">$$\begin{eqnarray}
+x^n + y^n = z^n\end{eqnarray}$$</div></div></div></div></div><p class="idocParagraph">&gt;&gt;&gt;</p><p class="idocParagraph">It&#39;s trivial.</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @lemma
+ #Easy Lemma
+ ---
+ This is a lemma.  It&#39;s pretty easy to prove.
+ 
+ For $n &gt; 2$ there exists no integer solutions to the equation
+ 
+ @eqnarray
+ ---
+ x^n + y^n = z^n
+ ---
+ 
+ &gt;&gt;&gt;
+
+ It&#39;s trivial.
+ ---
+ [[#lemEasyLemma]]</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-star-o"></span> Proposition <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocProposition"><p class="idocParagraph">Hey, um, do you want to go out with me next Saturday?</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @proposition
+ ---
+ Hey, um, do you want to go out with me next Saturday?
+ ---</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-star-o"></span> Corollary <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCorollary"><p class="idocParagraph">If <span class="idocInlineMath">$$x, y &gt; 2$$</span> are prime then <span class="idocInlineMath">$$x + y$$</span> is not prime.</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @corollary
+ ---
+ If $x, y &gt; 2$ are prime then $x + y$ is not prime.
+ ---</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-question"></span> Conjecture <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocConjecture"><p class="idocParagraph">The product of any two primes is also prime.</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @conjecture
+ ---
+ The product of any two primes is also prime.
+ ---</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-star"></span> Proof <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocProof"><p class="idocParagraph">Just intuit.</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> [theorem=lemEasyLemma]
+ @proof
+ ---
+ Just intuit.
+ ---</div></div></div></div></div></section><section class="idocSection"><h3 class="idocSubSectionTitle">Emphasis Blocks</h3><p class="idocParagraph">The following blocks are designed to emphasize certain things within
+the text.  The first is the <span class="idocMonospace">quote</span> block, used for quotations.</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse" href="##qEinstein"><span class="fa fa-quote-left"></span> A Quote from the &quot;Great One&quot;. <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in" id="#qEinstein"><div class="panel-body"><div class="idocQuote">The internet is the most important invention since gravity.</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> [author=Albert Einstein]
+ @quote
+ #A Quote from the &quot;Great One&quot;.
+ ---
+ The internet is the most important invention since gravity.
+ ---
+ [[#qEinstein]]</div></div></div></div></div><p class="idocParagraph">Notice in the <span class="idocMonospace">quote</span> block we added an author attribution above as an
+<em class="idocEmphasis">attribute</em> of the quote block contents.  <strong class="idocStrong">Attribute lists</strong> always
+come <em class="idocEmphasis">just</em> before the thing they modify.  In this case, we are
+modifying the &quot;body&quot; of the <span class="idocMonospace">quote</span> element, so it comes just before
+the body.</p><p class="idocParagraph">The next type of block is the <span class="idocMonospace">sidenote</span>.  It is used to separate a
+paragraph from the main text, perhaps because it is important.  Or
+perhaps it&#39;s unimportant... but then why is it there at all!?</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-sticky-note-o"></span> Please be Aware: <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocSideNote"><p class="idocParagraph">This content will be rendered off to the side of the document.  You are
+allowed any amount of complex content here.  An equation: <span class="idocInlineMath">$$F =
+\frac{dp}{dt}$$</span>.</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @sidenote
+ #Please be Aware:
+ ---
+ This content will be rendered off to the side of the document.  You are
+ allowed any amount of complex content here.  An equation: $F =
+ \frac{dp}{dt}$.
+ ---</div></div></div></div></div><p class="idocParagraph">For more specialized blocks similar to <span class="idocMonospace">sidenotes</span>, use an
+<span class="idocMonospace">admonition</span> instead.  They look nicer and are more eye catching.
+Here are some examples; notice how again we use an attribute list to
+specify the type of admonition.</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse" href="##warningAdmonition"> This is a Warning Block <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in" id="#warningAdmonition"><div class="panel-body"><div class="idocAdmonition"><p class="idocParagraph">This will show a little warning symbol next to it.</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> [type=warning]
+ @admonition
+ #This is a Warning Block
+ ---
+ This will show a little warning symbol next to it.
+ ---
+ [[#warningAdmonition]]</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse" href="##infoAdmonition"> This is an Info Block <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in" id="#infoAdmonition"><div class="panel-body"><div class="idocAdmonition"><p class="idocParagraph">This will show a little info symbol next to it.</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> [type=info]
+ @admonition
+ #This is an Info Block
+ ---
+ This will show a little info symbol next to it.
+ ---
+ [[#infoAdmonition]]</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse" href="##cautionAdmonition"> This is a Caution Block <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in" id="#cautionAdmonition"><div class="panel-body"><div class="idocAdmonition"><p class="idocParagraph">This will show a little caution symbol next to it.</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> [type=caution]
+ @admonition
+ #This is a Caution Block
+ ---
+ This will show a little caution symbol next to it.
+ ---
+ [[#cautionAdmonition]]</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse" href="##tipAdmonition"> This is a Tip Block <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in" id="#tipAdmonition"><div class="panel-body"><div class="idocAdmonition"><p class="idocParagraph">This will show a little lightbulb symbol next to it.</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> [type=tip]
+ @admonition
+ #This is a Tip Block
+ ---
+ This will show a little lightbulb symbol next to it.
+ ---
+ [[#tipAdmonition]]</div></div></div></div></div><p class="idocParagraph">If you&#39;re worried about all the wasted space in the HTML output, don&#39;t
+be!  It&#39;s only wasted because I didn&#39;t put text between each block.
+You would not normally have <span class="idocInlineMath">$$1 + 4$$</span> of these things in a row.</p></section><section class="idocSection"><h3 class="idocSubSectionTitle">Pedagogical Blocks</h3><p class="idocParagraph">These next blocks are useful when you want to offer extra information
+to the reader.  In the case of a <span class="idocMonospace">connection</span>, that information may be
+more advanced than what the reader understands.  In the case of an
+<span class="idocMonospace">intuition</span>, it&#39;s information that is technically contained in the
+main text, but is a powerful/neat way of thinking about the material.
+Please use good judgement when deciding when to use these.</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-link"></span> A connection <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocConnection"><p class="idocParagraph">@prerex
+#Connection Prerex</p></div></div></div></div></div><p class="idocParagraph">/Basics/Logic{Mostly only <em class="idocEmphasis">first-order</em> logic will be used, but some <em class="idocEmphasis">second-order</em> stuff is important for stuff later on, so we put it here.}
+/Basics/Fun{And so on...}</p><ul class="idocUnorderedList"><li class="idocUnorderedItem">--</li></ul><p class="idocParagraph">A <span class="idocMonospace">connection</span> is useful when you have content connected to the main text
+but which isn&#39;t super necessary, or requires more advanced techniques
+than the rest of the text.  This is because connections are allowed to have
+their own prerequisites, in addition to the main doc&#39;s prereqs.</p><p class="idocParagraph">@admonition
+#Rendering
+[type=info]</p><ul class="idocUnorderedList"><li class="idocUnorderedItem">--
+If you&#39;re viewing this full-screen on a computer, you&#39;ll notice that
+unlike the other some other blocks we&#39;ve seen, connections are
+rendered across the full screen.  In general, you should <em class="idocEmphasis">never</em> rely
+on the position of something relative to something else, or its size.
+This is because idoc has been designed to have pluggable themes, and
+the web renderer creates <em class="idocEmphasis">responsive</em> html that is free to reorganize
+content to better match the devices size.  Therefore, <strong class="idocStrong">whenever you
+refer to something, please please please use an ID</strong>.
+---
+[[#renderingInfo]]</li></ul><p class="idocParagraph">Connections are for when you want to connect with an outside idea, but
+don&#39;t want to have this interesting connection create new
+prerequisites for your doc.  For example, in the article
+<a class="idocBackLink" href="http://www.independentlearning.scienceMath/Topology/Homeomorphism">on topology</a>, we might want to talk
+about how is difficult to prove two things are <em class="idocEmphasis">not</em> homeomorphic, and
+how the fundamental group is useful because of its status as a
+topological invariant.  However, we don&#39;t know if the readers actually
+know group theory.  This would be the time you would use a connection --
+group theory is not needed to understand homeomorphisms, but it <em class="idocEmphasis">is</em>
+needed to understand this small aside.</p><p class="idocParagraph">When the site is complete, connections will start out open or closed
+depending on if the reader has the necessary prereqs or not.</p><p class="idocParagraph">---
+</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @connection
+ #A connection
+ ---
+ @prerex
+ #Connection Prerex
+ ---
+ /Basics/Logic{Mostly only _first-order_ logic will be used, but some _second-order_ stuff is important for stuff later on, so we put it here.}
+ /Basics/Fun{And so on...}
+ ---
+ 
+ A `connection` is useful when you have content connected to the main text
+ but which isn&#39;t super necessary, or requires more advanced techniques
+ than the rest of the text.  This is because connections are allowed to have
+ their own prerequisites, in addition to the main doc&#39;s prereqs.
+ 
+ @admonition
+ #Rendering
+ [type=info]
+ ---
+ If you&#39;re viewing this full-screen on a computer, you&#39;ll notice that
+ unlike the other some other blocks we&#39;ve seen, connections are
+ rendered across the full screen.  In general, you should _never_ rely
+ on the position of something relative to something else, or its size.
+ This is because idoc has been designed to have pluggable themes, and
+ the web renderer creates _responsive_ html that is free to reorganize
+ content to better match the devices size.  Therefore, *whenever you
+ refer to something, please please please use an ID*.
+ ---
+ [[#renderingInfo]]
+ 
+ Connections are for when you want to connect with an outside idea, but
+ don&#39;t want to have this interesting connection create new
+ prerequisites for your doc.  For example, in the article
+ &lt;&lt;/Math/Topology/Homeomorphism#&gt;&gt;{on topology}, we might want to talk
+ about how is difficult to prove two things are _not_ homeomorphic, and
+ how the fundamental group is useful because of its status as a
+ topological invariant.  However, we don&#39;t know if the readers actually
+ know group theory.  This would be the time you would use a connection --
+ group theory is not needed to understand homeomorphisms, but it _is_
+ needed to understand this small aside.
+ 
+ When the site is complete, connections will start out open or closed
+ depending on if the reader has the necessary prereqs or not.
+ ---
+ [[#myConnection]]</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-puzzle-piece"></span> But What <em class="idocEmphasis">is</em> the Determinant?! -- An Example Intuition Block <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocIntuition"><p class="idocParagraph">The determinant from a geometric point of view is used to talk about
+<em class="idocEmphasis">volume</em>.  If you grok this, then everything else will fall into
+place.  For example, the reason a linear transformation is invertible
+if and only if its determinant is non-zero is because when it <em class="idocEmphasis">is</em>
+zero, the map is going to map a set of basis vectors in your
+<span class="idocInlineMath">$$n$$</span>-dimensional space into some smaller <span class="idocInlineMath">$$m$$</span>-dimensional space.  This
+<span class="idocInlineMath">$$m$$</span>-dimensional space has zero &quot;volume&quot; compared to the
+<span class="idocInlineMath">$$n$$</span>-dimensional one, and so you&#39;re basically losing a whole dimension.
+There is no way to then map linearly back to the bigger space.  It
+would be like trying to find a linear function that maps the square to
+the cube!</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @intuition
+ # But What _is_ the Determinant?! -- An Example Intuition Block
+ ---
+ The determinant from a geometric point of view is used to talk about
+ _volume_.  If you grok this, then everything else will fall into
+ place.  For example, the reason a linear transformation is invertible
+ if and only if its determinant is non-zero is because when it _is_
+ zero, the map is going to map a set of basis vectors in your
+ $n$-dimensional space into some smaller $m$-dimensional space.  This
+ $m$-dimensional space has zero &quot;volume&quot; compared to the
+ $n$-dimensional one, and so you&#39;re basically losing a whole
+ dimension.  There is no way to then map linearly back to the bigger
+ space.  It would be like trying to find a linear function that maps
+ the square to the cube!
+ ---</div></div></div></div></div><p class="idocParagraph"><span class="idocMonospace">examples</span> and <span class="idocMonospace">exercises</span> are also a key way for people to learn.
+The difference between the two is that essentially an exercise is an
+example without a solution.</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse" href="##exExample"><span class="fa fa-pencil"></span> Example <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in" id="#exExample"><div class="panel-body"><div class="idocExample"><p class="idocParagraph">Prove that every integer greater than zero is positive.</p><p class="idocParagraph">&gt;&gt;&gt;</p><p class="idocParagraph">The proof is pretty simple.  Try to follow along.</p><p class="idocParagraph">First, assume not.  But that&#39;s not the case.  QED.</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @example
+ ---
+ Prove that every integer greater than zero is positive.
+ 
+ &gt;&gt;&gt;
+ 
+ The proof is pretty simple.  Try to follow along.
+ 
+ First, assume not.  But that&#39;s not the case.  QED.
+ ---
+ [[#exExample]]</div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-pencil"></span> Exercise <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocExercise"><p class="idocParagraph">What is largest rational number that can be written as a fraction of
+<span class="idocInlineMath">$$5$$</span> and <span class="idocInlineMath">$$7$$</span>?</p></div></div></div></div></div><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-code"></span> Code <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><div class="idocCode"> @exercise
+ ---
+ What is largest rational number that can be written as a fraction of
+ $5$ and $7$?
+ ---</div></div></div></div></div></section><section class="idocSection"><h3 class="idocSubSectionTitle" id="#secLinks">Links</h3><p class="idocParagraph">Links come in three flavours.  The first is your standard link, called
+an <strong class="idocStrong">out link</strong> or <strong class="idocStrong">olink</strong> in idoc.  It&#39;s written like
+<span class="idocMonospace"><a class="idocOutLink" href="http://www.example.com">this</a></span> and appears like
+<a class="idocOutLink" href="http://www.example.com">this</a>.  Note that the <span class="idocMonospace">http(s)://</span> part of
+the link is <em class="idocEmphasis">mandatory</em>.  Olinks are restricted in idoc to appear in
+only very specific places, for example in <span class="idocMonospace">furtherreading</span> or
+<span class="idocMonospace">bibliography</span> blocks.  This is because the text of a doc should be
+<em class="idocEmphasis">self-contained</em>.  You should not <em class="idocEmphasis">need</em> to go to an outside source to
+understand a concept.  However, that doesn&#39;t mean that outside sources
+are useless -- Wikipedia is an excellent reference for topics you&#39;ve
+just learned about.  It just means you don&#39;t want to interrupt the
+flow of the document just anywhere.  This is why idoc enforces this
+rule.</p><p class="idocParagraph">The second flavour is a link within the current doc, called an
+<strong class="idocStrong">internal link</strong> or <strong class="idocStrong">ilink</strong>.  For example, when we used <span class="idocMonospace">ref{}</span> back
+in the Math section, we were using ilinks.  Refering to anything on
+the page which has an ID is an ilink.  They are written like
+<span class="idocMonospace"><a class="idocInternal" href="http://www.independentlearning.scienceimportant-equation">this</a></span>, and appear like
+<a class="idocInternal" href="http://www.independentlearning.scienceimportant-equation">this</a>.  That is, they are the <span class="idocMonospace">#</span> symbol
+followed by a valid ID.</p><p class="idocParagraph">The final flavour is the <strong class="idocStrong">back link</strong>, or <strong class="idocStrong">blink</strong>.  This is a link to
+something contained within the prerequisite tree of the current doc.
+In their most general form, they are written like
+<span class="idocMonospace"><a class="idocBackLink" href="http://www.independentlearning.scienceName/Of/Articleid-in-article">this right here</a></span> and display like
+<a class="idocBackLink" href="http://www.independentlearning.scienceName/Of/Articleid-in-article">this right here</a>.  However, the <span class="idocMonospace">#</span>
+symbol and the ID following it can be left out if you just want to
+refer to the article as a whole.  Notice that you are not allowed to
+link to another article that isn&#39;t within the prerequisite tree from
+just anywhere.  This is by design; articles should only depend on the
+knowledge from previous articles.  This restriction allows many of the
+features that the ILS website hopes to deliver, such as automatic
+prerequisite resolution for subjects you want to learn.</p><p class="idocParagraph">In all types of links, you are free to leave out the text inside the
+<span class="idocMonospace">{}</span>.  This will just use the text inside the <span class="idocMonospace"><a class="idocInternal" href="http://www.independentlearning.science"></a></span> as the display
+text instead.  Normally this is not what you want, however.</p></section><section class="idocSection"><h3 class="idocSubSectionTitle">YouTube</h3><p class="idocParagraph">We can embed YouTube videos if we think they are important.  Please do
+not abuse this feature.</p><p class="idocParagraph">@youtube</p><ul class="idocUnorderedList"><li class="idocUnorderedItem">--
+<a class="idocOutLink" href="https://www.youtube.com/FdU8oqCbvzo"></a></li></ul><p class="idocParagraph">&gt;&gt;&gt;</p><p class="idocParagraph">Objections are awesome.</p><ul class="idocUnorderedList"><li class="idocUnorderedItem">--
+[[#ytUnlimitedCorners]]</li></ul></section><section class="idocSection"><h3 class="idocSubSectionTitle">Images</h3><p class="idocParagraph">We can embed important images too.</p><div class="col-md-12"><div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><a data-toggle="collapse"><span class="fa fa-image"></span> Image <span class="fa fa-angle-double-down"></span></a></h3></div><div class="panel-collapse collapse in"><div class="panel-body"><img class="idocImage img-responsive" src="http://www.independentlearning.science/uusBbd5.jpg"></div></div></div></div><p class="idocParagraph">Bunnies make everything better.</p></section><section class="idocSection"><h2 class="idocTopSectionTitle">Conclusion</h2><p class="idocParagraph">That&#39;s about it for the basic syntax.  We can fix the rest later.</p></section><script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" crossorigin="anonymous"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script></body></html></html>

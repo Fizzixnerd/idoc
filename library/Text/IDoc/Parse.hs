@@ -452,7 +452,10 @@ blockP = label "A Block" $ do
           "connection" -> S.ConnectionB <$> connectionP
           "definition" -> S.DefinitionB <$> definitionP
           "intuition" -> S.IntuitionB <$> intuitionP
-          "admonition" -> S.AdmonitionB <$> admonitionP
+          "info" -> S.InfoB <$> infoP
+          "tip" -> S.TipB <$> tipP
+          "caution" -> S.CautionB <$> cautionP
+          "warning" -> S.WarningB <$> warningP
           "sidenote" -> S.SideNoteB <$> sideNoteP
           "example" -> S.ExampleB <$> exampleP
           "exercise" -> S.ExerciseB <$> exerciseP
@@ -521,9 +524,12 @@ biblioBlockP = do
 prerexItemP :: IDocParser S.PrerexItem
 prerexItemP = do
   fSlashP
-  path <- sepBy1V textP fSlashP
-  desc <- optional markupContentsP
-  return $ S.PrerexItem { S._prerexItemPath = path
+  path <- someV idBaseP
+  desc <- markupContentsP
+  return $ S.PrerexItem { S._prerexItemPath = S.ID { S._idProtocol = Nothing
+                                                   , S._idBase = path
+                                                   , S._idHash = Nothing
+                                                   }
                         , S._prerexItemDescription = desc
                         }
 
@@ -592,8 +598,17 @@ definitionP = S.Definition <$> coreBlockP
 intuitionP :: IDocParser S.Intuition
 intuitionP = S.Intuition <$> coreBlockP
 
-admonitionP :: IDocParser S.Admonition
-admonitionP = S.Admonition <$> coreBlockP
+infoP :: IDocParser S.Info
+infoP = S.Info <$> coreBlockP
+
+tipP :: IDocParser S.Tip
+tipP = S.Tip <$> coreBlockP
+
+cautionP :: IDocParser S.Caution
+cautionP = S.Caution <$> coreBlockP
+
+warningP :: IDocParser S.Warning
+warningP = S.Warning <$> coreBlockP
 
 sideNoteP :: IDocParser S.SideNote
 sideNoteP = S.SideNote <$> coreBlockP

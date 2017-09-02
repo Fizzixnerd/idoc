@@ -18,8 +18,7 @@ originally based on asciidoc, but has since diverged significantly.
 
 ==Goals
 
-[type=tip]
-@admonition
+@tip
 #Get the Source!
 ---
 You will probably want to examine the source for this document along
@@ -543,84 +542,76 @@ For more specialized blocks similar to `sidenotes`, use an
 Here are some examples; notice how again we use an attribute list to
 specify the type of admonition.
 
-[type=warning]
-@admonition
+@warning
 #This is a Warning Block
 ---
 This will show a little warning symbol next to it.
 ---
-[[#warningAdmonition]]
+[[#warningBlock]]
 
 [lang=idoc]
 @code
 ---
- [type=warning]
- @admonition
+ @warning
  #This is a Warning Block
  ---
  This will show a little warning symbol next to it.
  ---
- [[#warningAdmonition]]
+ [[#warningBlock]]
 ---
 
-[type=info]
-@admonition
+@info
 #This is an Info Block
 ---
 This will show a little info symbol next to it.
 ---
-[[#infoAdmonition]]
+[[#infoBlock]]
 
 [lang=idoc]
 @code
 ---
- [type=info]
- @admonition
+ @info
  #This is an Info Block
  ---
  This will show a little info symbol next to it.
  ---
- [[#infoAdmonition]]
+ [[#infoBlock]]
 ---
 
-[type=caution]
-@admonition
+@caution
 #This is a Caution Block
 ---
 This will show a little caution symbol next to it.
 ---
-[[#cautionAdmonition]]
+[[#cautionBlock]]
 
 [lang=idoc]
 @code
 ---
- [type=caution]
- @admonition
+ @caution
  #This is a Caution Block
  ---
  This will show a little caution symbol next to it.
  ---
- [[#cautionAdmonition]]
+ [[#cautionBlock]]
 ---
 
-[type=tip]
-@admonition
+@tip
 #This is a Tip Block
 ---
 This will show a little lightbulb symbol next to it.
 ---
-[[#tipAdmonition]]
+[[#tipBlock]]
 
 [lang=idoc]
 @code
 ---
- [type=tip]
- @admonition
+ @tip
  #This is a Tip Block
  ---
  This will show a little lightbulb symbol next to it.
  ---
- [[#tipAdmonition]]
+ [[#tipBlock]]
 ---
 
 If you're worried about all the wasted space in the HTML output, don't
