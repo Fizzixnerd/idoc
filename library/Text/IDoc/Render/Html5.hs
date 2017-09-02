@@ -347,8 +347,12 @@ instance B.ToMarkup Equation where
 
 instance B.ToMarkup EqnArray where
   toMarkup (EqnArray ea) = vectorBlockToMarkup "idocEqnArray center-block"
-                           (\x -> "$$\\begin{eqnarray}\n" ++ x ++ 
-                                  "\\end{eqnarray}$$") ea
+                           (\x -> "$$\\begin{eqnarray}\n" ++ 
+                                  x ++
+                                  "\\end{eqnarray}$$") $                              (reverse (V.foldl (\acc y -> if y == Newline then  
+                                                                                                                     fromList [BSlash, BSlash] <> acc
+                                                                                                                   else
+                                                                                                                     V.cons y acc) empty ea))
 
 instance B.ToMarkup Theorem where
   toMarkup (Theorem t) = vectorBlockToMarkup "idocTheorem" id t
