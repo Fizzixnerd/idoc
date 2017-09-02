@@ -213,12 +213,12 @@ vectorBlockToMarkup vectorBlockToMarkup196,197
 vectorBlockToMarkup vectorBlockToMarkup201,202
 verbatimBlockToMarkup verbatimBlockToMarkup206,207
 verbatimBlockToMarkup verbatimBlockToMarkup210,211
-decorateAdmonition decorateAdmonition417,418
-decorateAdmonition decorateAdmonition418,419
-megaMain'' megaMain''523,524
-megaMain'' megaMain''524,525
-renderPretty renderPretty534,535
-renderPretty renderPretty535,536
+decorateAdmonition decorateAdmonition419,420
+decorateAdmonition decorateAdmonition420,421
+megaMain'' megaMain''525,526
+megaMain'' megaMain''526,527
+renderPretty renderPretty536,537
+renderPretty renderPretty537,538
 
 ./library/Text/IDoc/Render/Html5/Icons.hs,483
 module Text.IDoc.Render.Html5.Icons Text.IDoc.Render.Html5.Icons9,10

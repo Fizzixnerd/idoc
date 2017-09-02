@@ -221,12 +221,13 @@ instance B.ToMarkup BlockTitle where
 
 instance B.ToMarkup Block where
   toMarkup Block { _bType = PrerexB p } = B.toMarkup p
-  toMarkup b = panel blockPanelOptions 
-                     blockTitle 
-                     (b^.bSetID)
-                     blockIcon
-                     blockFooter
-                     blockContents
+  toMarkup b = (B.div B.! A.class_ "clearfix" $ "") ++
+               (panel blockPanelOptions 
+                      blockTitle 
+                      (b^.bSetID)
+                      blockIcon
+                      blockFooter
+                      blockContents)
     where
       (blockPanelOptions, blockTitle, blockIcon, blockFooter, blockContents) =
         case b^.bType of
@@ -284,8 +285,9 @@ instance B.ToMarkup Block where
                                              , panelGridWidth = GridFour
                                              },
                          mTitle "Warning", warningIcon, Nothing, B.toMarkup a)
-          SideNoteB s -> (defaultPanelOptions, mTitle "Side Note", sideNoteIcon,
-                          Nothing, B.toMarkup s)
+          SideNoteB s -> (defaultPanelOptions { panelGridWidth = GridFour },
+                          mTitle "Side Note", sideNoteIcon, Nothing,
+                          B.toMarkup s)
           ExampleB e -> (defaultPanelOptions, mTitle "Example", exampleIcon,
                          Nothing, B.toMarkup e)
           ExerciseB e -> (defaultPanelOptions, mTitle "Exercise", exerciseIcon,
@@ -426,7 +428,7 @@ decorateAdmonition pt cnt = (B.span B.! A.class_
       PDanger -> "fa-exclamation-circle"
       PWarning -> "fa-exclamation-triangle"
       PPrimary -> "fa-lightbulb-o"
-      _ -> error $ "I can't decorate like that!"
+      _ -> error "I can't decorate like that!"
 
 instance B.ToMarkup Info where
   toMarkup (Info a) = decorateAdmonition PInfo $
@@ -507,10 +509,10 @@ instance B.ToMarkup Section where
     where titlify = case s^.secType of
             Preamble -> id
             TopSection -> (mID (s^.secSetID) 
-                            (B.h2 B.! A.class_ "idocTopSectionTitle" $
+                            (B.h2 B.! A.class_ "idocTopSectionTitle clearfix" $
                              s^.secTitle.to B.toMarkup) ++)
             SubSection -> (mID (s^.secSetID) 
-                            (B.h3 B.! A.class_ "idocSubSectionTitle" $
+                            (B.h3 B.! A.class_ "idocSubSectionTitle clearfix" $
                              s^.secTitle.to B.toMarkup) ++)
 
 instance B.ToMarkup DocTitle where
