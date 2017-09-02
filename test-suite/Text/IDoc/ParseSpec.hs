@@ -257,18 +257,27 @@ spec = hspec $ do
   describe "prerexItemP" $ do
     it "Parses a PrerexItem properly." $ do
       parseFileAs (filePrefix ++ "prerexItemP.idoc") prerexItemP `shouldReturn`
-        (Right $ PrerexItem { _prerexItemPath = fromList [ "Something", "SomethingElse" ]
-                            , _prerexItemDescription = Just $ fromList [ TextC "Something about something" ]
+        (Right $ PrerexItem { _prerexItemPath = ID { _idProtocol = Nothing
+                                                   , _idBase = fromList [ IDBase "Something", IDBase "SomethingElse" ]
+                                                   , _idHash = Nothing
+                                                   }
+                            , _prerexItemDescription = fromList [ TextC "Something about something" ]
                             })
 
   describe "prerexP" $ do
     it "Parses a Prerex Block properly." $ do
       parseFileAs (filePrefix ++ "prerexP.idoc") prerexP `shouldReturn`
-        (Right $ Prerex $ fromList [ PrerexItem { _prerexItemPath = fromList [ "Something", "SomethingElse" ]
-                                                , _prerexItemDescription = Just $ fromList [ TextC "Something about something" ]
+        (Right $ Prerex $ fromList [ PrerexItem { _prerexItemPath = ID { _idProtocol = Nothing
+                                                                       , _idBase = fromList [ IDBase "Something", IDBase "SomethingElse" ]
+                                                                       , _idHash = Nothing
+                                                                       }
+                                                , _prerexItemDescription = fromList [ TextC "Something about something" ]
                                                 }
-                                   , PrerexItem { _prerexItemPath = fromList [ "SomethingElse", "SomethingWeird" ]
-                                                , _prerexItemDescription = Just $ fromList [ TextC "Something about something else" ]
+                                   , PrerexItem { _prerexItemPath = ID { _idProtocol = Nothing
+                                                                       , _idBase = fromList [ IDBase "SomethingElse", IDBase "SomethingWeird" ]
+                                                                       , _idHash = Nothing
+                                                                       }
+                                                , _prerexItemDescription = fromList [ TextC "Something about something else" ]
                             }
                                    ])
 

@@ -281,8 +281,8 @@ instance B.ToMarkup Block where
                          Nothing, B.toMarkup e)
           ExerciseB e -> (defaultPanelOptions, mTitle "Exercise", exerciseIcon,
                           Nothing, B.toMarkup e)
-          BibliographyB b -> (defaultPanelOptions, mTitle "Bibliography",
-                              bibliographyIcon, Nothing, B.toMarkup b)
+          BibliographyB b_ -> (defaultPanelOptions, mTitle "Bibliography",
+                               bibliographyIcon, Nothing, B.toMarkup b_)
           FurtherReadingB f -> (defaultPanelOptions, mTitle "Further Reading",
                                 furtherReadingIcon, Nothing, B.toMarkup f)
           SummaryB s -> (defaultPanelOptions, mTitle "Summary", summaryIcon,
@@ -349,10 +349,11 @@ instance B.ToMarkup EqnArray where
   toMarkup (EqnArray ea) = vectorBlockToMarkup "idocEqnArray center-block"
                            (\x -> "$$\\begin{eqnarray}\n" ++ 
                                   x ++
-                                  "\\end{eqnarray}$$") $                              (reverse (V.foldl (\acc y -> if y == Newline then  
-                                                                                                                     fromList [BSlash, BSlash] <> acc
-                                                                                                                   else
-                                                                                                                     V.cons y acc) empty ea))
+                                  "\\end{eqnarray}$$") $
+                           (reverse (V.foldl (\acc y -> if y == Newline then  
+                                                          fromList [BSlash, BSlash] <> acc
+                                                        else
+                                                          V.cons y acc) empty ea))
 
 instance B.ToMarkup Theorem where
   toMarkup (Theorem t) = vectorBlockToMarkup "idocTheorem" id t

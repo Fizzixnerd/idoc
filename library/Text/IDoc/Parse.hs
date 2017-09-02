@@ -260,10 +260,12 @@ idBaseP = S.IDBase <$> do
   fSlashP
   concat <$> (manyV $ do
                  notFollowedBy $ MP.eitherP (MP.try fSlashP) $
-                   MP.eitherP (MP.try rAngleP) octothorpeP
+                   MP.eitherP (MP.try rAngleP) $
+                   MP.eitherP (MP.try octothorpeP) lBraceP
                  textP)
   where
     rAngleP = void $ tokenP S.RAngle
+    lBraceP = void $ tokenP S.LBrace
 
 idHashP :: IDocParser S.IDHash
 idHashP = S.IDHash <$> do
@@ -523,23 +525,19 @@ biblioBlockP = do
 
 prerexItemP :: IDocParser S.PrerexItem
 prerexItemP = do
-  fSlashP
-  path <- someV idBaseP
+  path <- idP
   desc <- markupContentsP
-  return $ S.PrerexItem { S._prerexItemPath = S.ID { S._idProtocol = Nothing
-                                                   , S._idBase = path
-                                                   , S._idHash = Nothing
-                                                   }
+  return $ S.PrerexItem { S._prerexItemPath = path
                         , S._prerexItemDescription = desc
                         }
 
 prerexP :: IDocParser S.Prerex
 prerexP = S.Prerex <$> do
   blockStarterP
-  someTill blockEnderP' (do
-                            x <- prerexItemP
-                            newlineP
-                            return x)
+  someTill blockEnderP $ do
+    x <- prerexItemP
+    newlineP
+    return x
 
 introductionP :: IDocParser S.Introduction
 introductionP = S.Introduction <$> coreBlockP
@@ -644,7 +642,7 @@ sectionP = do
   sid <- optional setIDP
   void $ many newlineP
   cnt <- manyV $ do
-    MP.notFollowedBy $ MP.eitherP (MP.try looksLikeEofP) ((many newlineP) >> equalsP >> equalsP)
+    MP.notFollowedBy $ (many newlineP) >> equalsP >> equalsP
     x <- coreP
     void $ many newlineP
     return x
@@ -685,10 +683,10 @@ docP = do
   title <- someTween equalsP newlineP simpleCoreP
   void $ many newlineP
   preamble <- manyV $ do
-    MP.notFollowedBy $ MP.eitherP (MP.try looksLikeEofP) (newlineP >> equalsP >> equalsP)
+    MP.notFollowedBy $ (many newlineP) >> equalsP >> equalsP
     x <- coreP
     return x
-  void $ manyV newlineP
+  void $ many newlineP
   sections <- sepEndByV sectionP (many newlineP)
   let preambleSection = S.Section { S._secType = S.Preamble
                                   , S._secAttrs = S.AttrMap M.empty
@@ -714,8 +712,8 @@ parseFileAs f ty = (withFile f ReadMode
                           (CP.Right x) -> return $ MP.parse ty "<tokens>" x
                           (CP.Left _) -> error "Could not even lex the fucking thing."))
 
-megaMain :: IO ()
-megaMain = (withFile "simple1.idoc" ReadMode 
+megaMain' :: IO ()
+megaMain' = (withFile "simple1.idoc" ReadMode 
              (\src -> do
                 cnts <- CP.hGetContents src
                 case MP.parse (Text.IDoc.Lex.tokens :: Parser (Vector S.Token)) "source.idoc" (E.decodeUtf8 cnts) of

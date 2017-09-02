@@ -3,7 +3,7 @@
 @prerex
 ---
 /None{Someone wanted to see what this looked like, so it's here.
-      Normally you can just leave the `prerex` block out when
+      Normally you can just leave the prerex block out when
       there are none.}
 ---
 
@@ -856,10 +856,6 @@ not abuse this feature.
 @youtube
 ---
 <<https://www.youtube.com/FdU8oqCbvzo>>
-
->>>
-
-Objections are awesome.
 ---
 [[#ytUnlimitedCorners]]
 
