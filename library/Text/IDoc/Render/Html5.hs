@@ -138,12 +138,10 @@ instance B.ToValue LinkType where
 
 instance B.ToMarkup ID where
   toMarkup id_ = 
-    let base = case (id_^.idProtocol) of
-                 Nothing -> "http://www.independentlearning.science"
-                 Just (Protocol p) -> p ++ "://"
-        hash_ = case (id_^.idHash) of
-                 Nothing -> ""
-                 Just (IDHash h) -> "#" ++ h
+    let (base, hash_) = case (id_^.idProtocol, id_^.idHash) of
+                          (Nothing, Nothing) -> ("http://www.independentlearning.science", "")
+                          (Just (Protocol p), Just (IDHash h)) -> (p ++ "://", h)
+                          (Nothing, Just (IDHash h)) -> ("", h)
     in
       B.toMarkup $ base ++
       (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
@@ -151,19 +149,18 @@ instance B.ToMarkup ID where
 
 instance B.ToValue ID where
   toValue id_ =
-    let base = case (id_^.idProtocol) of
-                 Nothing -> "http://www.independentlearning.science"
-                 Just (Protocol p) -> p ++ "://"
-        hash_ = case (id_^.idHash) of
-                 Nothing -> ""
-                 Just (IDHash h) -> "#" ++ h
+    let (base, hash_) = case (id_^.idProtocol, id_^.idHash) of
+                          (Nothing, Nothing) -> ("http://www.independentlearning.science", "")
+                          (Just (Protocol p), Just (IDHash h)) -> (p ++ "://", h)
+                          (Nothing, Just (IDHash h)) -> ("", h)
+                          (Just (Protocol p), Nothing) -> (p ++ "://", "")
     in
       B.toValue $ base ++
       (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
       hash_
 
 instance B.ToValue SetID where
-  toValue (SetID (IDHash sid)) = "#" ++ B.toValue sid
+  toValue (SetID (IDHash sid)) = B.toValue sid
 
 instance B.ToValue Link where
   toValue l = B.toValue $ l^.linkLocation

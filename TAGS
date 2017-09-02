@@ -207,14 +207,14 @@ defaultPanelOptions defaultPanelOptions75,76
 defaultPanelOptions defaultPanelOptions76,77
 panel panel78,79
 panel panel86,87
-vectorBlockToMarkup vectorBlockToMarkup198,199
-vectorBlockToMarkup vectorBlockToMarkup203,204
-verbatimBlockToMarkup verbatimBlockToMarkup205,206
-verbatimBlockToMarkup verbatimBlockToMarkup209,210
-megaMain'' megaMain''506,507
-megaMain'' megaMain''507,508
-renderPretty renderPretty517,518
-renderPretty renderPretty518,519
+vectorBlockToMarkup vectorBlockToMarkup195,196
+vectorBlockToMarkup vectorBlockToMarkup200,201
+verbatimBlockToMarkup verbatimBlockToMarkup202,203
+verbatimBlockToMarkup verbatimBlockToMarkup206,207
+megaMain'' megaMain''503,504
+megaMain'' megaMain''504,505
+renderPretty renderPretty514,515
+renderPretty renderPretty515,516
 
 ./library/Text/IDoc/Render/Html5/Icons.hs,263
 module Text.IDoc.Render.Html5.Icons Text.IDoc.Render.Html5.Icons9,10
