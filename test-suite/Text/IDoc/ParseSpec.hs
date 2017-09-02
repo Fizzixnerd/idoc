@@ -165,6 +165,27 @@ spec = hspec $ do
                                               , _liType = Labelled
                                               }
                                               ])
+
+      it "Parses a List after a Paragraph." $ do
+        parseFileAs (filePrefix ++ "listP.followingParagraphP.idoc") sectionP `shouldReturn`
+          (Right $ Section { _secAttrs = AttrMap M.empty
+                           , _secTitle = SectionTitle $ fromList [ TextC "Hello!" ]
+                           , _secSetID = Nothing
+                           , _secType = TopSection
+                           , _secContents = fromList [ CC $ ParagraphC $
+                                                       Paragraph { _paraContents = fromList [ TextC "Hello there this is a paragraph blah blah blah", TextC "." ]
+                                                                 ,_paraSetID = Nothing
+                                                                 }
+                                                     , CC $ ListC $ List $
+                                                       fromList [ ListItem { _liAttrs = AttrMap M.empty
+                                                                           , _liLabel = Nothing
+                                                                           , _liType = Unordered
+                                                                           , _liContents = fromList [ TextC "And a one and a", TextC ".", TextC ".", TextC "." ]
+                                                                           , _liSetID = Nothing
+                                                                           }
+                                                                ]
+                                                     ]
+                           })
                                               
     describe "inlineMathP" $ do
       it "Parses InlineMath properly." $ do

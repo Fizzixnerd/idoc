@@ -140,9 +140,9 @@ Another paragraph.  RAAAAAAAAAAAWR!
 would not display what you want correctly.  Subsections are the same
 deal: use `=== Subsection Name`.
 
-Any line that begins with `//` denotes a comment.  They will be
-rendered as comments upon translation, but will not be displayed in
-the final document.  These are not yet implemented, but will be soon.
+Any line that begins with `//` denotes a comment. They will not be
+displayed in the final document.  These are not yet implemented, but
+will be soon.
 
 // This is a comment line.  It will not be rendered.  Block
 // comments are not supported because they are a pain.
@@ -172,39 +172,51 @@ lists.  You may only write a single paragraph.  We support unordered
 lists, ordered lists and labelled (description) lists.
 
 -This is an unordered list.  It can contain paragraph contents.
+
 -It will look like bullet points in the final render.
+
 -Third main item.
 
 [lang=idoc]
 @code
 ---
 -This is an unordered list.  It can contain paragraph contents.
+
 -It will look like bullet points in the final render.
+
 -Third main item.
 ---
 
 .This is a numbered list.
+
 .This is the second guy.
+
 .And so on...
 
 [lang=idoc]
 @code
 ---
 .This is a numbered list.
+
 .This is the second guy.
+
 .And so on...
 ---
 
-:First Item:: This is a list where the items have labels.
-:Second Item:: Another item.
-:And So On:: ...
+:First Item::This is a list where the items have labels.
+
+:Second Item::Another item.
+
+:And So On::...
 
 [lang=idoc]
 @code
 ---
-:First Item:: This is a list where the items have labels.
-:Second Item:: Another item.
-:And So On:: ...
+:First Item::This is a list where the items have labels.
+
+:Second Item::Another item.
+
+:And So On::...
 ---
 
 ==Blocks

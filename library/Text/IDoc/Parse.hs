@@ -309,7 +309,6 @@ linkP = label "A Link" $ do
 -- | Lists
 mkListItemP :: S.Token -> Bool -> S.ListType-> IDocParser S.ListItem
 mkListItemP starter hasLabel ty = do
-  am <- optionalAttrMapP
   starterP
   lbl <- if hasLabel then
            Just <$> (someTill doubleStarterP simpleCoreP)
@@ -318,7 +317,7 @@ mkListItemP starter hasLabel ty = do
   cnt <- someV $ do
     notFollowedBy $ newlineP >> some newlineP
     simpleCoreP
-  return $ S.ListItem { S._liAttrs = am
+  return $ S.ListItem { S._liAttrs = S.AttrMap M.empty
                       , S._liLabel = S.ListLabel <$> lbl
                       , S._liContents = cnt
                       , S._liSetID = Nothing
@@ -410,7 +409,7 @@ paragraphP = do
   cnt <- someV $ do
     notFollowedBy $ MP.eitherP (MP.try $ newlineP >> some newlineP) $
                     MP.eitherP (MP.try $ blockEnderP') $
-                                doubleLBracketP
+                               doubleLBracketP
     simpleCoreP
   sid <- optional setIDP
   void $ many newlineP
@@ -643,7 +642,7 @@ sectionP = do
   sid <- optional setIDP
   void $ many newlineP
   cnt <- manyV $ do
-    MP.notFollowedBy $ (many newlineP) >> equalsP >> equalsP
+    MP.notFollowedBy $ many newlineP >> equalsP >> equalsP
     x <- coreP
     void $ many newlineP
     return x
@@ -684,7 +683,7 @@ docP = do
   title <- someTween equalsP newlineP simpleCoreP
   void $ many newlineP
   preamble <- manyV $ do
-    MP.notFollowedBy $ (many newlineP) >> equalsP >> equalsP
+    MP.notFollowedBy $ many newlineP >> equalsP >> equalsP
     x <- coreP
     return x
   void $ many newlineP

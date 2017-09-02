@@ -2,7 +2,9 @@
 
 @prerex
 ---
-/None{Someone wanted to see what this looked like, so it's here.  Normally you can just leave the `prerex` block out when there are none.}
+/None{Someone wanted to see what this looked like, so it's here.
+      Normally you can just leave the prerex block out when
+      there are none.}
 ---
 
 @introduction
@@ -18,8 +20,7 @@ originally based on asciidoc, but has since diverged significantly.
 
 ==Goals
 
-[type=tip]
-@admonition
+@tip
 #Get the Source!
 ---
 You will probably want to examine the source for this document along
@@ -139,9 +140,9 @@ Another paragraph.  RAAAAAAAAAAAWR!
 would not display what you want correctly.  Subsections are the same
 deal: use `=== Subsection Name`.
 
-Any line that begins with `//` denotes a comment.  They will be
-rendered as comments upon translation, but will not be displayed in
-the final document.  These are not yet implemented, but will be soon.
+Any line that begins with `//` denotes a comment. They will not be
+displayed in the final document.  These are not yet implemented, but
+will be soon.
 
 // This is a comment line.  It will not be rendered.  Block
 // comments are not supported because they are a pain.
@@ -171,39 +172,51 @@ lists.  You may only write a single paragraph.  We support unordered
 lists, ordered lists and labelled (description) lists.
 
 -This is an unordered list.  It can contain paragraph contents.
+
 -It will look like bullet points in the final render.
+
 -Third main item.
 
 [lang=idoc]
 @code
 ---
 -This is an unordered list.  It can contain paragraph contents.
+
 -It will look like bullet points in the final render.
+
 -Third main item.
 ---
 
 .This is a numbered list.
+
 .This is the second guy.
+
 .And so on...
 
 [lang=idoc]
 @code
 ---
 .This is a numbered list.
+
 .This is the second guy.
+
 .And so on...
 ---
 
-:First Item:: This is a list where the items have labels.
-:Second Item:: Another item.
-:And So On:: ...
+:First Item::This is a list where the items have labels.
+
+:Second Item::Another item.
+
+:And So On::...
 
 [lang=idoc]
 @code
 ---
-:First Item:: This is a list where the items have labels.
-:Second Item:: Another item.
-:And So On:: ...
+:First Item::This is a list where the items have labels.
+
+:Second Item::Another item.
+
+:And So On::...
 ---
 
 ==Blocks
@@ -362,7 +375,7 @@ a *number* is an element of an field.
 (x + y)^2 = x^2 + 2 xy + y^2.
 ---
 
-***
+>>>
 
 Use geometry.
 ---
@@ -379,7 +392,7 @@ Use geometry.
  (x + y)^2 = x^2 + 2 xy + y^2.
  ---
 
- ***
+ >>>
 
  Use geometry.
  ---
@@ -398,7 +411,7 @@ For $n > 2$ there exists no integer solutions to the equation:
 x^n + y^n = z^n
 ---
 
-***
+>>>
 
 It's trivial.
 ---
@@ -418,7 +431,7 @@ It's trivial.
  x^n + y^n = z^n
  ---
  
- ***
+ >>>
 
  It's trivial.
  ---
@@ -543,84 +556,76 @@ For more specialized blocks similar to `sidenotes`, use an
 Here are some examples; notice how again we use an attribute list to
 specify the type of admonition.
 
-[type=warning]
-@admonition
+@warning
 #This is a Warning Block
 ---
 This will show a little warning symbol next to it.
 ---
-[[#warningAdmonition]]
+[[#warningBlock]]
 
 [lang=idoc]
 @code
 ---
- [type=warning]
- @admonition
+ @warning
  #This is a Warning Block
  ---
  This will show a little warning symbol next to it.
  ---
- [[#warningAdmonition]]
+ [[#warningBlock]]
 ---
 
-[type=info]
-@admonition
+@info
 #This is an Info Block
 ---
 This will show a little info symbol next to it.
 ---
-[[#infoAdmonition]]
+[[#infoBlock]]
 
 [lang=idoc]
 @code
 ---
- [type=info]
- @admonition
+ @info
  #This is an Info Block
  ---
  This will show a little info symbol next to it.
  ---
- [[#infoAdmonition]]
+ [[#infoBlock]]
 ---
 
-[type=caution]
-@admonition
+@caution
 #This is a Caution Block
 ---
 This will show a little caution symbol next to it.
 ---
-[[#cautionAdmonition]]
+[[#cautionBlock]]
 
 [lang=idoc]
 @code
 ---
- [type=caution]
- @admonition
+ @caution
  #This is a Caution Block
  ---
  This will show a little caution symbol next to it.
  ---
- [[#cautionAdmonition]]
+ [[#cautionBlock]]
 ---
 
-[type=tip]
-@admonition
+@tip
 #This is a Tip Block
 ---
 This will show a little lightbulb symbol next to it.
 ---
-[[#tipAdmonition]]
+[[#tipBlock]]
 
 [lang=idoc]
 @code
 ---
- [type=tip]
- @admonition
+ @tip
  #This is a Tip Block
  ---
  This will show a little lightbulb symbol next to it.
  ---
- [[#tipAdmonition]]
+ [[#tipBlock]]
 ---
 
 If you're worried about all the wasted space in the HTML output, don't
@@ -651,9 +656,8 @@ but which isn't super necessary, or requires more advanced techniques
 than the rest of the text.  This is because connections are allowed to have
 their own prerequisites, in addition to the main doc's prereqs.
 
-@admonition
+@info
 #Rendering
-[type=info]
 ---
 If you're viewing this full-screen on a computer, you'll notice that
 unlike the other some other blocks we've seen, connections are
@@ -700,10 +704,9 @@ depending on if the reader has the necessary prereqs or not.
  than the rest of the text.  This is because connections are allowed to have
  their own prerequisites, in addition to the main doc's prereqs.
  
- @admonition
+ @info
  #Rendering
- [type=info]
- ---
+  ---
  If you're viewing this full-screen on a computer, you'll notice that
  unlike the other some other blocks we've seen, connections are
  rendered across the full screen.  In general, you should _never_ rely
@@ -776,7 +779,7 @@ example without a solution.
 ---
 Prove that every integer greater than zero is positive.
 
-***
+>>>
 
 The proof is pretty simple.  Try to follow along.
 
@@ -791,7 +794,7 @@ First, assume not.  But that's not the case.  QED.
  ---
  Prove that every integer greater than zero is positive.
  
- ***
+ >>>
  
  The proof is pretty simple.  Try to follow along.
  
@@ -864,11 +867,7 @@ not abuse this feature.
 
 @youtube
 ---
-<<https://www.youtube.com/FdU8oqCbvzo>>
-
-***
-
-Objections are awesome.
+<<youtube://FdU8oqCbvzo>>
 ---
 [[#ytUnlimitedCorners]]
 
