@@ -203,16 +203,17 @@ vectorBlockToMarkup :: B.ToMarkup a =>
                     -> B.Html
 vectorBlockToMarkup cls dec vb = B.div B.! A.class_ cls $ dec $ concatMap B.toMarkup vb
 
-verbatimBlockToMarkup :: B.ToMarkup a => 
-                         B.AttributeValue 
+verbatimBlockToMarkup :: B.AttributeValue 
                       -> (B.Html -> B.Html)
-                      -> Vector a 
+                      -> Vector Token
                       -> B.Html
 verbatimBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
                                    dec $
-                                   concat $ 
-                                   intersperse (B.toMarkup B.br) $
-                                   fmap B.toMarkup vb
+                                   concatMap (\x -> if x == Newline then
+                                                      B.toMarkup B.br
+                                                    else
+                                                      B.toMarkup x)
+                                   vb
 
 instance B.ToMarkup BlockTitle where
   toMarkup (BlockTitle bt) = concatMap B.toMarkup bt

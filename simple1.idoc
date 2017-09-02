@@ -644,9 +644,8 @@ but which isn't super necessary, or requires more advanced techniques
 than the rest of the text.  This is because connections are allowed to have
 their own prerequisites, in addition to the main doc's prereqs.
 
-@admonition
+@info
 #Rendering
-[type=info]
 ---
 If you're viewing this full-screen on a computer, you'll notice that
 unlike the other some other blocks we've seen, connections are
@@ -693,10 +692,9 @@ depending on if the reader has the necessary prereqs or not.
  than the rest of the text.  This is because connections are allowed to have
  their own prerequisites, in addition to the main doc's prereqs.
  
- @admonition
+ @info
  #Rendering
- [type=info]
- ---
+  ---
  If you're viewing this full-screen on a computer, you'll notice that
  unlike the other some other blocks we've seen, connections are
  rendered across the full screen.  In general, you should _never_ rely

@@ -210,11 +210,11 @@ panel panel86,87
 vectorBlockToMarkup vectorBlockToMarkup198,199
 vectorBlockToMarkup vectorBlockToMarkup203,204
 verbatimBlockToMarkup verbatimBlockToMarkup205,206
-verbatimBlockToMarkup verbatimBlockToMarkup210,211
-megaMain'' megaMain''500,501
+verbatimBlockToMarkup verbatimBlockToMarkup209,210
 megaMain'' megaMain''501,502
-renderPretty renderPretty511,512
+megaMain'' megaMain''502,503
 renderPretty renderPretty512,513
+renderPretty renderPretty513,514
 
 ./library/Text/IDoc/Render/Html5/Icons.hs,263
 module Text.IDoc.Render.Html5.Icons Text.IDoc.Render.Html5.Icons9,10
