@@ -259,325 +259,331 @@ tokens tokens89,90
 megaMain megaMain91,92
 megaMain megaMain92,93
 
-./library/Text/IDoc/Syntax.hs,13918
+./library/Text/IDoc/Syntax.hs,14180
 module Text.IDoc.Syntax Text.IDoc.Syntax11,12
-data Token Token19,20
-    TextT TextT21,22
-  | EqualsEquals23,24
-  | LAngleLAngle24,25
-  | RAngleRAngle25,26
-  | LBracketLBracket26,27
-  | RBracketRBracket27,28
-  | LBraceLBrace28,29
-  | RBraceRBrace29,30
-  | ColonColon30,31
-  | NewlineNewline31,32
-  | DashDash32,33
-  | AtSignAtSign33,34
-  | BackTickBackTick34,35
-  | AsteriskAsterisk35,36
-  | UnderscoreUnderscore36,37
-  | OctothorpeOctothorpe37,38
-  | DoubleQuoteDoubleQuote38,39
-  | TildeTilde39,40
-  | CaretCaret40,41
-  | FSlashFSlash41,42
-  | CommaComma42,43
-  | PeriodPeriod43,44
-  | DollarSignDollarSign44,45
-  | PercentSignPercentSign45,46
-  | SemiColonSemiColon46,47
-  | BSlashBSlash47,48
-  | PlusPlus48,49
-data Core Core51,52
-data Core = SC SC51,52
-          | CC CC52,53
-data SimpleCore SimpleCore55,56
-    TextC TextC56,57
-  | QTextC QTextC57,58
-  | LinkC LinkC58,59
-  | InlineMathC InlineMathC59,60
-  | MarkupC MarkupC60,61
-data ComplexCore ComplexCore63,64
-    ListC ListC64,65
-  | BlockC BlockC65,66
-  | ParagraphC ParagraphC66,67
-data Paragraph Paragraph69,70
-data Paragraph = Paragraph Paragraph69,70
-data Paragraph = Paragraph { _paraContents _paraContents69,70
-                           , _paraSetID _paraSetID70,71
-newtype DocTitle DocTitle74,75
-newtype DocTitle = DocTitle DocTitle74,75
-newtype DocTitle = DocTitle { unDocTitle unDocTitle74,75
-data Doc Doc77,78
-data Doc = Doc Doc77,78
-data Doc = Doc { _docTitle _docTitle77,78
-               , _docSections _docSections78,79
-data TextType TextType81,82
-data TextType = StrongStrong81,82
-              | EmphasisEmphasis82,83
-              | MonospaceMonospace83,84
-              | SuperscriptSuperscript84,85
-              | SubscriptSubscript85,86
-              | QuotedQuoted86,87
-data QText QText89,90
-data QText = QText QText89,90
-data QText = QText { _qtText _qtText89,90
-                   , _qtType _qtType90,91
-data SetID SetID94,95
-data SetID = SetID SetID94,95
-data SetID = SetID { _sidName _sidName94,95
-newtype IDHash IDHash97,98
-newtype IDHash = IDHash IDHash97,98
-data AttrMap AttrMap99,100
-data AttrMap = AttrMap AttrMap99,100
-data AttrMap = AttrMap { _amMap _amMap99,100
-newtype AttrName AttrName102,103
-newtype AttrName = AttrName AttrName102,103
-newtype AttrValue AttrValue103,104
-newtype AttrValue = AttrValue AttrValue103,104
-data LinkType LinkType105,106
-data LinkType = InternalInternal105,106
-              | BackBack106,107
-              | OutOut107,108
-newtype LinkText LinkText110,111
-newtype LinkText = LinkText LinkText110,111
-newtype LinkText = LinkText { unLinkText unLinkText110,111
-data Link Link113,114
-data Link = Link Link113,114
-data Link = Link { _linkText _linkText113,114
-                 , _linkAttrs _linkAttrs114,115
-                 , _linkLocation _linkLocation115,116
-                 , _linkType _linkType116,117
-data ID ID120,121
-data ID = ID ID120,121
-data ID = ID { _idProtocol _idProtocol120,121
-             , _idBase _idBase121,122
-             , _idHash _idHash122,123
-newtype Protocol Protocol126,127
-newtype Protocol = Protocol Protocol126,127
-newtype IDBase IDBase127,128
-newtype IDBase = IDBase IDBase127,128
-data ListType ListType129,130
-data ListType = UnorderedUnordered129,130
-              | OrderedOrdered130,131
-              | LabelledLabelled131,132
-data List List134,135
-data List = List List134,135
-data List = List { _listContents _listContents134,135
-newtype ListLabel ListLabel137,138
-newtype ListLabel = ListLabel ListLabel137,138
-newtype ListLabel = ListLabel { unListLabel unListLabel137,138
-data ListItem ListItem140,141
-data ListItem = ListItem ListItem140,141
-data ListItem = ListItem { _liAttrs _liAttrs140,141
-                         , _liLabel _liLabel141,142
-                         , _liContents _liContents142,143
-                         , _liSetID _liSetID143,144
-                         , _liType _liType144,145
-data MarkupType MarkupType148,149
-data MarkupType = FootnoteFootnote148,149
-                | FootnoteRefFootnoteRef149,150
-                | CitationCitation150,151
-data Markup Markup153,154
-data Markup = Markup Markup153,154
-data Markup = Markup { _muType _muType153,154
-                     , _muAttrs _muAttrs154,155
-                     , _muContents _muContents155,156
-                     , _muSetID _muSetID156,157
-data InlineMath InlineMath160,161
-data InlineMath = InlineMath InlineMath160,161
-data InlineMath = InlineMath { _imAttrs _imAttrs160,161
-                             , _imContents _imContents161,162
-                             , _imSetID _imSetID162,163
-data BlockType BlockType166,167
-data BlockType = PrerexB PrerexB166,167
-data BlockType = PrerexB { _prerex _prerex166,167
-               | IntroductionB IntroductionB167,168
-               | IntroductionB { _introduction _introduction167,168
-               | MathB MathB168,169
-               | MathB { _math _math168,169
-               | EquationB EquationB169,170
-               | EquationB { _equation _equation169,170
-               | EqnArrayB EqnArrayB170,171
-               | EqnArrayB { _eqnArray _eqnArray170,171
-               | TheoremB TheoremB171,172
-               | TheoremB { _theorem _theorem171,172
-               | LemmaB LemmaB172,173
-               | LemmaB { _lemma _lemma172,173
-               | CorollaryB CorollaryB173,174
-               | CorollaryB { _corollary _corollary173,174
-               | PropositionB PropositionB174,175
-               | PropositionB { _proposition _proposition174,175
-               | ConjectureB ConjectureB175,176
-               | ConjectureB { _conjecture _conjecture175,176
-               | AxiomB AxiomB176,177
-               | AxiomB { _axiom _axiom176,177
-               | ProofB ProofB177,178
-               | ProofB { _proof _proof177,178
-               | QuoteB QuoteB178,179
-               | QuoteB { _quote _quote178,179
-               | CodeB CodeB179,180
-               | CodeB { _code _code179,180
-               | ImageB ImageB180,181
-               | ImageB { _image _image180,181
-               | VideoB VideoB181,182
-               | VideoB { _video _video181,182
-               | YouTubeB YouTubeB182,183
-               | YouTubeB { _youTube _youTube182,183
-               | ConnectionB ConnectionB183,184
-               | ConnectionB { _connection _connection183,184
-               | DefinitionB DefinitionB184,185
-               | DefinitionB { _definition _definition184,185
-               | IntuitionB IntuitionB185,186
-               | IntuitionB { _intuition _intuition185,186
-               | InfoB InfoB186,187
-               | InfoB { _info _info186,187
-               | TipB TipB187,188
-               | TipB { _tip _tip187,188
-               | CautionB CautionB188,189
-               | CautionB { _caution _caution188,189
-               | WarningB WarningB189,190
-               | WarningB { _warning _warning189,190
-               | SideNoteB SideNoteB190,191
-               | SideNoteB { _sidenote _sidenote190,191
-               | ExampleB ExampleB191,192
-               | ExampleB { _example _example191,192
-               | ExerciseB ExerciseB192,193
-               | ExerciseB { _exercise _exercise192,193
-               | BibliographyB BibliographyB193,194
-               | BibliographyB { _bibliography _bibliography193,194
-               | FurtherReadingB FurtherReadingB194,195
-               | FurtherReadingB { _furtherReading _furtherReading194,195
-               | SummaryB SummaryB195,196
-               | SummaryB { _summary _summary195,196
-               | RecallB RecallB196,197
-               | RecallB { _recall _recall196,197
-newtype BlockTitle BlockTitle199,200
-newtype BlockTitle = BlockTitle BlockTitle199,200
-newtype BlockTitle = BlockTitle { unBlockTitle unBlockTitle199,200
-data Block Block202,203
-data Block = Block Block202,203
-data Block = Block { _bType _bType202,203
-                   , _bAttrs _bAttrs203,204
-                   , _bTitle _bTitle204,205
-                   , _bSetID _bSetID205,206
-data Prerex Prerex209,210
-data Prerex = Prerex Prerex209,210
-data Prerex = Prerex { _prerexContents _prerexContents209,210
-data PrerexItem PrerexItem212,213
-data PrerexItem = PrerexItem PrerexItem212,213
-data PrerexItem = PrerexItem { _prerexItemPath _prerexItemPath212,213
-                             , _prerexItemDescription _prerexItemDescription213,214
-data Introduction Introduction217,218
-data Introduction = Introduction Introduction217,218
-data Introduction = Introduction { _introductionContents _introductionContents217,218
-data Math Math220,221
-data Math = Math Math220,221
-data Math = Math { _mathContents _mathContents220,221
-data Equation Equation223,224
-data Equation = Equation Equation223,224
-data Equation = Equation { _equationContents _equationContents223,224
-data EqnArray EqnArray226,227
-data EqnArray = EqnArray EqnArray226,227
-data EqnArray = EqnArray { _eqnArrayContents _eqnArrayContents226,227
-data Theorem Theorem229,230
-data Theorem = Theorem Theorem229,230
-data Theorem = Theorem { _theoremContents _theoremContents229,230
-data Lemma Lemma232,233
-data Lemma = Lemma Lemma232,233
-data Lemma = Lemma { _lemmaContents _lemmaContents232,233
-data Corollary Corollary235,236
-data Corollary = Corollary Corollary235,236
-data Corollary = Corollary { _corollaryContents _corollaryContents235,236
-data Proposition Proposition238,239
-data Proposition = Proposition Proposition238,239
-data Proposition = Proposition { _propositionContents _propositionContents238,239
-data Conjecture Conjecture241,242
-data Conjecture = Conjecture Conjecture241,242
-data Conjecture = Conjecture { _conjectureContents _conjectureContents241,242
-data Axiom Axiom244,245
-data Axiom = Axiom Axiom244,245
-data Axiom = Axiom { _axiomContents _axiomContents244,245
-data Proof Proof247,248
-data Proof = Proof Proof247,248
-data Proof = Proof { _proofContents _proofContents247,248
-data Quote Quote250,251
-data Quote = Quote Quote250,251
-data Quote = Quote { _quoteContents _quoteContents250,251
-data Code Code253,254
-data Code = Code Code253,254
-data Code = Code { _codeContents _codeContents253,254
-data Image Image256,257
-data Image = Image Image256,257
-data Image = Image { _imageContents _imageContents256,257
-data Video Video259,260
-data Video = Video Video259,260
-data Video = Video { _videoContents _videoContents259,260
-data YouTube YouTube262,263
-data YouTube = YouTube YouTube262,263
-data YouTube = YouTube { _youTubeContents _youTubeContents262,263
-data Connection Connection265,266
-data Connection = Connection Connection265,266
-data Connection = Connection { _connectionContents _connectionContents265,266
-data Definition Definition268,269
-data Definition = Definition Definition268,269
-data Definition = Definition { _definitionContents _definitionContents268,269
-data Intuition Intuition271,272
-data Intuition = Intuition Intuition271,272
-data Intuition = Intuition { _intuitionContents _intuitionContents271,272
-data Info Info274,275
-data Info = Info Info274,275
-data Info = Info { _infoContents _infoContents274,275
-data Tip Tip277,278
-data Tip = Tip Tip277,278
-data Tip = Tip { _tipContents _tipContents277,278
-data Caution Caution280,281
-data Caution = Caution Caution280,281
-data Caution = Caution { _cautionContents _cautionContents280,281
-data Warning Warning283,284
-data Warning = Warning Warning283,284
-data Warning = Warning { _warningContents _warningContents283,284
-data SideNote SideNote286,287
-data SideNote = SideNote SideNote286,287
-data SideNote = SideNote { _sideNoteContents _sideNoteContents286,287
-data Example Example289,290
-data Example = Example Example289,290
-data Example = Example { _exampleContents _exampleContents289,290
-data Exercise Exercise292,293
-data Exercise = Exercise Exercise292,293
-data Exercise = Exercise { _exerciseContents _exerciseContents292,293
-data Bibliography Bibliography295,296
-data Bibliography = Bibliography Bibliography295,296
-data Bibliography = Bibliography { _bibliographyContents _bibliographyContents295,296
-data BibItem BibItem298,299
-data BibItem = BibItem BibItem298,299
-data BibItem = BibItem { _biAuthor _biAuthor298,299
-                       , _biTitle _biTitle299,300
-                       , _biYear _biYear300,301
-data FurtherReading FurtherReading304,305
-data FurtherReading = FurtherReading FurtherReading304,305
-data FurtherReading = FurtherReading { _furtherReadingContents _furtherReadingContents304,305
-data Summary Summary307,308
-data Summary = Summary Summary307,308
-data Summary = Summary { _summaryContents _summaryContents307,308
-data Recall Recall310,311
-data Recall = Recall Recall310,311
-data Recall = Recall { _recallContents _recallContents310,311
-data SectionType SectionType313,314
-data SectionType = PreamblePreamble313,314
-                 | TopSectionTopSection314,315
-                 | SubSectionSubSection315,316
-newtype SectionTitle SectionTitle318,319
-newtype SectionTitle = SectionTitle SectionTitle318,319
-newtype SectionTitle = SectionTitle { unSectionTitle unSectionTitle318,319
-data Section Section321,322
-data Section = Section Section321,322
-data Section = Section { _secType _secType321,322
-                       , _secAttrs _secAttrs322,323
-                       , _secContents _secContents323,324
-                       , _secTitle _secTitle324,325
-                       , _secSetID _secSetID325,326
+data DebugInfo DebugInfo19,20
+data DebugInfo = DebugInfoDebugInfo19,20
+data DToken DToken21,22
+data DToken d = DToken DToken21,22
+data DToken d = DToken { _dTokenInfo _dTokenInfo21,22
+                       , _dTokenToken _dTokenToken22,23
+data Token Token24,25
+    TextT TextT26,27
+  | EqualsEquals28,29
+  | LAngleLAngle29,30
+  | RAngleRAngle30,31
+  | LBracketLBracket31,32
+  | RBracketRBracket32,33
+  | LBraceLBrace33,34
+  | RBraceRBrace34,35
+  | ColonColon35,36
+  | NewlineNewline36,37
+  | DashDash37,38
+  | AtSignAtSign38,39
+  | BackTickBackTick39,40
+  | AsteriskAsterisk40,41
+  | UnderscoreUnderscore41,42
+  | OctothorpeOctothorpe42,43
+  | DoubleQuoteDoubleQuote43,44
+  | TildeTilde44,45
+  | CaretCaret45,46
+  | FSlashFSlash46,47
+  | CommaComma47,48
+  | PeriodPeriod48,49
+  | DollarSignDollarSign49,50
+  | PercentSignPercentSign50,51
+  | SemiColonSemiColon51,52
+  | BSlashBSlash52,53
+  | PlusPlus53,54
+data Core Core56,57
+data Core = SC SC56,57
+          | CC CC57,58
+data SimpleCore SimpleCore60,61
+    TextC TextC61,62
+  | QTextC QTextC62,63
+  | LinkC LinkC63,64
+  | InlineMathC InlineMathC64,65
+  | MarkupC MarkupC65,66
+data ComplexCore ComplexCore68,69
+    ListC ListC69,70
+  | BlockC BlockC70,71
+  | ParagraphC ParagraphC71,72
+data Paragraph Paragraph74,75
+data Paragraph = Paragraph Paragraph74,75
+data Paragraph = Paragraph { _paraContents _paraContents74,75
+                           , _paraSetID _paraSetID75,76
+newtype DocTitle DocTitle79,80
+newtype DocTitle = DocTitle DocTitle79,80
+newtype DocTitle = DocTitle { unDocTitle unDocTitle79,80
+data Doc Doc82,83
+data Doc = Doc Doc82,83
+data Doc = Doc { _docTitle _docTitle82,83
+               , _docSections _docSections83,84
+data TextType TextType86,87
+data TextType = StrongStrong86,87
+              | EmphasisEmphasis87,88
+              | MonospaceMonospace88,89
+              | SuperscriptSuperscript89,90
+              | SubscriptSubscript90,91
+              | QuotedQuoted91,92
+data QText QText94,95
+data QText = QText QText94,95
+data QText = QText { _qtText _qtText94,95
+                   , _qtType _qtType95,96
+data SetID SetID99,100
+data SetID = SetID SetID99,100
+data SetID = SetID { _sidName _sidName99,100
+newtype IDHash IDHash102,103
+newtype IDHash = IDHash IDHash102,103
+data AttrMap AttrMap104,105
+data AttrMap = AttrMap AttrMap104,105
+data AttrMap = AttrMap { _amMap _amMap104,105
+newtype AttrName AttrName107,108
+newtype AttrName = AttrName AttrName107,108
+newtype AttrValue AttrValue108,109
+newtype AttrValue = AttrValue AttrValue108,109
+data LinkType LinkType110,111
+data LinkType = InternalInternal110,111
+              | BackBack111,112
+              | OutOut112,113
+newtype LinkText LinkText115,116
+newtype LinkText = LinkText LinkText115,116
+newtype LinkText = LinkText { unLinkText unLinkText115,116
+data Link Link118,119
+data Link = Link Link118,119
+data Link = Link { _linkText _linkText118,119
+                 , _linkAttrs _linkAttrs119,120
+                 , _linkLocation _linkLocation120,121
+                 , _linkType _linkType121,122
+data ID ID125,126
+data ID = ID ID125,126
+data ID = ID { _idProtocol _idProtocol125,126
+             , _idBase _idBase126,127
+             , _idHash _idHash127,128
+newtype Protocol Protocol131,132
+newtype Protocol = Protocol Protocol131,132
+newtype IDBase IDBase132,133
+newtype IDBase = IDBase IDBase132,133
+data ListType ListType134,135
+data ListType = UnorderedUnordered134,135
+              | OrderedOrdered135,136
+              | LabelledLabelled136,137
+data List List139,140
+data List = List List139,140
+data List = List { _listContents _listContents139,140
+newtype ListLabel ListLabel142,143
+newtype ListLabel = ListLabel ListLabel142,143
+newtype ListLabel = ListLabel { unListLabel unListLabel142,143
+data ListItem ListItem145,146
+data ListItem = ListItem ListItem145,146
+data ListItem = ListItem { _liAttrs _liAttrs145,146
+                         , _liLabel _liLabel146,147
+                         , _liContents _liContents147,148
+                         , _liSetID _liSetID148,149
+                         , _liType _liType149,150
+data MarkupType MarkupType153,154
+data MarkupType = FootnoteFootnote153,154
+                | FootnoteRefFootnoteRef154,155
+                | CitationCitation155,156
+data Markup Markup158,159
+data Markup = Markup Markup158,159
+data Markup = Markup { _muType _muType158,159
+                     , _muAttrs _muAttrs159,160
+                     , _muContents _muContents160,161
+                     , _muSetID _muSetID161,162
+data InlineMath InlineMath165,166
+data InlineMath = InlineMath InlineMath165,166
+data InlineMath = InlineMath { _imAttrs _imAttrs165,166
+                             , _imContents _imContents166,167
+                             , _imSetID _imSetID167,168
+data BlockType BlockType171,172
+data BlockType = PrerexB PrerexB171,172
+data BlockType = PrerexB { _prerex _prerex171,172
+               | IntroductionB IntroductionB172,173
+               | IntroductionB { _introduction _introduction172,173
+               | MathB MathB173,174
+               | MathB { _math _math173,174
+               | EquationB EquationB174,175
+               | EquationB { _equation _equation174,175
+               | EqnArrayB EqnArrayB175,176
+               | EqnArrayB { _eqnArray _eqnArray175,176
+               | TheoremB TheoremB176,177
+               | TheoremB { _theorem _theorem176,177
+               | LemmaB LemmaB177,178
+               | LemmaB { _lemma _lemma177,178
+               | CorollaryB CorollaryB178,179
+               | CorollaryB { _corollary _corollary178,179
+               | PropositionB PropositionB179,180
+               | PropositionB { _proposition _proposition179,180
+               | ConjectureB ConjectureB180,181
+               | ConjectureB { _conjecture _conjecture180,181
+               | AxiomB AxiomB181,182
+               | AxiomB { _axiom _axiom181,182
+               | ProofB ProofB182,183
+               | ProofB { _proof _proof182,183
+               | QuoteB QuoteB183,184
+               | QuoteB { _quote _quote183,184
+               | CodeB CodeB184,185
+               | CodeB { _code _code184,185
+               | ImageB ImageB185,186
+               | ImageB { _image _image185,186
+               | VideoB VideoB186,187
+               | VideoB { _video _video186,187
+               | YouTubeB YouTubeB187,188
+               | YouTubeB { _youTube _youTube187,188
+               | ConnectionB ConnectionB188,189
+               | ConnectionB { _connection _connection188,189
+               | DefinitionB DefinitionB189,190
+               | DefinitionB { _definition _definition189,190
+               | IntuitionB IntuitionB190,191
+               | IntuitionB { _intuition _intuition190,191
+               | InfoB InfoB191,192
+               | InfoB { _info _info191,192
+               | TipB TipB192,193
+               | TipB { _tip _tip192,193
+               | CautionB CautionB193,194
+               | CautionB { _caution _caution193,194
+               | WarningB WarningB194,195
+               | WarningB { _warning _warning194,195
+               | SideNoteB SideNoteB195,196
+               | SideNoteB { _sidenote _sidenote195,196
+               | ExampleB ExampleB196,197
+               | ExampleB { _example _example196,197
+               | ExerciseB ExerciseB197,198
+               | ExerciseB { _exercise _exercise197,198
+               | BibliographyB BibliographyB198,199
+               | BibliographyB { _bibliography _bibliography198,199
+               | FurtherReadingB FurtherReadingB199,200
+               | FurtherReadingB { _furtherReading _furtherReading199,200
+               | SummaryB SummaryB200,201
+               | SummaryB { _summary _summary200,201
+               | RecallB RecallB201,202
+               | RecallB { _recall _recall201,202
+newtype BlockTitle BlockTitle204,205
+newtype BlockTitle = BlockTitle BlockTitle204,205
+newtype BlockTitle = BlockTitle { unBlockTitle unBlockTitle204,205
+data Block Block207,208
+data Block = Block Block207,208
+data Block = Block { _bType _bType207,208
+                   , _bAttrs _bAttrs208,209
+                   , _bTitle _bTitle209,210
+                   , _bSetID _bSetID210,211
+data Prerex Prerex214,215
+data Prerex = Prerex Prerex214,215
+data Prerex = Prerex { _prerexContents _prerexContents214,215
+data PrerexItem PrerexItem217,218
+data PrerexItem = PrerexItem PrerexItem217,218
+data PrerexItem = PrerexItem { _prerexItemPath _prerexItemPath217,218
+                             , _prerexItemDescription _prerexItemDescription218,219
+data Introduction Introduction222,223
+data Introduction = Introduction Introduction222,223
+data Introduction = Introduction { _introductionContents _introductionContents222,223
+data Math Math225,226
+data Math = Math Math225,226
+data Math = Math { _mathContents _mathContents225,226
+data Equation Equation228,229
+data Equation = Equation Equation228,229
+data Equation = Equation { _equationContents _equationContents228,229
+data EqnArray EqnArray231,232
+data EqnArray = EqnArray EqnArray231,232
+data EqnArray = EqnArray { _eqnArrayContents _eqnArrayContents231,232
+data Theorem Theorem234,235
+data Theorem = Theorem Theorem234,235
+data Theorem = Theorem { _theoremContents _theoremContents234,235
+data Lemma Lemma237,238
+data Lemma = Lemma Lemma237,238
+data Lemma = Lemma { _lemmaContents _lemmaContents237,238
+data Corollary Corollary240,241
+data Corollary = Corollary Corollary240,241
+data Corollary = Corollary { _corollaryContents _corollaryContents240,241
+data Proposition Proposition243,244
+data Proposition = Proposition Proposition243,244
+data Proposition = Proposition { _propositionContents _propositionContents243,244
+data Conjecture Conjecture246,247
+data Conjecture = Conjecture Conjecture246,247
+data Conjecture = Conjecture { _conjectureContents _conjectureContents246,247
+data Axiom Axiom249,250
+data Axiom = Axiom Axiom249,250
+data Axiom = Axiom { _axiomContents _axiomContents249,250
+data Proof Proof252,253
+data Proof = Proof Proof252,253
+data Proof = Proof { _proofContents _proofContents252,253
+data Quote Quote255,256
+data Quote = Quote Quote255,256
+data Quote = Quote { _quoteContents _quoteContents255,256
+data Code Code258,259
+data Code = Code Code258,259
+data Code = Code { _codeContents _codeContents258,259
+data Image Image261,262
+data Image = Image Image261,262
+data Image = Image { _imageContents _imageContents261,262
+data Video Video264,265
+data Video = Video Video264,265
+data Video = Video { _videoContents _videoContents264,265
+data YouTube YouTube267,268
+data YouTube = YouTube YouTube267,268
+data YouTube = YouTube { _youTubeContents _youTubeContents267,268
+data Connection Connection270,271
+data Connection = Connection Connection270,271
+data Connection = Connection { _connectionContents _connectionContents270,271
+data Definition Definition273,274
+data Definition = Definition Definition273,274
+data Definition = Definition { _definitionContents _definitionContents273,274
+data Intuition Intuition276,277
+data Intuition = Intuition Intuition276,277
+data Intuition = Intuition { _intuitionContents _intuitionContents276,277
+data Info Info279,280
+data Info = Info Info279,280
+data Info = Info { _infoContents _infoContents279,280
+data Tip Tip282,283
+data Tip = Tip Tip282,283
+data Tip = Tip { _tipContents _tipContents282,283
+data Caution Caution285,286
+data Caution = Caution Caution285,286
+data Caution = Caution { _cautionContents _cautionContents285,286
+data Warning Warning288,289
+data Warning = Warning Warning288,289
+data Warning = Warning { _warningContents _warningContents288,289
+data SideNote SideNote291,292
+data SideNote = SideNote SideNote291,292
+data SideNote = SideNote { _sideNoteContents _sideNoteContents291,292
+data Example Example294,295
+data Example = Example Example294,295
+data Example = Example { _exampleContents _exampleContents294,295
+data Exercise Exercise297,298
+data Exercise = Exercise Exercise297,298
+data Exercise = Exercise { _exerciseContents _exerciseContents297,298
+data Bibliography Bibliography300,301
+data Bibliography = Bibliography Bibliography300,301
+data Bibliography = Bibliography { _bibliographyContents _bibliographyContents300,301
+data BibItem BibItem303,304
+data BibItem = BibItem BibItem303,304
+data BibItem = BibItem { _biAuthor _biAuthor303,304
+                       , _biTitle _biTitle304,305
+                       , _biYear _biYear305,306
+data FurtherReading FurtherReading309,310
+data FurtherReading = FurtherReading FurtherReading309,310
+data FurtherReading = FurtherReading { _furtherReadingContents _furtherReadingContents309,310
+data Summary Summary312,313
+data Summary = Summary Summary312,313
+data Summary = Summary { _summaryContents _summaryContents312,313
+data Recall Recall315,316
+data Recall = Recall Recall315,316
+data Recall = Recall { _recallContents _recallContents315,316
+data SectionType SectionType318,319
+data SectionType = PreamblePreamble318,319
+                 | TopSectionTopSection319,320
+                 | SubSectionSubSection320,321
+newtype SectionTitle SectionTitle323,324
+newtype SectionTitle = SectionTitle SectionTitle323,324
+newtype SectionTitle = SectionTitle { unSectionTitle unSectionTitle323,324
+data Section Section326,327
+data Section = Section Section326,327
+data Section = Section { _secType _secType326,327
+                       , _secAttrs _secAttrs327,328
+                       , _secContents _secContents328,329
+                       , _secTitle _secTitle329,330
+                       , _secSetID _secSetID330,331
 
 ./library/Text/IDoc/Parse.hs,6734
 module Text.IDoc.Parse Text.IDoc.Parse8,9

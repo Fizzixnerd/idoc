@@ -17,6 +17,11 @@ import Data.Data
 
 import Control.Lens
 
+data DebugInfo = DebugInfo
+
+data DToken d = DToken { _dTokenInfo :: d
+                       , _dTokenToken :: Token }
+
 data Token = 
   -- "regular" text
     TextT Text
@@ -327,6 +332,7 @@ data Section = Section { _secType :: SectionType
                        }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+makeLenses ''DToken
 makeLenses ''AttrMap
 makeLenses ''QText
 makeLenses ''SetID
