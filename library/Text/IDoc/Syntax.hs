@@ -1,27 +1,21 @@
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+
 -- | Syntax.hs
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause
 -- Created: Aug 24, 2017
 -- Summary: 
 
-{-# LANGUAGE Arrows #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE ScopedTypeVariables #-}
--- {-# LANGUAGE TemplateHaskell #-}
--- {-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-
 module Text.IDoc.Syntax where
 
-import Control.Lens
-
 import ClassyPrelude
+
+import Data.Data
+
+import Control.Lens
 
 data Token = 
   -- "regular" text
@@ -52,11 +46,12 @@ data Token =
   | PercentSign
   | SemiColon
   | BSlash
-  deriving (Eq, Ord, Show)
+  | Plus
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Core = SC SimpleCore
           | CC ComplexCore
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data SimpleCore =
     TextC Text
@@ -64,25 +59,25 @@ data SimpleCore =
   | LinkC Link
   | InlineMathC InlineMath
   | MarkupC Markup
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data ComplexCore =
     ListC List
   | BlockC Block
   | ParagraphC Paragraph
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Paragraph = Paragraph { _paraContents :: Vector SimpleCore
                            , _paraSetID :: Maybe SetID
                            }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 newtype DocTitle = DocTitle { unDocTitle :: Vector SimpleCore }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Doc = Doc { _docTitle :: DocTitle
                , _docSections :: Vector Section }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data TextType = Strong
               | Emphasis 
@@ -90,58 +85,58 @@ data TextType = Strong
               | Superscript
               | Subscript
               | Quoted
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data QText = QText { _qtText :: Vector SimpleCore
                    , _qtType :: TextType
                    }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data SetID = SetID { _sidName :: IDHash }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-newtype IDHash = IDHash Text deriving (Eq, Ord, Show)
+newtype IDHash = IDHash Text deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data AttrMap = AttrMap { _amMap :: Map AttrName (Maybe AttrValue) }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-newtype AttrName = AttrName Text deriving (Eq, Ord, Show)
-newtype AttrValue = AttrValue Text deriving (Eq, Ord, Show)
+newtype AttrName = AttrName Text deriving (Eq, Ord, Show, Data, Typeable, Generic)
+newtype AttrValue = AttrValue Text deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data LinkType = Internal 
               | Back
               | Out
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 newtype LinkText = LinkText { unLinkText :: Vector SimpleCore }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Link = Link { _linkText :: LinkText
                  , _linkAttrs :: AttrMap
                  , _linkLocation :: ID
                  , _linkType :: LinkType
                  }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data ID = ID { _idProtocol :: Maybe Protocol
              , _idBase :: Vector IDBase
              , _idHash :: Maybe IDHash
              }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-newtype Protocol = Protocol Text deriving (Eq, Ord, Show)
-newtype IDBase = IDBase Text deriving (Eq, Ord, Show)
+newtype Protocol = Protocol Text deriving (Eq, Ord, Show, Data, Typeable, Generic)
+newtype IDBase = IDBase Text deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data ListType = Unordered
               | Ordered
               | Labelled
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data List = List { _listContents :: Vector ListItem }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 newtype ListLabel = ListLabel { unListLabel :: Vector SimpleCore }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data ListItem = ListItem { _liAttrs :: AttrMap
                          , _liLabel :: Maybe ListLabel
@@ -149,25 +144,25 @@ data ListItem = ListItem { _liAttrs :: AttrMap
                          , _liSetID :: Maybe SetID
                          , _liType :: ListType
                          }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data MarkupType = Footnote
                 | FootnoteRef
                 | Citation
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Markup = Markup { _muType :: MarkupType
                      , _muAttrs :: AttrMap
                      , _muContents :: Vector SimpleCore
                      , _muSetID :: Maybe SetID
                      }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data InlineMath = InlineMath { _imAttrs :: AttrMap
                              , _imContents :: Vector Token
                              , _imSetID :: Maybe SetID
                              }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data BlockType = PrerexB { _prerex :: Prerex }
                | IntroductionB { _introduction :: Introduction }
@@ -200,129 +195,129 @@ data BlockType = PrerexB { _prerex :: Prerex }
                | FurtherReadingB { _furtherReading :: FurtherReading }
                | SummaryB { _summary :: Summary }
                | RecallB { _recall :: Recall }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 newtype BlockTitle = BlockTitle { unBlockTitle :: Vector SimpleCore }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Block = Block { _bType :: BlockType
                    , _bAttrs :: AttrMap
                    , _bTitle :: Maybe BlockTitle
                    , _bSetID :: Maybe SetID
                    }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Prerex = Prerex { _prerexContents :: Vector PrerexItem }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data PrerexItem = PrerexItem { _prerexItemPath :: ID
                              , _prerexItemDescription :: Vector SimpleCore
                              }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Introduction = Introduction { _introductionContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Math = Math { _mathContents :: Vector Token }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Equation = Equation { _equationContents :: Vector Token }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data EqnArray = EqnArray { _eqnArrayContents :: Vector Token }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data Theorem = Theorem { _theoremContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+data Theorem = Theorem { _theoremContents :: (Vector Core, Maybe (Vector Core)) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data Lemma = Lemma { _lemmaContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+data Lemma = Lemma { _lemmaContents :: (Vector Core, Maybe (Vector Core)) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data Corollary = Corollary { _corollaryContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+data Corollary = Corollary { _corollaryContents :: (Vector Core, Maybe (Vector Core)) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data Proposition = Proposition { _propositionContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+data Proposition = Proposition { _propositionContents :: (Vector Core, Maybe (Vector Core)) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Conjecture = Conjecture { _conjectureContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Axiom = Axiom { _axiomContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Proof = Proof { _proofContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Quote = Quote { _quoteContents :: Vector SimpleCore }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Code = Code { _codeContents :: Vector Token }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data Image = Image { _imageContents :: Link }
-  deriving (Eq, Ord, Show)
+data Image = Image { _imageContents :: (Link, Maybe (Vector SimpleCore)) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data Video = Video { _videoContents :: Link }
-  deriving (Eq, Ord, Show)
+data Video = Video { _videoContents :: (Link, Maybe (Vector SimpleCore)) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data YouTube = YouTube { _youTubeContents :: Link }
-  deriving (Eq, Ord, Show)
+data YouTube = YouTube { _youTubeContents :: (Link, Maybe (Vector SimpleCore )) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Connection = Connection { _connectionContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Definition = Definition { _definitionContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Intuition = Intuition { _intuitionContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Info = Info { _infoContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Tip = Tip { _tipContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Caution = Caution { _cautionContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Warning = Warning { _warningContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data SideNote = SideNote { _sideNoteContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data Example = Example { _exampleContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+data Example = Example { _exampleContents :: (Vector Core, Vector Core) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Exercise = Exercise { _exerciseContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Bibliography = Bibliography { _bibliographyContents :: Vector BibItem }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data BibItem = BibItem { _biAuthor :: Text
                        , _biTitle :: Text
                        , _biYear :: Text
                        }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data FurtherReading = FurtherReading { _furtherReadingContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Summary = Summary { _summaryContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data Recall = Recall { _recallContents :: Vector Core }
-  deriving (Eq, Ord, Show)
+data Recall = Recall { _recallContents :: (Vector Link, Vector Core) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data SectionType = Preamble
                  | TopSection
                  | SubSection
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 newtype SectionTitle = SectionTitle { unSectionTitle :: Vector SimpleCore }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Section = Section { _secType :: SectionType
                        , _secAttrs :: AttrMap
@@ -330,7 +325,7 @@ data Section = Section { _secType :: SectionType
                        , _secTitle :: SectionTitle
                        , _secSetID :: Maybe SetID
                        }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 makeLenses ''AttrMap
 makeLenses ''QText

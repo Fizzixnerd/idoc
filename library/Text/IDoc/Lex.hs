@@ -56,7 +56,8 @@ reservedPunctuation = M.fromList [ ('=', Equals)
                                  , ('$', DollarSign)
                                  , ('%', PercentSign)
                                  , (';', SemiColon)
-                                 , ('\\', BSlash) ]
+                                 , ('\\', BSlash)
+                                 , ('+', Plus) ]
 
 reservedPunctuationL :: [Char]
 reservedPunctuationL = fst <$> (M.toList reservedPunctuation)

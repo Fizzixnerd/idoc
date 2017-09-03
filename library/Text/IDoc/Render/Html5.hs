@@ -147,7 +147,7 @@ idHelper decorator id_ = let (base, hash_) =
                                    ("http://www.independentlearning.science/", "")
                                  (Just (Protocol p), Just (IDHash h)) ->
                                    (p ++ "://", h)
-                                 (Nothing, Just (IDHash h)) -> ("", h)
+                                 (Nothing, Just (IDHash h)) -> ("/", h)
                                  (Just (Protocol p), Nothing) -> (p ++ "://", "")
     in
       decorator $ base ++
@@ -520,7 +520,8 @@ instance B.ToMarkup DocTitle where
                            concatMap B.toMarkup dt
 
 instance B.ToMarkup Doc where
-  toMarkup d = (B.toMarkup $ d^.docTitle) ++
+  toMarkup d = B.article B.! A.class_ "idocDoc" $
+               (B.toMarkup $ d^.docTitle) ++
                (concatMap B.toMarkup $ d^.docSections)
 
 megaMain'' :: IO ()

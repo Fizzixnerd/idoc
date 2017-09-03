@@ -80,6 +80,14 @@ someTill e x = do
   void e
   return xs
 
+someTill' :: IDocParser ender -> IDocParser a -> IDocParser (Vector a, ender)
+someTill' e x = do
+  xs <- someV $ do
+    notFollowedBy e
+    x
+  e_ <- e
+  return (xs, e_)
+
 manyTill :: IDocParser ender -> IDocParser a -> IDocParser (Vector a)
 manyTill e x = do
   xs <- manyV $ do
@@ -108,6 +116,9 @@ newlineP = void $ tokenP S.Newline
 
 dashP :: IDocParser ()
 dashP = void $ tokenP S.Dash
+
+plusP :: IDocParser ()
+plusP = void $ tokenP S.Plus
 
 fSlashP :: IDocParser ()
 fSlashP = void $ tokenP S.FSlash
@@ -155,6 +166,7 @@ unToken S.DollarSign = "$"
 unToken S.PercentSign = "%"
 unToken S.SemiColon = ";"
 unToken S.BSlash = "\\"
+unToken S.Plus = "+"
 
 mkQTextP :: S.Token -> S.TextType -> IDocParser S.QText
 mkQTextP t tt = MP.label "Quoted Text" $ do
@@ -483,6 +495,10 @@ blockEnderP :: IDocParser ()
 blockEnderP = do
   dashP >> dashP >> dashP >> newlineP
 
+blockContinuerP :: IDocParser ()
+blockContinuerP = do
+  plusP >> plusP >> plusP >> newlineP
+
 blockEnderP' :: IDocParser ()
 blockEnderP' = newlineP >> blockEnderP
 
@@ -500,6 +516,34 @@ coreBlockP = do
   blockStarterP
   someTill (many newlineP >> blockEnderP) coreP
 
+vectorLinkCoreBlockP :: IDocParser (Vector S.Link, Vector S.Core)
+vectorLinkCoreBlockP = do
+  blockStarterP
+  ls <- someTill (many newlineP >> blockContinuerP) $ do
+    l <- linkP
+    newlineP
+    return l
+  x <- someTill (many newlineP >> blockEnderP) coreP
+  return (ls, x)
+
+doubleCoreBlockP :: IDocParser (Vector S.Core, Vector S.Core)
+doubleCoreBlockP = do
+  blockStarterP
+  x <- someTill (many newlineP >> blockContinuerP) coreP
+  y <- someTill (many newlineP >> blockEnderP) coreP
+  return (x, y)
+
+coreBlockWithOptionalP :: IDocParser (Vector S.Core, Maybe (Vector S.Core))
+coreBlockWithOptionalP = do
+  blockStarterP
+  (xs, e) <- someTill' 
+             (many newlineP >> 
+               (MP.eitherP (MP.try blockContinuerP) blockEnderP)) coreP
+  op <- case e of
+          Left _ -> Just <$> (someTill (many newlineP >> blockEnderP) coreP)
+          Right _ -> return Nothing
+  return (xs, op)
+
 uninterpretedBlockP :: IDocParser (Vector S.Token)
 uninterpretedBlockP = do
   blockStarterP
@@ -515,6 +559,17 @@ linkBlockP = do
   x <- linkP
   blockEnderP'
   return x
+
+linkBlockWithOptionalP :: IDocParser (S.Link, Maybe (Vector S.SimpleCore))
+linkBlockWithOptionalP = do
+  blockStarterP
+  x <- linkP
+  newlineP
+  e <- MP.eitherP (MP.try blockContinuerP) blockEnderP
+  op <- case e of
+    Left _ -> Just <$> (someTill blockEnderP' simpleCoreP)
+    Right _ -> return Nothing
+  return (x, op)
 
 biblioBlockP :: IDocParser (Vector S.BibItem)
 biblioBlockP = do
@@ -552,16 +607,16 @@ eqnArrayP :: IDocParser S.EqnArray
 eqnArrayP = S.EqnArray <$> uninterpretedBlockP
 
 theoremP :: IDocParser S.Theorem
-theoremP = S.Theorem <$> coreBlockP
+theoremP = S.Theorem <$> coreBlockWithOptionalP
 
 lemmaP :: IDocParser S.Lemma
-lemmaP = S.Lemma <$> coreBlockP
+lemmaP = S.Lemma <$> coreBlockWithOptionalP
 
 corollaryP :: IDocParser S.Corollary
-corollaryP = S.Corollary <$> coreBlockP
+corollaryP = S.Corollary <$> coreBlockWithOptionalP
 
 propositionP :: IDocParser S.Proposition
-propositionP = S.Proposition <$> coreBlockP
+propositionP = S.Proposition <$> coreBlockWithOptionalP
 
 conjectureP :: IDocParser S.Conjecture
 conjectureP = S.Conjecture <$> coreBlockP
@@ -579,13 +634,13 @@ codeP :: IDocParser S.Code
 codeP = S.Code <$> uninterpretedBlockP
 
 imageP :: IDocParser S.Image
-imageP = S.Image <$> linkBlockP
+imageP = S.Image <$> linkBlockWithOptionalP
 
 videoP :: IDocParser S.Video
-videoP = S.Video <$> linkBlockP
+videoP = S.Video <$> linkBlockWithOptionalP
 
 youTubeP :: IDocParser S.YouTube
-youTubeP = S.YouTube <$> linkBlockP
+youTubeP = S.YouTube <$> linkBlockWithOptionalP
 
 connectionP :: IDocParser S.Connection
 connectionP = S.Connection <$> coreBlockP
@@ -612,7 +667,7 @@ sideNoteP :: IDocParser S.SideNote
 sideNoteP = S.SideNote <$> coreBlockP
 
 exampleP :: IDocParser S.Example
-exampleP = S.Example <$> coreBlockP
+exampleP = S.Example <$> doubleCoreBlockP
 
 exerciseP :: IDocParser S.Exercise
 exerciseP = S.Exercise <$> coreBlockP
@@ -627,7 +682,7 @@ summaryP :: IDocParser S.Summary
 summaryP = S.Summary <$> coreBlockP
 
 recallP :: IDocParser S.Recall
-recallP = S.Recall <$> coreBlockP
+recallP = S.Recall <$> vectorLinkCoreBlockP
 
 -- | Section
 sectionP :: IDocParser S.Section
