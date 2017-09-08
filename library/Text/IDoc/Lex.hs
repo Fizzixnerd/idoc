@@ -1,18 +1,11 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+
 -- | Lex.hs
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause
 -- Created: Aug 24, 2017
 -- Summary: 
-
-{-# LANGUAGE Arrows #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE NoImplicitPrelude #-}
 
 module Text.IDoc.Lex where
 
@@ -65,15 +58,20 @@ reservedPunctuationL = fst <$> (M.toList reservedPunctuation)
 reservedPunctuationS :: Set Char
 reservedPunctuationS = S.fromList reservedPunctuationL
 
--- backslashT :: Parser Token
--- backslashT = MP.label "Backslash" $ do
---   void $ MP.char '\\'
---   nextChar <- MP.anyChar
---   return $ TextT $ fromList [nextChar]
+mkDTokenP :: Parser Token -> Parser DToken
+mkDTokenP p = do
+  MP.SourcePos _ r1 c1 <- MP.getPosition
+  x <- p
+  MP.SourcePos _ r2 c2 <- MP.getPosition
+  let di = DebugInfo (MP.unPos r1, MP.unPos c1) (MP.unPos r2, MP.unPos c2)
+  return $ DebugToken di x
 
 puncT :: Parser Token
 puncT = MP.label "Punctuation" $ do
   (\c -> fromJust $ lookup c reservedPunctuation) <$> (MP.oneOf reservedPunctuationL)
+
+dPuncT :: Parser DToken
+dPuncT = MP.label "Punctuation" $ mkDTokenP puncT
 
 dashT :: Parser Token
 dashT = MP.label "Dash" $ do
@@ -82,18 +80,26 @@ dashT = MP.label "Dash" $ do
 regularTextT :: Parser Token
 regularTextT = TextT . fromString <$> (some $ MP.satisfy (\c -> c `notElem` reservedPunctuationS))
 
+dRegularTextT :: Parser DToken
+dRegularTextT = mkDTokenP regularTextT
+
 token :: Parser Token
 token =  MP.try puncT
      <|>        regularTextT
 
+dToken :: Parser DToken
+dToken =  MP.try dPuncT
+      <|>        dRegularTextT
+
 tokens :: Parser (Vector Token)
 tokens = fromList <$> (many token)
 
+dTokens :: Parser IDocTokenStream
+dTokens = IDocTokenStream <$> fromList <$> (many dToken)
+
 megaMain :: IO ()
-megaMain = (withFile "source.idoc" ReadMode 
+megaMain = withFile "source.idoc" ReadMode 
              (\src -> do
                 cnts <- CP.hGetContents src
                 case MP.parse (tokens :: Parser (Vector Token)) "source.idoc" (E.decodeUtf8 cnts) of
-                  (CP.Right x) -> do
-                    --System.IO.hPutStr tex (Data.Text.unpack $ utRender x)
-                    CP.print x))
+                  (CP.Right x) -> CP.print x)

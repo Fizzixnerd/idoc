@@ -239,14 +239,20 @@ instance B.ToMarkup Block where
                           Nothing, B.toMarkup e)
           EqnArrayB e -> (defaultPanelOptions, mTitle "EqnArray", "",
                           Nothing, B.toMarkup e)
-          TheoremB t -> (defaultPanelOptions, mTitle "Theorem", theoremIcon,
-                         Nothing, B.toMarkup t)
-          LemmaB l -> (defaultPanelOptions, mTitle "Lemma", lemmaIcon,
-                       Nothing, B.toMarkup l)
-          CorollaryB c -> (defaultPanelOptions, mTitle "Corollary",
-                           corollaryIcon, Nothing, B.toMarkup c)
-          PropositionB p -> (defaultPanelOptions, mTitle "Proposition",
-                             propositionIcon, Nothing, B.toMarkup p)
+          TheoremB (Theorem (bdy, foot)) -> (defaultPanelOptions, mTitle "Theorem", theoremIcon,
+                                             (vectorBlockToMarkup "idocTheoremProof" id) <$> foot,
+                                             vectorBlockToMarkup "idocTheorem" id bdy)
+          LemmaB (Lemma (bdy, foot)) -> (defaultPanelOptions, mTitle "Lemma", lemmaIcon,
+                                         (vectorBlockToMarkup "idocLemmaProof" id) <$> foot,
+                                         vectorBlockToMarkup "idocLemma" id bdy)
+          CorollaryB (Corollary (bdy, foot)) -> (defaultPanelOptions, mTitle "Corollary",
+                                                 corollaryIcon,
+                                                 (vectorBlockToMarkup "idocCorollaryProof" id) <$> foot,
+                                                 vectorBlockToMarkup "idocCorollary" id bdy)
+          PropositionB (Proposition (bdy, foot)) -> (defaultPanelOptions, mTitle "Proposition",
+                                                     propositionIcon,
+                                         (vectorBlockToMarkup "idocPropostionProof" id) <$> foot,
+                                         vectorBlockToMarkup "idocProposition" id bdy)
           ConjectureB c -> (defaultPanelOptions, mTitle "Conjecture",
                             conjectureIcon, Nothing, B.toMarkup c)
           AxiomB a -> (defaultPanelOptions, mTitle "Axiom", axiomIcon,
@@ -257,18 +263,31 @@ instance B.ToMarkup Block where
                        Nothing, B.toMarkup q)
           CodeB c -> (defaultPanelOptions, mTitle "Code", codeIcon,
                       Nothing, B.toMarkup c)
-          ImageB i -> (defaultPanelOptions, mTitle "Image", imageIcon,
-                       Nothing, B.toMarkup i)
-          VideoB v -> (defaultPanelOptions, mTitle "Video", videoIcon,
-                       Nothing, B.toMarkup v)
+          ImageB (Image (il, foot)) -> (defaultPanelOptions, mTitle "Image", imageIcon,
+                       (vectorBlockToMarkup "idocImageFooter" id) <$> foot,
+                       B.img B.! A.class_ "idocImage img-responsive"
+                             B.! A.src (B.toValue $ il^.linkLocation))
+          VideoB (Video (vl, foot)) -> (defaultPanelOptions, mTitle "Video", videoIcon,
+                       (vectorBlockToMarkup "idocVideoFooter" id) <$> foot, 
+                       B.video B.! A.class_ "idocVideo"
+                               B.! A.controls "true"
+                               B.! A.src (B.toValue $ vl^.linkLocation) $
+                               "")
           ConnectionB c -> (defaultPanelOptions, mTitle "Connection",
                             connectionIcon, Nothing, B.toMarkup c)
           DefinitionB d -> (defaultPanelOptions, mTitle "Defintion",
                             definitionIcon, Nothing, B.toMarkup d)
           IntuitionB i -> (defaultPanelOptions, mTitle "Intuition",
                            intuitionIcon, Nothing, B.toMarkup i)
-          YouTubeB y -> (defaultPanelOptions, mTitle "Youtube",
-                         youTubeIcon, Nothing, B.toMarkup y)
+          YouTubeB (YouTube (yl, foot)) -> (defaultPanelOptions, mTitle "Youtube",
+                                            youTubeIcon,
+                                            (vectorBlockToMarkup "idocYouTubeFooter" id) <$> foot,
+                                            B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
+                                                  B.iframe B.! A.class_ "idocYouTubeEmbed embed-responsive-item"
+                                                           B.! allowFullscreen "true"
+                                                           B.! A.src (B.toValue yl) $
+                                                           "")
+            where allowFullscreen = B.customAttribute "allowfullscreen"
           InfoB a -> (defaultPanelOptions { panelType = PInfo
                                           , panelGridWidth = GridFour
                                           },
@@ -288,8 +307,9 @@ instance B.ToMarkup Block where
           SideNoteB s -> (defaultPanelOptions { panelGridWidth = GridFour },
                           mTitle "Side Note", sideNoteIcon, Nothing,
                           B.toMarkup s)
-          ExampleB e -> (defaultPanelOptions, mTitle "Example", exampleIcon,
-                         Nothing, B.toMarkup e)
+          ExampleB (Example (ex, ans)) -> (defaultPanelOptions, mTitle "Example", exampleIcon,
+                                           Just $ vectorBlockToMarkup "idocExampleAnswer" id ans, 
+                                           vectorBlockToMarkup "idocExample" id ex)
           ExerciseB e -> (defaultPanelOptions, mTitle "Exercise", exerciseIcon,
                           Nothing, B.toMarkup e)
           BibliographyB b_ -> (defaultPanelOptions, mTitle "Bibliography",
@@ -298,8 +318,9 @@ instance B.ToMarkup Block where
                                 furtherReadingIcon, Nothing, B.toMarkup f)
           SummaryB s -> (defaultPanelOptions, mTitle "Summary", summaryIcon,
                          Nothing, B.toMarkup s)
-          RecallB r -> (defaultPanelOptions, mTitle "Recall", recallIcon,
-                        Nothing, B.toMarkup r)
+          RecallB (Recall (vl, foot)) -> (defaultPanelOptions, mTitle "Recall", recallIcon,
+                                          Just $ vectorBlockToMarkup "idocRecallFooter" id foot,
+                                          vectorBlockToMarkup "idocRecall" id vl)
           x -> error $ "Unhandled case: " ++ show x
       mTitle defaultTitle = maybe defaultTitle B.toMarkup (b^.bTitle)
       theoremIcon = icon "fa-star-o"
@@ -362,17 +383,17 @@ instance B.ToMarkup EqnArray where
                                                         else
                                                           V.cons y acc) empty ea))
 
-instance B.ToMarkup Theorem where
-  toMarkup (Theorem t) = vectorBlockToMarkup "idocTheorem" id t
+-- instance B.ToMarkup Theorem where
+--   toMarkup (Theorem t) = vectorBlockToMarkup "idocTheorem" id t
 
-instance B.ToMarkup Lemma where
-  toMarkup (Lemma l) = vectorBlockToMarkup "idocLemma" id l
+-- instance B.ToMarkup Lemma where
+--   toMarkup (Lemma l) = vectorBlockToMarkup "idocLemma" id l
 
-instance B.ToMarkup Corollary where
-  toMarkup (Corollary c) = vectorBlockToMarkup "idocCorollary" id c
+-- instance B.ToMarkup Corollary where
+--   toMarkup (Corollary c) = vectorBlockToMarkup "idocCorollary" id c
 
-instance B.ToMarkup Proposition where
-  toMarkup (Proposition p) = vectorBlockToMarkup "idocProposition" id p
+-- instance B.ToMarkup Proposition where
+--   toMarkup (Proposition p) = vectorBlockToMarkup "idocProposition" id p
 
 instance B.ToMarkup Conjecture where
   toMarkup (Conjecture c) = vectorBlockToMarkup "idocConjecture" id c
@@ -389,24 +410,24 @@ instance B.ToMarkup Quote where
 instance B.ToMarkup Code where
   toMarkup (Code c) = verbatimBlockToMarkup "idocCode" id c
 
-instance B.ToMarkup Image where
-  toMarkup (Image il) = B.img B.! A.class_ "idocImage img-responsive"
-                              B.! A.src (B.toValue $ il^.linkLocation)
+-- instance B.ToMarkup Image where
+--   toMarkup (Image il) = B.img B.! A.class_ "idocImage img-responsive"
+--                               B.! A.src (B.toValue $ il^.linkLocation)
 
-instance B.ToMarkup Video where
-  toMarkup (Video vl) = B.video B.! A.class_ "idocVideo"
-                                B.! A.controls "true"
-                                B.! A.src (B.toValue $ vl^.linkLocation) $
-                                ""
+-- instance B.ToMarkup Video where
+--   toMarkup (Video vl) = B.video B.! A.class_ "idocVideo"
+--                                 B.! A.controls "true"
+--                                 B.! A.src (B.toValue $ vl^.linkLocation) $
+--                                 ""
 
-instance B.ToMarkup YouTube where
-  toMarkup (YouTube yl) =  B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
-                                 B.iframe B.! A.class_ "idocYouTubeEmbed embed-responsive-item"
-                                          B.! allowFullscreen "true"
-                                          B.! A.src (B.toValue yl) $
-                                          ""
-    where
-      allowFullscreen = B.customAttribute "allowfullscreen"
+-- instance B.ToMarkup YouTube where
+--   toMarkup (YouTube yl) = B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
+--                                  B.iframe B.! A.class_ "idocYouTubeEmbed embed-responsive-item"
+--                                           B.! allowFullscreen "true"
+--                                           B.! A.src (B.toValue yl) $
+--                                           ""
+--     where
+      
 
 instance B.ToMarkup Connection where
   toMarkup (Connection c) = vectorBlockToMarkup "idocConnection" id c
@@ -449,8 +470,8 @@ instance B.ToMarkup Warning where
 instance B.ToMarkup SideNote where
   toMarkup (SideNote s) = vectorBlockToMarkup "idocSideNote" id s
 
-instance B.ToMarkup Example where
-  toMarkup (Example e) = vectorBlockToMarkup "idocExample" id e
+-- instance B.ToMarkup Example where
+--   toMarkup (Example e) = vectorBlockToMarkup "idocExample" id e
 
 instance B.ToMarkup Exercise where
   toMarkup (Exercise e) = vectorBlockToMarkup "idocExercise" id e
@@ -469,8 +490,8 @@ instance B.ToMarkup FurtherReading where
 instance B.ToMarkup Summary where
   toMarkup (Summary s) = vectorBlockToMarkup "idocSummary" id s
 
-instance B.ToMarkup Recall where
-  toMarkup (Recall r) = vectorBlockToMarkup "idocRecall" id r
+-- instance B.ToMarkup Recall where
+--   toMarkup (Recall r) = vectorBlockToMarkup "idocRecall" id r
 
 instance B.ToMarkup ListItem where
   toMarkup li = correctListItemHolder (li^.liType) (li^.liLabel) $ 
@@ -528,7 +549,7 @@ megaMain'' :: IO ()
 megaMain'' = (withFile "simple1.idoc" ReadMode 
              (\src -> do
                 cnts <- CP.hGetContents src
-                case MP.parse (Text.IDoc.Lex.tokens :: Parser (Vector Token)) "source.idoc" (CP.decodeUtf8 cnts) of
+                case MP.parse (Text.IDoc.Lex.dTokens :: Parser IDocTokenStream) "source.idoc" (CP.decodeUtf8 cnts) of
                   (CP.Right x) -> do
                     --System.IO.hPutStr tex (Data.Text.unpack $ utRender x)
                     case MP.parse docP "<tokens>" x of

@@ -1,4 +1,5 @@
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE NoImplicitPrelude #-}
@@ -11,16 +12,29 @@
 
 module Text.IDoc.Syntax where
 
-import ClassyPrelude
+import ClassyPrelude as CP
 
 import Data.Data
 
+import qualified Text.Megaparsec.Prim as Prim
+import Text.Megaparsec.Pos
+
 import Control.Lens
 
-data DebugInfo = DebugInfo
+type Row = Word
+type Col = Word
 
-data DToken d = DToken { _dTokenInfo :: d
-                       , _dTokenToken :: Token }
+data DebugInfo = DebugInfo { _diStart :: !(Row, Col)
+                           , _diEnd :: !(Row, Col)
+                           }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+
+data DebugToken d = DebugToken { _dtInfo :: d
+                               , _dtToken :: Token
+                               }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+
+type DToken = DebugToken DebugInfo
 
 data Token = 
   -- "regular" text
@@ -54,6 +68,24 @@ data Token =
   | Plus
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+newtype IDocTokenStream = IDocTokenStream { unStream :: Vector DToken }
+
+instance Prim.Stream IDocTokenStream where
+  type Token IDocTokenStream = DToken
+  uncons s = (fmap IDocTokenStream) <$> (CP.uncons $ unStream s)
+  updatePos _ _ sp t = 
+    let info = _dtInfo t
+        (r1, c1) = bimap unsafePos unsafePos $ _diStart info
+        (r2, c2) = bimap unsafePos unsafePos $ _diEnd info
+        sp1 = sp { sourceLine = r1
+                 , sourceColumn = c1
+                 }
+        sp2 = sp { sourceLine = r2
+                 , sourceColumn = c2
+                 }
+        in
+      (sp1, sp2)
+          
 data Core = SC SimpleCore
           | CC ComplexCore
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -332,7 +364,8 @@ data Section = Section { _secType :: SectionType
                        }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-makeLenses ''DToken
+makeLenses ''DebugInfo
+makeLenses ''DebugToken
 makeLenses ''AttrMap
 makeLenses ''QText
 makeLenses ''SetID

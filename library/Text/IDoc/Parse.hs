@@ -1,6 +1,6 @@
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE TypeFamilies #-}
 -- | Parse2.hs
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause
@@ -17,7 +17,6 @@ import qualified Data.Vector as V
 
 import qualified Text.Megaparsec as MP
 import Text.Megaparsec.Prim as Prim
-import Text.Megaparsec.Pos
 
 import qualified Text.IDoc.Syntax as S
 
@@ -27,14 +26,9 @@ import Text.Megaparsec.Text
 import Text.IDoc.Lex
 import qualified IPPrint.Colored as C
 
-type IDocParseError = MP.ParseError S.Token MP.Dec
+type IDocParseError = MP.ParseError S.DToken MP.Dec
 
-type IDocParser = MP.Parsec MP.Dec (Vector S.Token)
-
-instance Ord s => Stream (Vector s) where
-  type Token (Vector s) = s
-  uncons = CP.uncons
-  updatePos _ _ sp _ = (sp, sp { sourceColumn = unsafePos $ (unPos $ sourceColumn sp) + 1 })
+type IDocParser = MP.Parsec MP.Dec S.IDocTokenStream
 
 manyV :: IDocParser a -> IDocParser (Vector a)
 manyV x = fromList <$> many x
@@ -96,20 +90,20 @@ manyTill e x = do
   void e
   return xs
 
-satisfy :: (MonadParsec e s m, Token s ~ S.Token) => (S.Token -> Bool) -> m S.Token
+satisfy :: (MonadParsec e s m, Token s ~ S.DToken) => (S.Token -> Bool) -> m S.Token
 satisfy f = Prim.token test Nothing
   where
-    test x =
+    test (y@S.DebugToken { S._dtToken = x }) =
       if f x then
         Right x
       else
-        Left (Set.singleton (MP.Tokens (x NE.:| [])), mempty, mempty)
+        Left (Set.singleton (MP.Tokens (y NE.:| [])), mempty, mempty)
 
 tokenP :: S.Token -> IDocParser S.Token
 tokenP t = satisfy (== t) <?> (show t)
 
 anyTokenP :: IDocParser S.Token
-anyTokenP = satisfy (\x -> x == x) <?> "Any Token"
+anyTokenP = satisfy (const True) <?> "Any Token"
 
 newlineP :: IDocParser ()
 newlineP = void $ tokenP S.Newline
@@ -763,7 +757,7 @@ parseFileAs :: FilePath -> IDocParser a -> IO (Either IDocParseError a)
 parseFileAs f ty = (withFile f ReadMode 
                     (\src -> do
                         cnts <- CP.hGetContents src
-                        case MP.parse (Text.IDoc.Lex.tokens :: Parser (Vector S.Token)) f (E.decodeUtf8 cnts) of
+                        case MP.parse (Text.IDoc.Lex.dTokens :: Parser S.IDocTokenStream) f (E.decodeUtf8 cnts) of
                           (CP.Right x) -> return $ MP.parse ty "<tokens>" x
                           (CP.Left _) -> error "Could not even lex the fucking thing."))
 
@@ -771,7 +765,7 @@ megaMain' :: IO ()
 megaMain' = (withFile "simple1.idoc" ReadMode 
              (\src -> do
                 cnts <- CP.hGetContents src
-                case MP.parse (Text.IDoc.Lex.tokens :: Parser (Vector S.Token)) "source.idoc" (E.decodeUtf8 cnts) of
+                case MP.parse (Text.IDoc.Lex.dTokens :: Parser S.IDocTokenStream) "source.idoc" (E.decodeUtf8 cnts) of
                   (CP.Right x) -> do
                     --System.IO.hPutStr tex (Data.Text.unpack $ utRender x)
                     case MP.parse docP "<tokens>" x of

@@ -375,7 +375,7 @@ a *number* is an element of an field.
 (x + y)^2 = x^2 + 2 xy + y^2.
 ---
 
->>>
++++
 
 Use geometry.
 ---
@@ -392,7 +392,7 @@ Use geometry.
  (x + y)^2 = x^2 + 2 xy + y^2.
  ---
 
- >>>
+ +++
 
  Use geometry.
  ---
@@ -411,7 +411,7 @@ For $n > 2$ there exists no integer solutions to the equation:
 x^n + y^n = z^n
 ---
 
->>>
++++
 
 It's trivial.
 ---
@@ -431,7 +431,7 @@ It's trivial.
  x^n + y^n = z^n
  ---
  
- >>>
+ +++
 
  It's trivial.
  ---
@@ -779,7 +779,7 @@ example without a solution.
 ---
 Prove that every integer greater than zero is positive.
 
->>>
++++
 
 The proof is pretty simple.  Try to follow along.
 
@@ -794,7 +794,7 @@ First, assume not.  But that's not the case.  QED.
  ---
  Prove that every integer greater than zero is positive.
  
- >>>
+ +++
  
  The proof is pretty simple.  Try to follow along.
  
