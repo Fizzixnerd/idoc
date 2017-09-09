@@ -86,19 +86,19 @@ panel :: B.ToValue a =>
       -> B.Html
 panel (PanelOptions {..}) title_ id_ icon__ footer_ body_= 
   B.div B.! A.class_ (B.toValue panelGridWidth) $
-  B.div B.! A.class_ ("panel " ++ (B.toValue panelType)) $
-        (B.div B.! A.class_ "panel-heading" $
-               (B.h3 B.! A.class_ "panel-title" $
+  B.div B.! A.class_ "card" $
+               (B.h5 B.! A.class_ "card-header card-inverse idocCardHeader bg-primary" $
                     (mHrefV id_ $ 
-                     B.a B.! B.dataAttribute "toggle" "collapse" $
-                     (icon__ ++ " " ++ title_ ++ " " ++ (B.span B.! A.class_ "fa fa-angle-double-down" $ ""))))) ++
+                     B.a B.! A.class_ "idocCardHeaderLink"
+                         B.! B.dataAttribute "toggle" "collapse" $
+                     (icon__ ++ " " ++ title_ ++ " " ++ (B.span B.! A.class_ "fa fa-angle-double-down" $ "")))) ++
          (mID' id_ $ 
-          B.div B.! A.class_ ("panel-collapse collapse " ++ (B.toValue panelDefaultCollapseState)) $
-                mfooterify footer_ $ (B.div B.! A.class_ "panel-body" $
+          B.div B.! A.class_ "card-collapse show" $
+                mfooterify footer_ $ (B.div B.! A.class_ "card-block" $
                                             body_))
   where
     mfooterify Nothing = id
-    mfooterify (Just f) = ((flip (++)) (B.div B.! A.class_ "panel-footer" $ f))
+    mfooterify (Just f) = ((flip (++)) (B.div B.! A.class_ "card-footer" $ f))
     mHrefV (Just i') = (B.! A.href ("#" ++ (B.toValue i')))
     mHrefV Nothing  = id
     mID' (Just i') = (B.! A.id (B.toValue i'))
@@ -556,10 +556,7 @@ megaMain'' = (withFile "simple1.idoc" ReadMode
                      CP.Right y -> CP.putStrLn $ fromString $ renderPretty y
                      CP.Left z -> CP.print z))
 
-renderPretty :: B.ToMarkup a => a -> String
-renderPretty x = 
-  S.renderHtml $ 
-  B.docTypeHtml $ B.html $
+html x = B.docTypeHtml $ B.html $
   (B.head $ (B.meta B.! A.charset "utf-8") ++
             (B.meta B.! A.name "viewport"
                     B.! A.content "width=device-width, initial-scale=1, shrink-to-fit=no") ++
@@ -590,3 +587,9 @@ renderPretty x =
   where
     -- integrity = B.customAttribute "integrity"
     crossorigin = B.customAttribute "crossorigin"
+
+
+renderPretty :: B.ToMarkup a => a -> String
+renderPretty x = 
+  S.renderHtml $ 
+  html x

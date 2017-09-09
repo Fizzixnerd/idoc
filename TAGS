@@ -658,7 +658,7 @@ cautionIcon cautionIcon34,35
 warningIcon warningIcon36,37
 warningIcon warningIcon37,38
 
-./library/Text/IDoc/Render/Html5.hs,1689
+./library/Text/IDoc/Render/Html5.hs,1708
 module Text.IDoc.Render.Html5 Text.IDoc.Render.Html511,12
 mID mID32,33
 mID mID33,34
@@ -697,8 +697,9 @@ decorateAdmonition decorateAdmonition440,441
 decorateAdmonition decorateAdmonition441,442
 megaMain'' megaMain''547,548
 megaMain'' megaMain''548,549
-renderPretty renderPretty558,559
-renderPretty renderPretty559,560
+html html558,559
+renderPretty renderPretty591,592
+renderPretty renderPretty592,593
 
 ./test-suite/Main.hs,68
 main main11,12
