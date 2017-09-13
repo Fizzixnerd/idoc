@@ -658,7 +658,7 @@ cautionIcon cautionIcon34,35
 warningIcon warningIcon36,37
 warningIcon warningIcon37,38
 
-./library/Text/IDoc/Render/Html5.hs,1708
+./library/Text/IDoc/Render/Html5.hs,1765
 module Text.IDoc.Render.Html5 Text.IDoc.Render.Html511,12
 mID mID32,33
 mID mID33,34
@@ -666,40 +666,42 @@ data DefaultCollapseState DefaultCollapseState37,38
 data DefaultCollapseState = CollapsedCollapsed37,38
                           | Uncollapsed Uncollapsed38,39
 instance instance40,41
-data PanelType PanelType44,45
-data PanelType = PDefaultPDefault44,45
-               | PPrimaryPPrimary45,46
-               | PInfoPInfo46,47
-               | PSuccessPSuccess47,48
-               | PWarningPWarning48,49
-               | PDanger PDanger49,50
+data CardType CardType44,45
+data CardType = CDefaultCDefault44,45
+              | CPrimaryCPrimary45,46
+              | CInfoCInfo46,47
+              | CSuccessCSuccess47,48
+              | CWarningCWarning48,49
+              | CDanger CDanger49,50
 data GridWidth GridWidth59,60
 data GridWidth = GridFourGridFour59,60
                | GridSixGridSix60,61
                | GridEightGridEight61,62
                | GridTwelve GridTwelve62,63
-data PanelOptions PanelOptions70,71
-data PanelOptions = PanelOptions PanelOptions70,71
-data PanelOptions = PanelOptions { panelDefaultCollapseState panelDefaultCollapseState70,71
-                                 , panelType panelType71,72
-                                 , panelGridWidth panelGridWidth72,73
-defaultPanelOptions defaultPanelOptions75,76
-defaultPanelOptions defaultPanelOptions76,77
-panel panel78,79
-panel panel86,87
-idHelper idHelper138,139
-idHelper idHelper139,140
-vectorBlockToMarkup vectorBlockToMarkup196,197
-vectorBlockToMarkup vectorBlockToMarkup201,202
-verbatimBlockToMarkup verbatimBlockToMarkup206,207
-verbatimBlockToMarkup verbatimBlockToMarkup210,211
-decorateAdmonition decorateAdmonition440,441
-decorateAdmonition decorateAdmonition441,442
-megaMain'' megaMain''547,548
-megaMain'' megaMain''548,549
-html html558,559
-renderPretty renderPretty591,592
-renderPretty renderPretty592,593
+data CardOptions CardOptions70,71
+data CardOptions = CardOptions CardOptions70,71
+data CardOptions = CardOptions { cardDefaultCollapseState cardDefaultCollapseState70,71
+                               , cardType cardType71,72
+                               , cardGridWidth cardGridWidth72,73
+defaultCardOptions defaultCardOptions75,76
+defaultCardOptions defaultCardOptions76,77
+primaryCardOptions primaryCardOptions78,79
+primaryCardOptions primaryCardOptions79,80
+card card81,82
+card card89,90
+idHelper idHelper141,142
+idHelper idHelper142,143
+vectorBlockToMarkup vectorBlockToMarkup199,200
+vectorBlockToMarkup vectorBlockToMarkup204,205
+verbatimBlockToMarkup verbatimBlockToMarkup209,210
+verbatimBlockToMarkup verbatimBlockToMarkup213,214
+decorateAdmonition decorateAdmonition443,444
+decorateAdmonition decorateAdmonition444,445
+megaMain'' megaMain''550,551
+megaMain'' megaMain''551,552
+html html561,562
+renderPretty renderPretty594,595
+renderPretty renderPretty595,596
 
 ./test-suite/Main.hs,68
 main main11,12

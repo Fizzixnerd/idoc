@@ -42,20 +42,20 @@ instance B.ToValue DefaultCollapseState where
   toValue Collapsed = ""
   toValue Uncollapsed = "in"
 
-data PanelType = PDefault 
-               | PPrimary 
-               | PInfo 
-               | PSuccess
-               | PWarning
-               | PDanger deriving (Eq, Show)
+data CardType = CDefault 
+              | CPrimary 
+              | CInfo 
+              | CSuccess
+              | CWarning
+              | CDanger deriving (Eq, Show)
 
-instance B.ToValue PanelType where
-  toValue PDefault = "panel-default"
-  toValue PPrimary = "panel-primary"
-  toValue PInfo    = "panel-info"
-  toValue PSuccess = "panel-success"
-  toValue PWarning = "panel-warning"
-  toValue PDanger  = "panel-danger"
+instance B.ToValue CardType where
+  toValue CDefault = "card-default idocCardHeader"
+  toValue CPrimary = "card-primary card-inverse idocCardHeaderInverse"
+  toValue CInfo    = "card-info card-inverse idocCardHeaderInverse"
+  toValue CSuccess = "card-success card-inverse idocCardHeaderInverse"
+  toValue CWarning = "card-warning card-inverse idocCardHeaderInverse"
+  toValue CDanger  = "card-danger card-inverse idocCardHeaderInverse"
 
 data GridWidth = GridFour
                | GridSix
@@ -68,28 +68,31 @@ instance B.ToValue GridWidth where
   toValue GridEight = "col-md-8"
   toValue GridTwelve = "col-md-12"
 
-data PanelOptions = PanelOptions { panelDefaultCollapseState :: DefaultCollapseState
-                                 , panelType :: PanelType
-                                 , panelGridWidth :: GridWidth
-                                 } deriving (Eq, Show)
+data CardOptions = CardOptions { cardDefaultCollapseState :: DefaultCollapseState
+                               , cardType :: CardType
+                               , cardGridWidth :: GridWidth
+                               } deriving (Eq, Show)
 
-defaultPanelOptions :: PanelOptions
-defaultPanelOptions = PanelOptions Uncollapsed PDefault GridTwelve
+defaultCardOptions :: CardOptions
+defaultCardOptions = CardOptions Uncollapsed CDefault GridTwelve
 
-panel :: B.ToValue a => 
-         PanelOptions 
-      -> B.Html -- ^ title
-      -> Maybe a -- ^ id
-      -> Icon -- ^ icon
-      -> Maybe B.Html -- ^ footer
-      -> B.Html -- ^ body
-      -> B.Html
-panel (PanelOptions {..}) title_ id_ icon__ footer_ body_= 
-  B.div B.! A.class_ (B.toValue panelGridWidth) $
+primaryCardOptions :: CardOptions
+primaryCardOptions = CardOptions Uncollapsed CPrimary GridTwelve
+
+card :: B.ToValue a => 
+        CardOptions 
+     -> B.Html -- ^ title
+     -> Maybe a -- ^ id
+     -> Icon -- ^ icon
+     -> Maybe B.Html -- ^ footer
+     -> B.Html -- ^ body
+     -> B.Html
+card (CardOptions {..}) title_ id_ icon__ footer_ body_= 
+  B.div B.! A.class_ (B.toValue cardGridWidth) $
   B.div B.! A.class_ "card" $
-               (B.h5 B.! A.class_ "card-header card-inverse idocCardHeader bg-primary" $
+               (B.h5 B.! A.class_ ("card-header " ++ B.toValue cardType) $
                     (mHrefV id_ $ 
-                     B.a B.! A.class_ "idocCardHeaderLink"
+                     B.a B.! A.class_ (if cardType == CDefault then "idocCardHeaderLink" else "idocCardHeaderLinkInverse")
                          B.! B.dataAttribute "toggle" "collapse" $
                      (icon__ ++ " " ++ title_ ++ " " ++ (B.span B.! A.class_ "fa fa-angle-double-down" $ "")))) ++
          (mID' id_ $ 
@@ -222,64 +225,64 @@ instance B.ToMarkup BlockTitle where
 instance B.ToMarkup Block where
   toMarkup Block { _bType = PrerexB p } = B.toMarkup p
   toMarkup b = (B.div B.! A.class_ "clearfix" $ "") ++
-               (panel blockPanelOptions 
-                      blockTitle 
-                      (b^.bSetID)
-                      blockIcon
-                      blockFooter
-                      blockContents)
+               (card blockCardOptions 
+                     blockTitle 
+                     (b^.bSetID)
+                     blockIcon
+                     blockFooter
+                     blockContents)
     where
-      (blockPanelOptions, blockTitle, blockIcon, blockFooter, blockContents) =
+      (blockCardOptions, blockTitle, blockIcon, blockFooter, blockContents) =
         case b^.bType of
-          IntroductionB i -> (defaultPanelOptions, mTitle "Introduction",
+          IntroductionB i -> (defaultCardOptions, mTitle "Introduction",
                               "", Nothing, B.toMarkup i)
-          MathB m -> (defaultPanelOptions, mTitle "Math", "",
+          MathB m -> (defaultCardOptions, mTitle "Math", "",
                       Nothing, B.toMarkup m)
-          EquationB e -> (defaultPanelOptions, mTitle "Equation", "",
+          EquationB e -> (defaultCardOptions, mTitle "Equation", "",
                           Nothing, B.toMarkup e)
-          EqnArrayB e -> (defaultPanelOptions, mTitle "EqnArray", "",
+          EqnArrayB e -> (defaultCardOptions, mTitle "EqnArray", "",
                           Nothing, B.toMarkup e)
-          TheoremB (Theorem (bdy, foot)) -> (defaultPanelOptions, mTitle "Theorem", theoremIcon,
+          TheoremB (Theorem (bdy, foot)) -> (primaryCardOptions, mTitle "Theorem", theoremIcon,
                                              (vectorBlockToMarkup "idocTheoremProof" id) <$> foot,
                                              vectorBlockToMarkup "idocTheorem" id bdy)
-          LemmaB (Lemma (bdy, foot)) -> (defaultPanelOptions, mTitle "Lemma", lemmaIcon,
+          LemmaB (Lemma (bdy, foot)) -> (primaryCardOptions, mTitle "Lemma", lemmaIcon,
                                          (vectorBlockToMarkup "idocLemmaProof" id) <$> foot,
                                          vectorBlockToMarkup "idocLemma" id bdy)
-          CorollaryB (Corollary (bdy, foot)) -> (defaultPanelOptions, mTitle "Corollary",
+          CorollaryB (Corollary (bdy, foot)) -> (primaryCardOptions, mTitle "Corollary",
                                                  corollaryIcon,
                                                  (vectorBlockToMarkup "idocCorollaryProof" id) <$> foot,
                                                  vectorBlockToMarkup "idocCorollary" id bdy)
-          PropositionB (Proposition (bdy, foot)) -> (defaultPanelOptions, mTitle "Proposition",
+          PropositionB (Proposition (bdy, foot)) -> (primaryCardOptions, mTitle "Proposition",
                                                      propositionIcon,
                                          (vectorBlockToMarkup "idocPropostionProof" id) <$> foot,
                                          vectorBlockToMarkup "idocProposition" id bdy)
-          ConjectureB c -> (defaultPanelOptions, mTitle "Conjecture",
+          ConjectureB c -> (primaryCardOptions, mTitle "Conjecture",
                             conjectureIcon, Nothing, B.toMarkup c)
-          AxiomB a -> (defaultPanelOptions, mTitle "Axiom", axiomIcon,
+          AxiomB a -> (primaryCardOptions, mTitle "Axiom", axiomIcon,
                        Nothing, B.toMarkup a)
-          ProofB p -> (defaultPanelOptions, mTitle "Proof", proofIcon,
+          ProofB p -> (primaryCardOptions, mTitle "Proof", proofIcon,
                        Nothing, B.toMarkup p)
-          QuoteB q -> (defaultPanelOptions, mTitle "Quote", quoteIcon,
+          QuoteB q -> (defaultCardOptions { cardType = CInfo }, mTitle "Quote", quoteIcon,
                        Nothing, B.toMarkup q)
-          CodeB c -> (defaultPanelOptions, mTitle "Code", codeIcon,
+          CodeB c -> (defaultCardOptions, mTitle "Code", codeIcon,
                       Nothing, B.toMarkup c)
-          ImageB (Image (il, foot)) -> (defaultPanelOptions, mTitle "Image", imageIcon,
+          ImageB (Image (il, foot)) -> (defaultCardOptions, mTitle "Image", imageIcon,
                        (vectorBlockToMarkup "idocImageFooter" id) <$> foot,
                        B.img B.! A.class_ "idocImage img-responsive"
                              B.! A.src (B.toValue $ il^.linkLocation))
-          VideoB (Video (vl, foot)) -> (defaultPanelOptions, mTitle "Video", videoIcon,
+          VideoB (Video (vl, foot)) -> (defaultCardOptions, mTitle "Video", videoIcon,
                        (vectorBlockToMarkup "idocVideoFooter" id) <$> foot, 
                        B.video B.! A.class_ "idocVideo"
                                B.! A.controls "true"
                                B.! A.src (B.toValue $ vl^.linkLocation) $
                                "")
-          ConnectionB c -> (defaultPanelOptions, mTitle "Connection",
+          ConnectionB c -> (primaryCardOptions, mTitle "Connection",
                             connectionIcon, Nothing, B.toMarkup c)
-          DefinitionB d -> (defaultPanelOptions, mTitle "Defintion",
+          DefinitionB d -> (primaryCardOptions, mTitle "Defintion",
                             definitionIcon, Nothing, B.toMarkup d)
-          IntuitionB i -> (defaultPanelOptions, mTitle "Intuition",
+          IntuitionB i -> (defaultCardOptions { cardType = CInfo }, mTitle "Intuition",
                            intuitionIcon, Nothing, B.toMarkup i)
-          YouTubeB (YouTube (yl, foot)) -> (defaultPanelOptions, mTitle "Youtube",
+          YouTubeB (YouTube (yl, foot)) -> (defaultCardOptions, mTitle "Youtube",
                                             youTubeIcon,
                                             (vectorBlockToMarkup "idocYouTubeFooter" id) <$> foot,
                                             B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
@@ -288,37 +291,37 @@ instance B.ToMarkup Block where
                                                            B.! A.src (B.toValue yl) $
                                                            "")
             where allowFullscreen = B.customAttribute "allowfullscreen"
-          InfoB a -> (defaultPanelOptions { panelType = PInfo
-                                          , panelGridWidth = GridFour
-                                          },
-                      mTitle "Info", infoIcon, Nothing, B.toMarkup a)
-          TipB a -> (defaultPanelOptions { panelType = PPrimary
-                                         , panelGridWidth = GridFour
+          InfoB a -> (defaultCardOptions { cardType = CInfo
+                                         , cardGridWidth = GridFour
                                          },
+                      mTitle "Info", infoIcon, Nothing, B.toMarkup a)
+          TipB a -> (defaultCardOptions { cardType = CPrimary
+                                        , cardGridWidth = GridFour
+                                        },
                      mTitle "Tip", tipIcon, Nothing, B.toMarkup a)
-          CautionB a -> (defaultPanelOptions { panelType = PWarning
-                                             , panelGridWidth = GridFour
-                                             },
+          CautionB a -> (defaultCardOptions { cardType = CWarning
+                                            , cardGridWidth = GridFour
+                                            },
                          mTitle "Caution", cautionIcon, Nothing, B.toMarkup a)
-          WarningB a -> (defaultPanelOptions { panelType = PDanger
-                                             , panelGridWidth = GridFour
-                                             },
+          WarningB a -> (defaultCardOptions { cardType = CDanger
+                                            , cardGridWidth = GridFour
+                                            },
                          mTitle "Warning", warningIcon, Nothing, B.toMarkup a)
-          SideNoteB s -> (defaultPanelOptions { panelGridWidth = GridFour },
+          SideNoteB s -> (primaryCardOptions { cardGridWidth = GridFour },
                           mTitle "Side Note", sideNoteIcon, Nothing,
                           B.toMarkup s)
-          ExampleB (Example (ex, ans)) -> (defaultPanelOptions, mTitle "Example", exampleIcon,
+          ExampleB (Example (ex, ans)) -> (primaryCardOptions, mTitle "Example", exampleIcon,
                                            Just $ vectorBlockToMarkup "idocExampleAnswer" id ans, 
                                            vectorBlockToMarkup "idocExample" id ex)
-          ExerciseB e -> (defaultPanelOptions, mTitle "Exercise", exerciseIcon,
+          ExerciseB e -> (primaryCardOptions, mTitle "Exercise", exerciseIcon,
                           Nothing, B.toMarkup e)
-          BibliographyB b_ -> (defaultPanelOptions, mTitle "Bibliography",
+          BibliographyB b_ -> (defaultCardOptions, mTitle "Bibliography",
                                bibliographyIcon, Nothing, B.toMarkup b_)
-          FurtherReadingB f -> (defaultPanelOptions, mTitle "Further Reading",
+          FurtherReadingB f -> (defaultCardOptions, mTitle "Further Reading",
                                 furtherReadingIcon, Nothing, B.toMarkup f)
-          SummaryB s -> (defaultPanelOptions, mTitle "Summary", summaryIcon,
+          SummaryB s -> (defaultCardOptions, mTitle "Summary", summaryIcon,
                          Nothing, B.toMarkup s)
-          RecallB (Recall (vl, foot)) -> (defaultPanelOptions, mTitle "Recall", recallIcon,
+          RecallB (Recall (vl, foot)) -> (defaultCardOptions { cardType = CInfo }, mTitle "Recall", recallIcon,
                                           Just $ vectorBlockToMarkup "idocRecallFooter" id foot,
                                           vectorBlockToMarkup "idocRecall" id vl)
           x -> error $ "Unhandled case: " ++ show x
@@ -346,9 +349,9 @@ instance B.ToMarkup Block where
       recallIcon = "" -- FIXME
 
 instance B.ToMarkup PrerexItem where
-  toMarkup p = panel (defaultPanelOptions { panelType = PInfo
-                                          , panelDefaultCollapseState = Collapsed
-                                          })
+  toMarkup p = card (defaultCardOptions { cardType = CInfo
+                                        , cardDefaultCollapseState = Collapsed
+                                        })
                      (B.toMarkup $ p^.prerexItemPath)
                      (Just $ p^.prerexItemPath)
                      prerexItemIcon
@@ -358,7 +361,7 @@ instance B.ToMarkup PrerexItem where
                      (concatMap B.toMarkup $ p^.prerexItemDescription)
 
 instance B.ToMarkup Prerex where
-  toMarkup p = B.div B.! A.class_ "idocPrerex panel-group" $ 
+  toMarkup p = B.div B.! A.class_ "idocPrerex" $ 
                concatMap B.toMarkup (p^.prerexContents)
 
 instance B.ToMarkup Introduction where
@@ -438,33 +441,33 @@ instance B.ToMarkup Definition where
 instance B.ToMarkup Intuition where
   toMarkup (Intuition i) = vectorBlockToMarkup "idocIntuition" id i
 
-decorateAdmonition :: PanelType -> B.Html -> B.Html
+decorateAdmonition :: CardType -> B.Html -> B.Html
 decorateAdmonition pt cnt = (B.span B.! A.class_ 
                              ("fa " ++
                               faIcon ++
                               " fa-4x fa-pull-left fa-border") $ "") ++ cnt
   where
     faIcon = case pt of
-      PInfo -> "fa-info-circle"
-      PDanger -> "fa-exclamation-circle"
-      PWarning -> "fa-exclamation-triangle"
-      PPrimary -> "fa-lightbulb-o"
+      CInfo -> "fa-info-circle"
+      CDanger -> "fa-exclamation-circle"
+      CWarning -> "fa-exclamation-triangle"
+      CPrimary -> "fa-lightbulb-o"
       _ -> error "I can't decorate like that!"
 
 instance B.ToMarkup Info where
-  toMarkup (Info a) = decorateAdmonition PInfo $
+  toMarkup (Info a) = decorateAdmonition CInfo $
                       vectorBlockToMarkup "idocInfo" id a
 
 instance B.ToMarkup Tip where
-  toMarkup (Tip a) = decorateAdmonition PPrimary $ 
+  toMarkup (Tip a) = decorateAdmonition CPrimary $ 
                      vectorBlockToMarkup "idocTip" id a
 
 instance B.ToMarkup Caution where
-  toMarkup (Caution a) = decorateAdmonition PWarning $ 
+  toMarkup (Caution a) = decorateAdmonition CWarning $ 
                          vectorBlockToMarkup "idocCaution" id a
 
 instance B.ToMarkup Warning where
-  toMarkup (Warning a) = decorateAdmonition PDanger $ 
+  toMarkup (Warning a) = decorateAdmonition CDanger $ 
                          vectorBlockToMarkup "idocWarning" id a
 
 instance B.ToMarkup SideNote where
