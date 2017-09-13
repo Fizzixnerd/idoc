@@ -147,7 +147,7 @@ idHelper decorator id_ = let (base, hash_) =
                                  (Just (Protocol "youtube"), Just _) -> 
                                    error "got youtube protocol with a hash!?"
                                  (Nothing, Nothing) -> 
-                                   ("http://www.independentlearning.science/", "")
+                                   ("http://www.independentlearning.science/tiki/", "")
                                  (Just (Protocol p), Just (IDHash h)) ->
                                    (p ++ "://", h)
                                  (Nothing, Just (IDHash h)) -> ("/", h)
@@ -194,7 +194,7 @@ instance B.ToMarkup Markup where
                   concatMap B.toMarkup (mu^.muContents)
 
 instance B.ToMarkup Paragraph where
-  toMarkup p = B.p B.! A.class_ "idocParagraph" $
+  toMarkup p = B.p B.! A.class_ "idocParagraph col-md-12" $
                concatMap B.toMarkup $ p^.paraContents
 
 vectorBlockToMarkup :: B.ToMarkup a => 
