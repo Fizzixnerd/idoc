@@ -113,7 +113,8 @@ newtype DocTitle = DocTitle { unDocTitle :: Vector SimpleCore }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Doc = Doc { _docTitle :: DocTitle
-               , _docSections :: Vector Section }
+               , _docSections :: Vector Section 
+               , _docSetID :: Maybe SetID }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data TextType = Strong
@@ -129,7 +130,8 @@ data QText = QText { _qtText :: Vector SimpleCore
                    }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data SetID = SetID { _sidName :: IDHash }
+data SetID = SetID { _sidName :: IDHash
+                   , _sidDisplay :: Vector SimpleCore }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 newtype IDHash = IDHash Text deriving (Eq, Ord, Show, Data, Typeable, Generic)

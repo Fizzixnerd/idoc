@@ -3,6 +3,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE LambdaCase #-}
 -- | Html5.hs
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause
@@ -12,23 +13,17 @@
 module Text.IDoc.Render.Html5 where
 
 import Text.IDoc.Syntax
-import Text.IDoc.Lex
 import Text.IDoc.Parse
 import Text.IDoc.Render.Html5.Icons
-
-import System.IO
 
 import Control.Lens hiding (cons, List)
 
 import qualified Text.Blaze.Html5 as B
 import qualified Text.Blaze.Html5.Attributes as A
-import qualified Text.Blaze.Html.Renderer.String as S
 
 import qualified Data.Vector as V
 
 import ClassyPrelude as CP
-import qualified Text.Megaparsec as MP
-import Text.Megaparsec.Text
 
 mID :: Maybe SetID -> (B.Html -> B.Html)
 mID mid = case mid of
@@ -164,7 +159,7 @@ instance B.ToValue ID where
   toValue id_ = idHelper B.toValue id_
 
 instance B.ToValue SetID where
-  toValue (SetID (IDHash sid)) = B.toValue sid
+  toValue (SetID { _sidName = (IDHash sid) }) = B.toValue sid
 
 instance B.ToValue Link where
   toValue l = B.toValue $ l^.linkLocation
@@ -548,51 +543,21 @@ instance B.ToMarkup Doc where
                (B.toMarkup $ d^.docTitle) ++
                (concatMap B.toMarkup $ d^.docSections)
 
-megaMain'' :: IO ()
-megaMain'' = (withFile "simple1.idoc" ReadMode 
-             (\src -> do
-                cnts <- CP.hGetContents src
-                case MP.parse (Text.IDoc.Lex.dTokens :: Parser IDocTokenStream) "source.idoc" (CP.decodeUtf8 cnts) of
-                  (CP.Right x) -> do
-                    --System.IO.hPutStr tex (Data.Text.unpack $ utRender x)
-                    case MP.parse docP "<tokens>" x of
-                     CP.Right y -> CP.putStrLn $ fromString $ renderPretty y
-                     CP.Left z -> CP.print z))
+newtype LinkLevel = LinkLevel Int deriving (Eq, Ord, Show)
 
-html x = B.docTypeHtml $ B.html $
-  (B.head $ (B.meta B.! A.charset "utf-8") ++
-            (B.meta B.! A.name "viewport"
-                    B.! A.content "width=device-width, initial-scale=1, shrink-to-fit=no") ++
-            (B.script $ B.text $ unlines $ [ "window.MathJax = { TeX: {equationNumbers: {autoNumber: \"AMS\", formatID: function (n) {return ''+String(n).replace(/[:'\"<>&]/g,\"\")}}}}"
-                                           ]) ++
-            (B.script B.! A.src "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML-full,Safe,http://independentlearning.science/MathJax/config/local/local.js") "" ++
-            (B.link B.! A.rel "stylesheet" 
-                    B.! A.href "https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css"
---                    B.! integrity "sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" 
-                    B.! crossorigin "anonymous") ++
-            (B.link B.! A.rel "stylesheet"
-                    B.! A.href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-                    B.! crossorigin "anonymous") ++
-            (B.style $ B.text $ unlines $ [ ".ils-logo-small, .ils-logo-container { height: 52px; width: 52px; display: inline-block; }"
-                                        , "span.footnote:before { counter-increment: footnotecounter; content: counter(footnotecounter); position: relative; }"
-                                        , "body { counter-reset: footnotecounter; }"
-                                        ])) ++
-  (B.body $ (B.toMarkup x) ++
-            (B.script B.! A.src "https://code.jquery.com/jquery-3.1.1.slim.min.js"
---                       B.! integrity "sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
-                      B.! crossorigin "anonymous") "" ++
---             (B.script B.! A.src "https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
---                       B.! integrity "sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
---                       B.! crossorigin "anonymous") (text "") ++
-            (B.script B.! A.src "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
---                       B.! integrity "sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
-                      B.! crossorigin "anonymous") "")
-  where
-    -- integrity = B.customAttribute "integrity"
-    crossorigin = B.customAttribute "crossorigin"
-
-
-renderPretty :: B.ToMarkup a => a -> String
-renderPretty x = 
-  S.renderHtml $ 
-  html x
+listLinks :: Doc -> Vector (SetID, LinkLevel)
+listLinks (Doc { _docSections = ss
+               , _docSetID = dsid }) =
+  catMaybes (singleton ((\x -> (x, LinkLevel 1)) <$> dsid)) <>
+  concatMap (\(Section { _secSetID = ssid
+                       , _secContents = scnts }) ->
+                catMaybes $ ((\case
+                                CC (BlockC (Block { _bSetID = bsid })) -> do
+                                  sid <- bsid
+                                  return (sid, LinkLevel 3)
+                                CC (ParagraphC (Paragraph { _paraSetID = psid })) -> do
+                                  sid <- psid
+                                  return (sid, LinkLevel 3)
+                                _ -> Nothing
+                                -- FIXME: Add lists here
+                            ) <$> scnts) <> singleton ((\x -> (x, LinkLevel 2)) <$> ssid)) ss

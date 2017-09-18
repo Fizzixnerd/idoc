@@ -228,7 +228,9 @@ setIDP = label "A SetID" $ do
   lBracketP >> lBracketP
   h <- idHashP
   rBracketP >> rBracketP
-  return $ S.SetID { S._sidName = h }
+  d <- markupContentsP
+  return $ S.SetID { S._sidName = h
+                   , S._sidDisplay = d }
   where
     lBracketP = void $ tokenP S.LBracket
     rBracketP = void $ tokenP S.RBracket
@@ -730,6 +732,7 @@ coreP = S.CC <$> ((S.BlockC     <$> (MP.try blockP))
 docP :: IDocParser S.Doc
 docP = do
   title <- someTween equalsP newlineP simpleCoreP
+  docSid <- optional setIDP
   void $ many newlineP
   preamble <- manyV $ do
     MP.notFollowedBy $ many newlineP >> equalsP >> equalsP
@@ -745,6 +748,7 @@ docP = do
                                   }
   return $ S.Doc { S._docTitle = S.DocTitle title
                  , S._docSections = preambleSection `V.cons` sections
+                 , S._docSetID = docSid
                  }
   where
     equalsP = void $ tokenP S.Equals
