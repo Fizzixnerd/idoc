@@ -287,24 +287,22 @@ instance B.ToMarkup Block where
                                                            "")
             where allowFullscreen = B.customAttribute "allowfullscreen"
           InfoB a -> (defaultCardOptions { cardType = CInfo
-                                         , cardGridWidth = GridFour
                                          },
                       mTitle "Info", infoIcon, Nothing, B.toMarkup a)
           TipB a -> (defaultCardOptions { cardType = CPrimary
-                                        , cardGridWidth = GridFour
                                         },
                      mTitle "Tip", tipIcon, Nothing, B.toMarkup a)
           CautionB a -> (defaultCardOptions { cardType = CWarning
-                                            , cardGridWidth = GridFour
                                             },
                          mTitle "Caution", cautionIcon, Nothing, B.toMarkup a)
           WarningB a -> (defaultCardOptions { cardType = CDanger
-                                            , cardGridWidth = GridFour
                                             },
                          mTitle "Warning", warningIcon, Nothing, B.toMarkup a)
-          SideNoteB s -> (primaryCardOptions { cardGridWidth = GridFour },
-                          mTitle "Side Note", sideNoteIcon, Nothing,
-                          B.toMarkup s)
+          SideNoteB s -> ( primaryCardOptions
+                         , mTitle "Side Note"
+                         , sideNoteIcon
+                         , Nothing
+                         , B.toMarkup s)
           ExampleB (Example (ex, ans)) -> (primaryCardOptions, mTitle "Example", exampleIcon,
                                            Just $ vectorBlockToMarkup "idocExampleAnswer" id ans, 
                                            vectorBlockToMarkup "idocExample" id ex)
