@@ -61,7 +61,7 @@ instance B.ToValue GridWidth where
   toValue GridFour = "col-md-4"
   toValue GridSix = "col-md-6"
   toValue GridEight = "col-md-8"
-  toValue GridTwelve = "col-md-12"
+  toValue GridTwelve = ""
 
 data CardOptions = CardOptions { cardDefaultCollapseState :: DefaultCollapseState
                                , cardType :: CardType
@@ -189,7 +189,7 @@ instance B.ToMarkup Markup where
                   concatMap B.toMarkup (mu^.muContents)
 
 instance B.ToMarkup Paragraph where
-  toMarkup p = B.p B.! A.class_ "idocParagraph col-md-12" $
+  toMarkup p = B.p B.! A.class_ "idocParagraph" $
                concatMap B.toMarkup $ p^.paraContents
 
 vectorBlockToMarkup :: B.ToMarkup a => 
@@ -220,8 +220,8 @@ instance B.ToMarkup BlockTitle where
 instance B.ToMarkup Block where
   toMarkup Block { _bType = PrerexB p } = B.toMarkup p
   toMarkup b = (B.div B.! A.class_ "clearfix" $ "") ++
-               (card blockCardOptions 
-                     blockTitle 
+               (card blockCardOptions
+                     blockTitle
                      (b^.bSetID)
                      blockIcon
                      blockFooter
@@ -379,18 +379,6 @@ instance B.ToMarkup EqnArray where
                                                         else
                                                           V.cons y acc) empty ea))
 
--- instance B.ToMarkup Theorem where
---   toMarkup (Theorem t) = vectorBlockToMarkup "idocTheorem" id t
-
--- instance B.ToMarkup Lemma where
---   toMarkup (Lemma l) = vectorBlockToMarkup "idocLemma" id l
-
--- instance B.ToMarkup Corollary where
---   toMarkup (Corollary c) = vectorBlockToMarkup "idocCorollary" id c
-
--- instance B.ToMarkup Proposition where
---   toMarkup (Proposition p) = vectorBlockToMarkup "idocProposition" id p
-
 instance B.ToMarkup Conjecture where
   toMarkup (Conjecture c) = vectorBlockToMarkup "idocConjecture" id c
 
@@ -406,25 +394,6 @@ instance B.ToMarkup Quote where
 instance B.ToMarkup Code where
   toMarkup (Code c) = verbatimBlockToMarkup "idocCode" id c
 
--- instance B.ToMarkup Image where
---   toMarkup (Image il) = B.img B.! A.class_ "idocImage img-responsive"
---                               B.! A.src (B.toValue $ il^.linkLocation)
-
--- instance B.ToMarkup Video where
---   toMarkup (Video vl) = B.video B.! A.class_ "idocVideo"
---                                 B.! A.controls "true"
---                                 B.! A.src (B.toValue $ vl^.linkLocation) $
---                                 ""
-
--- instance B.ToMarkup YouTube where
---   toMarkup (YouTube yl) = B.div B.! A.class_ "embed-responsive embed-responsive-16by9" $
---                                  B.iframe B.! A.class_ "idocYouTubeEmbed embed-responsive-item"
---                                           B.! allowFullscreen "true"
---                                           B.! A.src (B.toValue yl) $
---                                           ""
---     where
-      
-
 instance B.ToMarkup Connection where
   toMarkup (Connection c) = vectorBlockToMarkup "idocConnection" id c
 
@@ -438,7 +407,7 @@ decorateAdmonition :: CardType -> B.Html -> B.Html
 decorateAdmonition pt cnt = (B.span B.! A.class_ 
                              ("fa " ++
                               faIcon ++
-                              " fa-4x fa-pull-left fa-border") $ "") ++ cnt
+                              " fa-4x fa-pull-left") $ "") ++ cnt
   where
     faIcon = case pt of
       CInfo -> "fa-info-circle"
