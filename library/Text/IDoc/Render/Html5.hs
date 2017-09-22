@@ -219,8 +219,10 @@ instance B.ToMarkup BlockTitle where
 
 instance B.ToMarkup Block where
   toMarkup Block { _bType = PrerexB p } = B.toMarkup p
-  toMarkup b = (B.div B.! A.class_ "clearfix" $ "") ++
-               (card blockCardOptions
+  toMarkup Block { _bType = MathB m } = B.toMarkup m
+  toMarkup Block { _bType = EquationB e } = B.toMarkup e
+  toMarkup Block { _bType = EqnArrayB e } = B.toMarkup e
+  toMarkup b = (card blockCardOptions
                      blockTitle
                      (b^.bSetID)
                      blockIcon
@@ -231,12 +233,6 @@ instance B.ToMarkup Block where
         case b^.bType of
           IntroductionB i -> (defaultCardOptions, mTitle "Introduction",
                               "", Nothing, B.toMarkup i)
-          MathB m -> (defaultCardOptions, mTitle "Math", "",
-                      Nothing, B.toMarkup m)
-          EquationB e -> (defaultCardOptions, mTitle "Equation", "",
-                          Nothing, B.toMarkup e)
-          EqnArrayB e -> (defaultCardOptions, mTitle "EqnArray", "",
-                          Nothing, B.toMarkup e)
           TheoremB (Theorem (bdy, foot)) -> (primaryCardOptions, mTitle "Theorem", theoremIcon,
                                              (vectorBlockToMarkup "idocTheoremProof" id) <$> foot,
                                              vectorBlockToMarkup "idocTheorem" id bdy)
