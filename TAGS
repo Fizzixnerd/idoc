@@ -697,12 +697,12 @@ vectorBlockToMarkup vectorBlockToMarkup194,195
 vectorBlockToMarkup vectorBlockToMarkup199,200
 verbatimBlockToMarkup verbatimBlockToMarkup204,205
 verbatimBlockToMarkup verbatimBlockToMarkup208,209
-decorateAdmonition decorateAdmonition405,406
-decorateAdmonition decorateAdmonition406,407
-newtype LinkLevel LinkLevel512,513
-newtype LinkLevel = LinkLevel LinkLevel512,513
-listLinks listLinks514,515
-listLinks listLinks515,516
+decorateAdmonition decorateAdmonition401,402
+decorateAdmonition decorateAdmonition402,403
+newtype LinkLevel LinkLevel508,509
+newtype LinkLevel = LinkLevel LinkLevel508,509
+listLinks listLinks510,511
+listLinks listLinks511,512
 
 ./test-suite/Main.hs,68
 main main11,12
