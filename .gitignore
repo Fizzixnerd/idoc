@@ -1,7 +1,10 @@
+<<<<<<< HEAD
 # Stack uses this directory as scratch space.
 /.stack-work/
 # Stack generates the Cabal file from `package.yaml` through hpack.
 /*.cabal
+=======
+>>>>>>> 9dc4e3c3563ccc6767b39bf8ef534d0d320b3781
 dist
 dist-*
 cabal-dev
@@ -22,6 +25,7 @@ cabal.sandbox.config
 .stack-work/
 cabal.project.local
 .HTF/
+<<<<<<< HEAD
 *~
 
 # temporary files which can be created if a process still has a handle open of a deleted file
@@ -80,3 +84,5 @@ flycheck_*.el
 
 # directory configuration
 .dir-locals.el
+=======
+>>>>>>> 9dc4e3c3563ccc6767b39bf8ef534d0d320b3781
