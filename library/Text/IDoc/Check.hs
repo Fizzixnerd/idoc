@@ -1,8 +1,3 @@
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-
 -- | Check.hs
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause

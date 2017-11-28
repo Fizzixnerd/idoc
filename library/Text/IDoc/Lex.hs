@@ -1,6 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-
 -- | Lex.hs
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause

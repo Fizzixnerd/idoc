@@ -1,6 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE TypeFamilies #-}
 -- | Parse2.hs
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause

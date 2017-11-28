@@ -1,9 +1,4 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
-
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE LambdaCase #-}
 -- | Html5.hs
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause
@@ -82,7 +77,7 @@ card :: B.ToValue a =>
      -> Maybe B.Html -- ^ footer
      -> B.Html -- ^ body
      -> B.Html
-card (CardOptions {..}) title_ id_ icon__ footer_ body_= 
+card (CardOptions {..}) title_ id_ icon__ footer_ body_ = 
   B.div B.! A.class_ (B.toValue cardGridWidth) $
   B.div B.! A.class_ "card" $
                (B.h5 B.! A.class_ ("card-header " ++ B.toValue cardType) $
@@ -147,10 +142,10 @@ idHelper decorator id_ = let (base, hash_) =
                                    (p ++ "://", h)
                                  (Nothing, Just (IDHash h)) -> ("/", h)
                                  (Just (Protocol p), Nothing) -> (p ++ "://", "")
-    in
-      decorator $ base ++
-      (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
-      hash_
+                         in
+                           decorator $ base ++
+                           (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
+                           hash_
 
 instance B.ToMarkup ID where
   toMarkup id_ = idHelper B.toMarkup id_
@@ -341,13 +336,13 @@ instance B.ToMarkup PrerexItem where
   toMarkup p = card (defaultCardOptions { cardType = CInfo
                                         , cardDefaultCollapseState = Collapsed
                                         })
-                     (B.toMarkup $ p^.prerexItemPath)
-                     (Just $ p^.prerexItemPath)
-                     prerexItemIcon
-                     (Just $ B.a B.! A.class_ "idocPrerexItemLink"
-                                 B.! A.href (p^.prerexItemPath.to B.toValue) $
-                                 "Go to " ++ (p^.prerexItemPath.to B.toMarkup))
-                     (concatMap B.toMarkup $ p^.prerexItemDescription)
+                    (B.toMarkup $ p^.prerexItemPath)
+                    (Just $ p^.prerexItemPath)
+                    prerexItemIcon
+                    (Just $ B.a B.! A.class_ "idocPrerexItemLink"
+                                B.! A.href (p^.prerexItemPath.to B.toValue) $
+                                "Go to " ++ (p^.prerexItemPath.to B.toMarkup))
+                    (concatMap B.toMarkup $ p^.prerexItemDescription)
 
 instance B.ToMarkup Prerex where
   toMarkup p = B.div B.! A.class_ "idocPrerex" $ 

@@ -1,9 +1,3 @@
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-
 -- | Syntax.hs
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause
