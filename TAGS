@@ -704,23 +704,27 @@ newtype LinkLevel = LinkLevel LinkLevel503,504
 listLinks listLinks505,506
 listLinks listLinks506,507
 
-./library/Text/IDoc/Render/Tex.hs,487
+./library/Text/IDoc/Render/Tex.hs,639
 module Text.IDoc.Render.Tex Text.IDoc.Render.Tex1,2
-type Icon Icon14,15
-mLabel mLabel16,17
-mLabel mLabel17,18
-instance instance21,22
-idHelper idHelper70,71
-idHelper idHelper71,72
-vectorBlockTexy vectorBlockTexy116,117
-vectorBlockTexy vectorBlockTexy117,118
-mTitle mTitle156,157
-mTitle mTitle157,158
-class Blocky Blocky159,160
-  block :: LaTeXC l => Maybe Maybe160,161
-  block block160,161
-theoremBlock theoremBlock187,188
-theoremBlock theoremBlock194,195
+type Icon Icon21,22
+mLabel mLabel23,24
+mLabel mLabel24,25
+defaultDecorator defaultDecorator28,29
+defaultDecorator defaultDecorator29,30
+compileToTex compileToTex46,47
+compileToTex compileToTex47,48
+instance instance58,59
+idHelper idHelper107,108
+idHelper idHelper108,109
+vectorBlockTexy vectorBlockTexy153,154
+vectorBlockTexy vectorBlockTexy154,155
+mTitle mTitle193,194
+mTitle mTitle194,195
+class Blocky Blocky196,197
+  block :: LaTeXC l => Maybe Maybe197,198
+  block block197,198
+theoremBlock theoremBlock223,224
+theoremBlock theoremBlock230,231
 
 ./test-suite/Main.hs,68
 main main11,12

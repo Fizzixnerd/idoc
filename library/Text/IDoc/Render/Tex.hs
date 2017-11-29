@@ -3,14 +3,21 @@ module Text.IDoc.Render.Tex where
 
 import ClassyPrelude
 import Control.Lens
+import qualified Data.Text.IO as IO
+import qualified System.IO as SIO
 
 import Text.IDoc.Syntax as S
 import Text.IDoc.Parse
+import Text.IDoc.Lex
 
+import qualified Text.Megaparsec as MP
 import Text.LaTeX as L hiding ((<>))
 import Text.LaTeX.Base.Class
+import Text.LaTeX.Packages.Graphicx
+import Text.LaTeX.Packages.AMSSymb
 import Text.LaTeX.Packages.AMSMath as M
 import Text.LaTeX.Packages.AMSThm as T
+import Text.LaTeX.Packages.Hyperref
 
 type Icon = LaTeX
 
@@ -18,6 +25,36 @@ mLabel :: (LaTeXC l) => Maybe SetID -> (l -> l)
 mLabel mid = case mid of
   Nothing -> id
   Just id_ -> ((texy id_) ++)
+
+defaultDecorator :: LaTeXC l => l -> l -> l
+defaultDecorator title_ d =
+  (documentclass [letterpaper] "memoir") ++
+
+  (usepackage [] hyperref) ++
+  (usepackage [] graphicx) ++
+  (usepackage [] amsmath) ++
+  (usepackage [] amsthm) ++
+  (usepackage [] amssymb) ++
+
+  (document $
+  title title_ ++
+  author "ILS Contributors" ++
+  date today ++
+  maketitle ++
+  tableofcontents ++
+  d)
+
+compileToTex :: FilePath -> FilePath -> IO ()
+compileToTex inFile outFile = SIO.withFile inFile SIO.ReadMode 
+                              (\src -> do
+                                  fileContents <- IO.hGetContents src
+                                  case MP.parse dTokens inFile fileContents of
+                                    Left e -> print e
+                                    Right x -> do
+                                      case MP.parse docP "<tokens>" x of
+                                        Left e -> print e
+                                        Right y -> renderFile outFile $ defaultDecorator "Title" $ (texy y :: LaTeX))
+                                          
 
 instance Texy Doc where
   texy d = chapter (mLabel (d^.docSetID) $ (texy $ d^.docTitle)) ++
@@ -112,7 +149,7 @@ instance Texy Markup where
       Citation -> cite $ concatMap texy $ mu^.muContents
 
 instance Texy Paragraph where
-  texy p = paragraph $ concatMap texy $ p^.paraContents
+  texy p = (concatMap texy $ p^.paraContents) ++ "\n\n"
 
 vectorBlockTexy :: (Texy a, LaTeXC l) => Vector a -> l
 vectorBlockTexy vb = concatMap texy vb
@@ -161,15 +198,14 @@ class Blocky b where
   block :: LaTeXC l => Maybe BlockTitle -> Maybe SetID -> b -> l
 
 instance Blocky Prerex where
-  block mt msid (Prerex ps) = subsection (mLabel msid title) ++ vectorBlockTexy ps
+  block mt msid (Prerex ps) = subsubsection (mLabel msid title) ++ vectorBlockTexy ps
     where
       title = mTitle mt "Prerex"
 
 instance Texy PrerexItem where
-  texy p = paragraph $ 
-    (L.ref $ texy $ p^.prerexItemPath) ++
-    ": " ++
-    (concatMap texy $ p^.prerexItemDescription)
+  texy p = (href [] "" $ texy $ p^.prerexItemPath) ++
+           ": " ++
+           (concatMap texy $ p^.prerexItemDescription)
 
 instance Blocky Introduction where
   block mt msid (Introduction i) = subsection (mLabel msid title) ++ vectorBlockTexy i
@@ -177,13 +213,13 @@ instance Blocky Introduction where
       title = mTitle mt "Introduction"
 
 instance Blocky Math where
-  block mt msid (Math m) = mLabel msid $ mathDisplay $ texy $ concatMap unToken m
+  block mt msid (Math m) = mLabel msid $ mathDisplay $ raw $ concatMap unToken m
 
 instance Blocky Equation where
-  block mt msid (Equation e) = mLabel msid $ M.equation $ texy $ concatMap unToken e
+  block mt msid (Equation e) = mLabel msid $ M.equation $ raw $ concatMap unToken e
 
 instance Blocky EqnArray where
-  block mt msid (EqnArray e) = mLabel msid $ M.align [texy $ concatMap unToken e]
+  block mt msid (EqnArray e) = mLabel msid $ M.align [raw $ concatMap unToken e]
 
 theoremBlock :: LaTeXC l => 
                 Maybe BlockTitle
@@ -231,7 +267,7 @@ instance Blocky Quote where
 
 instance Blocky Code where
   block mt msid (Code c) = mLabel msid $
-                           L.verb $ concatMap (fromString . show) c
+                           L.verb $ concatMap unToken c
 
 instance Blocky Image where
   block mt msid (Image (lnk, mcaption)) = mLabel msid $
@@ -244,7 +280,7 @@ instance Blocky Video where
                                          maybe "" vectorBlockTexy mcaption
 
 instance Blocky Connection where
-  block mt msid (Connection c) = (subsubsection $ mLabel msid title) ++
+  block mt msid (Connection c) = (subsection $ mLabel msid title) ++
                                  vectorBlockTexy c
     where title = mTitle mt "Connection"
 

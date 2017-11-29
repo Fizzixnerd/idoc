@@ -1,46 +1,26 @@
-=idoc User Guide
-[[#idocUserGuide]]{idoc User Guide}
-
-@prerex
----
-/None{Someone wanted to see what this looked like, so it's here.
+\documentclass[letterpaper]{memoir}\usepackage{hyperref}\usepackage{graphicx}\usepackage{amsmath}\usepackage{amsthm}\usepackage{amssymb}\begin{document}\title{Title}\author{ILS Contributors}\date{\today{}}\maketitle{}\tableofcontents{}\chapter{\label{idocUserGuide}idoc User Guide}\subsubsection{Prerex}\href{}{http://www.independentlearning.science/tiki/None}: Someone wanted to see what this looked like, so it's here.
       Normally you can just leave the prerex block out when
-      there are none.}
----
-
-@introduction
----
-idoc is a language and a program.  The language is what was used to
+      there are none.\subsection{Introduction}idoc is a language and a program.  The language is what was used to
 write this document.  The program is what rendered it (in both
 $\LaTeX$ and HTML5).  It has a number of features that are not found
 in other humane markup languages.  The most critical of these is
 support for allowing prerequisite resolution, though this is
 technically implemented by a static checker after parsing.  idoc was
 originally based on asciidoc, but has since diverged significantly.
----
 
-==Goals
-
-@tip
-#Get the Source!
----
-You will probably want to examine the source for this document along
+\section{Goals}\subsubsection{\label{sourceTip}Get the Source!}You will probably want to examine the source for this document along
 with the rendered content.  It can be found
-<<http://www.independentlearning.science/source.idoc>>{here}.
----
-[[#sourceTip]]{Get the source!}
+\ref{here}.
 
 idoc was created because no other existing markup language had the
 properties we needed for the website.  We describe these properties
 and how the extant humane markup languages failed to have them.
 
-:Prerequisite resolution::This is the big one.  The website is
+\begin{enumerate}\item[Prerequisite resolution]This is the big one.  The website is
 designed around the idea of prerequisites, and so prerequisite
 resolution is a necessary thing idoc has to be able to do.  It would
-have been _possible_ to add this to Asciidoc, but not fun.  It would
-have been _impossible_ to add this to Markdown.
-
-:Typed Blocks::A "strongly-typed" block is where one declares the
+have been \emph{possible} to add this to Asciidoc, but not fun.  It would
+have been \emph{impossible} to add this to Markdown.\item[Typed Blocks]A "strongly-typed" block is where one declares the
 purpose of a section of text explicitly.  idoc uses the strongly-typed
 blocks to enable a bunch of cool features.  One of those features is
 being able to take a doc (or a bunch of docs) and take all the
@@ -48,31 +28,25 @@ theorems, lemmas, propositions, corollaries, definitions and examples,
 stick them all in a new document and basically generate a useful
 review sheet for you automatically.  It also means that you don't
 manually have to describe the formatting of these things; idoc takes
-care of that for you.
-
-:Extensible Blocks::On the other hand, having "extensible" blocks
+care of that for you.\item[Extensible Blocks]On the other hand, having "extensible" blocks
 means that we can add new types of blocks -- and new features to them
 -- as needed.  For example, if idoc is use a lot by computer science
 students, it might be necessary to add a block that allows you to
 download example code.  It might even be cool to add that
-functionality to the already existing `code` blocks.  These kind of
-additions are _impossible_ in Markdown, _difficult_ in Asciidoc, and
-_easy_ in idoc.
-
-:Easy to Learn by Example::While Asciidoc is a powerful markup
+functionality to the already existing \texttt{code} blocks.  These kind of
+additions are \emph{impossible} in Markdown, \emph{difficult} in Asciidoc, and
+\emph{easy} in idoc.\item[Easy to Learn by Example]While Asciidoc is a powerful markup
 language, its syntax can be somewhat irregular.  It uses different
 types of delimiters to denote different types of blocks.  Unless you
 have memorized what each style of delimiter means, this makes the
 markup hard to understand as a beginner.  idoc was designed to be more
 regular -- you should be able to figure out what is going on given
 just the source and the output.  More importantly, you should be able
-to make _changes_ to the source confidently, based on what you already
+to make \emph{changes} to the source confidently, based on what you already
 see in it.  Most edits to sites like Wikipedia are small ones; users
 like that don't want to learn the entirety of a markup language.  They
 just want to get in, make their edit, and get out.  Hopefully idoc
-allows them to do this.
-
-:Power with Limitations::Asciidoc and Markdown allow you to insert
+allows them to do this.\item[Power with Limitations]Asciidoc and Markdown allow you to insert
 inline HTML into your documents.  While this sounds nice, it means
 that it's unsuitable for content on a shared website.  This is because
 Javascript can be embedded in HTML, and that would mean we were
@@ -81,269 +55,139 @@ computers.  This is not acceptable.  Such things also break the
 abstraction layer the markup languages provide, and makes it much more
 difficult to properly format the result of the markup language
 automatically.  We prefer providing the features users want directly,
-instead of having them rely on such "escape hatches".
-
-:Haskell Implementation::We are using the
-<<https://www.haskell.org>>{Haskell programming language} to make the
+instead of having them rely on such "escape hatches".\item[Haskell Implementation]We are using the
+\ref{Haskell programming language} to make the
 site because there is simply no better language out there.  There does
 not exist (at the time of writing) a good implementation of Asciidoc
 for Haskell, and since Markdown is unsuitable for our purposes it did
-not matter _how_ good the implementation of it was.  Since we would
+not matter \emph{how} good the implementation of it was.  Since we would
 have to write our own implementation of another markup language
 anyway, it was not a major extra investment to write an implementation
-of a new one instead.
-
-Hopefully you can forgive us for forcing you to use an untested
+of a new one instead.\end{enumerate}Hopefully you can forgive us for forcing you to use an untested
 language!
 
-==Features
-[[#features]]{Features}
-
-===Basics
-[[#basics]]{Basics}
-
-idoc is a _humane_ markup language, which basically means it doesn't
-suck to write in it.  For example, this is a *paragraph*.  You just
+\section{\label{features}Features}\subsection{\label{basics}Basics}idoc is a \emph{humane} markup language, which basically means it doesn't
+suck to write in it.  For example, this is a \textbf{paragraph}.  You just
 type like normal.  They are separated by a blank line, as is every
-other *complex content* in idoc.  Complex content is one of a
+other \textbf{complex content} in idoc.  Complex content is one of a
 paragraph, a list, or a block.
 
-This is now a new paragraph.  I can *italicize* text by surrounding it
-with with _underscores_ (`\_`) and *bold* it with *asterisks* (`\*`).
-I can make it *monospace* (like "computer code") using `backticks`
-(`\``).
+This is now a new paragraph.  I can \textbf{italicize} text by surrounding it
+with with \emph{underscores} (\texttt{\_{}}) and \textbf{bold} it with \textbf{asterisks} (\texttt{*}).
+I can make it \textbf{monospace} (like "computer code") using \texttt{backticks}
+(\texttt{`}).
 
-Every idoc document must have a *title*, which is the first line of
-the document and looks like this: `= Title`.  The space between the
-`=` and the title text is important.  To make new *sections*, type `==
-Section Name`.  Note that the section title must be separated from the
+Every idoc document must have a \textbf{title}, which is the first line of
+the document and looks like this: \texttt{= Title}.  The space between the
+\texttt{=} and the title text is important.  To make new \textbf{sections}, type \texttt{==
+Section Name}.  Note that the section title must be separated from the
 previous content by a newline.  For example,
 
-[lang=idoc]
-@code
----
-I am a paragraph!  Hear me roar!
+\verb`I am a paragraph!  Hear me roar!
 
 ==New Section!
 
-Another paragraph.  RAAAAAAAAAAAWR!
----
+Another paragraph.  RAAAAAAAAAAAWR!`is correct, while
 
-is correct, while
-
-[lang=idoc]
-@code
----
-I am a paragraph!  Hear me roar!
+\verb`I am a paragraph!  Hear me roar!
 ==New Section!
 
-Another paragraph.  RAAAAAAAAAAAWR!
----
+Another paragraph.  RAAAAAAAAAAAWR!`would not display what you want correctly.  Subsections are the same
+deal: use \texttt{=== Subsection Name}.
 
-would not display what you want correctly.  Subsections are the same
-deal: use `=== Subsection Name`.
-
-Any line that begins with `//` denotes a comment. They will not be
+Any line that begins with \texttt{//} denotes a comment. They will not be
 displayed in the final document.  These are not yet implemented, but
 will be soon.
 
 // This is a comment line.  It will not be rendered.  Block
 // comments are not supported because they are a pain.
 
-Nearly everything in idoc can be given an identifier (or *ID*) using
-the syntax `[[#idName]]`.  This immediately follows the thing you
+Nearly everything in idoc can be given an identifier (or \textbf{ID}) using
+the syntax \texttt{[[\#idName]]}.  This immediately follows the thing you
 wish to identify.
 
-[lang=idoc]
-@code
----
-Nearly everything in idoc can be given an identifier using the syntax
+\verb'Nearly everything in idoc can be given an identifier using the syntax
 `[[#idName]]`.  This immediately follows the thing you wish to
 identify.
+'To see how to refer to IDs and link to them, check out the
+\ref{section on links}.
 
----
-
-To see how to refer to IDs and link to them, check out the
-<<#secLinks>>{section on links}.
-
-===Lists
-
-Lists are of fundamental importance when constructing rich documents.
-However, currently `idoc` does not recognize complex content inside
+\subsection{Lists}Lists are of fundamental importance when constructing rich documents.
+However, currently \texttt{idoc} does not recognize complex content inside
 lists, though this is subject to change.  This means you cannot nest
 lists.  You may only write a single paragraph.  We support unordered
 lists, ordered lists and labelled (description) lists.
 
--This is an unordered list.  It can contain paragraph contents.
+\begin{enumerate}\item This is an unordered list.  It can contain paragraph contents.\item It will look like bullet points in the final render.\item Third main item.\end{enumerate}\verb`-This is an unordered list.  It can contain paragraph contents.
 
 -It will look like bullet points in the final render.
 
--Third main item.
-
-[lang=idoc]
-@code
----
--This is an unordered list.  It can contain paragraph contents.
-
--It will look like bullet points in the final render.
-
--Third main item.
----
-
-.This is a numbered list.
+-Third main item.`\begin{enumerate}\item This is a numbered list.\item This is the second guy.\item And so on...\end{enumerate}\verb`.This is a numbered list.
 
 .This is the second guy.
 
-.And so on...
-
-[lang=idoc]
-@code
----
-.This is a numbered list.
-
-.This is the second guy.
-
-.And so on...
----
-
-:First Item::This is a list where the items have labels.
+.And so on...`\begin{enumerate}\item[First Item]This is a list where the items have labels.\item[Second Item]Another item.\item[And So On]...\end{enumerate}\verb`:First Item::This is a list where the items have labels.
 
 :Second Item::Another item.
 
-:And So On::...
-
-[lang=idoc]
-@code
----
-:First Item::This is a list where the items have labels.
-
-:Second Item::Another item.
-
-:And So On::...
----
-
-==Blocks
-[[#blocks]]{Blocks}
-
-*Blocks* are a fundamental construct in idoc.  They all look the same,
-basically.  They begin with `@blocktype` on a line by itself,
+:And So On::...`\section{\label{blocks}Blocks}\textbf{Blocks} are a fundamental construct in idoc.  They all look the same,
+basically.  They begin with \texttt{@blocktype} on a line by itself,
 separated by the previous content by a blank line.  A block can also
-have a title, which comes _after_ the declaration of block type; it
-looks like `#Block Title`.  Titles are optional, and a default title
+have a title, which comes \emph{after} the declaration of block type; it
+looks like \texttt{\#Block Title}.  Titles are optional, and a default title
 will be chosen based on the block type if not included.  Next, we have
 the attribute list, which I'll talk more on below.  Basically it looks
-like `[key=value,key-no-value,key2=value-2,...]`, and gives a list
-of *attributes* and optionally their *values*.  Finally, we have the
-actual block itself, which is enclosed by the delimiters `---`.  The
+like \texttt{[key=value,key-no-value,key2=value-2,...]}, and gives a list
+of \textbf{attributes} and optionally their \textbf{values}.  Finally, we have the
+actual block itself, which is enclosed by the delimiters \texttt{---}.  The
 syntax inside the block is block dependent, and we'll explore them all
 below.
 
-===Math
-[[#math]]{Math}
-
-Inline math is done just using normal $\LaTeX$ syntax by doing enclosing
+\subsection{\label{math}Math}Inline math is done just using normal $\LaTeX$ syntax by doing enclosing
 text in dollar signs. $f(x) = \exp (-x^2)$.  Display mode is done by
-using a `math` block, like so:
+using a \texttt{math} block, like so:
 
-@math
-#Look Ma', I Have Equations!
----
-f(x) = \int_x^\infty g(t) \mathrm{d}t
----
-[[#eqnFDefn]]{Basic Math}
-
-[lang=idoc]
-@code
----
- @math
+\label{eqnFDefn}\[f(x) = \int_x^\infty g(t) \mathrm{d}t\]\verb` @math
  #Look Ma', I Have Equations!
  ---
  f(x) = \int_x^\infty g(t) \mathrm{d}t
  ---
- [[#eqnFDefn]]{Basic Math}
----
-
-Note that that $d$ will not be upright as it should be.  We'll fix
-that later.  (Fixed it!  Use `\mathrm{d}`!)  Also note that we added
-an _ID_ to the equation.  IDs can be added to many things.  They
+ [[#eqnFDefn]]{Basic Math}`Note that that $d$ will not be upright as it should be.  We'll fix
+that later.  (Fixed it!  Use \texttt{mathrm\{d\}}!)  Also note that we added
+an \emph{ID} to the equation.  IDs can be added to many things.  They
 always appear immediately following the thing they identify.
 
-There is also a more specialized `eqnarray` block, which numbers
-equations.  Note however that _unlike_ the $\LaTeX$ eqnarray, you do
-not put a linebreak (`\\ `) at the end of each line.  The ampersands
-(`&`) tell MathJax where to align line to.  So, for example, the
+There is also a more specialized \texttt{eqnarray} block, which numbers
+equations.  Note however that \emph{unlike} the $\LaTeX$ eqnarray, you do
+not put a linebreak (\texttt{\textbackslash{} }) at the end of each line.  The ampersands
+(\texttt{\&}) tell MathJax where to align line to.  So, for example, the
 equations below have a "left side", an "equals sign" in the middle,
 and a "right side".
 
-@eqnarray
----
-f(x) &=& 2x + 3
+\begin{align}f(x) &=& 2x + 3
 g(y) &=& y^2
-\implies (f \circ g) (x) &=& 2 x^2 + 3
----
-
-[lang=idoc]
-@code
----
- @eqnarray
+\implies (f \circ g) (x) &=& 2 x^2 + 3\end{align}\verb` @eqnarray
  ---
  f(x) &=& 2x + 3
  g(y) &=& y^2
  \implies (f \circ g) (x) &=& 2 x^2 + 3
- ---
----
+ ---`Note that we can use the standard \texttt{label\{\}} macro within the \texttt{math}
+or \texttt{eqnarray} environments to assign IDs to individual equations.
+Then we can use \texttt{ref\{\}} or \texttt{\ref{}} syntax to refer to them:
 
-Note that we can use the standard `\label{}` macro within the `math`
-or `eqnarray` environments to assign IDs to individual equations.
-Then we can use `\ref{}` or `<<#idLabel>>` syntax to refer to them:
-
-@eqnarray
----
-\label{importantEquation} y &=& mx + b
----
-
-[lang=idoc]
-@code
----
- @eqnarray
+\begin{align}\label{importantEquation} y &=& mx + b\end{align}\verb` @eqnarray
  ---
  \label{importantEquation} y &=& mx + b
- ---
----
+ ---`Refer to the \emph{important equation} $\ref{importantEquation}$.  Refer
+to \ref{the important equation}.  If you want to
+prevent an equation from being numbered, use \texttt{nonumber} as usual.
 
-Refer to the _important equation_ $\ref{importantEquation}$.  Refer
-to <<#importantEquation>>{the important equation}.  If you want to
-prevent an equation from being numbered, use `\nonumber` as usual.
-
-@eqnarray
----
-R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber
----
-
-[lang=idoc]
-@code
----
- @eqnarray
+\begin{align}R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber\end{align}\verb` @eqnarray
  ---
  R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber
- ---
----
+ ---`\begin{Axiom}An axiom looks like this.
 
-@axiom
----
-An axiom looks like this.
-
-@eqnarray
----
-x \cdot y = y \cdot x
----
-
----
-
-[lang=idoc]
-@code
----
- @axiom
+\begin{align}x \cdot y = y \cdot x\end{align}\end{Axiom}\verb` @axiom
  ---
  An axiom looks like this.
  
@@ -351,45 +195,16 @@ x \cdot y = y \cdot x
  ---
  x \cdot y = y \cdot x
  ---
- ---
----
+ ---`\label{def-number}\begin{Definition}a \textbf{number} is an element of an field.
 
-[term=number]
-@definition
----
-a *number* is an element of an field.
----
-[[#def-number]]{Definition: Number}
-
-[lang=idoc]
-@code
----
- [term=number]
+\end{Definition}\verb` [term=number]
  @definition
  ---
  a *number* is an element of an field.
  ---
- [[#def-number]]{Definition: Number}
----
+ [[#def-number]]{Definition: Number}`\label{thm-foil}\begin{Theorem}\begin{align}(x + y)^2 = x^2 + 2 xy + y^2.\end{align}\begin{proof}Use geometry.
 
-@theorem
----
-
-@eqnarray
----
-(x + y)^2 = x^2 + 2 xy + y^2.
----
-
-+++
-
-Use geometry.
----
-[[#thm-foil]]{Theorem: FOIL}
-
-[lang=idoc]
-@code
----
- @theorem
+\end{proof}\end{Theorem}\verb` @theorem
  ---
 
  @eqnarray
@@ -401,30 +216,13 @@ Use geometry.
 
  Use geometry.
  ---
- [[#thm-foil]]{Theorem: FOIL}
----
-
-@lemma
-#Easy Lemma
----
-This is a lemma.  It's pretty easy to prove.
+ [[#thm-foil]]{Theorem: FOIL}`\label{lemEasyLemma}\begin{Lemma}This is a lemma.  It's pretty easy to prove.
 
 For $n > 2$ there exists no integer solutions to the equation:
 
-@eqnarray
----
-x^n + y^n = z^n
----
+\begin{align}x^n + y^n = z^n\end{align}\begin{proof}[Easy Lemma]It's trivial.
 
-+++
-
-It's trivial.
----
-[[#lemEasyLemma]]{Lemma: Easy One}
-
-@code
----
- @lemma
+\end{proof}\end{Lemma}\verb` @lemma
  #Easy Lemma
  ---
  This is a lemma.  It's pretty easy to prove.
@@ -440,261 +238,129 @@ It's trivial.
 
  It's trivial.
  ---
- [[#lemEasyLemma]]{Lemma: Easy One}
----
+ [[#lemEasyLemma]]{Lemma: Easy One}`\begin{Proposition}Hey, um, do you want to go out with me next Saturday?
 
-@proposition
----
-Hey, um, do you want to go out with me next Saturday?
----
-
-[lang=idoc]
-@code
----
- @proposition
+\end{Proposition}\verb` @proposition
  ---
  Hey, um, do you want to go out with me next Saturday?
- ---
----
+ ---`\begin{Corollary}If $x, y > 2$ are prime then $x + y$ is not prime.
 
-@corollary
----
-If $x, y > 2$ are prime then $x + y$ is not prime.
----
-
-[lang=idoc]
-@code
----
- @corollary
+\end{Corollary}\verb` @corollary
  ---
  If $x, y > 2$ are prime then $x + y$ is not prime.
- ---
----
+ ---`\begin{Conjecture}The product of any two primes is also prime.
 
-@conjecture
----
-The product of any two primes is also prime.
----
-
-[lang=idoc]
-@code
----
- @conjecture
+\end{Conjecture}\verb` @conjecture
  ---
  The product of any two primes is also prime.
- ---
----
+ ---`\begin{proof}Just intuit.
 
-[theorem=lemEasyLemma]
-@proof
----
-Just intuit.
----
-
-[lang=idoc]
-@code
----
- [theorem=lemEasyLemma]
+\end{proof}\verb` [theorem=lemEasyLemma]
  @proof
  ---
  Just intuit.
- ---
----
+ ---`\subsection{Emphasis Blocks}The following blocks are designed to emphasize certain things within
+the text.  The first is the \texttt{quote} block, used for quotations.
 
-===Emphasis Blocks
-
-The following blocks are designed to emphasize certain things within
-the text.  The first is the `quote` block, used for quotations.
-
-[author=Albert Einstein]
-@quote
-#A Quote from the "Great One".
----
-The internet is the most important invention since gravity.
----
-[[#qEinstein]]{Einstein Quote}
-
-[lang=idoc]
-@code
----
- [author=Albert Einstein]
+\label{qEinstein}\begin{quote}The internet is the most important invention since gravity.\end{quote}\verb` [author=Albert Einstein]
  @quote
  #A Quote from the "Great One".
  ---
  The internet is the most important invention since gravity.
  ---
- [[#qEinstein]]{Einstein Quote}
----
-
-Notice in the `quote` block we added an author attribution above as an
-_attribute_ of the quote block contents.  *Attribute lists* always
-come _just_ before the thing they modify.  In this case, we are
-modifying the "body" of the `quote` element, so it comes just before
+ [[#qEinstein]]{Einstein Quote}`Notice in the \texttt{quote} block we added an author attribution above as an
+\emph{attribute} of the quote block contents.  \textbf{Attribute lists} always
+come \emph{just} before the thing they modify.  In this case, we are
+modifying the "body" of the \texttt{quote} element, so it comes just before
 the body.
 
-The next type of block is the `sidenote`.  It is used to separate a
+The next type of block is the \texttt{sidenote}.  It is used to separate a
 paragraph from the main text, perhaps because it is important.  Or
 perhaps it's unimportant... but then why is it there at all!?
 
-@sidenote
-#Please be Aware:
----
-This content will be rendered off to the side of the document.  You are
+\subsubsection{Please be Aware:}This content will be rendered off to the side of the document.  You are
 allowed any amount of complex content here.  An equation: $F =
 \frac{dp}{dt}$.
----
 
-[lang=idoc]
-@code
----
- @sidenote
+\verb` @sidenote
  #Please be Aware:
  ---
  This content will be rendered off to the side of the document.  You are
  allowed any amount of complex content here.  An equation: $F =
  \frac{dp}{dt}$.
- ---
----
-
-For more specialized blocks similar to `sidenotes`, use an
-`admonition` instead.  They look nicer and are more eye catching.
+ ---`For more specialized blocks similar to \texttt{sidenotes}, use an
+\texttt{admonition} instead.  They look nicer and are more eye catching.
 Here are some examples; notice how again we use an attribute list to
 specify the type of admonition.
 
-@warning
-#This is a Warning Block
----
-This will show a little warning symbol next to it.
----
-[[#warningBlock]]{Warning}
+\subsubsection{\label{warningBlock}This is a Warning Block}This will show a little warning symbol next to it.
 
-[lang=idoc]
-@code
----
- @warning
+\verb` @warning
  #This is a Warning Block
  ---
  This will show a little warning symbol next to it.
  ---
- [[#warningBlock]]{Warning}
----
+ [[#warningBlock]]{Warning}`\subsubsection{\label{infoBlock}This is an Info Block}This will show a little info symbol next to it.
 
-@info
-#This is an Info Block
----
-This will show a little info symbol next to it.
----
-[[#infoBlock]]{Info}
-
-[lang=idoc]
-@code
----
- @info
+\verb` @info
  #This is an Info Block
  ---
  This will show a little info symbol next to it.
  ---
- [[#infoBlock]]{Info}
----
+ [[#infoBlock]]{Info}`\subsubsection{\label{cautionBlock}This is a Caution Block}This will show a little caution symbol next to it.
 
-@caution
-#This is a Caution Block
----
-This will show a little caution symbol next to it.
----
-[[#cautionBlock]]{Caution}
-
-[lang=idoc]
-@code
----
- @caution
+\verb` @caution
  #This is a Caution Block
  ---
  This will show a little caution symbol next to it.
  ---
- [[#cautionBlock]]{Caution}
----
+ [[#cautionBlock]]{Caution}`\subsubsection{\label{tipBlock}This is a Tip Block}This will show a little lightbulb symbol next to it.
 
-@tip
-#This is a Tip Block
----
-This will show a little lightbulb symbol next to it.
----
-[[#tipBlock]]{Tip}
-
-[lang=idoc]
-@code
----
- @tip
+\verb` @tip
  #This is a Tip Block
  ---
  This will show a little lightbulb symbol next to it.
  ---
- [[#tipBlock]]{Tip}
----
-
-If you're worried about all the wasted space in the HTML output, don't
+ [[#tipBlock]]{Tip}`If you're worried about all the wasted space in the HTML output, don't
 be!  It's only wasted because I didn't put text between each block.
 You would not normally have $1 + 4$ of these things in a row.
 
-===Pedagogical Blocks
-
-These next blocks are useful when you want to offer extra information
-to the reader.  In the case of a `connection`, that information may be
+\subsection{Pedagogical Blocks}These next blocks are useful when you want to offer extra information
+to the reader.  In the case of a \texttt{connection}, that information may be
 more advanced than what the reader understands.  In the case of an
-`intuition`, it's information that is technically contained in the
+\texttt{intuition}, it's information that is technically contained in the
 main text, but is a powerful/neat way of thinking about the material.
 Please use good judgement when deciding when to use these.
 
-@connection
-#A connection
----
-@prerex
-#Connection Prerex
----
-/Basics/Logic{Mostly only _first-order_ logic will be used, but some _second-order_ stuff is important for stuff later on, so we put it here.}
-/Basics/Fun{And so on...}
----
-
-A `connection` is useful when you have content connected to the main text
+\subsection{\label{myConnection}A connection}\subsubsection{Connection Prerex}\href{}{http://www.independentlearning.science/tiki/Basics/Logic}: Mostly only \emph{first-order} logic will be used, but some \emph{second-order} stuff is important for stuff later on, so we put it here.\href{}{http://www.independentlearning.science/tiki/Basics/Fun}: And so on...A \texttt{connection} is useful when you have content connected to the main text
 but which isn't super necessary, or requires more advanced techniques
 than the rest of the text.  This is because connections are allowed to have
 their own prerequisites, in addition to the main doc's prereqs.
 
-@info
-#Rendering
----
-If you're viewing this full-screen on a computer, you'll notice that
+\subsubsection{\label{renderingInfo}Rendering}If you're viewing this full-screen on a computer, you'll notice that
 unlike the other some other blocks we've seen, connections are
-rendered across the full screen.  In general, you should _never_ rely
+rendered across the full screen.  In general, you should \emph{never} rely
 on the position of something relative to something else, or its size.
 This is because idoc has been designed to have pluggable themes, and
-the web renderer creates _responsive_ html that is free to reorganize
-content to better match the devices size.  Therefore, *whenever you
-refer to something, please please please use an ID*.
----
-[[#renderingInfo]]{Rendering Info}
+the web renderer creates \emph{responsive} html that is free to reorganize
+content to better match the devices size.  Therefore, \textbf{whenever you
+refer to something, please please please use an ID}.
 
 Connections are for when you want to connect with an outside idea, but
 don't want to have this interesting connection create new
 prerequisites for your doc.  For example, in the article
-<</Math/Topology/Homeomorphism#>>{on topology}, we might want to talk
-about how is difficult to prove two things are _not_ homeomorphic, and
+\ref{on topology}, we might want to talk
+about how is difficult to prove two things are \emph{not} homeomorphic, and
 how the fundamental group is useful because of its status as a
 topological invariant.  However, we don't know if the readers actually
 know group theory.  This would be the time you would use a connection --
-group theory is not needed to understand homeomorphisms, but it _is_
+group theory is not needed to understand homeomorphisms, but it \emph{is}
 needed to understand this small aside.
 
 When the site is complete, connections will start out open or closed
 depending on if the reader has the necessary prereqs or not.
----
-[[#myConnection]]{A Connection}
 
-[lang=idoc]
-@code
----
- @connection
+\verb" @connection
  #A connection
  ---
  @prerex
@@ -737,16 +403,10 @@ depending on if the reader has the necessary prereqs or not.
  When the site is complete, connections will start out open or closed
  depending on if the reader has the necessary prereqs or not.
  ---
- [[#myConnection]]{A Connection}
----
-
-@intuition
-#But What _is_ the Determinant?! -- An Example Intuition Block
----
-The determinant from a geometric point of view is used to talk about
-_volume_.  If you grok this, then everything else will fall into
+ [[#myConnection]]{A Connection}"\subsubsection{But What \emph{is} the Determinant?! -- An Example Intuition Block}The determinant from a geometric point of view is used to talk about
+\emph{volume}.  If you grok this, then everything else will fall into
 place.  For example, the reason a linear transformation is invertible
-if and only if its determinant is non-zero is because when it _is_
+if and only if its determinant is non-zero is because when it \emph{is}
 zero, the map is going to map a set of basis vectors in your
 $n$-dimensional space into some smaller $m$-dimensional space.  This
 $m$-dimensional space has zero "volume" compared to the
@@ -754,12 +414,8 @@ $n$-dimensional one, and so you're basically losing a whole dimension.
 There is no way to then map linearly back to the bigger space.  It
 would be like trying to find a linear function that maps the square to
 the cube!
----
 
-[lang=idoc]
-@code
----
- @intuition
+\verb` @intuition
  # But What _is_ the Determinant?! -- An Example Intuition Block
  ---
  The determinant from a geometric point of view is used to talk about
@@ -773,29 +429,17 @@ the cube!
  dimension.  There is no way to then map linearly back to the bigger
  space.  It would be like trying to find a linear function that maps
  the square to the cube!
- ---
----
-
-`examples` and `exercises` are also a key way for people to learn.
+ ---`\texttt{examples} and \texttt{exercises} are also a key way for people to learn.
 The difference between the two is that essentially an exercise is an
 example without a solution.
 
-@example
----
-Prove that every integer greater than zero is positive.
-
-+++
+\subsubsection{\label{exExample}Example}Prove that every integer greater than zero is positive.
 
 The proof is pretty simple.  Try to follow along.
 
 First, assume not.  But that's not the case.  QED.
----
-[[#exExample]]{An Example}
 
-[lang=idoc]
-@code
----
- @example
+\verb` @example
  ---
  Prove that every integer greater than zero is positive.
  
@@ -805,35 +449,21 @@ First, assume not.  But that's not the case.  QED.
  
  First, assume not.  But that's not the case.  QED.
  ---
- [[#exExample]]{An Example}
----
-
-@exercise
----
-What is largest rational number that can be written as a fraction of
+ [[#exExample]]{An Example}`\subsubsection{Exercise}What is largest rational number that can be written as a fraction of
 $5$ and $7$?
----
 
-@code
----
- @exercise
+\verb` @exercise
  ---
  What is largest rational number that can be written as a fraction of
  $5$ and $7$?
- ---
----
-
-===Links
-[[#secLinks]]{Links}
-
-Links come in three flavours.  The first is your standard link, called
-an *out link* or *olink* in idoc.  It's written like
-`<<http://www.example.com>>{this}` and appears like
-<<http://www.example.com>>{this}.  Note that the `http(s)://` part of
-the link is _mandatory_.  Olinks are restricted in idoc to appear in
-only very specific places, for example in `furtherreading` or
-`bibliography` blocks.  This is because the text of a doc should be
-_self-contained_.  You should not _need_ to go to an outside source to
+ ---`\subsection{\label{secLinks}Links}Links come in three flavours.  The first is your standard link, called
+an \textbf{out link} or \textbf{olink} in idoc.  It's written like
+\texttt{\ref{this}} and appears like
+\ref{this}.  Note that the \texttt{http(s)://} part of
+the link is \emph{mandatory}.  Olinks are restricted in idoc to appear in
+only very specific places, for example in \texttt{furtherreading} or
+\texttt{bibliography} blocks.  This is because the text of a doc should be
+\emph{self-contained}.  You should not \emph{need} to go to an outside source to
 understand a concept.  However, that doesn't mean that outside sources
 are useless -- Wikipedia is an excellent reference for topics you've
 just learned about.  It just means you don't want to interrupt the
@@ -841,18 +471,18 @@ flow of the document just anywhere.  This is why idoc enforces this
 rule.
 
 The second flavour is a link within the current doc, called an
-*internal link* or *ilink*.  For example, when we used `\ref{}` back
+\textbf{internal link} or \textbf{ilink}.  For example, when we used \texttt{ref\{\}} back
 in the Math section, we were using ilinks.  Refering to anything on
 the page which has an ID is an ilink.  They are written like
-`<<#important-equation>>{this}`, and appear like
-<<#important-equation>>{this}.  That is, they are the `#` symbol
+\texttt{\ref{this}}, and appear like
+\ref{this}.  That is, they are the \texttt{\#} symbol
 followed by a valid ID.
 
-The final flavour is the *back link*, or *blink*.  This is a link to
+The final flavour is the \textbf{back link}, or \textbf{blink}.  This is a link to
 something contained within the prerequisite tree of the current doc.
 In their most general form, they are written like
-`\<</Name/Of/Article#id-in-article>>{this right here}` and display like
-<</Name/Of/Article#id-in-article>>{this right here}.  However, the `#`
+\texttt{<</Name/Of/Article\#id-in-article>>\{this right here\}} and display like
+\ref{this right here}.  However, the \texttt{\#}
 symbol and the ID following it can be left out if you just want to
 refer to the article as a whole.  Notice that you are not allowed to
 link to another article that isn't within the prerequisite tree from
@@ -862,31 +492,16 @@ features that the ILS website hopes to deliver, such as automatic
 prerequisite resolution for subjects you want to learn.
 
 In all types of links, you are free to leave out the text inside the
-`{}`.  This will just use the text inside the `<<>>` as the display
+\texttt{\{\}}.  This will just use the text inside the \texttt{\ref{}} as the display
 text instead.  Normally this is not what you want, however.
 
-===YouTube
-
-We can embed YouTube videos if we think they are important.  Please do
+\subsection{YouTube}We can embed YouTube videos if we think they are important.  Please do
 not abuse this feature.
 
-@youtube
----
-<<youtube://FdU8oqCbvzo>>
----
-[[#ytUnlimitedCorners]]{Unlimited Corners}
+\label{ytUnlimitedCorners}\verb`THIS ISN'T IMPLEMENTED (YouTube): `\subsection{Images}We can embed important images too.
 
-===Images
+\verb`THIS ISN'T IMPLEMENTED (Image): `Bunnies make everything better.
 
-We can embed important images too.
+\section{Conclusion}That's about it for the basic syntax.  We can fix the rest later.
 
-@image
----
-<<http://www.independentlearning.science/uusBbd5.jpg>>
----
-
-Bunnies make everything better.
-
-==Conclusion
-
-That's about it for the basic syntax.  We can fix the rest later.
+\end{document}
