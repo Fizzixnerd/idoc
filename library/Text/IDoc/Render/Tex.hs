@@ -158,25 +158,6 @@ instance Texy QText where
 
       textsubscript x = between x (raw "\textsubscript{") (raw "}")
 
--- idHelper :: (Text -> t) -> ID -> t
--- idHelper decorator id_ = let (base, hash_) =
---                                case (id_^.idProtocol, id_^.idHash) of
---                                  (Just (Protocol "youtube"), Nothing) -> 
---                                    ("https://youtube.com/embed/", "")
---                                  (Just (Protocol "youtube"), Just _) -> 
---                                    error "got youtube protocol with a hash!?"
---                                  (Nothing, Nothing) -> 
---                                    ("http://www.independentlearning.science/tiki/", "")
---                                  (Just (Protocol p), Just (IDHash h)) ->
---                                    (p ++ "://", h)
---                                  (Nothing, Just (IDHash h)) -> 
---                                    ("http://www.independentlearning.science/tiki/", h)
---                                  (Just (Protocol p), Nothing) -> (p ++ "://", "")
---                          in
---                            decorator $ base ++
---                            (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
---                            "#" ++ hash_
-
 instance Texy SetID where
   texy (SetID { _sidName = IDHash sid }) = label $ texy sid
 
@@ -208,7 +189,7 @@ instance Texy Link where
           (if hash_ /= "" then "#" ++ hash_ else "")
       fromInternal id_ = case id_^.idHash of
                            Just (IDHash h) -> h
-                           _ -> error $ show $ id_
+                           _ -> "WTF"
       fromBack id_ = "http://www.independentlearning.science/tiki/" ++ 
                      (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 

@@ -34,12 +34,10 @@ library
               , blaze-html
               , classy-prelude
               , containers
-              , ghci-pretty
               , hspec >= 2.4.4
               , lens
               , megaparsec
               , mtl >= 2.2.1
-              , pretty
               , shakespeare
               , text
               , vector

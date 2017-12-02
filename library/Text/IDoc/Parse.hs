@@ -21,7 +21,6 @@ import System.IO
 import Data.Text.Encoding as E
 import Text.Megaparsec.Text
 import Text.IDoc.Lex
-import qualified IPPrint.Colored as C
 
 type IDocParseError = MP.ParseError S.DToken MP.Dec
 
@@ -754,23 +753,23 @@ looksLikeEofP :: IDocParser ()
 looksLikeEofP = do
   void $ some newlineP
 
-parseFileAs :: FilePath -> IDocParser a -> IO (Either IDocParseError a)
-parseFileAs f ty = (withFile f ReadMode 
-                    (\src -> do
-                        cnts <- CP.hGetContents src
-                        case MP.parse (Text.IDoc.Lex.dTokens :: Parser S.IDocTokenStream) f (E.decodeUtf8 cnts) of
-                          (CP.Right x) -> return $ MP.parse ty "<tokens>" x
-                          (CP.Left _) -> error "Could not even lex the fucking thing."))
+-- parseFileAs :: FilePath -> IDocParser a -> IO (Either IDocParseError a)
+-- parseFileAs f ty = (withFile f ReadMode 
+--                     (\src -> do
+--                         cnts <- CP.hGetContents src
+--                         case MP.parse (Text.IDoc.Lex.dTokens :: Parser S.IDocTokenStream) f (E.decodeUtf8 cnts) of
+--                           (CP.Right x) -> return $ MP.parse ty "<tokens>" x
+--                           (CP.Left _) -> error "Could not even lex the fucking thing."))
 
-megaMain' :: IO ()
-megaMain' = (withFile "simple1.idoc" ReadMode 
-             (\src -> do
-                cnts <- CP.hGetContents src
-                case MP.parse (Text.IDoc.Lex.dTokens :: Parser S.IDocTokenStream) "source.idoc" (E.decodeUtf8 cnts) of
-                  (CP.Right x) -> do
-                    --System.IO.hPutStr tex (Data.Text.unpack $ utRender x)
-                    case MP.parse docP "<tokens>" x of
-                     CP.Right y -> C.cpprint y
-                     CP.Left z -> CP.print z))
-  where
-    equalsP = void $ tokenP S.Equals
+-- megaMain' :: IO ()
+-- megaMain' = (withFile "simple1.idoc" ReadMode 
+--              (\src -> do
+--                 cnts <- CP.hGetContents src
+--                 case MP.parse (Text.IDoc.Lex.dTokens :: Parser S.IDocTokenStream) "source.idoc" (E.decodeUtf8 cnts) of
+--                   (CP.Right x) -> do
+--                     --System.IO.hPutStr tex (Data.Text.unpack $ utRender x)
+--                     case MP.parse docP "<tokens>" x of
+--                      CP.Right y -> C.cpprint y
+--                      CP.Left z -> CP.print z))
+--   where
+--     equalsP = void $ tokenP S.Equals

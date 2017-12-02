@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Debian) (preloaded format=pdflatex 2017.9.28)  2 DEC 2017 14:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Debian) (preloaded format=pdflatex 2017.9.28)  2 DEC 2017 16:12
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -1071,29 +1071,17 @@ Package mdframed Info: mdframed detected package amsthm
 
 (./_minted-out/C035818579AE669E09380E6027ABEA5A3720D176FEC7F33C74A859BD06D5DF8A
 .pygtex [5])
-./out.tex:127: Missing \endcsname inserted.
-<to be read again> 
-                   \#
-l.127 ...ependentlearning.science/tiki/\#secLinks}
-                                                  .
-The control sequence marked <to be read again> should
-not appear between \csname and \endcsname.
 
+./out.tex:127: Package keyval Error: secLinks undefined.
 
-LaTeX Warning: Reference `s' on page 6 undefined on input line 127.
-
-./out.tex:127: Extra \endcsname.
-\NR@setref ... \NR@@setref \csname r@#1\endcsname 
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
                                                   
-l.127 ...ependentlearning.science/tiki/\#secLinks}
-                                                  .
-I'm ignoring this, since I wasn't doing a \csname.
-
-
-Overfull \hbox (229.22307pt too wide) in paragraph at lines 126--134
-[]\OT1/cmr/m/n/10 To see how to re-fer to IDs and link to them, check out the [
-]ecLinkshttp://www.independentlearning.science/tiki/#secLinksLists
- []
+l.127 \href[secLinks]
+                     {section on links}.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
 \openout4 = `out.pyg'.
 
@@ -1104,12 +1092,12 @@ Overfull \hbox (229.22307pt too wide) in paragraph at lines 126--134
 
 
 (./_minted-out/2591C9690142FF901AC5BB098161533C3720D176FEC7F33C74A859BD06D5DF8A
-.pygtex)
+.pygtex) [6]
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/3FA9171070A446DE38DCFE1D4F2E251E3720D176FEC7F33C74A859BD06D5DF8A
-.pygtex [6])
+.pygtex)
 ./out.tex:172: You can't use `\spacefactor' in math mode.
 \@->\spacefactor 
                  \@m {}
@@ -1135,6 +1123,7 @@ LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
 (Font)              for symbol `textbraceleft' on input line 186.
 
+[7]
 ./out.tex:191: You can't use `\spacefactor' in math mode.
 \@->\spacefactor 
                  \@m {}
@@ -1146,72 +1135,43 @@ If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
 Missing character: There is no è in font cmex10!
-[7]
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/876B2E07B13214A40186C528EFBCA52F3720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-./out.tex:211: Missing \endcsname inserted.
-<to be read again> 
-                   \#
-l.211 ...ependentlearning.science/tiki/\#idLabel}}
-                                                   syntax to refer to them:
-The control sequence marked <to be read again> should
-not appear between \csname and \endcsname.
 
+./out.tex:210: Package keyval Error: idLabel undefined.
 
-LaTeX Warning: Reference `i' on page 8 undefined on input line 211.
-
-./out.tex:211: Extra \endcsname.
-\NR@setref ... \NR@@setref \csname r@#1\endcsname 
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
                                                   
-l.211 ...ependentlearning.science/tiki/\#idLabel}}
+l.210 ...ttt{ref\{\}} or \texttt{\href[idLabel]{}}
                                                    syntax to refer to them:
-I'm ignoring this, since I wasn't doing a \csname.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
 
-Overfull \hbox (13.4694pt too wide) in paragraph at lines 209--212
-\OT1/cmtt/m/n/10 ref\OMS/cmtt/m/n/10 fg \OT1/cmr/m/n/10 or []\OT1/cmtt/m/n/10 d
-Labelhttp://www.independentlearning.science/tiki/#idLabel
- []
+Package hyperref Warning: Suppressing link with empty target on input line 210.
+
 
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/FDB0FDD0E186114224327A6960F064223720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-./out.tex:221: Missing \endcsname inserted.
-<to be read again> 
-                   \#
-l.221 ...earning.science/tiki/\#importantEquation}
-                                                  .  If you want to
-The control sequence marked <to be read again> should
-not appear between \csname and \endcsname.
 
+./out.tex:220: Package keyval Error: importantEquation undefined.
 
-LaTeX Warning: Reference `i' on page 8 undefined on input line 221.
-
-./out.tex:221: Extra \endcsname.
-\NR@setref ... \NR@@setref \csname r@#1\endcsname 
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
                                                   
-l.221 ...earning.science/tiki/\#importantEquation}
-                                                  .  If you want to
-I'm ignoring this, since I wasn't doing a \csname.
-
-
-Overfull \hbox (350.36931pt too wide) in paragraph at lines 220--223
-[]\OT1/cmtt/m/n/10 Refer to the \OT1/cmtt/m/it/10 important equation $[]\OT1/cm
-r/m/n/10 1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 2[]$\OT1/cmtt/m/n/10 . Refer to []m
-portantEquationhttp://www.independentlearning.science/tiki/#importantEquationou
-
- []
-
-
-Overfull \hbox (31.74675pt too wide) in paragraph at lines 220--223
-\OT1/cmtt/m/n/10 want to prevent an equation from being numbered, use nonumber 
-as usual. 
- []
+l.220 to \href[importantEquation]
+                                 {the important equation}.  If you want to
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
 \openout4 = `out.pyg'.
 
@@ -1258,349 +1218,86 @@ as usual.
 
 (./_minted-out/7C628397118928A837B7ED65B97D57243720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-Overfull \hbox (15.99689pt too wide) in paragraph at lines 337--339
-\OT1/cmtt/m/n/10 The following blocks are designed to emphasize certain things 
-within
- []
-
-
-Overfull \hbox (18.74736pt too wide) in paragraph at lines 340--340
-[]\OT1/cmtt/m/n/10 The internet is the most important invention since gravity. 
-
- []
-
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/263EB162C53F878290857B6786247AB43720D176FEC7F33C74A859BD06D5DF8A
 .pygtex [11])
-LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 351.
-
-Overfull \hbox (15.24702pt too wide) in paragraph at lines 350--355
-[]\OT1/cmtt/m/n/10 Notice in the quote block we added an author attribution abo
-ve as
- []
-
-
-Overfull \hbox (1.98314pt too wide) in paragraph at lines 350--355
-\OT1/cmtt/m/n/10 an \OT1/cmtt/m/it/10 attribute \OT1/cmtt/m/n/10 of the quote b
-lock contents. Attribute lists always
- []
-
-
-Overfull \hbox (33.48286pt too wide) in paragraph at lines 350--355
-\OT1/cmtt/m/n/10 come \OT1/cmtt/m/it/10 just \OT1/cmtt/m/n/10 before the thing 
-they modify. In this case, we are modifying
- []
-
-
-Overfull \hbox (5.49698pt too wide) in paragraph at lines 350--355
-\OT1/cmtt/m/n/10 the "body" of the quote element, so it comes just before the b
-ody. 
- []
-
-
-Overfull \hbox (4.74712pt too wide) in paragraph at lines 356--359
-[]\OT1/cmtt/m/n/10 The next type of block is the sidenote. It is used to separa
-te
- []
-
-
-Overfull \hbox (15.99689pt too wide) in paragraph at lines 356--359
-\OT1/cmtt/m/n/10 a paragraph from the main text, perhaps because it is importan
-t. Or
- []
-
-Package mdframed Info: mdframed works in twoside mode on input line 360.
+Package mdframed Info: mdframed works in twoside mode on input line 359.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 360.
-
-Overfull \hbox (5.29715pt too wide) in paragraph at lines 360--363
-[]\OT1/cmtt/m/n/10 This content will be rendered off to the side of the documen
-t.
- []
-
-
-Overfull \hbox (21.04701pt too wide) in paragraph at lines 360--363
-\OT1/cmtt/m/n/10 You are allowed any amount of complex content here. An equatio
-n:
- []
-
+(mdframed)              on input line 359.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 365.
+(mdframed)              on input line 364.
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/70EC459C994B1AE22B44B946AD19BD933720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-Overfull \hbox (25.74693pt too wide) in paragraph at lines 376--380
-[]\OT1/cmtt/m/n/10 For more specialized blocks similar to sidenotes, use an adm
-onition
- []
-
-
-Overfull \hbox (10.74693pt too wide) in paragraph at lines 376--380
-\OT1/cmtt/m/n/10 instead. They look nicer and are more eye catching. Here are s
-ome
- []
-
-
-Overfull \hbox (5.49698pt too wide) in paragraph at lines 376--380
-\OT1/cmtt/m/n/10 examples; notice how again we use an attribute list to specify
- the
- []
-
-Package mdframed Info: mdframed works in twoside mode on input line 381.
+Package mdframed Info: mdframed works in twoside mode on input line 380.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 381.
+(mdframed)              on input line 380.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 384.
+(mdframed)              on input line 383.
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/81CA2899CEF07C1AA9A95384BB03136D3720D176FEC7F33C74A859BD06D5DF8A
 .pygtex [12])
-Package mdframed Info: mdframed works in twoside mode on input line 394.
+Package mdframed Info: mdframed works in twoside mode on input line 393.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 394.
+(mdframed)              on input line 393.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 397.
+(mdframed)              on input line 396.
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/F537B0042B64B99D45E8DA11D2CA96E53720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-Package mdframed Info: mdframed works in twoside mode on input line 407.
+Package mdframed Info: mdframed works in twoside mode on input line 406.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 407.
+(mdframed)              on input line 406.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 410.
+(mdframed)              on input line 409.
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/3B375ACC03A1D5375A1E5E30C1E7D2593720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-Package mdframed Info: mdframed works in twoside mode on input line 420.
+Package mdframed Info: mdframed works in twoside mode on input line 419.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 420.
+(mdframed)              on input line 419.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 423.
+(mdframed)              on input line 422.
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/3A2685DE81DC60DA51B3C9BAF7B66D533720D176FEC7F33C74A859BD06D5DF8A
-.pygtex)
-Overfull \hbox (9.99707pt too wide) in paragraph at lines 433--436
-[]\OT1/cmtt/m/n/10 If you're worried about all the wasted space in the HTML out
-put,
- []
+.pygtex) [13]
 
-
-Overfull \hbox (5.49698pt too wide) in paragraph at lines 433--436
-\OT1/cmtt/m/n/10 don't be! It's only wasted because I didn't put text between e
-ach
- []
-
-
-Overfull \hbox (2.275pt too wide) in paragraph at lines 433--436
-\OT1/cmtt/m/n/10 block. You would not normally have $\OT1/cmr/m/n/10 1 + 4$ \OT
-1/cmtt/m/n/10 of these things in a row. 
- []
-
-[13]
-Overfull \hbox (21.24684pt too wide) in paragraph at lines 437--443
-\OT1/cmtt/m/n/10 These next blocks are useful when you want to offer extra info
-rmation
- []
-
-
-Overfull \hbox (0.24702pt too wide) in paragraph at lines 437--443
-\OT1/cmtt/m/n/10 to the reader. In the case of a connection, that information m
-ay
- []
-
-
-Overfull \hbox (5.49698pt too wide) in paragraph at lines 437--443
-\OT1/cmtt/m/n/10 be more advanced than what the reader understands. In the case
- of
- []
-
-
-Overfull \hbox (10.74693pt too wide) in paragraph at lines 437--443
-\OT1/cmtt/m/n/10 an intuition, it's information that is technically contained i
-n the
- []
-
-
-Overfull \hbox (21.24684pt too wide) in paragraph at lines 437--443
-\OT1/cmtt/m/n/10 main text, but is a powerful/neat way of thinking about the ma
-terial.
- []
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 444.
+Package hyperref Warning: Suppressing link with empty target on input line 443.
 
 
 
-Package hyperref Warning: Suppressing link with empty target on input line 444.
+Package hyperref Warning: Suppressing link with empty target on input line 443.
 
 
-
-Overfull \hbox (5.49698pt too wide) in paragraph at lines 444--448
-\OT1/cmtt/m/n/10 http://www.independentlearning.science/tiki/Basics/Logic#: Mos
-tly
- []
-
-
-Overfull \hbox (14.21916pt too wide) in paragraph at lines 444--448
-\OT1/cmtt/m/n/10 only \OT1/cmtt/m/it/10 first-order \OT1/cmtt/m/n/10 logic will
- be used, but some \OT1/cmtt/m/it/10 second-order \OT1/cmtt/m/n/10 stuff is
- []
-
-
-Overfull \hbox (26.4968pt too wide) in paragraph at lines 444--448
-\OT1/cmtt/m/n/10 http://www.independentlearning.science/tiki/Basics/Fun#: And s
-o on... 
- []
-
-
-Overfull \hbox (5.49698pt too wide) in paragraph at lines 444--448
-\OT1/cmtt/m/n/10 A connection is useful when you have content connected to the 
-main
- []
-
-
-Overfull \hbox (47.49661pt too wide) in paragraph at lines 444--448
-\OT1/cmtt/m/n/10 text but which isn't super necessary, or requires more advance
-d techniques
- []
-
-
-Overfull \hbox (10.74693pt too wide) in paragraph at lines 444--448
-\OT1/cmtt/m/n/10 than the rest of the text. This is because connections are all
-owed
- []
-
-
-Overfull \hbox (31.74675pt too wide) in paragraph at lines 444--448
-\OT1/cmtt/m/n/10 to have their own prerequisites, in addition to the main doc's
- prereqs. 
- []
-
-Package mdframed Info: mdframed works in twoside mode on input line 449.
+Package mdframed Info: mdframed works in twoside mode on input line 448.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 449.
-
-Overfull \hbox (10.5471pt too wide) in paragraph at lines 449--457
-[]\OT1/cmtt/m/n/10 If you're viewing this full-screen on a computer, you'll not
-ice
- []
-
-
-Overfull \hbox (10.5471pt too wide) in paragraph at lines 449--457
-\OT1/cmtt/m/n/10 that unlike the other some other blocks we've seen, connection
-s
- []
-
-
-Overfull \hbox (26.29697pt too wide) in paragraph at lines 449--457
-\OT1/cmtt/m/n/10 are rendered across the full screen. In general, you should \O
-T1/cmtt/m/it/10 never
- []
-
-
-Overfull \hbox (47.29678pt too wide) in paragraph at lines 449--457
-\OT1/cmtt/m/n/10 or its size. This is because idoc has been designed to have pl
-uggable
- []
-
-
-Overfull \hbox (22.78313pt too wide) in paragraph at lines 449--457
-\OT1/cmtt/m/n/10 themes, and the web renderer creates \OT1/cmtt/m/it/10 respons
-ive \OT1/cmtt/m/n/10 html that is free
- []
-
-
-Overfull \hbox (31.54692pt too wide) in paragraph at lines 449--457
-\OT1/cmtt/m/n/10 to reorganize content to better match the devices size. Theref
-ore,
- []
-
-
-Overfull \hbox (15.79706pt too wide) in paragraph at lines 449--457
-\OT1/cmtt/m/n/10 whenever you refer to something, please please please use an I
-D. 
- []
-
+(mdframed)              on input line 448.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 459.
-
-Overfull \hbox (5.49698pt too wide) in paragraph at lines 460--470
-\OT1/cmtt/m/n/10 Connections are for when you want to connect with an outside i
-dea,
- []
-
-
-Overfull \hbox (52.74657pt too wide) in paragraph at lines 460--470
-\OT1/cmtt/m/n/10 but don't want to have this interesting connection create new 
-prerequisites
- []
-
-
-Overfull \hbox (21.24684pt too wide) in paragraph at lines 460--470
-\OT1/cmtt/m/n/10 for your doc. For example, in the article []on topology[], we 
-might want
- []
-
-
-Overfull \hbox (38.73282pt too wide) in paragraph at lines 460--470
-\OT1/cmtt/m/n/10 to talk about how is difficult to prove two things are \OT1/cm
-tt/m/it/10 not \OT1/cmtt/m/n/10 homeomorphic,
- []
-
-
-Overfull \hbox (5.49698pt too wide) in paragraph at lines 460--470
-\OT1/cmtt/m/n/10 and how the fundamental group is useful because of its status 
-as a
- []
-
-
-Overfull \hbox (26.4968pt too wide) in paragraph at lines 460--470
-\OT1/cmtt/m/n/10 topological invariant. However, we don't know if the readers a
-ctually
- []
-
-
-Overfull \hbox (21.24684pt too wide) in paragraph at lines 460--470
-\OT1/cmtt/m/n/10 know group theory. This would be the time you would use a conn
-ection
- []
-
-
-Overfull \hbox (5.49698pt too wide) in paragraph at lines 460--470
-\OT1/cmtt/m/n/10 -- group theory is not needed to understand homeomorphisms, bu
-t it
- []
-
-
-Overfull \hbox (30.99689pt too wide) in paragraph at lines 471--473
-[]\OT1/cmtt/m/n/10 When the site is complete, connections will start out open o
-r closed
- []
-
+(mdframed)              on input line 458.
 \openout4 = `out.pyg'.
 
 
@@ -1609,419 +1306,123 @@ r closed
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [15])
-Overfull \hbox (15.99689pt too wide) in paragraph at lines 521--532
-\OT1/cmtt/m/n/10 The determinant from a geometric point of view is used to talk
- about
- []
-
-
-Overfull \hbox (21.24684pt too wide) in paragraph at lines 521--532
-\OT1/cmtt/m/it/10 volume\OT1/cmtt/m/n/10 . If you grok this, then everything el
-se will fall into place.
- []
-
-
-Overfull \hbox (15.99689pt too wide) in paragraph at lines 521--532
-\OT1/cmtt/m/n/10 For example, the reason a linear transformation is invertible 
-if and
- []
-
-
-Overfull \hbox (12.48305pt too wide) in paragraph at lines 521--532
-\OT1/cmtt/m/n/10 only if its determinant is non-zero is because when it \OT1/cm
-tt/m/it/10 is \OT1/cmtt/m/n/10 zero, the
- []
-
-
-Overfull \hbox (27.24919pt too wide) in paragraph at lines 521--532
-\OT1/cmtt/m/n/10 map is going to map a set of basis vectors in your $\OML/cmm/m
-/it/10 n$\OT1/cmtt/m/n/10 -dimensional space
- []
-
-
-Overfull \hbox (2.05743pt too wide) in paragraph at lines 521--532
-\OT1/cmtt/m/n/10 into some smaller $\OML/cmm/m/it/10 m$\OT1/cmtt/m/n/10 -dimens
-ional space. This $\OML/cmm/m/it/10 m$\OT1/cmtt/m/n/10 -dimensional space
- []
-
-
-Overfull \hbox (6.24937pt too wide) in paragraph at lines 521--532
-\OT1/cmtt/m/n/10 has zero "volume" compared to the $\OML/cmm/m/it/10 n$\OT1/cmt
-t/m/n/10 -dimensional one, and so you're
- []
-
-
-Overfull \hbox (42.24666pt too wide) in paragraph at lines 521--532
-\OT1/cmtt/m/n/10 basically losing a whole dimension. There is no way to then ma
-p linearly
- []
-
-
-Overfull \hbox (10.74693pt too wide) in paragraph at lines 521--532
-\OT1/cmtt/m/n/10 back to the bigger space. It would be like trying to find a li
-near
- []
-
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/958DBEF84F653F5FA2A6E7D9F41A09733720D176FEC7F33C74A859BD06D5DF8A
 .pygtex [16])
-Overfull \hbox (25.74693pt too wide) in paragraph at lines 551--554
-[]\OT1/cmtt/m/n/10 examples and exercises are also a key way for people to lear
-n. The
- []
-
-
-Overfull \hbox (36.9967pt too wide) in paragraph at lines 551--554
-\OT1/cmtt/m/n/10 difference between the two is that essentially an exercise is 
-an example
- []
-
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/B1BE98EA17B505B20ED8EDEA286FF3443720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-Overfull \hbox (0.24702pt too wide) in paragraph at lines 575--577
-\OT1/cmtt/m/n/10 What is largest rational number that can be written as a fract
-ion
- []
-
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/C34A25024095B3022DFDC611E8BE26873720D176FEC7F33C74A859BD06D5DF8A
 .pygtex [17])
-./out.tex:588: Illegal parameter number in definition of \reserved@a.
-<to be read again> 
-                   }
-l.588 ...ttt{\href{http://www.example.com#}{this}}
-                                                   and appears like
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
 
-./out.tex:588: Illegal parameter number in definition of \Hy@tempa.
-<to be read again> 
-                   }
-l.588 ...ttt{\href{http://www.example.com#}{this}}
-                                                   and appears like
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
+./out.tex:603: Package keyval Error: important-equation undefined.
 
-./out.tex:588: Illegal parameter number in definition of \Hy@tempa.
-<to be read again> 
-                   }
-l.588 ...ttt{\href{http://www.example.com#}{this}}
-                                                   and appears like
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-./out.tex:588: Illegal parameter number in definition of \Hy@tempa.
-<to be read again> 
-                   }
-l.588 ...ttt{\href{http://www.example.com#}{this}}
-                                                   and appears like
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-
-Overfull \hbox (26.4968pt too wide) in paragraph at lines 586--599
-\OT1/cmtt/m/n/10 Links come in three flavours. The first is your standard link,
- called
- []
-
-
-Overfull \hbox (0.24702pt too wide) in paragraph at lines 586--599
-\OT1/cmtt/m/n/10 an out link or olink in idoc. It's written like []this[] and a
-ppears
- []
-
-
-Overfull \hbox (10.74693pt too wide) in paragraph at lines 586--599
-\OT1/cmtt/m/n/10 like []this[]. Note that the http(s):// part of the link is \O
-T1/cmtt/m/it/10 mandatory\OT1/cmtt/m/n/10 .
- []
-
-
-Overfull \hbox (21.24684pt too wide) in paragraph at lines 586--599
-\OT1/cmtt/m/n/10 Olinks are restricted in idoc to appear in only very specific 
-places,
- []
-
-
-Overfull \hbox (26.4968pt too wide) in paragraph at lines 586--599
-\OT1/cmtt/m/n/10 for example in furtherreading or bibliography blocks. This is 
-because
- []
-
-
-Overfull \hbox (12.48305pt too wide) in paragraph at lines 586--599
-\OT1/cmtt/m/n/10 the text of a doc should be \OT1/cmtt/m/it/10 self-contained\O
-T1/cmtt/m/n/10 . You should not \OT1/cmtt/m/it/10 need \OT1/cmtt/m/n/10 to
- []
-
-
-Overfull \hbox (31.74675pt too wide) in paragraph at lines 586--599
-\OT1/cmtt/m/n/10 go to an outside source to understand a concept. However, that
- doesn't
- []
-
-
-Overfull \hbox (5.49698pt too wide) in paragraph at lines 586--599
-\OT1/cmtt/m/n/10 mean that outside sources are useless -- Wikipedia is an excel
-lent
- []
-
-
-Overfull \hbox (5.49698pt too wide) in paragraph at lines 586--599
-\OT1/cmtt/m/n/10 reference for topics you've just learned about. It just means 
-you
- []
-
-
-Overfull \hbox (21.24684pt too wide) in paragraph at lines 586--599
-\OT1/cmtt/m/n/10 don't want to interrupt the flow of the document just anywhere
-. This
- []
-
-./out.tex:604: Missing \endcsname inserted.
-<to be read again> 
-                   \#
-l.604 ...rning.science/tiki/\#important-equation}}
-                                                  , and appear like
-The control sequence marked <to be read again> should
-not appear between \csname and \endcsname.
-
-
-LaTeX Warning: Reference `i' on page 18 undefined on input line 604.
-
-./out.tex:604: Extra \endcsname.
-\NR@setref ... \NR@@setref \csname r@#1\endcsname 
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
                                                   
-l.604 ...rning.science/tiki/\#important-equation}}
-                                                  , and appear like
-I'm ignoring this, since I wasn't doing a \csname.
-
-./out.tex:605: Missing \endcsname inserted.
-<to be read again> 
-                   \#
-l.605 ...arning.science/tiki/\#important-equation}
-                                                  .  That is, they are the \...
-The control sequence marked <to be read again> should
-not appear between \csname and \endcsname.
+l.603 \texttt{\href[important-equation]{this}}
+                                              , and appear like
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
 
-LaTeX Warning: Reference `i' on page 18 undefined on input line 605.
+./out.tex:604: Package keyval Error: important-equation undefined.
 
-./out.tex:605: Extra \endcsname.
-\NR@setref ... \NR@@setref \csname r@#1\endcsname 
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
                                                   
-l.605 ...arning.science/tiki/\#important-equation}
-                                                  .  That is, they are the \...
-I'm ignoring this, since I wasn't doing a \csname.
+l.604 \href[important-equation]
+                               {this}.  That is, they are the \texttt{\#} sy...
+
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
 
-Overfull \hbox (46.74675pt too wide) in paragraph at lines 600--607
-[]\OT1/cmtt/m/n/10 The second flavour is a link within the current doc, called 
-an internal
- []
+./out.tex:621: Package keyval Error: WTF undefined.
 
-
-Overfull \hbox (41.74678pt too wide) in paragraph at lines 600--607
-\OT1/cmtt/m/n/10 link or ilink. For example, when we used ref\OMS/cmtt/m/n/10 f
-g \OT1/cmtt/m/n/10 back in the Math section,
- []
-
-
-Overfull \hbox (0.24702pt too wide) in paragraph at lines 600--607
-\OT1/cmtt/m/n/10 we were using ilinks. Refering to anything on the page which h
-as
- []
-
-
-Overfull \hbox (315.60542pt too wide) in paragraph at lines 600--607
-\OT1/cmtt/m/n/10 an ID is an ilink. They are written like []mportant-equationht
-tp://www.independentlearning.science/tiki/#important-equation,
- []
-
-
-Overfull \hbox (179.10661pt too wide) in paragraph at lines 600--607
-\OT1/cmtt/m/n/10 and appear like []mportant-equationhttp://www.independentlearn
-ing.science/tiki/#important-equationt
- []
-
-
-Overfull \hbox (9.99707pt too wide) in paragraph at lines 608--620
-[]\OT1/cmtt/m/n/10 The final flavour is the back link, or blink. This is a link
- to
- []
-
-
-Overfull \hbox (15.99689pt too wide) in paragraph at lines 608--620
-\OT1/cmtt/m/n/10 something contained within the prerequisite tree of the curren
-t doc.
- []
-
-
-Overfull \hbox (125.99599pt too wide) in paragraph at lines 608--620
-\OT1/cmtt/m/n/10 In their most general form, they are written like <</Name/Of/A
-rticle#id-in-article>>\OMS/cmtt/m/n/10 f\OT1/cmtt/m/n/10 this
- []
-
-
-Overfull \hbox (15.74695pt too wide) in paragraph at lines 608--620
-\OT1/cmtt/m/n/10 right here\OMS/cmtt/m/n/10 g \OT1/cmtt/m/n/10 and display like
- []this right here[]. However, the # symbol
- []
-
-
-Overfull \hbox (0.24702pt too wide) in paragraph at lines 608--620
-\OT1/cmtt/m/n/10 and the ID following it can be left out if you just want to re
-fer
- []
-
-
-Overfull \hbox (10.74693pt too wide) in paragraph at lines 608--620
-\OT1/cmtt/m/n/10 to the article as a whole. Notice that you are not allowed to 
-link
- []
-
-
-Overfull \hbox (15.99689pt too wide) in paragraph at lines 608--620
-\OT1/cmtt/m/n/10 to another article that isn't within the prerequisite tree fro
-m just
- []
-
-
-Overfull \hbox (47.49661pt too wide) in paragraph at lines 608--620
-\OT1/cmtt/m/n/10 anywhere. This is by design; articles should only depend on th
-e knowledge
- []
-
-
-Overfull \hbox (21.24684pt too wide) in paragraph at lines 608--620
-\OT1/cmtt/m/n/10 from previous articles. This restriction allows many of the fe
-atures
- []
-
-
-Overfull \hbox (21.24684pt too wide) in paragraph at lines 608--620
-\OT1/cmtt/m/n/10 that the ILS website hopes to deliver, such as automatic prere
-quisite
- []
-
-./out.tex:622: Missing \endcsname inserted.
-<to be read again> 
-                   \#
-l.622 ...www.independentlearning.science/tiki/\#}}
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.621 ...the text inside the \texttt{\href[WTF]{}}
                                                    as the display
-The control sequence marked <to be read again> should
-not appear between \csname and \endcsname.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
 
-LaTeX Warning: Reference `\endcsname ' on page 18 undefined on input line 622.
+Package hyperref Warning: Suppressing link with empty target on input line 621.
 
 
-Overfull \hbox (9.99707pt too wide) in paragraph at lines 621--624
-[]\OT1/cmtt/m/n/10 In all types of links, you are free to leave out the text in
-side
- []
+
+Package hyperref Warning: Suppressing empty link on input line 627.
 
 
-Overfull \hbox (157.60692pt too wide) in paragraph at lines 621--624
-\OT1/cmtt/m/n/10 the \OMS/cmtt/m/n/10 fg\OT1/cmtt/m/n/10 . This will just use t
-he text inside the []http://www.independentlearning.science/tiki/#
- []
+Package hyperref Warning: Suppressing empty link on input line 629.
 
-
-Overfull \hbox (0.24702pt too wide) in paragraph at lines 621--624
-\OT1/cmtt/m/n/10 as the display text instead. Normally this is not what you wan
-t,
- []
-
-[18]
-Overfull \hbox (10.74693pt too wide) in paragraph at lines 625--627
-\OT1/cmtt/m/n/10 We can embed YouTube videos if we think they are important. Pl
-ease
- []
-
-
-Package hyperref Warning: Suppressing empty link on input line 628.
-
-
-Package hyperref Warning: Suppressing empty link on input line 630.
-
-
-Overfull \hbox (0.24702pt too wide) in paragraph at lines 632--633
-\OT1/cmtt/m/n/10 That's about it for the basic syntax. We can fix the rest late
-r. 
- []
-
-[19]
+[18] [19]
 \tf@toc=\write8
 \openout8 = `out.toc'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 634.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 634.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 633.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 633.
  (./out.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 634.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 634.
-Package rerunfilecheck Info: File `out.out' has not changed.
-(rerunfilecheck)             Checksum: 35FAB6174C48438874856D93AE8BB286;822.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 633.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 633.
 
+
+Package rerunfilecheck Warning: File `out.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `out.out':
+(rerunfilecheck)             Before: 35FAB6174C48438874856D93AE8BB286;822
+(rerunfilecheck)             After:  B7B5FC608C80F0A699CF382D477B18C2;875.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 
-LaTeX Warning: There were undefined references.
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
 runsystem(rm out.pyg)...executed.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 634.
- )
-(\end occurred inside a group at level 3)
-
-### simple group (level 3) entered at line 622 ({)
-### simple group (level 2) entered at line 604 ({)
-### simple group (level 1) entered at line 211 ({)
-### bottom level
-(\end occurred when \ifmmode on line 622 was incomplete)
-(\end occurred when \ifmmode on line 604 was incomplete)
-(\end occurred when \ifmmode on line 211 was incomplete) 
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 633.
+ ) 
 Here is how much of TeX's memory you used:
- 20846 strings out of 493013
- 368844 string characters out of 6135682
- 507357 words of memory out of 5000000
- 24061 multiletter control sequences out of 15000+600000
- 14579 words of font info for 56 fonts, out of 8000000 for 9000
+ 20848 strings out of 493013
+ 368863 string characters out of 6135682
+ 507293 words of memory out of 5000000
+ 24063 multiletter control sequences out of 15000+600000
+ 14411 words of font info for 55 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 43i,11n,35p,11395b,617s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/font
-s/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmitt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
-amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/t
-exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl10.pfb></usr/share/texlive
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf
--dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmtt10.pfb>
-Output written on out.pdf (19 pages, 229589 bytes).
+ 43i,12n,35p,11372b,567s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/te
+xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmsl10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/tex
+live/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on out.pdf (19 pages, 227660 bytes).
 PDF statistics:
- 277 PDF objects out of 1000 (max. 8388607)
- 236 compressed objects within 3 object streams
- 58 named destinations out of 1000 (max. 500000)
+ 278 PDF objects out of 1000 (max. 8388607)
+ 238 compressed objects within 3 object streams
+ 59 named destinations out of 1000 (max. 500000)
  121 words of extra memory for PDF output out of 10000 (max. 10000000)
 
