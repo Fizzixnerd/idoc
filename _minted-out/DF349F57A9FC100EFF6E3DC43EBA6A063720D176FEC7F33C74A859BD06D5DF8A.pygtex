@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+ @math
+ \PYGZsh{}Look Ma\PYGZsq{}, I Have Equations!
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ f(x) = \PYGZbs{}int\PYGZus{}x\PYGZca{}\PYGZbs{}infty g(t) \PYGZbs{}mathrm\PYGZob{}d\PYGZcb{}t
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ [[\PYGZsh{}eqnFDefn]]\PYGZob{}Basic Math\PYGZcb{}
+\end{Verbatim}

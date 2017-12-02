@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Debian) (preloaded format=pdflatex 2017.9.28)  29 NOV 2017 10:15
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Debian) (preloaded format=pdflatex 2017.9.28)  2 DEC 2017 14:29
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -474,9 +474,154 @@ File: pdftex.def 2017/01/12 v0.06k Graphics/color for pdfTeX
 \Gin@req@height=\dimen151
 \Gin@req@width=\dimen152
 )
+(/usr/share/texlive/texmf-dist/tex/latex/minted/minted.sty
+Package: minted 2016/10/31 v2.4.1 Yet another Pygments shim for LaTeX
+
+(/usr/share/texlive/texmf-dist/tex/latex/fvextra/fvextra.sty
+Package: fvextra 2016/09/02 v1.2.1 fvextra - extensions and patches for fancyvr
+b
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2017/01/02 v2.4 e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count150
+)
+(/usr/share/texlive/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+Package: fancyvrb 2008/02/07
+
+Style option: `fancyvrb' v2.7a, with DG/SPQR fixes, and firstline=lastline fix 
+<2008/02/07> (tvz)
+\FV@CodeLineNo=\count151
+\FV@InFile=\read2
+\FV@TabBox=\box29
+\c@FancyVerbLine=\count152
+\FV@StepNumber=\count153
+\FV@OutFile=\write4
+)
+(/usr/share/texlive/texmf-dist/tex/latex/upquote/upquote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+)
+(/usr/share/texlive/texmf-dist/tex/latex/lineno/lineno.sty
+Package: lineno 2005/11/02 line numbers on paragraphs v4.41
+\linenopenalty=\count154
+\output=\toks23
+\linenoprevgraf=\count155
+\linenumbersep=\dimen153
+\linenumberwidth=\dimen154
+\c@linenumber=\count156
+\c@pagewiselinenumber=\count157
+\c@LN@truepage=\count158
+\c@internallinenumber=\count159
+\c@internallinenumbers=\count160
+\quotelinenumbersep=\dimen155
+\bframerule=\dimen156
+\bframesep=\dimen157
+\bframebox=\box30
+LaTeX Info: Redefining \\ on input line 3056.
+)
+\c@FV@TrueTabGroupLevel=\count161
+\c@FV@TrueTabCounter=\count162
+\FV@TabBox@Group=\box31
+\FV@TmpLength=\skip186
+\c@FV@HighlightLinesStart=\count163
+\c@FV@HighlightLinesStop=\count164
+\FV@BreakIndent=\dimen158
+\FV@BreakSymbolSepLeft=\dimen159
+\FV@BreakSymbolSepRight=\dimen160
+\FV@BreakSymbolIndentLeft=\dimen161
+\FV@BreakSymbolIndentRight=\dimen162
+\c@FancyVerbLineBreakLast=\count165
+\FV@LineBox=\box32
+\FV@LineIndentBox=\box33
+)
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count166
+\float@exts=\toks24
+\float@box=\box34
+\@float@everytoks=\toks25
+\@floatcapt=\box35
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2014/10/28 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count167
+\calc@Bcount=\count168
+\calc@Adimen=\dimen163
+\calc@Bdimen=\dimen164
+\calc@Askip=\skip187
+\calc@Bskip=\skip188
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count169
+\calc@Cskip=\skip189
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/shellesc.sty
+Package: shellesc 2016/06/07 v0.02a unified shell escape interface for LaTeX
+Package shellesc Info: Unrestricted shell escape enabled on input line 67.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/ifplatform/ifplatform.sty
+Package: ifplatform 2010/10/22 v0.4 Testing for the operating system
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/catchfile.sty
+Package: catchfile 2016/05/16 v1.7 Catch the contents of a file (HO)
+)
+runsystem(uname -s > "out.w18")...executed.
+
+ (./out.w18)
+runsystem(rm -- "out.w18")...executed.
+
+) (/usr/share/texlive/texmf-dist/tex/generic/xstring/xstring.sty
+(/usr/share/texlive/texmf-dist/tex/generic/xstring/xstring.tex
+\@xs@message=\write5
+\integerpart=\count170
+\decimalpart=\count171
+)
+Package: xstring 2013/10/13  v1.7c  String manipulations (C Tellechea)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/framed/framed.sty
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip190
+\fb@frw=\dimen165
+\fb@frh=\dimen166
+)
+\minted@appexistsfile=\read3
+\minted@bgbox=\box36
+\minted@code=\write6
+\c@minted@FancyVerbLineTemp=\count172
+\c@minted@pygmentizecounter=\count173
+\@float@every@listing=\toks26
+\c@listing=\count174
+)
+runsystem(mkdir -p _minted-out)...executed.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Package option `usenames' ignored on input line 216.
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/dvipsnam.def
+File: dvipsnam.def 2016/06/17 v3.0m Driver-dependent file (DPC,SPQR)
+))
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2016/11/05 v2.16a AMS math features
-\@mathmargin=\skip186
+\@mathmargin=\skip191
 
 For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
@@ -484,65 +629,65 @@ Package: amstext 2000/06/29 v2.01 AMS text
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
-\@emptytoks=\toks23
-\ex@=\dimen153
+\@emptytoks=\toks27
+\ex@=\dimen167
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
-\pmbraise@=\dimen154
+\pmbraise@=\dimen168
 )
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2016/03/08 v2.02 operator names
 )
-\inf@bad=\count150
+\inf@bad=\count175
 LaTeX Info: Redefining \frac on input line 213.
-\uproot@=\count151
-\leftroot@=\count152
+\uproot@=\count176
+\leftroot@=\count177
 LaTeX Info: Redefining \overline on input line 375.
-\classnum@=\count153
-\DOTSCASE@=\count154
+\classnum@=\count178
+\DOTSCASE@=\count179
 LaTeX Info: Redefining \ldots on input line 472.
 LaTeX Info: Redefining \dots on input line 475.
 LaTeX Info: Redefining \cdots on input line 596.
-\Mathstrutbox@=\box29
-\strutbox@=\box30
-\big@size=\dimen155
+\Mathstrutbox@=\box37
+\strutbox@=\box38
+\big@size=\dimen169
 LaTeX Font Info:    Redeclaring font encoding OML on input line 712.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 713.
-\macc@depth=\count155
-\c@MaxMatrixCols=\count156
+\macc@depth=\count180
+\c@MaxMatrixCols=\count181
 \dotsspace@=\muskip11
-\c@parentequation=\count157
-\dspbrk@lvl=\count158
-\tag@help=\toks24
-\row@=\count159
-\column@=\count160
-\maxfields@=\count161
-\andhelp@=\toks25
-\eqnshift@=\dimen156
-\alignsep@=\dimen157
-\tagshift@=\dimen158
-\tagwidth@=\dimen159
-\totwidth@=\dimen160
-\lineht@=\dimen161
-\@envbody=\toks26
-\multlinegap=\skip187
-\multlinetaggap=\skip188
-\mathdisplay@stack=\toks27
+\c@parentequation=\count182
+\dspbrk@lvl=\count183
+\tag@help=\toks28
+\row@=\count184
+\column@=\count185
+\maxfields@=\count186
+\andhelp@=\toks29
+\eqnshift@=\dimen170
+\alignsep@=\dimen171
+\tagshift@=\dimen172
+\tagwidth@=\dimen173
+\totwidth@=\dimen174
+\lineht@=\dimen175
+\@envbody=\toks30
+\multlinegap=\skip192
+\multlinetaggap=\skip193
+\mathdisplay@stack=\toks31
 LaTeX Info: Redefining \[ on input line 2817.
 LaTeX Info: Redefining \] on input line 2818.
 )
 (/usr/share/texlive/texmf-dist/tex/latex/amscls/amsthm.sty
 Package: amsthm 2015/03/04 v2.20.2
-\thm@style=\toks28
-\thm@bodyfont=\toks29
-\thm@headfont=\toks30
-\thm@notefont=\toks31
-\thm@headpunct=\toks32
-\thm@preskip=\skip189
-\thm@postskip=\skip190
-\thm@headsep=\skip191
-\dth@everypar=\toks33
+\thm@style=\toks32
+\thm@bodyfont=\toks33
+\thm@headfont=\toks34
+\thm@notefont=\toks35
+\thm@headpunct=\toks36
+\thm@preskip=\skip194
+\thm@postskip=\skip256
+\thm@headsep=\skip257
+\dth@everypar=\toks37
 )
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
@@ -553,11 +698,250 @@ Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSb=\mathgroup5
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
-)) (./out.aux
+))
+(/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
+Package: mdframed 2013/07/01 1.9b: mdframed
 
-LaTeX Warning: Label `importantEquation' multiply defined.
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2016/11/21 v6760 L3 programming layer (loader) 
 
+(/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3-code.tex
+Package: expl3 2016/11/21 v6760 L3 programming layer (code)
+L3 Module: l3bootstrap 2016/06/13 v6596 L3 Bootstrap code
+L3 Module: l3names 2016/10/13 v6722 L3 Namespace for primitives
+L3 Module: l3basics 2016/09/01 v6696 L3 Basic definitions
+L3 Module: l3expan 2016/08/19 v6684 L3 Argument expansion
+L3 Module: l3tl 2016/08/19 v6692 L3 Token lists
+L3 Module: l3str 2016/08/19 v6692 L3 Strings
+L3 Module: l3seq 2016/08/19 v6685 L3 Sequences and stacks
+L3 Module: l3int 2016/09/07 v6700 L3 Integers
+\c_max_int=\count187
+\l_tmpa_int=\count188
+\l_tmpb_int=\count189
+\g_tmpa_int=\count190
+\g_tmpb_int=\count191
+L3 Module: l3quark 2016/08/19 v6685 L3 Quarks
+L3 Module: l3prg 2016/08/18 v6679 L3 Control structures
+\g__prg_map_int=\count192
+L3 Module: l3clist 2016/08/19 v6685 L3 Comma separated lists
+L3 Module: l3token 2016/09/01 v6695 L3 Experimental token manipulation
+L3 Module: l3prop 2016/08/19 v6685 L3 Property lists
+L3 Module: l3msg 2016/08/19 v6691 L3 Messages
+L3 Module: l3file 2016/08/19 v6685 L3 File and I/O operations
+\l_iow_line_count_int=\count193
+\l__iow_target_count_int=\count194
+\l__iow_current_line_int=\count266
+\l__iow_current_word_int=\count267
+\l__iow_current_indentation_int=\count268
+L3 Module: l3skip 2016/08/19 v6692 L3 Dimensions and skips
+\c_zero_dim=\dimen176
+\c_max_dim=\dimen177
+\l_tmpa_dim=\dimen178
+\l_tmpb_dim=\dimen179
+\g_tmpa_dim=\dimen180
+\g_tmpb_dim=\dimen181
+\c_zero_skip=\skip258
+\c_max_skip=\skip259
+\l_tmpa_skip=\skip260
+\l_tmpb_skip=\skip261
+\g_tmpa_skip=\skip262
+\g_tmpb_skip=\skip263
+\c_zero_muskip=\muskip12
+\c_max_muskip=\muskip13
+\l_tmpa_muskip=\muskip14
+\l_tmpb_muskip=\muskip15
+\g_tmpa_muskip=\muskip16
+\g_tmpb_muskip=\muskip17
+L3 Module: l3keys 2016/09/21 v6711 L3 Key-value interfaces
+\l_keys_choice_int=\count269
+L3 Module: l3fp 2016/11/21 v6761 L3 Floating points
+\c__fp_leading_shift_int=\count270
+\c__fp_middle_shift_int=\count271
+\c__fp_trailing_shift_int=\count272
+\c__fp_big_leading_shift_int=\count273
+\c__fp_big_middle_shift_int=\count274
+\c__fp_big_trailing_shift_int=\count275
+\c__fp_Bigg_leading_shift_int=\count276
+\c__fp_Bigg_middle_shift_int=\count277
+\c__fp_Bigg_trailing_shift_int=\count278
+L3 Module: l3box 2016/08/19 v6685 L3 Experimental boxes
+\c_empty_box=\box39
+\l_tmpa_box=\box40
+\l_tmpb_box=\box41
+\g_tmpa_box=\box42
+\g_tmpb_box=\box43
+L3 Module: l3coffins 2016/08/19 v6685 L3 Coffin code layer
+\l__coffin_internal_box=\box44
+\l__coffin_internal_dim=\dimen182
+\l__coffin_offset_x_dim=\dimen183
+\l__coffin_offset_y_dim=\dimen184
+\l__coffin_x_dim=\dimen185
+\l__coffin_y_dim=\dimen186
+\l__coffin_x_prime_dim=\dimen187
+\l__coffin_y_prime_dim=\dimen188
+\c_empty_coffin=\box45
+\l__coffin_aligned_coffin=\box46
+\l__coffin_aligned_internal_coffin=\box47
+\l_tmpa_coffin=\box48
+\l_tmpb_coffin=\box49
+\l__coffin_display_coffin=\box50
+\l__coffin_display_coord_coffin=\box51
+\l__coffin_display_pole_coffin=\box52
+\l__coffin_display_offset_dim=\dimen189
+\l__coffin_display_x_dim=\dimen190
+\l__coffin_display_y_dim=\dimen191
+L3 Module: l3color 2016/06/13 v6596 L3 Experimental color support
+L3 Module: l3sys 2015/09/25 v6087 L3 Experimental system/runtime functions
+L3 Module: l3candidates 2016/08/19 v6688 L3 Experimental additions to l3kernel
+\l__box_top_dim=\dimen192
+\l__box_bottom_dim=\dimen193
+\l__box_left_dim=\dimen194
+\l__box_right_dim=\dimen256
+\l__box_top_new_dim=\dimen257
+\l__box_bottom_new_dim=\dimen258
+\l__box_left_new_dim=\dimen259
+\l__box_right_new_dim=\dimen260
+\l__box_internal_box=\box53
+\l__coffin_bounding_shift_dim=\dimen261
+\l__coffin_left_corner_dim=\dimen262
+\l__coffin_right_corner_dim=\dimen263
+\l__coffin_bottom_corner_dim=\dimen264
+\l__coffin_top_corner_dim=\dimen265
+\l__coffin_scaled_total_height_dim=\dimen266
+\l__coffin_scaled_width_dim=\dimen267
+L3 Module: l3luatex 2016/08/18 v6679 L3 Experimental LuaTeX-specific functions
 )
+(/usr/share/texlive/texmf-dist/tex/latex/l3kernel/l3pdfmode.def
+File: l3pdfmode.def 2016/08/18 v6679 L3 Experimental driver: PDF mode
+\l__driver_color_stack_int=\count279
+\l__driver_tmp_box=\box54
+))
+Package: xparse 2016/11/21 v6760 L3 Experimental document command parser
+\l__xparse_current_arg_int=\count280
+\l__xparse_m_args_int=\count281
+\l__xparse_mandatory_args_int=\count282
+\l__xparse_processor_int=\count283
+\l__xparse_v_nesting_int=\count284
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/zref-abspage.sty
+Package: zref-abspage 2016/05/21 v2.26 Module abspage for zref (HO)
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/zref-base.sty
+Package: zref-base 2016/05/21 v2.26 Module base for zref (HO)
+Package zref Info: New property list: main on input line 759.
+Package zref Info: New property: default on input line 760.
+Package zref Info: New property: page on input line 761.
+)
+\c@abspage=\count285
+Package zref Info: New property: abspage on input line 62.
+)
+\mdf@templength=\skip264
+\c@mdf@globalstyle@cnt=\count286
+\mdf@skipabove@length=\skip265
+\mdf@skipbelow@length=\skip266
+\mdf@leftmargin@length=\skip267
+\mdf@rightmargin@length=\skip268
+\mdf@innerleftmargin@length=\skip269
+\mdf@innerrightmargin@length=\skip270
+\mdf@innertopmargin@length=\skip271
+\mdf@innerbottommargin@length=\skip272
+\mdf@splittopskip@length=\skip273
+\mdf@splitbottomskip@length=\skip274
+\mdf@outermargin@length=\skip275
+\mdf@innermargin@length=\skip276
+\mdf@linewidth@length=\skip277
+\mdf@innerlinewidth@length=\skip278
+\mdf@middlelinewidth@length=\skip279
+\mdf@outerlinewidth@length=\skip280
+\mdf@roundcorner@length=\skip281
+\mdf@footenotedistance@length=\skip282
+\mdf@userdefinedwidth@length=\skip283
+\mdf@needspace@length=\skip284
+\mdf@frametitleaboveskip@length=\skip285
+\mdf@frametitlebelowskip@length=\skip286
+\mdf@frametitlerulewidth@length=\skip287
+\mdf@frametitleleftmargin@length=\skip288
+\mdf@frametitlerightmargin@length=\skip289
+\mdf@shadowsize@length=\skip290
+\mdf@extratopheight@length=\skip291
+\mdf@subtitleabovelinewidth@length=\skip292
+\mdf@subtitlebelowlinewidth@length=\skip293
+\mdf@subtitleaboveskip@length=\skip294
+\mdf@subtitlebelowskip@length=\skip295
+\mdf@subtitleinneraboveskip@length=\skip296
+\mdf@subtitleinnerbelowskip@length=\skip297
+\mdf@subsubtitleabovelinewidth@length=\skip298
+\mdf@subsubtitlebelowlinewidth@length=\skip299
+\mdf@subsubtitleaboveskip@length=\skip300
+\mdf@subsubtitlebelowskip@length=\skip301
+\mdf@subsubtitleinneraboveskip@length=\skip302
+\mdf@subsubtitleinnerbelowskip@length=\skip303
+
+(/usr/share/texlive/texmf-dist/tex/latex/mdframed/md-frame-0.mdf
+File: md-frame-0.mdf 2013/07/01\ 1.9b: md-frame-0
+)
+\mdf@frametitlebox=\box55
+\mdf@footnotebox=\box56
+\mdf@splitbox@one=\box57
+\mdf@splitbox@two=\box58
+\mdf@splitbox@save=\box59
+\mdfsplitboxwidth=\skip304
+\mdfsplitboxtotalwidth=\skip305
+\mdfsplitboxheight=\skip306
+\mdfsplitboxdepth=\skip307
+\mdfsplitboxtotalheight=\skip308
+\mdfframetitleboxwidth=\skip309
+\mdfframetitleboxtotalwidth=\skip310
+\mdfframetitleboxheight=\skip311
+\mdfframetitleboxdepth=\skip312
+\mdfframetitleboxtotalheight=\skip313
+\mdffootnoteboxwidth=\skip314
+\mdffootnoteboxtotalwidth=\skip315
+\mdffootnoteboxheight=\skip316
+\mdffootnoteboxdepth=\skip317
+\mdffootnoteboxtotalheight=\skip318
+\mdftotallinewidth=\skip319
+\mdfboundingboxwidth=\skip320
+\mdfboundingboxtotalwidth=\skip321
+\mdfboundingboxheight=\skip322
+\mdfboundingboxdepth=\skip323
+\mdfboundingboxtotalheight=\skip324
+\mdf@freevspace@length=\skip325
+\mdf@horizontalwidthofbox@length=\skip326
+\mdf@verticalmarginwhole@length=\skip327
+\mdf@horizontalspaceofbox=\skip328
+\mdfsubtitleheight=\skip329
+\mdfsubsubtitleheight=\skip330
+\c@mdfcountframes=\count287
+
+****** mdframed patching \endmdf@trivlist
+
+****** -- success******
+
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \newmdtheoremenv with sig. 'O{} m o m o ' on line 601.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \mdtheorem with sig. ' O{} m o m o ' on line 701.
+.................................................
+\mdf@envdepth=\count288
+\c@mdf@env@i=\count289
+\c@mdf@env@ii=\count290
+\c@mdf@zref@counter=\count291
+Package zref Info: New property: mdf@pagevalue on input line 895.
+)
+\c@Theorem=\count292
+\c@Definition=\count293
+runsystem(which pygmentize && touch out.aex)...executed.
+
+runsystem(rm out.aex)...executed.
+
+ (./out.aux)
 \openout1 = `out.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 1.
@@ -574,15 +958,16 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 1.
 LaTeX Font Info:    ... okay on input line 1.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 1.
 LaTeX Font Info:    ... okay on input line 1.
-\AtBeginShipoutBox=\box31
+\AtBeginShipoutBox=\box60
 Package hyperref Info: Link coloring OFF on input line 1.
- (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 
 (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
-\c@section@level=\count162
+\c@section@level=\count294
 )
 Redoing nameref's sectioning
 Redoing nameref's label
@@ -591,23 +976,23 @@ LaTeX Info: Redefining \ref on input line 1.
 LaTeX Info: Redefining \pageref on input line 1.
 LaTeX Info: Redefining \nameref on input line 1.
 (./out.out) (./out.out)
-\@outlinefile=\write4
-\openout4 = `out.out'.
+\@outlinefile=\write7
+\openout7 = `out.out'.
 
 
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count163
-\scratchdimen=\dimen162
-\scratchbox=\box32
-\nofMPsegments=\count164
-\nofMParguments=\count165
-\everyMPshowfont=\toks34
-\MPscratchCnt=\count166
-\MPscratchDim=\dimen163
-\MPnumerator=\count167
-\makeMPintoPDFobject=\count168
-\everyMPtoPDFconversion=\toks35
+\scratchcounter=\count295
+\scratchdimen=\dimen268
+\scratchbox=\box61
+\nofMPsegments=\count296
+\nofMParguments=\count297
+\everyMPshowfont=\toks38
+\MPscratchCnt=\count298
+\MPscratchDim=\dimen269
+\MPnumerator=\count299
+\makeMPintoPDFobject=\count300
+\everyMPtoPDFconversion=\toks39
 ) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
 
@@ -642,6 +1027,15 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 Package hyperref Warning: Suppressing link with empty target on input line 1.
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 1--3
+
+ []
+
+
+Package hyperref Warning: Difference (2) between bookmark levels is greater 
+(hyperref)                than one, level fixed on input line 3.
+
 ./out.tex:5: You can't use `\spacefactor' in math mode.
 \@->\spacefactor 
                  \@m {}
@@ -653,110 +1047,73 @@ If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
 Missing character: There is no è in font cmex10!
+Package mdframed Info: mdframed works in twoside mode on input line 11.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 11.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 16.
+[3] [4]
+\openout4 = `out.pyg'.
 
-LaTeX Warning: Reference `here' on page 3 undefined on input line 13.
+ (./_minted-out/default-pyg-prefix.pygstyle)
+(./_minted-out/default.pygstyle)
+(./_minted-out/C6B08C34E0B628DFC6903A65F0D59CDA3720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+\openout4 = `out.pyg'.
 
-[3]
 
-LaTeX Warning: Reference `Haskell programming language' on page 4 undefined on 
-input line 59.
+(./_minted-out/A85ED484E6A318230FF4F02A737538EB3720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+\openout4 = `out.pyg'.
 
-[4]
 
-./out.tex:86: LaTeX Error: \verb ended by end of line.
+(./_minted-out/C035818579AE669E09380E6027ABEA5A3720D176FEC7F33C74A859BD06D5DF8A
+.pygtex [5])
+./out.tex:127: Missing \endcsname inserted.
+<to be read again> 
+                   \#
+l.127 ...ependentlearning.science/tiki/\#secLinks}
+                                                  .
+The control sequence marked <to be read again> should
+not appear between \csname and \endcsname.
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
+
+LaTeX Warning: Reference `s' on page 6 undefined on input line 127.
+
+./out.tex:127: Extra \endcsname.
+\NR@setref ... \NR@@setref \csname r@#1\endcsname 
                                                   
-l.86 \verb`I am a paragraph!  Hear me roar!
-                                           
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+l.127 ...ependentlearning.science/tiki/\#secLinks}
+                                                  .
+I'm ignoring this, since I wasn't doing a \csname.
 
 
-./out.tex:92: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.92 \verb`I am a paragraph!  Hear me roar!
-                                           
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
-./out.tex:109: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.109 ...n be given an identifier using the syntax
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:110: You can't use `macro parameter character #' in horizontal mode.
-l.110 `[[#
-          idName]]`.  This immediately follows the thing you wish to
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-
-LaTeX Warning: Reference `section on links' on page 5 undefined on input line 1
-13.
-
-
-Overfull \hbox (89.30254pt too wide) in paragraph at lines 109--114
-[][]\OT1/cmtt/m/n/10 Nearly everything in idoc can be given an identifier using
- the syntax\OT1/cmr/m/n/10 `[[idName]]`.
+Overfull \hbox (229.22307pt too wide) in paragraph at lines 126--134
+[]\OT1/cmr/m/n/10 To see how to re-fer to IDs and link to them, check out the [
+]ecLinkshttp://www.independentlearning.science/tiki/#secLinksLists
  []
 
-
-./out.tex:121: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.121 ...list.  It can contain paragraph contents.
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-[5]
-
-./out.tex:125: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.125 ...enumerate}\verb`.This is a numbered list.
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+\openout4 = `out.pyg'.
 
 
-./out.tex:129: LaTeX Error: \verb ended by end of line.
+(./_minted-out/83F27C74F2BF2B9CD6CCB1BA37FDE0C83720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+\openout4 = `out.pyg'.
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.129 ...is is a list where the items have labels.
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
 
-./out.tex:146: You can't use `\spacefactor' in math mode.
+(./_minted-out/2591C9690142FF901AC5BB098161533C3720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/3FA9171070A446DE38DCFE1D4F2E251E3720D176FEC7F33C74A859BD06D5DF8A
+.pygtex [6])
+./out.tex:172: You can't use `\spacefactor' in math mode.
 \@->\spacefactor 
                  \@m {}
-l.146 ...ne math is done just using normal $\LaTeX
+l.172 ...ne math is done just using normal $\LaTeX
                                                   $ syntax by doing enclosing
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -764,74 +1121,24 @@ If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
 Missing character: There is no è in font cmex10!
+\openout4 = `out.pyg'.
 
-./out.tex:150: LaTeX Error: \verb ended by end of line.
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.150 ...t_x^\infty g(t) \mathrm{d}t\]\verb` @math
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:151: You can't use `macro parameter character #' in horizontal mode.
-l.151  #
-        Look Ma', I Have Equations!
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:153: Missing $ inserted.
-<inserted text> 
-                $
-l.153  f(x) = \int
-                  _x^\infty g(t) \mathrm{d}t
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:155: You can't use `macro parameter character #' in math mode.
-l.155  [[#
-          eqnFDefn]]{Basic Math}`Note that that $d$ will not be upright as i...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 156
+(./_minted-out/DF349F57A9FC100EFF6E3DC43EBA6A063720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 186
 .
-LaTeX Font Info:    No file OMScmtt.fd. on input line 156.
+LaTeX Font Info:    No file OMScmtt.fd. on input line 186.
+
 
 LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
-(Font)              for symbol `textbraceleft' on input line 156.
+(Font)              for symbol `textbraceleft' on input line 186.
 
-./out.tex:159: Missing $ inserted.
-<inserted text> 
-                $
-l.159 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-
-Overfull \hbox (1024.24025pt too wide) in paragraph at lines 150--159
-[] \OT1/cmtt/m/n/10 @math\OT1/cmr/m/n/10 Look Ma', I Have Equa-tions! --- f(x) 
-= $[][] \OML/cmm/m/it/10 g\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 t\OT1/cmr/m/n/10 )d
-\OML/cmm/m/it/10 t \OMS/cmtt/m/n/10 ^^@ ^^@ ^^@ \OT1/cmr/m/n/10 [[\OML/cmm/m/it
-/10 eqnFDefn\OT1/cmr/m/n/10 ]][]`\OML/cmm/m/it/10 Notethatthat$\OT1/cmr/m/n/10 
-d$\OML/cmm/m/it/10 willnotbeuprightasitshouldbe:We[]llfixthatlater:\OT1/cmr/m/n
-/10 (\OML/cmm/m/it/10 Fixedit\OT1/cmr/m/n/10 !\OML/cmm/m/it/10 Use[]\OT1/cmr/m/
-n/10 !)\OML/cmm/m/it/10 Alsonotethatweaddedan[]totheequation:IDscanbeaddedtoman
-ythings:Theyalwaysappearimmediatelyfollowingthethingtheyidentify:$ 
- []
-
-./out.tex:161: You can't use `\spacefactor' in math mode.
+./out.tex:191: You can't use `\spacefactor' in math mode.
 \@->\spacefactor 
                  \@m {}
-l.161 ...te however that \emph{unlike} the $\LaTeX
+l.191 ...te however that \emph{unlike} the $\LaTeX
                                                   $ eqnarray, you do
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -839,1062 +1146,833 @@ If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
 Missing character: There is no è in font cmex10!
-[6]
-
-./out.tex:169: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.169 ... &=& 2 x^2 + 3\end{align}\verb` @eqnarray
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:171: Misplaced alignment tab character &.
-l.171  f(x) &
-             =& 2x + 3
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-./out.tex:171: Misplaced alignment tab character &.
-l.171  f(x) &=&
-                2x + 3
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-./out.tex:172: Misplaced alignment tab character &.
-l.172  g(y) &
-             =& y^2
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-./out.tex:172: Misplaced alignment tab character &.
-l.172  g(y) &=&
-                y^2
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-./out.tex:172: Missing $ inserted.
-<inserted text> 
-                $
-l.172  g(y) &=& y^
-                  2
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:173: Misplaced alignment tab character &.
-l.173  \implies (f \circ g) (x) &
-                                 =& 2 x^2 + 3
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-./out.tex:173: Misplaced alignment tab character &.
-l.173  \implies (f \circ g) (x) &=&
-                                    2 x^2 + 3
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-
-LaTeX Warning: Reference `' on page 7 undefined on input line 176.
-
-./out.tex:177: Missing $ inserted.
-<inserted text> 
-                $
-l.177 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-
-Overfull \hbox (412.44249pt too wide) in paragraph at lines 169--177
-\OT1/cmr/m/n/10 `\OML/cmm/m/it/10 Notethatwecanusethestandard[]macrowithinthe[]
-or[]environmentstoassignIDstoindividualequations:Thenwecanuse[]or[]syntaxtorefe
-rtothem \OT1/cmr/m/n/10 :$ 
- []
-
-
-./out.tex:178: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.178 ...} y &=& mx + b\end{align}\verb` @eqnarray
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:180: Misplaced alignment tab character &.
-l.180  \label{importantEquation} y &
-                                    =& mx + b
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-./out.tex:180: Misplaced alignment tab character &.
-l.180  \label{importantEquation} y &=&
-                                       mx + b
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-
-LaTeX Warning: Reference `the important equation' on page 7 undefined on input 
-line 182.
-
-
-./out.tex:185: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.185 ...\nu} \nonumber\end{align}\verb` @eqnarray
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:187: Missing $ inserted.
-<inserted text> 
-                $
-l.187  R_
-         {\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \fr...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:187: Misplaced alignment tab character &.
-l.187 ...{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &
-                                                  =& \frac{8 \pi G}{c^4} T_{...
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-./out.tex:187: Misplaced alignment tab character &.
-l.187 ...} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=&
-                                                   \frac{8 \pi G}{c^4} T_{\m...
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-
-./out.tex:188: LaTeX Error: Environment Axiom undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.188  ---`\begin{Axiom}
-                        An axiom looks like this.
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-./out.tex:189: Missing $ inserted.
-<inserted text> 
-                $
-l.189 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:189: Missing \endgroup inserted.
-<inserted text> 
-                \endgroup 
-l.189 
-      
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-
-./out.tex:190: LaTeX Error: \begin{document} ended by \end{Axiom}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.190 ...\cdot y = y \cdot x\end{align}\end{Axiom}
-                                                  \verb` @axiom
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-./out.tex:190: Extra \endgroup.
-<recently read> \endgroup 
-                          
-l.190 ...\cdot y = y \cdot x\end{align}\end{Axiom}
-                                                  \verb` @axiom
-Things are pretty mixed up, but I think the worst is over.
-
-
-./out.tex:190: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.190 ...cdot x\end{align}\end{Axiom}\verb` @axiom
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:196: Missing $ inserted.
-<inserted text> 
-                $
-l.196  x \cdot
-               y = y \cdot x
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-
-./out.tex:198: LaTeX Error: Environment Definition undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.198  ---`\label{def-number}\begin{Definition}
-                                               a \textbf{number} is an eleme...
-
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-./out.tex:199: Missing $ inserted.
-<inserted text> 
-                $
-l.199 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:199: Missing \endgroup inserted.
-<inserted text> 
-                \endgroup 
-l.199 
-      
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-
-./out.tex:200: LaTeX Error: \begin{document} ended by \end{Definition}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.200 \end{Definition}
-                      \verb` [term=number]
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-./out.tex:200: Extra \endgroup.
-<recently read> \endgroup 
-                          
-l.200 \end{Definition}
-                      \verb` [term=number]
-Things are pretty mixed up, but I think the worst is over.
-
-
-./out.tex:200: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.200 \end{Definition}\verb` [term=number]
-                                          
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:205: You can't use `macro parameter character #' in horizontal mode.
-l.205  [[#
-          def-number]]{Definition: Number}`\label{thm-foil}\begin{Theorem}\b...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-
-./out.tex:205: LaTeX Error: Environment Theorem undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.205 ...: Number}`\label{thm-foil}\begin{Theorem}
-                                                  \begin{align}(x + y)^2 = x...
-
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-./out.tex:207: LaTeX Error: \begin{document} ended by \end{Theorem}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.207 \end{proof}\end{Theorem}
-                              \verb` @theorem
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-./out.tex:207: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.207 \end{proof}\end{Theorem}\verb` @theorem
-                                             
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:212: Missing $ inserted.
-<inserted text> 
-                $
-l.212  (x + y)^
-               2 = x^2 + 2 xy + y^2.
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:214: Missing $ inserted.
-<inserted text> 
-                $
-l.214 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:219: You can't use `macro parameter character #' in horizontal mode.
-l.219  [[#
-          thm-foil]]{Theorem: FOIL}`\label{lemEasyLemma}\begin{Lemma}This is...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-
-./out.tex:219: LaTeX Error: Environment Lemma undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.219 ...: FOIL}`\label{lemEasyLemma}\begin{Lemma}
-                                                  This is a lemma.  It's pre...
-
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-./out.tex:225: LaTeX Error: \begin{document} ended by \end{Lemma}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.225 \end{proof}\end{Lemma}
-                            \verb` @lemma
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-./out.tex:225: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.225 \end{proof}\end{Lemma}\verb` @lemma
-                                         
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:226: You can't use `macro parameter character #' in horizontal mode.
-l.226  #
-        Easy Lemma
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:234: Missing $ inserted.
-<inserted text> 
-                $
-l.234  x^
-         n + y^n = z^n
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:236: Missing $ inserted.
-<inserted text> 
-                $
-l.236 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:241: You can't use `macro parameter character #' in horizontal mode.
-l.241  [[#
-          lemEasyLemma]]{Lemma: Easy One}`\begin{Proposition}Hey, um, do you...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-
-./out.tex:241: LaTeX Error: Environment Proposition undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.241 ...ma]]{Lemma: Easy One}`\begin{Proposition}
-                                                  Hey, um, do you want to go...
-
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-./out.tex:243: LaTeX Error: \begin{document} ended by \end{Proposition}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.243 \end{Proposition}
-                       \verb` @proposition
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-./out.tex:243: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.243 \end{Proposition}\verb` @proposition
-                                          
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
-./out.tex:246: LaTeX Error: Environment Corollary undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.246  ---`\begin{Corollary}
-                            If $x, y > 2$ are prime then $x + y$ is not prime.
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
 [7]
+\openout4 = `out.pyg'.
 
-./out.tex:248: LaTeX Error: \begin{document} ended by \end{Corollary}.
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
+(./_minted-out/876B2E07B13214A40186C528EFBCA52F3720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+./out.tex:211: Missing \endcsname inserted.
+<to be read again> 
+                   \#
+l.211 ...ependentlearning.science/tiki/\#idLabel}}
+                                                   syntax to refer to them:
+The control sequence marked <to be read again> should
+not appear between \csname and \endcsname.
+
+
+LaTeX Warning: Reference `i' on page 8 undefined on input line 211.
+
+./out.tex:211: Extra \endcsname.
+\NR@setref ... \NR@@setref \csname r@#1\endcsname 
                                                   
-l.248 \end{Corollary}
-                     \verb` @corollary
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
+l.211 ...ependentlearning.science/tiki/\#idLabel}}
+                                                   syntax to refer to them:
+I'm ignoring this, since I wasn't doing a \csname.
 
 
-./out.tex:248: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.248 \end{Corollary}\verb` @corollary
-                                      
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
-./out.tex:251: LaTeX Error: Environment Conjecture undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.251  ---`\begin{Conjecture}
-                             The product of any two primes is also prime.
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-./out.tex:253: LaTeX Error: \begin{document} ended by \end{Conjecture}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.253 \end{Conjecture}
-                      \verb` @conjecture
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-./out.tex:253: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.253 \end{Conjecture}\verb` @conjecture
-                                        
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
-./out.tex:258: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.258 \end{proof}\verb` [theorem=lemEasyLemma]
-                                              
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
-./out.tex:265: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.265 ...end{quote}\verb` [author=Albert Einstein]
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:267: You can't use `macro parameter character #' in horizontal mode.
-l.267  #
-        A Quote from the "Great One".
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:271: You can't use `macro parameter character #' in horizontal mode.
-l.271  [[#
-          qEinstein]]{Einstein Quote}`Notice in the \texttt{quote} block we ...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-
-./out.tex:285: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.285 \verb` @sidenote
-                      
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:286: You can't use `macro parameter character #' in horizontal mode.
-l.286  #
-        Please be Aware:
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-
-./out.tex:298: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.298 \verb` @warning
-                     
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:299: You can't use `macro parameter character #' in horizontal mode.
-l.299  #
-        This is a Warning Block
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:303: You can't use `macro parameter character #' in horizontal mode.
-l.303  [[#
-          warningBlock]]{Warning}`\subsubsection{\label{infoBlock}This is an...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-[8]
-
-./out.tex:305: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.305 \verb` @info
-                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:306: You can't use `macro parameter character #' in horizontal mode.
-l.306  #
-        This is an Info Block
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:310: You can't use `macro parameter character #' in horizontal mode.
-l.310  [[#
-          infoBlock]]{Info}`\subsubsection{\label{cautionBlock}This is a Cau...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-
-./out.tex:312: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.312 \verb` @caution
-                     
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:313: You can't use `macro parameter character #' in horizontal mode.
-l.313  #
-        This is a Caution Block
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:317: You can't use `macro parameter character #' in horizontal mode.
-l.317  [[#
-          cautionBlock]]{Caution}`\subsubsection{\label{tipBlock}This is a T...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-
-./out.tex:319: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.319 \verb` @tip
-                 
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:320: You can't use `macro parameter character #' in horizontal mode.
-l.320  #
-        This is a Tip Block
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:324: You can't use `macro parameter character #' in horizontal mode.
-l.324  [[#
-          tipBlock]]{Tip}`If you're worried about all the wasted space in th...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 335.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 335.
-
-
-
-Overfull \hbox (0.33398pt too wide) in paragraph at lines 335--339
-\OT1/cmr/m/n/10 on, so we put it here.http://www.independentlearning.science/ti
-ki/Basics/Fun:
+Overfull \hbox (13.4694pt too wide) in paragraph at lines 209--212
+\OT1/cmtt/m/n/10 ref\OMS/cmtt/m/n/10 fg \OT1/cmr/m/n/10 or []\OT1/cmtt/m/n/10 d
+Labelhttp://www.independentlearning.science/tiki/#idLabel
  []
 
-[9]
-
-LaTeX Warning: Reference `on topology' on page 10 undefined on input line 352.
+\openout4 = `out.pyg'.
 
 
-./out.tex:363: LaTeX Error: \verb ended by end of line.
+(./_minted-out/FDB0FDD0E186114224327A6960F064223720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+./out.tex:221: Missing \endcsname inserted.
+<to be read again> 
+                   \#
+l.221 ...earning.science/tiki/\#importantEquation}
+                                                  .  If you want to
+The control sequence marked <to be read again> should
+not appear between \csname and \endcsname.
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
+
+LaTeX Warning: Reference `i' on page 8 undefined on input line 221.
+
+./out.tex:221: Extra \endcsname.
+\NR@setref ... \NR@@setref \csname r@#1\endcsname 
                                                   
-l.363 \verb" @connection
-                        
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:364: You can't use `macro parameter character #' in horizontal mode.
-l.364  #
-        A connection
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:367: You can't use `macro parameter character #' in horizontal mode.
-l.367  #
-        Connection Prerex
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:369: Missing $ inserted.
-<inserted text> 
-                $
-l.369  /Basics/Logic{Mostly only _
-                                  first-order_ logic will be used, but some ...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:369: Extra }, or forgotten $.
-l.369 ...t for stuff later on, so we put it here.}
-                                                  
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-./out.tex:372: Missing $ inserted.
-<inserted text> 
-                $
-l.372 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
+l.221 ...earning.science/tiki/\#importantEquation}
+                                                  .  If you want to
+I'm ignoring this, since I wasn't doing a \csname.
 
 
-Overfull \hbox (31.02664pt too wide) in paragraph at lines 363--372
-[][] \OT1/cmtt/m/n/10 @connection\OT1/cmr/m/n/10 A con-nec-tion --- @pre-rex Co
-n-nec-tion Pre-rex --- /Ba-sics/LogicMostly
+Overfull \hbox (350.36931pt too wide) in paragraph at lines 220--223
+[]\OT1/cmtt/m/n/10 Refer to the \OT1/cmtt/m/it/10 important equation $[]\OT1/cm
+r/m/n/10 1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 2[]$\OT1/cmtt/m/n/10 . Refer to []m
+portantEquationhttp://www.independentlearning.science/tiki/#importantEquationou
+
  []
 
 
-Overfull \hbox (241.1915pt too wide) in paragraph at lines 363--372
-\OT1/cmr/m/n/10 only $[]\OML/cmm/m/it/10 irst \OMS/cmtt/m/n/10 ^^@ \OML/cmm/m/i
-t/10 order[]ogicwillbeused; butsome[]econd \OMS/cmtt/m/n/10 ^^@ \OML/cmm/m/it/1
-0 order[]tuffisimportantforstufflateron; soweputithere:=Basics=Fun[] \OMS/cmtt/
-m/n/10 ^^@
+Overfull \hbox (31.74675pt too wide) in paragraph at lines 220--223
+\OT1/cmtt/m/n/10 want to prevent an equation from being numbered, use nonumber 
+as usual. 
  []
 
-./out.tex:379: You can't use `macro parameter character #' in horizontal mode.
-l.379  #
-        Rendering
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:383: Missing $ inserted.
-<inserted text> 
-                $
-l.383 ...he full screen.  In general, you should _
-                                                  never_ rely
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:390: You can't use `macro parameter character #' in math mode.
-l.390  [[#
-          renderingInfo]]{Rendering Info}
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:391: Missing $ inserted.
-<inserted text> 
-                $
-l.391 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
+\openout4 = `out.pyg'.
 
 
-Overfull \hbox (1233.1922pt too wide) in paragraph at lines 378--391
-\OT1/cmr/m/n/10 dered across the full screen. In gen-eral, you should $[]\OML/c
-mm/m/it/10 ever[]elyonthepositionofsomethingrelativetosomethingelse; oritssize:
-Thisisbecauseidochasbeendesignedtohavepluggablethemes; andthewebrenderercreates
-[]esponsive[]tmlthatisfreetoreorganizecontenttobettermatchthedevicessize:Theref
-ore; \OMS/cmtt/m/n/10 ^^C\OML/cmm/m/it/10 wheneveryourefertosomething; pleasepl
-easepleaseuseanID \OMS/cmtt/m/n/10 ^^C
- []
-
-./out.tex:395: You can't use `macro parameter character #' in horizontal mode.
-l.395  <</Math/Topology/Homeomorphism#
-                                      >>{on topology}, we might want to talk
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:396: Missing $ inserted.
-<inserted text> 
-                $
-l.396 ...ow is difficult to prove two things are _
-                                                  not_ homeomorphic, and
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:402: Missing $ inserted.
-<inserted text> 
-                $
-l.402 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
+(./_minted-out/141D0032818945AC41DE56D1EABBC14C3720D176FEC7F33C74A859BD06D5DF8A
+.pygtex [8])
+\openout4 = `out.pyg'.
 
 
-Overfull \hbox (593.90042pt too wide) in paragraph at lines 392--402
-[]\OML/cmm/m/it/10 ot[]omeomorphic; andhowthefundamentalgroupisusefulbecauseofi
-tsstatusasatopologicalinvariant:However; wedon[]tknowifthereadersactuallyknowgr
-ouptheory:Thiswouldbethetimeyouwoulduseaconnection \OMS/cmtt/m/n/10 ^^@
+(./_minted-out/EAC62A551C9095927A23B296B1431BFF3720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/3D9254FFC8696A420EE8AE549FD743423720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/C1541BC36A4A4122BE9D44C92DDB0CB83720D176FEC7F33C74A859BD06D5DF8A
+.pygtex [9])
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/C1B5E5FF40CF2B386DB66161BB2CB6E73720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/6F078BCC574756A23166BAC7C43873033720D176FEC7F33C74A859BD06D5DF8A
+.pygtex [10])
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/5FBAD25E7CA921B6BED51459E0FBB2EA3720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/3C48A7E52ECE416B45B5532A25D536CE3720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/7C628397118928A837B7ED65B97D57243720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+Overfull \hbox (15.99689pt too wide) in paragraph at lines 337--339
+\OT1/cmtt/m/n/10 The following blocks are designed to emphasize certain things 
+within
  []
 
 
-Overfull \hbox (104.80136pt too wide) in paragraph at lines 392--402
-\OMS/cmtt/m/n/10 ^^@\OML/cmm/m/it/10 grouptheoryisnotneededtounderstandhomeomor
-phisms; butit[]s[]eededtounderstandthissmallaside:$ 
+Overfull \hbox (18.74736pt too wide) in paragraph at lines 340--340
+[]\OT1/cmtt/m/n/10 The internet is the most important invention since gravity. 
+
  []
 
-./out.tex:406: You can't use `macro parameter character #' in horizontal mode.
-l.406  [[#
-          myConnection]]{A Connection}"\subsubsection{But What \emph{is} the...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
+\openout4 = `out.pyg'.
 
-[10]
 
-./out.tex:418: LaTeX Error: \verb ended by end of line.
+(./_minted-out/263EB162C53F878290857B6786247AB43720D176FEC7F33C74A859BD06D5DF8A
+.pygtex [11])
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 351.
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
+Overfull \hbox (15.24702pt too wide) in paragraph at lines 350--355
+[]\OT1/cmtt/m/n/10 Notice in the quote block we added an author attribution abo
+ve as
+ []
+
+
+Overfull \hbox (1.98314pt too wide) in paragraph at lines 350--355
+\OT1/cmtt/m/n/10 an \OT1/cmtt/m/it/10 attribute \OT1/cmtt/m/n/10 of the quote b
+lock contents. Attribute lists always
+ []
+
+
+Overfull \hbox (33.48286pt too wide) in paragraph at lines 350--355
+\OT1/cmtt/m/n/10 come \OT1/cmtt/m/it/10 just \OT1/cmtt/m/n/10 before the thing 
+they modify. In this case, we are modifying
+ []
+
+
+Overfull \hbox (5.49698pt too wide) in paragraph at lines 350--355
+\OT1/cmtt/m/n/10 the "body" of the quote element, so it comes just before the b
+ody. 
+ []
+
+
+Overfull \hbox (4.74712pt too wide) in paragraph at lines 356--359
+[]\OT1/cmtt/m/n/10 The next type of block is the sidenote. It is used to separa
+te
+ []
+
+
+Overfull \hbox (15.99689pt too wide) in paragraph at lines 356--359
+\OT1/cmtt/m/n/10 a paragraph from the main text, perhaps because it is importan
+t. Or
+ []
+
+Package mdframed Info: mdframed works in twoside mode on input line 360.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 360.
+
+Overfull \hbox (5.29715pt too wide) in paragraph at lines 360--363
+[]\OT1/cmtt/m/n/10 This content will be rendered off to the side of the documen
+t.
+ []
+
+
+Overfull \hbox (21.04701pt too wide) in paragraph at lines 360--363
+\OT1/cmtt/m/n/10 You are allowed any amount of complex content here. An equatio
+n:
+ []
+
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 365.
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/70EC459C994B1AE22B44B946AD19BD933720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+Overfull \hbox (25.74693pt too wide) in paragraph at lines 376--380
+[]\OT1/cmtt/m/n/10 For more specialized blocks similar to sidenotes, use an adm
+onition
+ []
+
+
+Overfull \hbox (10.74693pt too wide) in paragraph at lines 376--380
+\OT1/cmtt/m/n/10 instead. They look nicer and are more eye catching. Here are s
+ome
+ []
+
+
+Overfull \hbox (5.49698pt too wide) in paragraph at lines 376--380
+\OT1/cmtt/m/n/10 examples; notice how again we use an attribute list to specify
+ the
+ []
+
+Package mdframed Info: mdframed works in twoside mode on input line 381.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 381.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 384.
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/81CA2899CEF07C1AA9A95384BB03136D3720D176FEC7F33C74A859BD06D5DF8A
+.pygtex [12])
+Package mdframed Info: mdframed works in twoside mode on input line 394.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 394.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 397.
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/F537B0042B64B99D45E8DA11D2CA96E53720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+Package mdframed Info: mdframed works in twoside mode on input line 407.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 407.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 410.
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/3B375ACC03A1D5375A1E5E30C1E7D2593720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+Package mdframed Info: mdframed works in twoside mode on input line 420.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 420.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 423.
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/3A2685DE81DC60DA51B3C9BAF7B66D533720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+Overfull \hbox (9.99707pt too wide) in paragraph at lines 433--436
+[]\OT1/cmtt/m/n/10 If you're worried about all the wasted space in the HTML out
+put,
+ []
+
+
+Overfull \hbox (5.49698pt too wide) in paragraph at lines 433--436
+\OT1/cmtt/m/n/10 don't be! It's only wasted because I didn't put text between e
+ach
+ []
+
+
+Overfull \hbox (2.275pt too wide) in paragraph at lines 433--436
+\OT1/cmtt/m/n/10 block. You would not normally have $\OT1/cmr/m/n/10 1 + 4$ \OT
+1/cmtt/m/n/10 of these things in a row. 
+ []
+
+[13]
+Overfull \hbox (21.24684pt too wide) in paragraph at lines 437--443
+\OT1/cmtt/m/n/10 These next blocks are useful when you want to offer extra info
+rmation
+ []
+
+
+Overfull \hbox (0.24702pt too wide) in paragraph at lines 437--443
+\OT1/cmtt/m/n/10 to the reader. In the case of a connection, that information m
+ay
+ []
+
+
+Overfull \hbox (5.49698pt too wide) in paragraph at lines 437--443
+\OT1/cmtt/m/n/10 be more advanced than what the reader understands. In the case
+ of
+ []
+
+
+Overfull \hbox (10.74693pt too wide) in paragraph at lines 437--443
+\OT1/cmtt/m/n/10 an intuition, it's information that is technically contained i
+n the
+ []
+
+
+Overfull \hbox (21.24684pt too wide) in paragraph at lines 437--443
+\OT1/cmtt/m/n/10 main text, but is a powerful/neat way of thinking about the ma
+terial.
+ []
+
+
+Package hyperref Warning: Suppressing link with empty target on input line 444.
+
+
+
+Package hyperref Warning: Suppressing link with empty target on input line 444.
+
+
+
+Overfull \hbox (5.49698pt too wide) in paragraph at lines 444--448
+\OT1/cmtt/m/n/10 http://www.independentlearning.science/tiki/Basics/Logic#: Mos
+tly
+ []
+
+
+Overfull \hbox (14.21916pt too wide) in paragraph at lines 444--448
+\OT1/cmtt/m/n/10 only \OT1/cmtt/m/it/10 first-order \OT1/cmtt/m/n/10 logic will
+ be used, but some \OT1/cmtt/m/it/10 second-order \OT1/cmtt/m/n/10 stuff is
+ []
+
+
+Overfull \hbox (26.4968pt too wide) in paragraph at lines 444--448
+\OT1/cmtt/m/n/10 http://www.independentlearning.science/tiki/Basics/Fun#: And s
+o on... 
+ []
+
+
+Overfull \hbox (5.49698pt too wide) in paragraph at lines 444--448
+\OT1/cmtt/m/n/10 A connection is useful when you have content connected to the 
+main
+ []
+
+
+Overfull \hbox (47.49661pt too wide) in paragraph at lines 444--448
+\OT1/cmtt/m/n/10 text but which isn't super necessary, or requires more advance
+d techniques
+ []
+
+
+Overfull \hbox (10.74693pt too wide) in paragraph at lines 444--448
+\OT1/cmtt/m/n/10 than the rest of the text. This is because connections are all
+owed
+ []
+
+
+Overfull \hbox (31.74675pt too wide) in paragraph at lines 444--448
+\OT1/cmtt/m/n/10 to have their own prerequisites, in addition to the main doc's
+ prereqs. 
+ []
+
+Package mdframed Info: mdframed works in twoside mode on input line 449.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 449.
+
+Overfull \hbox (10.5471pt too wide) in paragraph at lines 449--457
+[]\OT1/cmtt/m/n/10 If you're viewing this full-screen on a computer, you'll not
+ice
+ []
+
+
+Overfull \hbox (10.5471pt too wide) in paragraph at lines 449--457
+\OT1/cmtt/m/n/10 that unlike the other some other blocks we've seen, connection
+s
+ []
+
+
+Overfull \hbox (26.29697pt too wide) in paragraph at lines 449--457
+\OT1/cmtt/m/n/10 are rendered across the full screen. In general, you should \O
+T1/cmtt/m/it/10 never
+ []
+
+
+Overfull \hbox (47.29678pt too wide) in paragraph at lines 449--457
+\OT1/cmtt/m/n/10 or its size. This is because idoc has been designed to have pl
+uggable
+ []
+
+
+Overfull \hbox (22.78313pt too wide) in paragraph at lines 449--457
+\OT1/cmtt/m/n/10 themes, and the web renderer creates \OT1/cmtt/m/it/10 respons
+ive \OT1/cmtt/m/n/10 html that is free
+ []
+
+
+Overfull \hbox (31.54692pt too wide) in paragraph at lines 449--457
+\OT1/cmtt/m/n/10 to reorganize content to better match the devices size. Theref
+ore,
+ []
+
+
+Overfull \hbox (15.79706pt too wide) in paragraph at lines 449--457
+\OT1/cmtt/m/n/10 whenever you refer to something, please please please use an I
+D. 
+ []
+
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 459.
+
+Overfull \hbox (5.49698pt too wide) in paragraph at lines 460--470
+\OT1/cmtt/m/n/10 Connections are for when you want to connect with an outside i
+dea,
+ []
+
+
+Overfull \hbox (52.74657pt too wide) in paragraph at lines 460--470
+\OT1/cmtt/m/n/10 but don't want to have this interesting connection create new 
+prerequisites
+ []
+
+
+Overfull \hbox (21.24684pt too wide) in paragraph at lines 460--470
+\OT1/cmtt/m/n/10 for your doc. For example, in the article []on topology[], we 
+might want
+ []
+
+
+Overfull \hbox (38.73282pt too wide) in paragraph at lines 460--470
+\OT1/cmtt/m/n/10 to talk about how is difficult to prove two things are \OT1/cm
+tt/m/it/10 not \OT1/cmtt/m/n/10 homeomorphic,
+ []
+
+
+Overfull \hbox (5.49698pt too wide) in paragraph at lines 460--470
+\OT1/cmtt/m/n/10 and how the fundamental group is useful because of its status 
+as a
+ []
+
+
+Overfull \hbox (26.4968pt too wide) in paragraph at lines 460--470
+\OT1/cmtt/m/n/10 topological invariant. However, we don't know if the readers a
+ctually
+ []
+
+
+Overfull \hbox (21.24684pt too wide) in paragraph at lines 460--470
+\OT1/cmtt/m/n/10 know group theory. This would be the time you would use a conn
+ection
+ []
+
+
+Overfull \hbox (5.49698pt too wide) in paragraph at lines 460--470
+\OT1/cmtt/m/n/10 -- group theory is not needed to understand homeomorphisms, bu
+t it
+ []
+
+
+Overfull \hbox (30.99689pt too wide) in paragraph at lines 471--473
+[]\OT1/cmtt/m/n/10 When the site is complete, connections will start out open o
+r closed
+ []
+
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/6FA689DA0E2023AC30869AAD62D2888C3720D176FEC7F33C74A859BD06D5DF8A
+.pygtex [14]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [15])
+Overfull \hbox (15.99689pt too wide) in paragraph at lines 521--532
+\OT1/cmtt/m/n/10 The determinant from a geometric point of view is used to talk
+ about
+ []
+
+
+Overfull \hbox (21.24684pt too wide) in paragraph at lines 521--532
+\OT1/cmtt/m/it/10 volume\OT1/cmtt/m/n/10 . If you grok this, then everything el
+se will fall into place.
+ []
+
+
+Overfull \hbox (15.99689pt too wide) in paragraph at lines 521--532
+\OT1/cmtt/m/n/10 For example, the reason a linear transformation is invertible 
+if and
+ []
+
+
+Overfull \hbox (12.48305pt too wide) in paragraph at lines 521--532
+\OT1/cmtt/m/n/10 only if its determinant is non-zero is because when it \OT1/cm
+tt/m/it/10 is \OT1/cmtt/m/n/10 zero, the
+ []
+
+
+Overfull \hbox (27.24919pt too wide) in paragraph at lines 521--532
+\OT1/cmtt/m/n/10 map is going to map a set of basis vectors in your $\OML/cmm/m
+/it/10 n$\OT1/cmtt/m/n/10 -dimensional space
+ []
+
+
+Overfull \hbox (2.05743pt too wide) in paragraph at lines 521--532
+\OT1/cmtt/m/n/10 into some smaller $\OML/cmm/m/it/10 m$\OT1/cmtt/m/n/10 -dimens
+ional space. This $\OML/cmm/m/it/10 m$\OT1/cmtt/m/n/10 -dimensional space
+ []
+
+
+Overfull \hbox (6.24937pt too wide) in paragraph at lines 521--532
+\OT1/cmtt/m/n/10 has zero "volume" compared to the $\OML/cmm/m/it/10 n$\OT1/cmt
+t/m/n/10 -dimensional one, and so you're
+ []
+
+
+Overfull \hbox (42.24666pt too wide) in paragraph at lines 521--532
+\OT1/cmtt/m/n/10 basically losing a whole dimension. There is no way to then ma
+p linearly
+ []
+
+
+Overfull \hbox (10.74693pt too wide) in paragraph at lines 521--532
+\OT1/cmtt/m/n/10 back to the bigger space. It would be like trying to find a li
+near
+ []
+
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/958DBEF84F653F5FA2A6E7D9F41A09733720D176FEC7F33C74A859BD06D5DF8A
+.pygtex [16])
+Overfull \hbox (25.74693pt too wide) in paragraph at lines 551--554
+[]\OT1/cmtt/m/n/10 examples and exercises are also a key way for people to lear
+n. The
+ []
+
+
+Overfull \hbox (36.9967pt too wide) in paragraph at lines 551--554
+\OT1/cmtt/m/n/10 difference between the two is that essentially an exercise is 
+an example
+ []
+
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/B1BE98EA17B505B20ED8EDEA286FF3443720D176FEC7F33C74A859BD06D5DF8A
+.pygtex)
+Overfull \hbox (0.24702pt too wide) in paragraph at lines 575--577
+\OT1/cmtt/m/n/10 What is largest rational number that can be written as a fract
+ion
+ []
+
+\openout4 = `out.pyg'.
+
+
+(./_minted-out/C34A25024095B3022DFDC611E8BE26873720D176FEC7F33C74A859BD06D5DF8A
+.pygtex [17])
+./out.tex:588: Illegal parameter number in definition of \reserved@a.
+<to be read again> 
+                   }
+l.588 ...ttt{\href{http://www.example.com#}{this}}
+                                                   and appears like
+You meant to type ## instead of #, right?
+Or maybe a } was forgotten somewhere earlier, and things
+are all screwed up? I'm going to assume that you meant ##.
+
+./out.tex:588: Illegal parameter number in definition of \Hy@tempa.
+<to be read again> 
+                   }
+l.588 ...ttt{\href{http://www.example.com#}{this}}
+                                                   and appears like
+You meant to type ## instead of #, right?
+Or maybe a } was forgotten somewhere earlier, and things
+are all screwed up? I'm going to assume that you meant ##.
+
+./out.tex:588: Illegal parameter number in definition of \Hy@tempa.
+<to be read again> 
+                   }
+l.588 ...ttt{\href{http://www.example.com#}{this}}
+                                                   and appears like
+You meant to type ## instead of #, right?
+Or maybe a } was forgotten somewhere earlier, and things
+are all screwed up? I'm going to assume that you meant ##.
+
+./out.tex:588: Illegal parameter number in definition of \Hy@tempa.
+<to be read again> 
+                   }
+l.588 ...ttt{\href{http://www.example.com#}{this}}
+                                                   and appears like
+You meant to type ## instead of #, right?
+Or maybe a } was forgotten somewhere earlier, and things
+are all screwed up? I'm going to assume that you meant ##.
+
+
+Overfull \hbox (26.4968pt too wide) in paragraph at lines 586--599
+\OT1/cmtt/m/n/10 Links come in three flavours. The first is your standard link,
+ called
+ []
+
+
+Overfull \hbox (0.24702pt too wide) in paragraph at lines 586--599
+\OT1/cmtt/m/n/10 an out link or olink in idoc. It's written like []this[] and a
+ppears
+ []
+
+
+Overfull \hbox (10.74693pt too wide) in paragraph at lines 586--599
+\OT1/cmtt/m/n/10 like []this[]. Note that the http(s):// part of the link is \O
+T1/cmtt/m/it/10 mandatory\OT1/cmtt/m/n/10 .
+ []
+
+
+Overfull \hbox (21.24684pt too wide) in paragraph at lines 586--599
+\OT1/cmtt/m/n/10 Olinks are restricted in idoc to appear in only very specific 
+places,
+ []
+
+
+Overfull \hbox (26.4968pt too wide) in paragraph at lines 586--599
+\OT1/cmtt/m/n/10 for example in furtherreading or bibliography blocks. This is 
+because
+ []
+
+
+Overfull \hbox (12.48305pt too wide) in paragraph at lines 586--599
+\OT1/cmtt/m/n/10 the text of a doc should be \OT1/cmtt/m/it/10 self-contained\O
+T1/cmtt/m/n/10 . You should not \OT1/cmtt/m/it/10 need \OT1/cmtt/m/n/10 to
+ []
+
+
+Overfull \hbox (31.74675pt too wide) in paragraph at lines 586--599
+\OT1/cmtt/m/n/10 go to an outside source to understand a concept. However, that
+ doesn't
+ []
+
+
+Overfull \hbox (5.49698pt too wide) in paragraph at lines 586--599
+\OT1/cmtt/m/n/10 mean that outside sources are useless -- Wikipedia is an excel
+lent
+ []
+
+
+Overfull \hbox (5.49698pt too wide) in paragraph at lines 586--599
+\OT1/cmtt/m/n/10 reference for topics you've just learned about. It just means 
+you
+ []
+
+
+Overfull \hbox (21.24684pt too wide) in paragraph at lines 586--599
+\OT1/cmtt/m/n/10 don't want to interrupt the flow of the document just anywhere
+. This
+ []
+
+./out.tex:604: Missing \endcsname inserted.
+<to be read again> 
+                   \#
+l.604 ...rning.science/tiki/\#important-equation}}
+                                                  , and appear like
+The control sequence marked <to be read again> should
+not appear between \csname and \endcsname.
+
+
+LaTeX Warning: Reference `i' on page 18 undefined on input line 604.
+
+./out.tex:604: Extra \endcsname.
+\NR@setref ... \NR@@setref \csname r@#1\endcsname 
                                                   
-l.418 \verb` @intuition
-                       
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+l.604 ...rning.science/tiki/\#important-equation}}
+                                                  , and appear like
+I'm ignoring this, since I wasn't doing a \csname.
 
-./out.tex:419: You can't use `macro parameter character #' in horizontal mode.
-l.419  #
-         But What _is_ the Determinant?! -- An Example Intuition Block
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./out.tex:419: Missing $ inserted.
-<inserted text> 
-                $
-l.419  # But What _
-                   is_ the Determinant?! -- An Example Intuition Block
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./out.tex:435: Missing $ inserted.
-<inserted text> 
-                $
-l.435 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
+./out.tex:605: Missing \endcsname inserted.
+<to be read again> 
+                   \#
+l.605 ...arning.science/tiki/\#important-equation}
+                                                  .  That is, they are the \...
+The control sequence marked <to be read again> should
+not appear between \csname and \endcsname.
 
 
-Overfull \hbox (13.7947pt too wide) in paragraph at lines 418--435
-[][] \OT1/cmtt/m/n/10 @intuition \OT1/cmr/m/n/10 But What $[]\OML/cmm/m/it/10 s
-[]heDeterminant\OT1/cmr/m/n/10 ?! \OMS/cmtt/m/n/10 ^^@ ^^@\OML/cmm/m/it/10 AnEx
-ampleIntuitionBlock \OMS/cmtt/m/n/10 ^^@
- []
+LaTeX Warning: Reference `i' on page 18 undefined on input line 605.
 
-
-Overfull \hbox (637.36162pt too wide) in paragraph at lines 418--435
-\OMS/cmtt/m/n/10 ^^@ ^^@ \OML/cmm/m/it/10 Thedeterminantfromageometricpointofvi
-ewisusedtotalkabout[]olume[]Ifyougrokthis; theneverythingelsewillfallintoplace:
-Forexample; thereasonalineartransformationisinvertibleifandonlyifitsdeterminant
-isnon \OMS/cmtt/m/n/10 ^^@
- []
-
-
-Overfull \hbox (1378.49034pt too wide) in paragraph at lines 418--435
-\OML/cmm/m/it/10 zeroisbecausewhenit[]s[]ero; themapisgoingtomapasetofbasisvect
-orsinyour$\OT1/cmr/m/n/10 n$\OMS/cmtt/m/n/10 ^^@\OML/cmm/m/it/10 dimensionalspa
-ceintosomesmaller$\OT1/cmr/m/n/10 m$\OMS/cmtt/m/n/10 ^^@\OML/cmm/m/it/10 dimens
-ionalspace:This$\OT1/cmr/m/n/10 m$\OMS/cmtt/m/n/10 ^^@\OML/cmm/m/it/10 dimensio
-nalspacehaszero\OT1/cmr/m/n/10 "\OML/cmm/m/it/10 volume\OT1/cmr/m/n/10 "\OML/cm
-m/m/it/10 comparedtothe$\OT1/cmr/m/n/10 n$\OMS/cmtt/m/n/10 ^^@\OML/cmm/m/it/10 
-dimensionalone; andsoyou[]rebasicallylosingawholedimension:Thereisnowaytothenma
-plinearlybacktothebiggerspace:Itwouldbeliketryingtofindalinearfunctionthatmapst
-hesquaretothecube\OT1/cmr/m/n/10 ! \OMS/cmtt/m/n/10 ^^@
- []
-
-
-Overfull \hbox (324.06567pt too wide) in paragraph at lines 418--435
-\OMS/cmtt/m/n/10 ^^@ ^^@ \OT1/cmr/m/n/10 `[]\OML/cmm/m/it/10 and[]arealsoakeywa
-yforpeopletolearn:Thedifferencebetweenthetwoisthatessentiallyanexerciseisanexam
-plewithoutasolution:$ 
- []
-
-
-./out.tex:442: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
+./out.tex:605: Extra \endcsname.
+\NR@setref ... \NR@@setref \csname r@#1\endcsname 
                                                   
-l.442 \verb` @example
-                     
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-./out.tex:452: You can't use `macro parameter character #' in horizontal mode.
-l.452  [[#
-          exExample]]{An Example}`\subsubsection{Exercise}What is largest ra...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
+l.605 ...arning.science/tiki/\#important-equation}
+                                                  .  That is, they are the \...
+I'm ignoring this, since I wasn't doing a \csname.
 
 
-./out.tex:455: LaTeX Error: \verb ended by end of line.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.455 \verb` @exercise
-                      
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
-LaTeX Warning: Reference `this' on page 11 undefined on input line 461.
-
-
-LaTeX Warning: Reference `this' on page 11 undefined on input line 462.
-
-
-Overfull \hbox (0.38455pt too wide) in paragraph at lines 459--472
-\OT1/cmtt/m/n/10 bibliography \OT1/cmr/m/n/10 blocks. This is be-cause the text
- of a doc should be \OT1/cmr/m/it/10 self-contained\OT1/cmr/m/n/10 .
+Overfull \hbox (46.74675pt too wide) in paragraph at lines 600--607
+[]\OT1/cmtt/m/n/10 The second flavour is a link within the current doc, called 
+an internal
  []
 
 
-LaTeX Warning: Reference `this' on page 11 undefined on input line 477.
+Overfull \hbox (41.74678pt too wide) in paragraph at lines 600--607
+\OT1/cmtt/m/n/10 link or ilink. For example, when we used ref\OMS/cmtt/m/n/10 f
+g \OT1/cmtt/m/n/10 back in the Math section,
+ []
 
 
-LaTeX Warning: Reference `this' on page 11 undefined on input line 478.
+Overfull \hbox (0.24702pt too wide) in paragraph at lines 600--607
+\OT1/cmtt/m/n/10 we were using ilinks. Refering to anything on the page which h
+as
+ []
 
 
-LaTeX Warning: Reference `this right here' on page 11 undefined on input line 4
-85.
+Overfull \hbox (315.60542pt too wide) in paragraph at lines 600--607
+\OT1/cmtt/m/n/10 an ID is an ilink. They are written like []mportant-equationht
+tp://www.independentlearning.science/tiki/#important-equation,
+ []
 
-[11]
 
-LaTeX Warning: Reference `' on page 12 undefined on input line 495.
+Overfull \hbox (179.10661pt too wide) in paragraph at lines 600--607
+\OT1/cmtt/m/n/10 and appear like []mportant-equationhttp://www.independentlearn
+ing.science/tiki/#important-equationt
+ []
 
-[12]
-\tf@toc=\write5
-\openout5 = `out.toc'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 507.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 507.
+Overfull \hbox (9.99707pt too wide) in paragraph at lines 608--620
+[]\OT1/cmtt/m/n/10 The final flavour is the back link, or blink. This is a link
+ to
+ []
+
+
+Overfull \hbox (15.99689pt too wide) in paragraph at lines 608--620
+\OT1/cmtt/m/n/10 something contained within the prerequisite tree of the curren
+t doc.
+ []
+
+
+Overfull \hbox (125.99599pt too wide) in paragraph at lines 608--620
+\OT1/cmtt/m/n/10 In their most general form, they are written like <</Name/Of/A
+rticle#id-in-article>>\OMS/cmtt/m/n/10 f\OT1/cmtt/m/n/10 this
+ []
+
+
+Overfull \hbox (15.74695pt too wide) in paragraph at lines 608--620
+\OT1/cmtt/m/n/10 right here\OMS/cmtt/m/n/10 g \OT1/cmtt/m/n/10 and display like
+ []this right here[]. However, the # symbol
+ []
+
+
+Overfull \hbox (0.24702pt too wide) in paragraph at lines 608--620
+\OT1/cmtt/m/n/10 and the ID following it can be left out if you just want to re
+fer
+ []
+
+
+Overfull \hbox (10.74693pt too wide) in paragraph at lines 608--620
+\OT1/cmtt/m/n/10 to the article as a whole. Notice that you are not allowed to 
+link
+ []
+
+
+Overfull \hbox (15.99689pt too wide) in paragraph at lines 608--620
+\OT1/cmtt/m/n/10 to another article that isn't within the prerequisite tree fro
+m just
+ []
+
+
+Overfull \hbox (47.49661pt too wide) in paragraph at lines 608--620
+\OT1/cmtt/m/n/10 anywhere. This is by design; articles should only depend on th
+e knowledge
+ []
+
+
+Overfull \hbox (21.24684pt too wide) in paragraph at lines 608--620
+\OT1/cmtt/m/n/10 from previous articles. This restriction allows many of the fe
+atures
+ []
+
+
+Overfull \hbox (21.24684pt too wide) in paragraph at lines 608--620
+\OT1/cmtt/m/n/10 that the ILS website hopes to deliver, such as automatic prere
+quisite
+ []
+
+./out.tex:622: Missing \endcsname inserted.
+<to be read again> 
+                   \#
+l.622 ...www.independentlearning.science/tiki/\#}}
+                                                   as the display
+The control sequence marked <to be read again> should
+not appear between \csname and \endcsname.
+
+
+LaTeX Warning: Reference `\endcsname ' on page 18 undefined on input line 622.
+
+
+Overfull \hbox (9.99707pt too wide) in paragraph at lines 621--624
+[]\OT1/cmtt/m/n/10 In all types of links, you are free to leave out the text in
+side
+ []
+
+
+Overfull \hbox (157.60692pt too wide) in paragraph at lines 621--624
+\OT1/cmtt/m/n/10 the \OMS/cmtt/m/n/10 fg\OT1/cmtt/m/n/10 . This will just use t
+he text inside the []http://www.independentlearning.science/tiki/#
+ []
+
+
+Overfull \hbox (0.24702pt too wide) in paragraph at lines 621--624
+\OT1/cmtt/m/n/10 as the display text instead. Normally this is not what you wan
+t,
+ []
+
+[18]
+Overfull \hbox (10.74693pt too wide) in paragraph at lines 625--627
+\OT1/cmtt/m/n/10 We can embed YouTube videos if we think they are important. Pl
+ease
+ []
+
+
+Package hyperref Warning: Suppressing empty link on input line 628.
+
+
+Package hyperref Warning: Suppressing empty link on input line 630.
+
+
+Overfull \hbox (0.24702pt too wide) in paragraph at lines 632--633
+\OT1/cmtt/m/n/10 That's about it for the basic syntax. We can fix the rest late
+r. 
+ []
+
+[19]
+\tf@toc=\write8
+\openout8 = `out.toc'.
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 634.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 634.
  (./out.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 507.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 507.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 634.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 634.
 Package rerunfilecheck Info: File `out.out' has not changed.
-(rerunfilecheck)             Checksum: 3C6C9F72BBCD46F514C7916CAE3445A7;307.
+(rerunfilecheck)             Checksum: 35FAB6174C48438874856D93AE8BB286;822.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
@@ -1902,41 +1980,48 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 LaTeX Warning: There were undefined references.
 
+runsystem(rm out.pyg)...executed.
 
-LaTeX Warning: There were multiply-defined labels.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 507.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 634.
  )
-(\end occurred inside a group at level 1)
+(\end occurred inside a group at level 3)
 
-### simple group (level 1) entered at line 369 ({)
-### bottom level 
+### simple group (level 3) entered at line 622 ({)
+### simple group (level 2) entered at line 604 ({)
+### simple group (level 1) entered at line 211 ({)
+### bottom level
+(\end occurred when \ifmmode on line 622 was incomplete)
+(\end occurred when \ifmmode on line 604 was incomplete)
+(\end occurred when \ifmmode on line 211 was incomplete) 
 Here is how much of TeX's memory you used:
- 9478 strings out of 493013
- 132858 string characters out of 6135682
- 253648 words of memory out of 5000000
- 12890 multiletter control sequences out of 15000+600000
- 15896 words of font info for 60 fonts, out of 8000000 for 9000
+ 20846 strings out of 493013
+ 368844 string characters out of 6135682
+ 507357 words of memory out of 5000000
+ 24061 multiletter control sequences out of 15000+600000
+ 14579 words of font info for 56 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 31i,11n,29p,626b,389s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.
-pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/
-share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/
-texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmsl10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10
-.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on out.pdf (12 pages, 211173 bytes).
+ 43i,11n,35p,11395b,617s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/font
+s/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmitt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/t
+exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl10.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmtt10.pfb>
+Output written on out.pdf (19 pages, 229589 bytes).
 PDF statistics:
- 196 PDF objects out of 1000 (max. 8388607)
- 165 compressed objects within 2 object streams
- 52 named destinations out of 1000 (max. 500000)
- 49 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 277 PDF objects out of 1000 (max. 8388607)
+ 236 compressed objects within 3 object streams
+ 58 named destinations out of 1000 (max. 500000)
+ 121 words of extra memory for PDF output out of 10000 (max. 10000000)
 

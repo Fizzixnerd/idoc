@@ -128,7 +128,7 @@ data SetID = SetID { _sidName :: IDHash
                    , _sidDisplay :: Vector SimpleCore }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-newtype IDHash = IDHash Text deriving (Eq, Ord, Show, Data, Typeable, Generic)
+newtype IDHash = IDHash { unIDHash :: Text } deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data AttrMap = AttrMap { _amMap :: Map AttrName (Maybe AttrValue) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -158,7 +158,7 @@ data ID = ID { _idProtocol :: Maybe Protocol
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 newtype Protocol = Protocol Text deriving (Eq, Ord, Show, Data, Typeable, Generic)
-newtype IDBase = IDBase Text deriving (Eq, Ord, Show, Data, Typeable, Generic)
+newtype IDBase = IDBase { unIDBase :: Text } deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data ListType = Unordered
               | Ordered

@@ -1,0 +1,46 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+ @connection
+ \PYGZsh{}A connection
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ @prerex
+ \PYGZsh{}Connection Prerex
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ /Basics/Logic\PYGZob{}Mostly only \PYGZus{}first\PYGZhy{}order\PYGZus{} logic will be used, but some \PYGZus{}second\PYGZhy{}order\PYGZus{} stuff is important for stuff later on, so we put it here.\PYGZcb{}
+ /Basics/Fun\PYGZob{}And so on...\PYGZcb{}
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+
+ A `connection` is useful when you have content connected to the main text
+ but which isn\PYGZsq{}t super necessary, or requires more advanced techniques
+ than the rest of the text.  This is because connections are allowed to have
+ their own prerequisites, in addition to the main doc\PYGZsq{}s prereqs.
+
+ @info
+ \PYGZsh{}Rendering
+  \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ If you\PYGZsq{}re viewing this full\PYGZhy{}screen on a computer, you\PYGZsq{}ll notice that
+ unlike the other some other blocks we\PYGZsq{}ve seen, connections are
+ rendered across the full screen.  In general, you should \PYGZus{}never\PYGZus{} rely
+ on the position of something relative to something else, or its size.
+ This is because idoc has been designed to have pluggable themes, and
+ the web renderer creates \PYGZus{}responsive\PYGZus{} html that is free to reorganize
+ content to better match the devices size.  Therefore, *whenever you
+ refer to something, please please please use an ID*.
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ [[\PYGZsh{}renderingInfo]]\PYGZob{}Rendering Info\PYGZcb{}
+
+ Connections are for when you want to connect with an outside idea, but
+ don\PYGZsq{}t want to have this interesting connection create new
+ prerequisites for your doc.  For example, in the article
+ \PYGZlt{}\PYGZlt{}/Math/Topology/Homeomorphism\PYGZsh{}\PYGZgt{}\PYGZgt{}\PYGZob{}on topology\PYGZcb{}, we might want to talk
+ about how is difficult to prove two things are \PYGZus{}not\PYGZus{} homeomorphic, and
+ how the fundamental group is useful because of its status as a
+ topological invariant.  However, we don\PYGZsq{}t know if the readers actually
+ know group theory.  This would be the time you would use a connection \PYGZhy{}\PYGZhy{}
+ group theory is not needed to understand homeomorphisms, but it \PYGZus{}is\PYGZus{}
+ needed to understand this small aside.
+
+ When the site is complete, connections will start out open or closed
+ depending on if the reader has the necessary prereqs or not.
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ [[\PYGZsh{}myConnection]]\PYGZob{}A Connection\PYGZcb{}
+\end{Verbatim}

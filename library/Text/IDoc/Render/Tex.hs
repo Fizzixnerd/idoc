@@ -32,9 +32,27 @@ defaultDecorator title_ d =
 
   (usepackage [] hyperref) ++
   (usepackage [] graphicx) ++
+  (usepackage [] "minted") ++
+  (usepackage ["usenames", "dvipsnames"] "xcolor") ++
   (usepackage [] amsmath) ++
   (usepackage [] amsthm) ++
   (usepackage [] amssymb) ++
+  (usepackage [] "mdframed") ++
+
+  (newtheorem  "Theorem" "Theorem") ++
+  (newtheorem' ["Theorem"] "Lemma" "Lemma") ++
+  (newtheorem' ["Theorem"] "Corollary" "Corollary") ++
+  (newtheorem' ["Theorem"] "Proposition" "Proposition") ++
+  (newtheorem' ["Theorem"] "Conjecture" "Conjecture") ++
+  (newtheorem' ["Theorem"] "Axiom" "Axiom") ++
+  (theoremstyle T.Definition)++
+  (newtheorem  "Definition" "Definition") ++
+
+  (newmdenv [] "SideNote") ++
+  (newmdenv ["backgroundcolor=SkyBlue"] "Info") ++
+  (newmdenv ["backgroundcolor=Goldenrod"] "Caution") ++
+  (newmdenv ["backgroundcolor=BrickRed"] "Warning") ++
+  (setcounter "tocdepth" "2") ++
 
   (document $
   title title_ ++
@@ -44,17 +62,52 @@ defaultDecorator title_ d =
   tableofcontents ++
   d)
 
-compileToTex :: FilePath -> FilePath -> IO ()
-compileToTex inFile outFile = SIO.withFile inFile SIO.ReadMode 
-                              (\src -> do
-                                  fileContents <- IO.hGetContents src
-                                  case MP.parse dTokens inFile fileContents of
-                                    Left e -> print e
-                                    Right x -> do
-                                      case MP.parse docP "<tokens>" x of
-                                        Left e -> print e
-                                        Right y -> renderFile outFile $ defaultDecorator "Title" $ (texy y :: LaTeX))
-                                          
+mkCode :: LaTeXC l => l -> l -> l
+mkCode lang t = L.between t (raw "\\begin{minted}[frame=single,framesep=5mm,breaklines]{" ++ lang ++ raw "}\n") (raw "\n\\end{minted}\n")
+
+mkBlock :: LaTeXC l => l -> l -> l -> l
+mkBlock name btitle t = L.between t (raw "\\begin{" ++ name ++ raw "}" ++ 
+                                     raw "[frametitle=" ++ btitle ++ raw "]") 
+                                    (raw "\n\\end{" ++ name ++ raw "}\n")
+
+sideNoteBlock :: LaTeXC l => l -> l -> l
+sideNoteBlock = mkBlock "SideNote"
+
+infoBlock :: LaTeXC l => l -> l -> l
+infoBlock = mkBlock "Info"
+
+warningBlock :: LaTeXC l => l -> l -> l
+warningBlock = mkBlock "Warning"
+
+cautionBlock :: LaTeXC l => l -> l -> l
+cautionBlock = mkBlock "Caution"
+
+newmdenv :: LaTeXC l => [Text] -> Text -> l
+newmdenv opts name = raw $ "\\newmdenv[" ++ (concat $ intersperse "," opts) ++ "]" ++
+                           "{" ++ name ++ "}"
+
+newtheorem' :: LaTeXC l => [Text] -> Text -> Text -> l
+newtheorem' opts env caption_ = raw $ "\\newtheorem{" ++ env ++ "}" ++
+                                      "[" ++ (concat $ intersperse "," opts) ++ "]" ++
+                                      "{" ++ caption_ ++ "}"
+
+href' :: LaTeXC l => Text -> l -> l
+href' lnk caption_ = (raw $ "\\href[" ++ lnk ++ "]") ++
+                     raw "{" ++ caption_ ++ raw "}"
+
+setcounter :: LaTeXC l => l -> l -> l
+setcounter name_ val = raw "\\setcounter{" ++ name_ ++ raw "}{" ++ val ++ raw "}"
+
+compileToTex :: LaTeX -> FilePath -> FilePath -> IO ()
+compileToTex title_ inFile outFile = SIO.withFile inFile SIO.ReadMode 
+                                     (\src -> do
+                                         fileContents <- IO.hGetContents src
+                                         case MP.parse dTokens inFile fileContents of
+                                           Left e -> print e
+                                           Right x -> do
+                                             case MP.parse docP "<tokens>" x of
+                                               Left e -> print e
+                                               Right y -> renderFile outFile $ defaultDecorator title_ $ (texy y :: LaTeX))
 
 instance Texy Doc where
   texy d = chapter (mLabel (d^.docSetID) $ (texy $ d^.docTitle)) ++
@@ -105,32 +158,59 @@ instance Texy QText where
 
       textsubscript x = between x (raw "\textsubscript{") (raw "}")
 
-idHelper :: (Text -> t) -> ID -> t
-idHelper decorator id_ = let (base, hash_) =
-                               case (id_^.idProtocol, id_^.idHash) of
-                                 (Just (Protocol "youtube"), Nothing) -> 
-                                   ("https://youtube.com/embed/", "")
-                                 (Just (Protocol "youtube"), Just _) -> 
-                                   error "got youtube protocol with a hash!?"
-                                 (Nothing, Nothing) -> 
-                                   ("http://www.independentlearning.science/tiki/", "")
-                                 (Just (Protocol p), Just (IDHash h)) ->
-                                   (p ++ "://", h)
-                                 (Nothing, Just (IDHash h)) -> ("/", h)
-                                 (Just (Protocol p), Nothing) -> (p ++ "://", "")
-                         in
-                           decorator $ base ++
-                           (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
-                           hash_
-
-instance Texy ID where
-  texy id_ = idHelper texy id_
+-- idHelper :: (Text -> t) -> ID -> t
+-- idHelper decorator id_ = let (base, hash_) =
+--                                case (id_^.idProtocol, id_^.idHash) of
+--                                  (Just (Protocol "youtube"), Nothing) -> 
+--                                    ("https://youtube.com/embed/", "")
+--                                  (Just (Protocol "youtube"), Just _) -> 
+--                                    error "got youtube protocol with a hash!?"
+--                                  (Nothing, Nothing) -> 
+--                                    ("http://www.independentlearning.science/tiki/", "")
+--                                  (Just (Protocol p), Just (IDHash h)) ->
+--                                    (p ++ "://", h)
+--                                  (Nothing, Just (IDHash h)) -> 
+--                                    ("http://www.independentlearning.science/tiki/", h)
+--                                  (Just (Protocol p), Nothing) -> (p ++ "://", "")
+--                          in
+--                            decorator $ base ++
+--                            (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
+--                            "#" ++ hash_
 
 instance Texy SetID where
   texy (SetID { _sidName = IDHash sid }) = label $ texy sid
 
 instance Texy Link where
-  texy l = ref $ texy $ l^.linkText
+  texy l = case l^.linkType of
+             Out -> href []
+                         (createURL $ unpack $ fromOut $ l^.linkLocation) 
+                         (concatMap texy $ unLinkText $ l^.linkText)
+             Internal -> href' (fromInternal $ l^.linkLocation)
+                               (concatMap texy $ unLinkText $ l^.linkText)
+             Back -> href [] 
+                          (createURL $ unpack $ fromBack $ l^.linkLocation)
+                          (concatMap texy $ unLinkText $ l^.linkText)
+    where
+      fromOut id_ =
+        let (proto, hash_) =
+              case (id_^.idProtocol, id_^.idHash) of
+                (Just (Protocol "youtube"), Nothing) -> 
+                  ("https://youtube.com/embed/", "")
+                (Just (Protocol "youtube"), Just _) -> 
+                  error "got youtube protocol with a hash!?"
+                (Just (Protocol p), Just (IDHash h)) ->
+                  (p, h)
+                (Just (Protocol p), Nothing) ->
+                  (p, "")
+        in
+          proto ++
+          (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
+          (if hash_ /= "" then "#" ++ hash_ else "")
+      fromInternal id_ = case id_^.idHash of
+                           Just (IDHash h) -> h
+                           _ -> error $ show $ id_
+      fromBack id_ = "http://www.independentlearning.science/tiki/" ++ 
+                     (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 
 instance Texy LinkText where
   texy (LinkText lt) = concatMap texy lt
@@ -172,7 +252,7 @@ instance Texy Block where
              AxiomB a -> block (b^.bTitle) (b^.bSetID) a
              ProofB p -> block (b^.bTitle) (b^.bSetID) p
              QuoteB q -> block (b^.bTitle) (b^.bSetID) q
-             CodeB  c -> block (b^.bTitle) (b^.bSetID) c
+             CodeB  c -> codeBlock (b^.bAttrs) (b^.bTitle) (b^.bSetID) c
              ImageB i -> block (b^.bTitle) (b^.bSetID) i
              VideoB v -> block (b^.bTitle) (b^.bSetID) v
              ConnectionB c -> block (b^.bTitle) (b^.bSetID) c
@@ -203,9 +283,13 @@ instance Blocky Prerex where
       title = mTitle mt "Prerex"
 
 instance Texy PrerexItem where
-  texy p = (href [] "" $ texy $ p^.prerexItemPath) ++
+  texy p = (href [] "" $ texy $ fromBack $ p^.prerexItemPath) ++
            ": " ++
-           (concatMap texy $ p^.prerexItemDescription)
+           (concatMap texy $ p^.prerexItemDescription) ++
+           newline
+    where fromBack id_ = "http://www.independentlearning.science/tiki/" ++ 
+                         (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
+
 
 instance Blocky Introduction where
   block mt msid (Introduction i) = subsection (mLabel msid title) ++ vectorBlockTexy i
@@ -231,7 +315,7 @@ theoremBlock :: LaTeXC l =>
 theoremBlock mt msid thm mprf ttype = mLabel msid $
                                       T.theorem ttype $
                                       vectorBlockTexy thm ++
-                                      maybe "" (T.proof (texy <$> mt) . vectorBlockTexy) mprf
+                                      maybe "" (T.proof Nothing . vectorBlockTexy) mprf
 
 instance Blocky Theorem where
   block mt msid (Theorem (thm, mprf)) = theoremBlock mt msid thm mprf "Theorem"
@@ -261,22 +345,28 @@ instance Blocky Proof where
                             vectorBlockTexy p
 
 instance Blocky Quote where
-  block mt msid (Quote q) = mLabel msid $
-                            L.quote $
-                            vectorBlockTexy q
+  block _ msid (Quote q) = mLabel msid $
+                           L.quote $
+                           vectorBlockTexy q
 
-instance Blocky Code where
-  block mt msid (Code c) = mLabel msid $
-                           L.verb $ concatMap unToken c
+codeBlock :: LaTeXC l => AttrMap -> Maybe BlockTitle -> Maybe SetID -> Code -> l
+codeBlock (AttrMap attrs) _ msid (Code c) = (mLabel msid $
+                                             mkCode langName $
+                                             raw $ concatMap unToken c) ++
+                                            "\n"
+  where 
+    langName = maybe "text" 
+                     (\(AttrValue x) -> if x == "idoc" then "text" else texy x)
+                     (join $ attrs ^.at (AttrName "lang"))
 
 instance Blocky Image where
-  block mt msid (Image (lnk, mcaption)) = mLabel msid $
-                                          L.verb "THIS ISN'T IMPLEMENTED (Image): " ++
-                                          maybe "" vectorBlockTexy mcaption
+  block _ msid (Image (lnk, mcaption)) = mLabel msid $
+                                         texy lnk ++
+                                         maybe "" vectorBlockTexy mcaption
 
 instance Blocky Video where
-  block mt msid (Video (ln, mcaption)) = mLabel msid $ 
-                                         L.verb "THIS ISN'T IMPLEMENTED (Video): " ++
+  block _ msid (Video (lnk, mcaption)) = mLabel msid $ 
+                                         texy lnk ++
                                          maybe "" vectorBlockTexy mcaption
 
 instance Blocky Connection where
@@ -285,9 +375,9 @@ instance Blocky Connection where
     where title = mTitle mt "Connection"
 
 instance Blocky Definition where
-  block mt msid (S.Definition d) = mLabel msid $
-                                   T.theorem "Definition" $
-                                   vectorBlockTexy d
+  block _ msid (S.Definition d) = mLabel msid $
+                                  T.theorem "Definition" $
+                                  vectorBlockTexy d
 
 instance Blocky Intuition where
   block mt msid (Intuition i) = (subsubsection $ mLabel msid title) ++
@@ -296,36 +386,32 @@ instance Blocky Intuition where
 
 instance Blocky YouTube where
   block mt msid (YouTube (lnk, mcaption)) = mLabel msid $ 
-                                            L.verb "THIS ISN'T IMPLEMENTED (YouTube): " ++
+                                            texy lnk ++
                                             maybe "" vectorBlockTexy mcaption
 
 instance Blocky Info where
-  block mt msid (Info i) = (subsubsection $ mLabel msid title) ++
-                           vectorBlockTexy i
+  block mt msid (Info i) = infoBlock (mLabel msid title) (vectorBlockTexy i)
     where
+      title :: LaTeXC l => l
       title = mTitle mt "Info"
 
 instance Blocky Tip where
-  block mt msid (Tip t) = (subsubsection $ mLabel msid title) ++
-                          vectorBlockTexy t
+  block mt msid (Tip t) = infoBlock (mLabel msid title) (vectorBlockTexy t)
     where
       title = mTitle mt "Tip"
 
 instance Blocky Caution where
-  block mt msid (Caution c) = (subsubsection $ mLabel msid title) ++
-                              vectorBlockTexy c
+  block mt msid (Caution c) = cautionBlock (mLabel msid title) (vectorBlockTexy c)
     where
       title = mTitle mt "Caution"
 
 instance Blocky Warning  where
-  block mt msid (Warning w) = (subsubsection $ mLabel msid title) ++
-                              vectorBlockTexy w
+  block mt msid (Warning w) = warningBlock (mLabel msid title) (vectorBlockTexy w)
     where 
       title = mTitle mt "Warning"
 
 instance Blocky SideNote where
-  block mt msid (SideNote s) = (subsubsection $ mLabel msid title) ++
-                               vectorBlockTexy s
+  block mt msid (SideNote s) = sideNoteBlock (mLabel msid title) (vectorBlockTexy s)
     where
       title = mTitle mt "SideNote"
 
@@ -378,7 +464,7 @@ instance Texy S.List where
   texy (S.List li) = enumerate $
                      concatMap (\li_ -> 
                                   mLabel (li_^.liSetID) $ 
-                                  item (texy <$> (li_^.liLabel)) ++ (vectorBlockTexy $ li_^.liContents)) li
+                                  item (textbf <$> texy <$> (li_^.liLabel)) ++ (vectorBlockTexy $ li_^.liContents)) li
 
 
 instance Texy ListLabel where

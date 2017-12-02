@@ -1,0 +1,11 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+ @axiom
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ An axiom looks like this.
+
+ @eqnarray
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ x \PYGZbs{}cdot y = y \PYGZbs{}cdot x
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+\end{Verbatim}

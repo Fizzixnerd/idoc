@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+Nearly everything in idoc can be given an identifier using the syntax
+`[[\PYGZsh{}idName]]`.  This immediately follows the thing you wish to
+identify.
+\end{Verbatim}
