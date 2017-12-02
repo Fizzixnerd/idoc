@@ -17,11 +17,6 @@ import Text.Megaparsec.Prim as Prim
 
 import qualified Text.IDoc.Syntax as S
 
-import System.IO
-import Data.Text.Encoding as E
-import Text.Megaparsec.Text
-import Text.IDoc.Lex
-
 type IDocParseError = MP.ParseError S.DToken MP.Dec
 
 type IDocParser = MP.Parsec MP.Dec S.IDocTokenStream

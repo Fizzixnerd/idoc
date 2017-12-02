@@ -34,11 +34,9 @@ library
               , blaze-html
               , classy-prelude
               , containers
-              , hspec >= 2.4.4
               , lens
               , megaparsec
               , mtl >= 2.2.1
-              , shakespeare
               , text
               , vector
               , HaTeX
