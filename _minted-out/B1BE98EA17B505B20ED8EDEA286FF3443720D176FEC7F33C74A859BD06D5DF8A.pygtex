@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+ @example
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ Prove that every integer greater than zero is positive.
+
+ +++
+
+ The proof is pretty simple.  Try to follow along.
+
+ First, assume not.  But that\PYGZsq{}s not the case.  QED.
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ [[\PYGZsh{}exExample]]\PYGZob{}An Example\PYGZcb{}
+\end{Verbatim}

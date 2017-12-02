@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+ @corollary
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ If \PYGZdl{}x, y \PYGZgt{} 2\PYGZdl{} are prime then \PYGZdl{}x + y\PYGZdl{} is not prime.
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+\end{Verbatim}

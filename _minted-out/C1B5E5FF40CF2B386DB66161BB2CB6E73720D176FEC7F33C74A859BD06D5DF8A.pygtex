@@ -1,0 +1,19 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+ @lemma
+ \PYGZsh{}Easy Lemma
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ This is a lemma.  It\PYGZsq{}s pretty easy to prove.
+
+ For \PYGZdl{}n \PYGZgt{} 2\PYGZdl{} there exists no integer solutions to the equation
+
+ @eqnarray
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ x\PYGZca{}n + y\PYGZca{}n = z\PYGZca{}n
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+
+ +++
+
+ It\PYGZsq{}s trivial.
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ [[\PYGZsh{}lemEasyLemma]]\PYGZob{}Lemma: Easy One\PYGZcb{}
+\end{Verbatim}

@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+ @intuition
+ \PYGZsh{} But What \PYGZus{}is\PYGZus{} the Determinant?! \PYGZhy{}\PYGZhy{} An Example Intuition Block
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ The determinant from a geometric point of view is used to talk about
+ \PYGZus{}volume\PYGZus{}.  If you grok this, then everything else will fall into
+ place.  For example, the reason a linear transformation is invertible
+ if and only if its determinant is non\PYGZhy{}zero is because when it \PYGZus{}is\PYGZus{}
+ zero, the map is going to map a set of basis vectors in your
+ \PYGZdl{}n\PYGZdl{}\PYGZhy{}dimensional space into some smaller \PYGZdl{}m\PYGZdl{}\PYGZhy{}dimensional space.  This
+ \PYGZdl{}m\PYGZdl{}\PYGZhy{}dimensional space has zero \PYGZdq{}volume\PYGZdq{} compared to the
+ \PYGZdl{}n\PYGZdl{}\PYGZhy{}dimensional one, and so you\PYGZsq{}re basically losing a whole
+ dimension.  There is no way to then map linearly back to the bigger
+ space.  It would be like trying to find a linear function that maps
+ the square to the cube!
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+\end{Verbatim}

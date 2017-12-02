@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+:First Item::This is a list where the items have labels.
+
+:Second Item::Another item.
+
+:And So On::...
+\end{Verbatim}

@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGZhy{}This is an unordered list.  It can contain paragraph contents.
+
+\PYGZhy{}It will look like bullet points in the final render.
+
+\PYGZhy{}Third main item.
+\end{Verbatim}

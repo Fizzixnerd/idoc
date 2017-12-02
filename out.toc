@@ -3,26 +3,18 @@
 \contentsline {subsubsection}{Prerex}{3}{section*.2}
 \contentsline {subsection}{Introduction}{3}{section*.3}
 \contentsline {section}{\numberline {1.1}Goals}{3}{section.1.1}
-\contentsline {subsubsection}{Get the Source!}{3}{section*.4}
 \contentsline {section}{\numberline {1.2}Features}{5}{section.1.2}
-\contentsline {subsection}{Basics}{5}{section*.5}
-\contentsline {subsection}{Lists}{5}{section*.6}
-\contentsline {section}{\numberline {1.3}Blocks}{6}{section.1.3}
-\contentsline {subsection}{Math}{6}{section*.7}
-\contentsline {subsection}{Emphasis Blocks}{8}{section*.8}
-\contentsline {subsubsection}{Please be Aware:}{8}{section*.9}
-\contentsline {subsubsection}{This is a Warning Block}{9}{section*.10}
-\contentsline {subsubsection}{This is an Info Block}{9}{section*.11}
-\contentsline {subsubsection}{This is a Caution Block}{9}{section*.12}
-\contentsline {subsubsection}{This is a Tip Block}{9}{section*.13}
-\contentsline {subsection}{Pedagogical Blocks}{9}{section*.14}
-\contentsline {subsection}{A connection}{9}{section*.15}
-\contentsline {subsubsection}{Connection Prerex}{9}{section*.16}
-\contentsline {subsubsection}{Rendering}{10}{section*.17}
-\contentsline {subsubsection}{But What \emph {is} the Determinant?! -- An Example Intuition Block}{10}{section*.18}
-\contentsline {subsubsection}{Example}{11}{section*.19}
-\contentsline {subsubsection}{Exercise}{11}{section*.20}
-\contentsline {subsection}{Links}{11}{section*.21}
-\contentsline {subsection}{YouTube}{12}{section*.22}
-\contentsline {subsection}{Images}{12}{section*.23}
-\contentsline {section}{\numberline {1.4}Conclusion}{12}{section.1.4}
+\contentsline {subsection}{Basics}{5}{section*.4}
+\contentsline {section}{\numberline {1.3}Blocks}{7}{section.1.3}
+\contentsline {subsection}{Math}{7}{section*.5}
+\contentsline {subsection}{Emphasis Blocks}{11}{section*.6}
+\contentsline {subsection}{Pedagogical Blocks}{14}{section*.7}
+\contentsline {subsection}{A connection}{14}{section*.8}
+\contentsline {subsubsection}{Connection Prerex}{14}{section*.9}
+\contentsline {subsubsection}{But What \emph {is} the Determinant?! -- An Example Intuition Block}{16}{section*.10}
+\contentsline {subsubsection}{Example}{17}{section*.11}
+\contentsline {subsubsection}{Exercise}{18}{section*.12}
+\contentsline {subsection}{Links}{18}{section*.13}
+\contentsline {subsection}{YouTube}{19}{section*.14}
+\contentsline {subsection}{Images}{19}{section*.15}
+\contentsline {section}{\numberline {1.4}Conclusion}{19}{section.1.4}

@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+ @sidenote
+ \PYGZsh{}Please be Aware:
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ This content will be rendered off to the side of the document.  You are
+ allowed any amount of complex content here.  An equation: \PYGZdl{}F =
+ \PYGZbs{}frac\PYGZob{}dp\PYGZcb{}\PYGZob{}dt\PYGZcb{}\PYGZdl{}.
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+\end{Verbatim}

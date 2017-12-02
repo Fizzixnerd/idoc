@@ -45,7 +45,7 @@ dTokens dTokens94,95
 megaMain megaMain96,97
 megaMain megaMain97,98
 
-./library/Text/IDoc/Syntax.hs,14722
+./library/Text/IDoc/Syntax.hs,14828
 module Text.IDoc.Syntax Text.IDoc.Syntax6,7
 type Row Row17,18
 type Col Col18,19
@@ -132,6 +132,7 @@ data SetID = SetID { _sidName _sidName126,127
                    , _sidDisplay _sidDisplay127,128
 newtype IDHash IDHash130,131
 newtype IDHash = IDHash IDHash130,131
+newtype IDHash = IDHash { unIDHash unIDHash130,131
 data AttrMap AttrMap132,133
 data AttrMap = AttrMap AttrMap132,133
 data AttrMap = AttrMap { _amMap _amMap132,133
@@ -161,6 +162,7 @@ newtype Protocol Protocol159,160
 newtype Protocol = Protocol Protocol159,160
 newtype IDBase IDBase160,161
 newtype IDBase = IDBase IDBase160,161
+newtype IDBase = IDBase { unIDBase unIDBase160,161
 data ListType ListType162,163
 data ListType = UnorderedUnordered162,163
               | OrderedOrdered163,164
@@ -704,27 +706,47 @@ newtype LinkLevel = LinkLevel LinkLevel503,504
 listLinks listLinks505,506
 listLinks listLinks506,507
 
-./library/Text/IDoc/Render/Tex.hs,639
+./library/Text/IDoc/Render/Tex.hs,1201
 module Text.IDoc.Render.Tex Text.IDoc.Render.Tex1,2
 type Icon Icon21,22
 mLabel mLabel23,24
 mLabel mLabel24,25
 defaultDecorator defaultDecorator28,29
 defaultDecorator defaultDecorator29,30
-compileToTex compileToTex46,47
-compileToTex compileToTex47,48
-instance instance58,59
-idHelper idHelper107,108
-idHelper idHelper108,109
-vectorBlockTexy vectorBlockTexy153,154
-vectorBlockTexy vectorBlockTexy154,155
-mTitle mTitle193,194
-mTitle mTitle194,195
-class Blocky Blocky196,197
-  block :: LaTeXC l => Maybe Maybe197,198
-  block block197,198
-theoremBlock theoremBlock223,224
-theoremBlock theoremBlock230,231
+mkCode mkCode64,65
+mkCode mkCode65,66
+mkBlock mkBlock67,68
+mkBlock mkBlock68,69
+sideNoteBlock sideNoteBlock72,73
+sideNoteBlock sideNoteBlock73,74
+infoBlock infoBlock75,76
+infoBlock infoBlock76,77
+warningBlock warningBlock78,79
+warningBlock warningBlock79,80
+cautionBlock cautionBlock81,82
+cautionBlock cautionBlock82,83
+newmdenv newmdenv84,85
+newmdenv newmdenv85,86
+newtheorem' newtheorem'88,89
+newtheorem' newtheorem'89,90
+href' href'93,94
+href' href'94,95
+setcounter setcounter97,98
+setcounter setcounter98,99
+compileToTex compileToTex100,101
+compileToTex compileToTex101,102
+instance instance111,112
+vectorBlockTexy vectorBlockTexy233,234
+vectorBlockTexy vectorBlockTexy234,235
+mTitle mTitle273,274
+mTitle mTitle274,275
+class Blocky Blocky276,277
+  block :: LaTeXC l => Maybe Maybe277,278
+  block block277,278
+theoremBlock theoremBlock307,308
+theoremBlock theoremBlock314,315
+codeBlock codeBlock351,352
+codeBlock codeBlock352,353
 
 ./test-suite/Main.hs,68
 main main11,12
