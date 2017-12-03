@@ -1,8 +1,7 @@
 <<<<<<< HEAD
 # Stack uses this directory as scratch space.
 /.stack-work/
-# Stack generates the Cabal file from `package.yaml` through hpack.
-/*.cabal
+TAGS
 =======
 >>>>>>> 9dc4e3c3563ccc6767b39bf8ef534d0d320b3781
 dist

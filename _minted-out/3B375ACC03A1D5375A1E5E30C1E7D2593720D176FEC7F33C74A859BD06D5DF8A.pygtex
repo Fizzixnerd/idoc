@@ -1,8 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
- @caution
- \PYGZsh{}This is a Caution Block
- \PYGZhy{}\PYGZhy{}\PYGZhy{}
- This will show a little caution symbol next to it.
- \PYGZhy{}\PYGZhy{}\PYGZhy{}
- [[\PYGZsh{}cautionBlock]]\PYGZob{}Caution\PYGZcb{}
-\end{Verbatim}

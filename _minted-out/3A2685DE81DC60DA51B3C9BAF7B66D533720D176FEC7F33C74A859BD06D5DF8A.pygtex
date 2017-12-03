@@ -1,8 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
- @tip
- \PYGZsh{}This is a Tip Block
- \PYGZhy{}\PYGZhy{}\PYGZhy{}
- This will show a little lightbulb symbol next to it.
- \PYGZhy{}\PYGZhy{}\PYGZhy{}
- [[\PYGZsh{}tipBlock]]\PYGZob{}Tip\PYGZcb{}
-\end{Verbatim}

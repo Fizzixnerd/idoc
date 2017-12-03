@@ -1,8 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
- [term=number]
- @definition
- \PYGZhy{}\PYGZhy{}\PYGZhy{}
- a *number* is an element of an field.
- \PYGZhy{}\PYGZhy{}\PYGZhy{}
- [[\PYGZsh{}def\PYGZhy{}number]]\PYGZob{}Definition: Number\PYGZcb{}
-\end{Verbatim}

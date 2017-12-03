@@ -1,8 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
- @info
- \PYGZsh{}This is an Info Block
- \PYGZhy{}\PYGZhy{}\PYGZhy{}
- This will show a little info symbol next to it.
- \PYGZhy{}\PYGZhy{}\PYGZhy{}
- [[\PYGZsh{}infoBlock]]\PYGZob{}Info\PYGZcb{}
-\end{Verbatim}
