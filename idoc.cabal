@@ -76,7 +76,7 @@ executable idoc
                 , megaparsec
                 , text
   default-language: Haskell2010
-  extra-extensions: NoImplicitPrelude
+  other-extensions: NoImplicitPrelude
                   , TemplateHaskell
 
 test-suite idoc-test-suite
