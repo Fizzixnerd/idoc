@@ -66,6 +66,7 @@ executable idoc
   hs-source-dirs:
       executable
   ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N
+  other-modules: Text.IDoc.OptParse
   build-depends:  classy-prelude
                 , idoc
                 , optparse-applicative
