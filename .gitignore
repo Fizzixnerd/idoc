@@ -2,6 +2,13 @@
 # Stack uses this directory as scratch space.
 /.stack-work/
 TAGS
+_minted-source
+*.pdf
+*.out
+*.log
+*.toc
+*.aux
+*.syntex.gz
 =======
 >>>>>>> 9dc4e3c3563ccc6767b39bf8ef534d0d320b3781
 dist

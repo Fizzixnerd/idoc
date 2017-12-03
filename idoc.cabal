@@ -30,18 +30,20 @@ library
       library
   ghc-options: -Wall
   build-depends:
-                base-noprelude
-              , blaze-html
-              , classy-prelude
-              , containers
-              , lens
-              , megaparsec
-              , mtl >= 2.2.1
-              , text
-              , vector
-              , HaTeX
+                    base-noprelude
+                , HaTeX
+                , blaze-html
+                , blaze-markup >= 0.8.0.0
+                , classy-prelude
+                , containers
+                , lens
+                , megaparsec
+                , mtl >= 2.2.1
+                , text
+                , vector
   exposed-modules: Text.IDoc.Render.Html5.Icons
                  , Text.IDoc.Render.Html5
+                 , Text.IDoc.Render.Tex
                  , Text.IDoc.Lex
                  , Text.IDoc.Parse
                  , Text.IDoc.Syntax
@@ -64,13 +66,18 @@ executable idoc
   hs-source-dirs:
       executable
   ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N
-  build-depends:
-                    base
-                , classy-prelude
-                , hspec >= 2.4.4
+  build-depends:  classy-prelude
                 , idoc
                 , optparse-applicative
+                , base-noprelude
+                , HaTeX
+                , blaze-html
+                , lens
+                , megaparsec
+                , text
   default-language: Haskell2010
+  extra-extensions: NoImplicitPrelude
+                  , TemplateHaskell
 
 test-suite idoc-test-suite
   type: exitcode-stdio-1.0
