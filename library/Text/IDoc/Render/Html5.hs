@@ -216,7 +216,7 @@ instance B.ToMarkup Block where
   toMarkup Block { _bType = PrerexB p } = B.toMarkup p
   toMarkup Block { _bType = MathB m } = B.toMarkup m
   toMarkup Block { _bType = EquationB e } = B.toMarkup e
-  toMarkup Block { _bType = EqnArrayB e } = B.toMarkup e
+  toMarkup Block { _bType = AlignB a } = B.toMarkup a
   toMarkup b = (card blockCardOptions
                      blockTitle
                      (b^.bSetID)
@@ -360,15 +360,11 @@ instance B.ToMarkup Equation where
                           (\x -> "$$\\begin{equation}\n" ++ x ++ 
                                  "\\end{equation}$$") e
 
-instance B.ToMarkup EqnArray where
-  toMarkup (EqnArray ea) = vectorBlockToMarkup "idocEqnArray center-block"
-                           (\x -> "$$\\begin{eqnarray}\n" ++ 
-                                  x ++
-                                  "\\end{eqnarray}$$") $
-                           (reverse (V.foldl (\acc y -> if y == Newline then  
-                                                          fromList [BSlash, BSlash] <> acc
-                                                        else
-                                                          V.cons y acc) empty ea))
+instance B.ToMarkup Align where
+  toMarkup (Align a) = vectorBlockToMarkup "idocAlign center-block"
+                       (\x -> "$$\\begin{align}\n" ++ 
+                              x ++
+                              "\\end{align}$$") $ a
 
 instance B.ToMarkup Conjecture where
   toMarkup (Conjecture c) = vectorBlockToMarkup "idocConjecture" id c

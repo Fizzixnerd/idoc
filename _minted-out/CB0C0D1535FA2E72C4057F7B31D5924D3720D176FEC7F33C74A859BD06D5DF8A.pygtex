@@ -1,11 +1,15 @@
 \begin{Verbatim}[commandchars=\\\{\}]
- @axiom
+ @theorem
  \PYGZhy{}\PYGZhy{}\PYGZhy{}
- An axiom looks like this.
 
- @eqnarray
+ @align
  \PYGZhy{}\PYGZhy{}\PYGZhy{}
- x \PYGZbs{}cdot y = y \PYGZbs{}cdot x
+ (x + y)\PYGZca{}2 = x\PYGZca{}2 + 2 xy + y\PYGZca{}2.
  \PYGZhy{}\PYGZhy{}\PYGZhy{}
+
+ +++
+
+ Use geometry.
  \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ [[\PYGZsh{}thm\PYGZhy{}foil]]\PYGZob{}Theorem: FOIL\PYGZcb{}
 \end{Verbatim}

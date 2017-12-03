@@ -201,7 +201,7 @@ data BlockType = PrerexB { _prerex :: Prerex }
                | IntroductionB { _introduction :: Introduction }
                | MathB { _math :: Math }
                | EquationB { _equation :: Equation }
-               | EqnArrayB { _eqnArray :: EqnArray }
+               | AlignB { _align :: Align }
                | TheoremB { _theorem :: Theorem }
                | LemmaB { _lemma :: Lemma }
                | CorollaryB { _corollary :: Corollary }
@@ -257,7 +257,7 @@ data Math = Math { _mathContents :: Vector Token }
 data Equation = Equation { _equationContents :: Vector Token }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data EqnArray = EqnArray { _eqnArrayContents :: Vector Token }
+data Align = Align { _alignContents :: Vector Token }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Theorem = Theorem { _theoremContents :: (Vector Core, Maybe (Vector Core)) }
@@ -383,7 +383,7 @@ makeLenses ''PrerexItem
 makeLenses ''Introduction
 makeLenses ''Math
 makeLenses ''Equation
-makeLenses ''EqnArray
+makeLenses ''Align
 makeLenses ''Theorem
 makeLenses ''Lemma
 makeLenses ''Corollary

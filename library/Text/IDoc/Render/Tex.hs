@@ -45,13 +45,15 @@ defaultDecorator title_ d =
   (newtheorem' ["Theorem"] "Proposition" "Proposition") ++
   (newtheorem' ["Theorem"] "Conjecture" "Conjecture") ++
   (newtheorem' ["Theorem"] "Axiom" "Axiom") ++
-  (theoremstyle T.Definition)++
+  (theoremstyle T.Definition) ++
   (newtheorem  "Definition" "Definition") ++
 
-  (newmdenv [] "SideNote") ++
-  (newmdenv ["backgroundcolor=SkyBlue"] "Info") ++
-  (newmdenv ["backgroundcolor=Goldenrod"] "Caution") ++
-  (newmdenv ["backgroundcolor=BrickRed"] "Warning") ++
+  (newmdenv ["frametitlebackgroundcolor=lightgray"] "SideNote") ++
+  (newmdenv ["frametitlebackgroundcolor=SkyBlue"] "Info") ++
+  (newmdenv ["frametitlebackgroundcolor=SkyBlue"] "Tip") ++
+  (newmdenv ["frametitlebackgroundcolor=Goldenrod"] "Caution") ++
+  (newmdenv ["frametitlebackgroundcolor=BrickRed"] "Warning") ++
+  (newmdenv ["frametitlebackgroundcolor=SkyBlue"] "Intuition") ++
   (setcounter "tocdepth" "2") ++
 
   (document $
@@ -76,6 +78,12 @@ sideNoteBlock = mkBlock "SideNote"
 infoBlock :: LaTeXC l => l -> l -> l
 infoBlock = mkBlock "Info"
 
+tipBlock :: LaTeXC l => l -> l -> l
+tipBlock = mkBlock "Tip"
+
+intuitionBlock :: LaTeXC l => l -> l -> l
+intuitionBlock = mkBlock "Intuition"
+
 warningBlock :: LaTeXC l => l -> l -> l
 warningBlock = mkBlock "Warning"
 
@@ -91,9 +99,9 @@ newtheorem' opts env caption_ = raw $ "\\newtheorem{" ++ env ++ "}" ++
                                       "[" ++ (concat $ intersperse "," opts) ++ "]" ++
                                       "{" ++ caption_ ++ "}"
 
-href' :: LaTeXC l => Text -> l -> l
-href' lnk caption_ = (raw $ "\\href[" ++ lnk ++ "]") ++
-                     raw "{" ++ caption_ ++ raw "}"
+hyperref' :: LaTeXC l => Text -> l -> l
+hyperref' lnk caption_ = (raw $ "\\hyperref[" ++ lnk ++ "]") ++
+                         raw "{" ++ caption_ ++ raw "}"
 
 setcounter :: LaTeXC l => l -> l -> l
 setcounter name_ val = raw "\\setcounter{" ++ name_ ++ raw "}{" ++ val ++ raw "}"
@@ -166,8 +174,8 @@ instance Texy Link where
              Out -> href []
                          (createURL $ unpack $ fromOut $ l^.linkLocation) 
                          (concatMap texy $ unLinkText $ l^.linkText)
-             Internal -> href' (fromInternal $ l^.linkLocation)
-                               (concatMap texy $ unLinkText $ l^.linkText)
+             Internal -> hyperref' (fromInternal $ l^.linkLocation)
+                                   (concatMap texy $ unLinkText $ l^.linkText)
              Back -> href [] 
                           (createURL $ unpack $ fromBack $ l^.linkLocation)
                           (concatMap texy $ unLinkText $ l^.linkText)
@@ -180,9 +188,9 @@ instance Texy Link where
                 (Just (Protocol "youtube"), Just _) -> 
                   error "got youtube protocol with a hash!?"
                 (Just (Protocol p), Just (IDHash h)) ->
-                  (p, h)
+                  (p ++ "://", h)
                 (Just (Protocol p), Nothing) ->
-                  (p, "")
+                  (p ++ "://", "")
         in
           proto ++
           (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
@@ -224,7 +232,7 @@ instance Texy Block where
              IntroductionB i -> block (b^.bTitle) (b^.bSetID) i
              MathB m -> block (b^.bTitle) (b^.bSetID) m
              EquationB e -> block (b^.bTitle) (b^.bSetID) e
-             EqnArrayB e -> block (b^.bTitle) (b^.bSetID) e
+             AlignB a -> block (b^.bTitle) (b^.bSetID) a
              TheoremB t -> block (b^.bTitle) (b^.bSetID) t
              LemmaB l -> block (b^.bTitle) (b^.bSetID) l
              CorollaryB c -> block (b^.bTitle) (b^.bSetID) c
@@ -283,8 +291,8 @@ instance Blocky Math where
 instance Blocky Equation where
   block mt msid (Equation e) = mLabel msid $ M.equation $ raw $ concatMap unToken e
 
-instance Blocky EqnArray where
-  block mt msid (EqnArray e) = mLabel msid $ M.align [raw $ concatMap unToken e]
+instance Blocky Align where
+  block mt msid (Align a) = mLabel msid $ M.align [raw $ concatMap unToken a]
 
 theoremBlock :: LaTeXC l => 
                 Maybe BlockTitle
@@ -361,8 +369,7 @@ instance Blocky Definition where
                                   vectorBlockTexy d
 
 instance Blocky Intuition where
-  block mt msid (Intuition i) = (subsubsection $ mLabel msid title) ++
-                                vectorBlockTexy i
+  block mt msid (Intuition i) = intuitionBlock (mLabel msid title) (vectorBlockTexy i)
     where title = mTitle mt "Intuition"
 
 instance Blocky YouTube where
@@ -377,7 +384,7 @@ instance Blocky Info where
       title = mTitle mt "Info"
 
 instance Blocky Tip where
-  block mt msid (Tip t) = infoBlock (mLabel msid title) (vectorBlockTexy t)
+  block mt msid (Tip t) = tipBlock (mLabel msid title) (vectorBlockTexy t)
     where
       title = mTitle mt "Tip"
 

@@ -6,7 +6,7 @@
 
  For \PYGZdl{}n \PYGZgt{} 2\PYGZdl{} there exists no integer solutions to the equation
 
- @eqnarray
+ @align
  \PYGZhy{}\PYGZhy{}\PYGZhy{}
  x\PYGZca{}n + y\PYGZca{}n = z\PYGZca{}n
  \PYGZhy{}\PYGZhy{}\PYGZhy{}

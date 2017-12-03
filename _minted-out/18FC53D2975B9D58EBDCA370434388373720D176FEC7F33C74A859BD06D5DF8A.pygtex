@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+ @align
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+ f(x) \PYGZam{}= 2x + 3 \PYGZbs{}\PYGZbs{}
+ g(y) \PYGZam{}= y\PYGZca{}2 \PYGZbs{}\PYGZbs{}
+ \PYGZbs{}implies (f \PYGZbs{}circ g) (x) \PYGZam{}= 2 x\PYGZca{}2 + 3
+ \PYGZhy{}\PYGZhy{}\PYGZhy{}
+\end{Verbatim}

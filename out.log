@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Debian) (preloaded format=pdflatex 2017.9.28)  2 DEC 2017 16:12
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Debian) (preloaded format=pdflatex 2017.9.28)  3 DEC 2017 09:31
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -1069,20 +1069,8 @@ Package mdframed Info: mdframed detected package amsthm
 \openout4 = `out.pyg'.
 
 
-(./_minted-out/C035818579AE669E09380E6027ABEA5A3720D176FEC7F33C74A859BD06D5DF8A
+(./_minted-out/ADD056CD262CD4F54077D8247F1170733720D176FEC7F33C74A859BD06D5DF8A
 .pygtex [5])
-
-./out.tex:127: Package keyval Error: secLinks undefined.
-
-See the keyval package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.127 \href[secLinks]
-                     {section on links}.
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
 \openout4 = `out.pyg'.
 
 
@@ -1098,10 +1086,10 @@ If that doesn't work, type  X <return>  to quit.
 
 (./_minted-out/3FA9171070A446DE38DCFE1D4F2E251E3720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-./out.tex:172: You can't use `\spacefactor' in math mode.
+./out.tex:171: You can't use `\spacefactor' in math mode.
 \@->\spacefactor 
                  \@m {}
-l.172 ...ne math is done just using normal $\LaTeX
+l.171 ...ne math is done just using normal $\LaTeX
                                                   $ syntax by doing enclosing
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
@@ -1114,74 +1102,55 @@ Missing character: There is no è in font cmex10!
 
 (./_minted-out/DF349F57A9FC100EFF6E3DC43EBA6A063720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 186
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 185
 .
-LaTeX Font Info:    No file OMScmtt.fd. on input line 186.
+LaTeX Font Info:    No file OMScmtt.fd. on input line 185.
 
 
 LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
-(Font)              for symbol `textbraceleft' on input line 186.
+(Font)              for symbol `textbraceleft' on input line 185.
 
 [7]
-./out.tex:191: You can't use `\spacefactor' in math mode.
-\@->\spacefactor 
-                 \@m {}
-l.191 ...te however that \emph{unlike} the $\LaTeX
-                                                  $ eqnarray, you do
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-Missing character: There is no è in font cmex10!
 \openout4 = `out.pyg'.
 
+runsystem(pygmentize -l text -f latex -P commandprefix=PYG -F tokenmerge -o _mi
+nted-out/18FC53D2975B9D58EBDCA370434388373720D176FEC7F33C74A859BD06D5DF8A.pygte
+x out.pyg)...executed.
 
-(./_minted-out/876B2E07B13214A40186C528EFBCA52F3720D176FEC7F33C74A859BD06D5DF8A
+
+(./_minted-out/18FC53D2975B9D58EBDCA370434388373720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
 
-./out.tex:210: Package keyval Error: idLabel undefined.
-
-See the keyval package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.210 ...ttt{ref\{\}} or \texttt{\href[idLabel]{}}
-                                                   syntax to refer to them:
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 210.
+LaTeX Warning: Hyper reference `idLabel' on page 8 undefined on input line 207.
 
 
 \openout4 = `out.pyg'.
 
+runsystem(pygmentize -l text -f latex -P commandprefix=PYG -F tokenmerge -o _mi
+nted-out/CA442CC1217ADEF0CB85B86BB7F0FDF43720D176FEC7F33C74A859BD06D5DF8A.pygte
+x out.pyg)...executed.
 
-(./_minted-out/FDB0FDD0E186114224327A6960F064223720D176FEC7F33C74A859BD06D5DF8A
+
+(./_minted-out/CA442CC1217ADEF0CB85B86BB7F0FDF43720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-
-./out.tex:220: Package keyval Error: importantEquation undefined.
-
-See the keyval package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.220 to \href[importantEquation]
-                                 {the important equation}.  If you want to
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
 \openout4 = `out.pyg'.
 
+runsystem(pygmentize -l text -f latex -P commandprefix=PYG -F tokenmerge -o _mi
+nted-out/F81CFDC06C9DC4D8A3155A1A7C7A709B3720D176FEC7F33C74A859BD06D5DF8A.pygte
+x out.pyg)...executed.
 
-(./_minted-out/141D0032818945AC41DE56D1EABBC14C3720D176FEC7F33C74A859BD06D5DF8A
+
+(./_minted-out/F81CFDC06C9DC4D8A3155A1A7C7A709B3720D176FEC7F33C74A859BD06D5DF8A
 .pygtex [8])
 \openout4 = `out.pyg'.
 
+runsystem(pygmentize -l text -f latex -P commandprefix=PYG -F tokenmerge -o _mi
+nted-out/45D56DF87F413D0D2541D35223EB9EB83720D176FEC7F33C74A859BD06D5DF8A.pygte
+x out.pyg)...executed.
 
-(./_minted-out/EAC62A551C9095927A23B296B1431BFF3720D176FEC7F33C74A859BD06D5DF8A
+
+(./_minted-out/45D56DF87F413D0D2541D35223EB9EB83720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
 \openout4 = `out.pyg'.
 
@@ -1190,13 +1159,21 @@ If that doesn't work, type  X <return>  to quit.
 .pygtex)
 \openout4 = `out.pyg'.
 
+runsystem(pygmentize -l text -f latex -P commandprefix=PYG -F tokenmerge -o _mi
+nted-out/CB0C0D1535FA2E72C4057F7B31D5924D3720D176FEC7F33C74A859BD06D5DF8A.pygte
+x out.pyg)...executed.
 
-(./_minted-out/C1541BC36A4A4122BE9D44C92DDB0CB83720D176FEC7F33C74A859BD06D5DF8A
+
+(./_minted-out/CB0C0D1535FA2E72C4057F7B31D5924D3720D176FEC7F33C74A859BD06D5DF8A
 .pygtex [9])
 \openout4 = `out.pyg'.
 
+runsystem(pygmentize -l text -f latex -P commandprefix=PYG -F tokenmerge -o _mi
+nted-out/EE88650D3648A41A4FC19795233B8FE73720D176FEC7F33C74A859BD06D5DF8A.pygte
+x out.pyg)...executed.
 
-(./_minted-out/C1B5E5FF40CF2B386DB66161BB2CB6E73720D176FEC7F33C74A859BD06D5DF8A
+
+(./_minted-out/EE88650D3648A41A4FC19795233B8FE73720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
 \openout4 = `out.pyg'.
 
@@ -1223,89 +1200,94 @@ If that doesn't work, type  X <return>  to quit.
 
 (./_minted-out/263EB162C53F878290857B6786247AB43720D176FEC7F33C74A859BD06D5DF8A
 .pygtex [11])
-Package mdframed Info: mdframed works in twoside mode on input line 359.
+Package mdframed Info: mdframed works in twoside mode on input line 358.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 359.
+(mdframed)              on input line 358.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 364.
+(mdframed)              on input line 363.
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/70EC459C994B1AE22B44B946AD19BD933720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-Package mdframed Info: mdframed works in twoside mode on input line 380.
+Package mdframed Info: mdframed works in twoside mode on input line 379.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 380.
+(mdframed)              on input line 379.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 383.
+(mdframed)              on input line 382.
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/81CA2899CEF07C1AA9A95384BB03136D3720D176FEC7F33C74A859BD06D5DF8A
 .pygtex [12])
-Package mdframed Info: mdframed works in twoside mode on input line 393.
+Package mdframed Info: mdframed works in twoside mode on input line 392.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 393.
+(mdframed)              on input line 392.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 396.
+(mdframed)              on input line 395.
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/F537B0042B64B99D45E8DA11D2CA96E53720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-Package mdframed Info: mdframed works in twoside mode on input line 406.
+Package mdframed Info: mdframed works in twoside mode on input line 405.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 406.
+(mdframed)              on input line 405.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 409.
+(mdframed)              on input line 408.
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/3B375ACC03A1D5375A1E5E30C1E7D2593720D176FEC7F33C74A859BD06D5DF8A
 .pygtex)
-Package mdframed Info: mdframed works in twoside mode on input line 419.
+Package mdframed Info: mdframed works in twoside mode on input line 418.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 419.
+(mdframed)              on input line 418.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 422.
+(mdframed)              on input line 421.
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/3A2685DE81DC60DA51B3C9BAF7B66D533720D176FEC7F33C74A859BD06D5DF8A
-.pygtex) [13]
+.pygtex [13])
 
-Package hyperref Warning: Suppressing link with empty target on input line 443.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 443.
+Package hyperref Warning: Suppressing link with empty target on input line 442.
 
 
-Package mdframed Info: mdframed works in twoside mode on input line 448.
+
+Package hyperref Warning: Suppressing link with empty target on input line 442.
+
+
+Package mdframed Info: mdframed works in twoside mode on input line 447.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 448.
+(mdframed)              on input line 447.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 458.
+(mdframed)              on input line 457.
+[14]
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/6FA689DA0E2023AC30869AAD62D2888C3720D176FEC7F33C74A859BD06D5DF8A
-.pygtex [14]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [15])
+.pygtex [15])
+Package mdframed Info: mdframed works in twoside mode on input line 519.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 519.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 532.
 \openout4 = `out.pyg'.
 
 
@@ -1315,95 +1297,70 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 (./_minted-out/B1BE98EA17B505B20ED8EDEA286FF3443720D176FEC7F33C74A859BD06D5DF8A
-.pygtex)
+.pygtex [17])
 \openout4 = `out.pyg'.
 
 
 (./_minted-out/C34A25024095B3022DFDC611E8BE26873720D176FEC7F33C74A859BD06D5DF8A
-.pygtex [17])
+.pygtex)
 
-./out.tex:603: Package keyval Error: important-equation undefined.
+LaTeX Warning: Hyper reference `WTF' on page 18 undefined on input line 622.
 
-See the keyval package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.603 \texttt{\href[important-equation]{this}}
-                                              , and appear like
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+[18]
+
+Package hyperref Warning: Suppressing empty link on input line 628.
 
 
-./out.tex:604: Package keyval Error: important-equation undefined.
+Package hyperref Warning: Suppressing empty link on input line 630.
 
-See the keyval package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.604 \href[important-equation]
-                               {this}.  That is, they are the \texttt{\#} sy...
+runsystem(rm _minted-out/A77704CC3B0D6C970696917FF51F808A3720D176FEC7F33C74A859
+BD06D5DF8A.pygtex)...executed.
 
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+runsystem(rm _minted-out/DA922CC0BABF723682780175A79507DB3720D176FEC7F33C74A859
+BD06D5DF8A.pygtex)...executed.
 
+runsystem(rm _minted-out/E2B89628EA1E6118DC0EAD1172DF52EF3720D176FEC7F33C74A859
+BD06D5DF8A.pygtex)...executed.
 
-./out.tex:621: Package keyval Error: WTF undefined.
+runsystem(rm _minted-out/EAC62A551C9095927A23B296B1431BFF3720D176FEC7F33C74A859
+BD06D5DF8A.pygtex)...executed.
 
-See the keyval package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.621 ...the text inside the \texttt{\href[WTF]{}}
-                                                   as the display
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+runsystem(rm _minted-out/C1541BC36A4A4122BE9D44C92DDB0CB83720D176FEC7F33C74A859
+BD06D5DF8A.pygtex)...executed.
 
+runsystem(rm _minted-out/C1B5E5FF40CF2B386DB66161BB2CB6E73720D176FEC7F33C74A859
+BD06D5DF8A.pygtex)...executed.
 
-Package hyperref Warning: Suppressing link with empty target on input line 621.
-
-
-
-Package hyperref Warning: Suppressing empty link on input line 627.
-
-
-Package hyperref Warning: Suppressing empty link on input line 629.
-
-[18] [19]
+[19]
 \tf@toc=\write8
 \openout8 = `out.toc'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 633.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 633.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 634.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 634.
  (./out.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 633.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 633.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 634.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 634.
+Package rerunfilecheck Info: File `out.out' has not changed.
+(rerunfilecheck)             Checksum: 32C31C9FFD89D6F4B6E1443DDC935567;875.
 
-
-Package rerunfilecheck Warning: File `out.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `out.out':
-(rerunfilecheck)             Before: 35FAB6174C48438874856D93AE8BB286;822
-(rerunfilecheck)             After:  B7B5FC608C80F0A699CF382D477B18C2;875.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+LaTeX Warning: There were undefined references.
 
 runsystem(rm out.pyg)...executed.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 633.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 634.
  ) 
 Here is how much of TeX's memory you used:
- 20848 strings out of 493013
- 368863 string characters out of 6135682
- 507293 words of memory out of 5000000
- 24063 multiletter control sequences out of 15000+600000
+ 20857 strings out of 493013
+ 369229 string characters out of 6135682
+ 506925 words of memory out of 5000000
+ 24065 multiletter control sequences out of 15000+600000
  14411 words of font info for 55 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 43i,12n,35p,11372b,567s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 43i,11n,35p,11541b,567s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/te
@@ -1419,10 +1376,10 @@ cmsl10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10
 usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/sha
 re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/tex
 live/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on out.pdf (19 pages, 227660 bytes).
+Output written on out.pdf (19 pages, 227791 bytes).
 PDF statistics:
- 278 PDF objects out of 1000 (max. 8388607)
- 238 compressed objects within 3 object streams
- 59 named destinations out of 1000 (max. 500000)
- 121 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 283 PDF objects out of 1000 (max. 8388607)
+ 243 compressed objects within 3 object streams
+ 60 named destinations out of 1000 (max. 500000)
+ 129 words of extra memory for PDF output out of 10000 (max. 10000000)
 

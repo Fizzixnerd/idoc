@@ -12,10 +12,9 @@
 \contentsline {subsection}{Pedagogical Blocks}{14}{section*.8}
 \contentsline {subsection}{A connection}{14}{section*.9}
 \contentsline {subsubsection}{Connection Prerex}{14}{section*.10}
-\contentsline {subsubsection}{But What \emph {is} the Determinant?! -- An Example Intuition Block}{16}{section*.11}
-\contentsline {subsubsection}{Example}{17}{section*.12}
-\contentsline {subsubsection}{Exercise}{17}{section*.13}
-\contentsline {subsection}{Links}{18}{section*.14}
-\contentsline {subsection}{YouTube}{18}{section*.15}
-\contentsline {subsection}{Images}{19}{section*.16}
+\contentsline {subsubsection}{Example}{17}{section*.11}
+\contentsline {subsubsection}{Exercise}{18}{section*.12}
+\contentsline {subsection}{Links}{18}{section*.13}
+\contentsline {subsection}{YouTube}{19}{section*.14}
+\contentsline {subsection}{Images}{19}{section*.15}
 \contentsline {section}{\numberline {1.4}Conclusion}{19}{section.1.4}

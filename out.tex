@@ -1,4 +1,4 @@
-\documentclass[letterpaper]{memoir}\usepackage{hyperref}\usepackage{graphicx}\usepackage{minted}\usepackage[usenames,dvipsnames]{xcolor}\usepackage{amsmath}\usepackage{amsthm}\usepackage{amssymb}\usepackage{mdframed}\newtheorem{Theorem}{Theorem}\newtheorem{Lemma}[Theorem]{Lemma}\newtheorem{Corollary}[Theorem]{Corollary}\newtheorem{Proposition}[Theorem]{Proposition}\newtheorem{Conjecture}[Theorem]{Conjecture}\newtheorem{Axiom}[Theorem]{Axiom}\theoremstyle{definition}\newtheorem{Definition}{Definition}\newmdenv[]{SideNote}\newmdenv[backgroundcolor=SkyBlue]{Info}\newmdenv[backgroundcolor=Goldenrod]{Caution}\newmdenv[backgroundcolor=BrickRed]{Warning}\setcounter{tocdepth}{2}\begin{document}\title{idoc User Guide}\author{ILS Contributors}\date{\today{}}\maketitle{}\tableofcontents{}\chapter{\label{idocUserGuide}idoc User Guide}\subsubsection{Prerex}\href{}{http://www.independentlearning.science/tiki/None}: Someone wanted to see what this looked like, so it's here.
+\documentclass[letterpaper]{memoir}\usepackage{hyperref}\usepackage{graphicx}\usepackage{minted}\usepackage[usenames,dvipsnames]{xcolor}\usepackage{amsmath}\usepackage{amsthm}\usepackage{amssymb}\usepackage{mdframed}\newtheorem{Theorem}{Theorem}\newtheorem{Lemma}[Theorem]{Lemma}\newtheorem{Corollary}[Theorem]{Corollary}\newtheorem{Proposition}[Theorem]{Proposition}\newtheorem{Conjecture}[Theorem]{Conjecture}\newtheorem{Axiom}[Theorem]{Axiom}\theoremstyle{definition}\newtheorem{Definition}{Definition}\newmdenv[frametitlebackgroundcolor=lightgray]{SideNote}\newmdenv[frametitlebackgroundcolor=SkyBlue]{Info}\newmdenv[frametitlebackgroundcolor=SkyBlue]{Tip}\newmdenv[frametitlebackgroundcolor=Goldenrod]{Caution}\newmdenv[frametitlebackgroundcolor=BrickRed]{Warning}\newmdenv[frametitlebackgroundcolor=SkyBlue]{Intuition}\setcounter{tocdepth}{2}\begin{document}\title{idoc User Guide}\author{ILS Contributors}\date{\today{}}\maketitle{}\tableofcontents{}\chapter{\label{idocUserGuide}idoc User Guide}\subsubsection{Prerex}\href{}{http://www.independentlearning.science/tiki/None}: Someone wanted to see what this looked like, so it's here.
       Normally you can just leave the prerex block out when
       there are none.\newline{}\subsection{Introduction}idoc is a language and a program.  The language is what was used to
 write this document.  The program is what rendered it (in both
@@ -8,12 +8,12 @@ support for allowing prerequisite resolution, though this is
 technically implemented by a static checker after parsing.  idoc was
 originally based on asciidoc, but has since diverged significantly.
 
-\section{Goals}\begin{Info}[frametitle=\label{sourceTip}Get the Source!]You will probably want to examine the source for this document along
+\section{Goals}\begin{Tip}[frametitle=\label{sourceTip}Get the Source!]You will probably want to examine the source for this document along
 with the rendered content.  It can be found
-\href{httpwww.independentlearning.science/source.idoc}{here}.
+\href{http://www.independentlearning.science/source.idoc}{here}.
 
 
-\end{Info}
+\end{Tip}
 idoc was created because no other existing markup language had the
 properties we needed for the website.  We describe these properties
 and how the extant humane markup languages failed to have them.
@@ -58,7 +58,7 @@ abstraction layer the markup languages provide, and makes it much more
 difficult to properly format the result of the markup language
 automatically.  We prefer providing the features users want directly,
 instead of having them rely on such "escape hatches".\item[\textbf{Haskell Implementation}]We are using the
-\href{httpswww.haskell.org}{Haskell programming language} to make the
+\href{https://www.haskell.org}{Haskell programming language} to make the
 site because there is simply no better language out there.  There does
 not exist (at the time of writing) a good implementation of Asciidoc
 for Haskell, and since Markdown is unsuitable for our purposes it did
@@ -80,10 +80,10 @@ I can make it \textbf{monospace} (like "computer code") using \texttt{backticks}
 (\texttt{`}).
 
 Every idoc document must have a \textbf{title}, which is the first line of
-the document and looks like this: \texttt{= Title}.  The space between the
-\texttt{=} and the title text is important.  To make new \textbf{sections}, type \texttt{==
-Section Name}.  Note that the section title must be separated from the
-previous content by a newline.  For example,
+the document and looks like this: \texttt{=Title}.  The lack of space between
+the \texttt{=} and the title text is important.  To make new \textbf{sections}, type
+\texttt{==Section Name}.  Note that the section title must be separated from
+the previous content by a newline.  For example,
 
 \begin{minted}[frame=single,framesep=5mm,breaklines]{text}
 I am a paragraph!  Hear me roar!
@@ -103,7 +103,7 @@ Another paragraph.  RAAAAAAAAAAAWR!
 \end{minted}
 
 would not display what you want correctly.  Subsections are the same
-deal: use \texttt{=== Subsection Name}.
+deal: use \texttt{===Subsection Name}.
 
 Any line that begins with \texttt{//} denotes a comment. They will not be
 displayed in the final document.  These are not yet implemented, but
@@ -120,11 +120,10 @@ wish to identify.
 Nearly everything in idoc can be given an identifier using the syntax
 `[[#idName]]`.  This immediately follows the thing you wish to
 identify.
-
 \end{minted}
 
 To see how to refer to IDs and link to them, check out the
-\href[secLinks]{section on links}.
+\hyperref[secLinks]{section on links}.
 
 \subsection{Lists}Lists are of fundamental importance when constructing rich documents.
 However, currently \texttt{idoc} does not recognize complex content inside
@@ -187,43 +186,43 @@ that later.  (Fixed it!  Use \texttt{mathrm\{d\}}!)  Also note that we added
 an \emph{ID} to the equation.  IDs can be added to many things.  They
 always appear immediately following the thing they identify.
 
-There is also a more specialized \texttt{eqnarray} block, which numbers
-equations.  Note however that \emph{unlike} the $\LaTeX$ eqnarray, you do
-not put a linebreak (\texttt{\textbackslash{} }) at the end of each line.  The ampersands
-(\texttt{\&}) tell MathJax where to align line to.  So, for example, the
-equations below have a "left side", an "equals sign" in the middle,
-and a "right side".
+There is also a more specialized \texttt{align} block, which numbers
+equations.  The ampersands (\texttt{\&}) tell MathJax where to align line to.
+So, for example, the equations below have a "left side" and a "right
+side".
 
-\begin{align}f(x) &=& 2x + 3
-g(y) &=& y^2
-\implies (f \circ g) (x) &=& 2 x^2 + 3\end{align}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
- @eqnarray
+\begin{align}f(x) &= 2x + 3 \\
+g(y) &= y^2 \\
+\implies (f \circ g) (x) &= 2 x^2 + 3\end{align}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+ @align
  ---
- f(x) &=& 2x + 3
- g(y) &=& y^2
- \implies (f \circ g) (x) &=& 2 x^2 + 3
+ f(x) &= 2x + 3 \\
+ g(y) &= y^2 \\
+ \implies (f \circ g) (x) &= 2 x^2 + 3
  ---
 \end{minted}
 
 Note that we can use the standard \texttt{label\{\}} macro within the \texttt{math}
-or \texttt{eqnarray} environments to assign IDs to individual equations.
-Then we can use \texttt{ref\{\}} or \texttt{\href[idLabel]{}} syntax to refer to them:
+or \texttt{align} environments to assign IDs to individual equations.
+Then we can use \texttt{ref\{\}} or \texttt{\hyperref[idLabel]{}} syntax to refer to them:
 
-\begin{align}\label{importantEquation} y &=& mx + b\end{align}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
- @eqnarray
+\begin{align}\label{importantEquation} y &= mx + b\end{align}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+ @align
  ---
- \label{importantEquation} y &=& mx + b
+ \label{importantEquation} y &= mx + b
  ---
 \end{minted}
 
 Refer to the \emph{important equation} $\ref{importantEquation}$.  Refer
-to \href[importantEquation]{the important equation}.  If you want to
+to \hyperref[importantEquation]{the important equation}.  If you want to
 prevent an equation from being numbered, use \texttt{nonumber} as usual.
 
-\begin{align}R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber\end{align}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
- @eqnarray
+\begin{align}R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &
+       = \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber\end{align}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+ @align
  ---
- R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber
+ R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &
+ 	= \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber
  ---
 \end{minted}
 
@@ -234,7 +233,7 @@ prevent an equation from being numbered, use \texttt{nonumber} as usual.
  ---
  An axiom looks like this.
  
- @eqnarray
+ @align
  ---
  x \cdot y = y \cdot x
  ---
@@ -258,7 +257,7 @@ prevent an equation from being numbered, use \texttt{nonumber} as usual.
  @theorem
  ---
 
- @eqnarray
+ @align
  ---
  (x + y)^2 = x^2 + 2 xy + y^2.
  ---
@@ -284,7 +283,7 @@ For $n > 2$ there exists no integer solutions to the equation:
  
  For $n > 2$ there exists no integer solutions to the equation
  
- @eqnarray
+ @align
  ---
  x^n + y^n = z^n
  ---
@@ -416,10 +415,10 @@ specify the type of admonition.
  [[#cautionBlock]]{Caution}
 \end{minted}
 
-\begin{Info}[frametitle=\label{tipBlock}This is a Tip Block]This will show a little lightbulb symbol next to it.
+\begin{Tip}[frametitle=\label{tipBlock}This is a Tip Block]This will show a little lightbulb symbol next to it.
 
 
-\end{Info}
+\end{Tip}
 \begin{minted}[frame=single,framesep=5mm,breaklines]{text}
  @tip
  #This is a Tip Block
@@ -517,7 +516,7 @@ depending on if the reader has the necessary prereqs or not.
  [[#myConnection]]{A Connection}
 \end{minted}
 
-\subsubsection{But What \emph{is} the Determinant?! -- An Example Intuition Block}The determinant from a geometric point of view is used to talk about
+\begin{Intuition}[frametitle=But What \emph{is} the Determinant?! -- An Example Intuition Block]The determinant from a geometric point of view is used to talk about
 \emph{volume}.  If you grok this, then everything else will fall into
 place.  For example, the reason a linear transformation is invertible
 if and only if its determinant is non-zero is because when it \emph{is}
@@ -529,6 +528,8 @@ There is no way to then map linearly back to the bigger space.  It
 would be like trying to find a linear function that maps the square to
 the cube!
 
+
+\end{Intuition}
 \begin{minted}[frame=single,framesep=5mm,breaklines]{text}
  @intuition
  # But What _is_ the Determinant?! -- An Example Intuition Block
@@ -584,8 +585,8 @@ $5$ and $7$?
 
 \subsection{\label{secLinks}Links}Links come in three flavours.  The first is your standard link, called
 an \textbf{out link} or \textbf{olink} in idoc.  It's written like
-\texttt{\href{httpwww.example.com}{this}} and appears like
-\href{httpwww.example.com}{this}.  Note that the \texttt{http(s)://} part of
+\texttt{\href{http://www.example.com}{this}} and appears like
+\href{http://www.example.com}{this}.  Note that the \texttt{http(s)://} part of
 the link is \emph{mandatory}.  Olinks are restricted in idoc to appear in
 only very specific places, for example in \texttt{furtherreading} or
 \texttt{bibliography} blocks.  This is because the text of a doc should be
@@ -600,8 +601,8 @@ The second flavour is a link within the current doc, called an
 \textbf{internal link} or \textbf{ilink}.  For example, when we used \texttt{ref\{\}} back
 in the Math section, we were using ilinks.  Refering to anything on
 the page which has an ID is an ilink.  They are written like
-\texttt{\href[important-equation]{this}}, and appear like
-\href[important-equation]{this}.  That is, they are the \texttt{\#} symbol
+\texttt{\hyperref[importantEquation]{this}}, and appear like
+\hyperref[importantEquation]{this}.  That is, they are the \texttt{\#} symbol
 followed by a valid ID.
 
 The final flavour is the \textbf{back link}, or \textbf{blink}.  This is a link to
@@ -618,7 +619,7 @@ features that the ILS website hopes to deliver, such as automatic
 prerequisite resolution for subjects you want to learn.
 
 In all types of links, you are free to leave out the text inside the
-\texttt{\{\}}.  This will just use the text inside the \texttt{\href[WTF]{}} as the display
+\texttt{\{\}}.  This will just use the text inside the \texttt{\hyperref[WTF]{}} as the display
 text instead.  Normally this is not what you want, however.
 
 \subsection{YouTube}We can embed YouTube videos if we think they are important.  Please do
@@ -626,7 +627,7 @@ not abuse this feature.
 
 \label{ytUnlimitedCorners}\href{https://youtube.com/embed/FdU8oqCbvzo}{}\subsection{Images}We can embed important images too.
 
-\href{httpwww.independentlearning.science/uusBbd5.jpg}{}Bunnies make everything better.
+\href{http://www.independentlearning.science/uusBbd5.jpg}{}Bunnies make everything better.
 
 \section{Conclusion}That's about it for the basic syntax.  We can fix the rest later.
 

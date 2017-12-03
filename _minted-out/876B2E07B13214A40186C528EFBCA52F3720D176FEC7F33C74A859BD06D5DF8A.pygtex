@@ -1,8 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
- @eqnarray
- \PYGZhy{}\PYGZhy{}\PYGZhy{}
- f(x) \PYGZam{}=\PYGZam{} 2x + 3
- g(y) \PYGZam{}=\PYGZam{} y\PYGZca{}2
- \PYGZbs{}implies (f \PYGZbs{}circ g) (x) \PYGZam{}=\PYGZam{} 2 x\PYGZca{}2 + 3
- \PYGZhy{}\PYGZhy{}\PYGZhy{}
-\end{Verbatim}

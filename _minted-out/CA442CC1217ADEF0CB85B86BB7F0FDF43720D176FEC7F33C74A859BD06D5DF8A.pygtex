@@ -1,6 +1,6 @@
 \begin{Verbatim}[commandchars=\\\{\}]
- @eqnarray
+ @align
  \PYGZhy{}\PYGZhy{}\PYGZhy{}
- \PYGZbs{}label\PYGZob{}importantEquation\PYGZcb{} y \PYGZam{}=\PYGZam{} mx + b
+ \PYGZbs{}label\PYGZob{}importantEquation\PYGZcb{} y \PYGZam{}= mx + b
  \PYGZhy{}\PYGZhy{}\PYGZhy{}
 \end{Verbatim}

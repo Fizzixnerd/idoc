@@ -45,7 +45,7 @@ dTokens dTokens94,95
 megaMain megaMain96,97
 megaMain megaMain97,98
 
-./library/Text/IDoc/Syntax.hs,14828
+./library/Text/IDoc/Syntax.hs,14786
 module Text.IDoc.Syntax Text.IDoc.Syntax6,7
 type Row Row17,18
 type Col Col18,19
@@ -204,8 +204,8 @@ data BlockType = PrerexB { _prerex _prerex199,200
                | MathB { _math _math201,202
                | EquationB EquationB202,203
                | EquationB { _equation _equation202,203
-               | EqnArrayB EqnArrayB203,204
-               | EqnArrayB { _eqnArray _eqnArray203,204
+               | AlignB AlignB203,204
+               | AlignB { _align _align203,204
                | TheoremB TheoremB204,205
                | TheoremB { _theorem _theorem204,205
                | LemmaB LemmaB205,206
@@ -283,9 +283,9 @@ data Math = Math { _mathContents _mathContents253,254
 data Equation Equation256,257
 data Equation = Equation Equation256,257
 data Equation = Equation { _equationContents _equationContents256,257
-data EqnArray EqnArray259,260
-data EqnArray = EqnArray EqnArray259,260
-data EqnArray = EqnArray { _eqnArrayContents _eqnArrayContents259,260
+data Align Align259,260
+data Align = Align Align259,260
+data Align = Align { _alignContents _alignContents259,260
 data Theorem Theorem262,263
 data Theorem = Theorem Theorem262,263
 data Theorem = Theorem { _theoremContents _theoremContents262,263
@@ -384,7 +384,7 @@ data Section = Section { _secType _secType354,355
                        , _secTitle _secTitle357,358
                        , _secSetID _secSetID358,359
 
-./library/Text/IDoc/Parse.hs,6573
+./library/Text/IDoc/Parse.hs,6561
 module Text.IDoc.Parse Text.IDoc.Parse5,6
 type IDocParseError IDocParseError19,20
 type IDocParser IDocParser21,22
@@ -538,8 +538,8 @@ mathP mathP586,587
 mathP mathP587,588
 equationP equationP589,590
 equationP equationP590,591
-eqnArrayP eqnArrayP592,593
-eqnArrayP eqnArrayP593,594
+alignP alignP592,593
+alignP alignP593,594
 theoremP theoremP595,596
 theoremP theoremP596,597
 lemmaP lemmaP598,599
@@ -695,54 +695,58 @@ vectorBlockToMarkup vectorBlockToMarkup189,190
 vectorBlockToMarkup vectorBlockToMarkup194,195
 verbatimBlockToMarkup verbatimBlockToMarkup199,200
 verbatimBlockToMarkup verbatimBlockToMarkup203,204
-decorateAdmonition decorateAdmonition396,397
-decorateAdmonition decorateAdmonition397,398
-newtype LinkLevel LinkLevel503,504
-newtype LinkLevel = LinkLevel LinkLevel503,504
-listLinks listLinks505,506
-listLinks listLinks506,507
+decorateAdmonition decorateAdmonition392,393
+decorateAdmonition decorateAdmonition393,394
+newtype LinkLevel LinkLevel499,500
+newtype LinkLevel = LinkLevel LinkLevel499,500
+listLinks listLinks501,502
+listLinks listLinks502,503
 
-./library/Text/IDoc/Render/Tex.hs,1201
+./library/Text/IDoc/Render/Tex.hs,1349
 module Text.IDoc.Render.Tex Text.IDoc.Render.Tex1,2
 type Icon Icon21,22
 mLabel mLabel23,24
 mLabel mLabel24,25
 defaultDecorator defaultDecorator28,29
 defaultDecorator defaultDecorator29,30
-mkCode mkCode64,65
-mkCode mkCode65,66
-mkBlock mkBlock67,68
-mkBlock mkBlock68,69
-sideNoteBlock sideNoteBlock72,73
-sideNoteBlock sideNoteBlock73,74
-infoBlock infoBlock75,76
-infoBlock infoBlock76,77
-warningBlock warningBlock78,79
-warningBlock warningBlock79,80
-cautionBlock cautionBlock81,82
-cautionBlock cautionBlock82,83
-newmdenv newmdenv84,85
-newmdenv newmdenv85,86
-newtheorem' newtheorem'88,89
-newtheorem' newtheorem'89,90
-href' href'93,94
-href' href'94,95
-setcounter setcounter97,98
-setcounter setcounter98,99
-compileToTex compileToTex100,101
-compileToTex compileToTex101,102
-instance instance111,112
-vectorBlockTexy vectorBlockTexy214,215
-vectorBlockTexy vectorBlockTexy215,216
-mTitle mTitle254,255
-mTitle mTitle255,256
-class Blocky Blocky257,258
-  block :: LaTeXC l => Maybe Maybe258,259
-  block block258,259
-theoremBlock theoremBlock288,289
-theoremBlock theoremBlock295,296
-codeBlock codeBlock332,333
-codeBlock codeBlock333,334
+mkCode mkCode66,67
+mkCode mkCode67,68
+mkBlock mkBlock69,70
+mkBlock mkBlock70,71
+sideNoteBlock sideNoteBlock74,75
+sideNoteBlock sideNoteBlock75,76
+infoBlock infoBlock77,78
+infoBlock infoBlock78,79
+tipBlock tipBlock80,81
+tipBlock tipBlock81,82
+intuitionBlock intuitionBlock83,84
+intuitionBlock intuitionBlock84,85
+warningBlock warningBlock86,87
+warningBlock warningBlock87,88
+cautionBlock cautionBlock89,90
+cautionBlock cautionBlock90,91
+newmdenv newmdenv92,93
+newmdenv newmdenv93,94
+newtheorem' newtheorem'96,97
+newtheorem' newtheorem'97,98
+hyperref' hyperref'101,102
+hyperref' hyperref'102,103
+setcounter setcounter105,106
+setcounter setcounter106,107
+compileToTex compileToTex108,109
+compileToTex compileToTex109,110
+instance instance119,120
+vectorBlockTexy vectorBlockTexy222,223
+vectorBlockTexy vectorBlockTexy223,224
+mTitle mTitle262,263
+mTitle mTitle263,264
+class Blocky Blocky265,266
+  block :: LaTeXC l => Maybe Maybe266,267
+  block block266,267
+theoremBlock theoremBlock296,297
+theoremBlock theoremBlock303,304
+codeBlock codeBlock340,341
+codeBlock codeBlock341,342
 
 ./test-suite/Main.hs,68
 main main11,12

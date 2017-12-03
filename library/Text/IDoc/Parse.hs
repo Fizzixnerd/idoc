@@ -437,7 +437,7 @@ blockP = label "A Block" $ do
           "prerex" -> S.PrerexB <$> prerexP
           "introduction" -> S.IntroductionB <$> introductionP
           "math" -> S.MathB <$> mathP
-          "eqnarray" -> S.EqnArrayB <$> eqnArrayP
+          "align" -> S.AlignB <$> alignP
           "theorem" -> S.TheoremB <$> theoremP
           "lemma" -> S.LemmaB <$> lemmaP
           "corollary" -> S.CorollaryB <$> corollaryP
@@ -590,8 +590,8 @@ mathP = S.Math <$> uninterpretedBlockP
 equationP :: IDocParser S.Equation
 equationP = S.Equation <$> uninterpretedBlockP
 
-eqnArrayP :: IDocParser S.EqnArray
-eqnArrayP = S.EqnArray <$> uninterpretedBlockP
+alignP :: IDocParser S.Align
+alignP = S.Align <$> uninterpretedBlockP
 
 theoremP :: IDocParser S.Theorem
 theoremP = S.Theorem <$> coreBlockWithOptionalP

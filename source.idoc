@@ -114,10 +114,10 @@ I can make it *monospace* (like "computer code") using `backticks`
 (`\``).
 
 Every idoc document must have a *title*, which is the first line of
-the document and looks like this: `= Title`.  The space between the
-`=` and the title text is important.  To make new *sections*, type `==
-Section Name`.  Note that the section title must be separated from the
-previous content by a newline.  For example,
+the document and looks like this: `=Title`.  The lack of space between
+the `=` and the title text is important.  To make new *sections*, type
+`==Section Name`.  Note that the section title must be separated from
+the previous content by a newline.  For example,
 
 [lang=idoc]
 @code
@@ -141,7 +141,7 @@ Another paragraph.  RAAAAAAAAAAAWR!
 ---
 
 would not display what you want correctly.  Subsections are the same
-deal: use `=== Subsection Name`.
+deal: use `===Subsection Name`.
 
 Any line that begins with `//` denotes a comment. They will not be
 displayed in the final document.  These are not yet implemented, but
@@ -160,7 +160,6 @@ wish to identify.
 Nearly everything in idoc can be given an identifier using the syntax
 `[[#idName]]`.  This immediately follows the thing you wish to
 identify.
-
 ---
 
 To see how to refer to IDs and link to them, check out the
@@ -268,46 +267,44 @@ that later.  (Fixed it!  Use `\mathrm{d}`!)  Also note that we added
 an _ID_ to the equation.  IDs can be added to many things.  They
 always appear immediately following the thing they identify.
 
-There is also a more specialized `eqnarray` block, which numbers
-equations.  Note however that _unlike_ the $\LaTeX$ eqnarray, you do
-not put a linebreak (`\\ `) at the end of each line.  The ampersands
-(`&`) tell MathJax where to align line to.  So, for example, the
-equations below have a "left side", an "equals sign" in the middle,
-and a "right side".
+There is also a more specialized `align` block, which numbers
+equations.  The ampersands (`&`) tell MathJax where to align line to.
+So, for example, the equations below have a "left side" and a "right
+side".
 
-@eqnarray
+@align
 ---
-f(x) &=& 2x + 3
-g(y) &=& y^2
-\implies (f \circ g) (x) &=& 2 x^2 + 3
+f(x) &= 2x + 3 \\
+g(y) &= y^2 \\
+\implies (f \circ g) (x) &= 2 x^2 + 3
 ---
 
 [lang=idoc]
 @code
 ---
- @eqnarray
+ @align
  ---
- f(x) &=& 2x + 3
- g(y) &=& y^2
- \implies (f \circ g) (x) &=& 2 x^2 + 3
+ f(x) &= 2x + 3 \\
+ g(y) &= y^2 \\
+ \implies (f \circ g) (x) &= 2 x^2 + 3
  ---
 ---
 
 Note that we can use the standard `\label{}` macro within the `math`
-or `eqnarray` environments to assign IDs to individual equations.
+or `align` environments to assign IDs to individual equations.
 Then we can use `\ref{}` or `<<#idLabel>>` syntax to refer to them:
 
-@eqnarray
+@align
 ---
-\label{importantEquation} y &=& mx + b
+\label{importantEquation} y &= mx + b
 ---
 
 [lang=idoc]
 @code
 ---
- @eqnarray
+ @align
  ---
- \label{importantEquation} y &=& mx + b
+ \label{importantEquation} y &= mx + b
  ---
 ---
 
@@ -315,17 +312,19 @@ Refer to the _important equation_ $\ref{importantEquation}$.  Refer
 to <<#importantEquation>>{the important equation}.  If you want to
 prevent an equation from being numbered, use `\nonumber` as usual.
 
-@eqnarray
+@align
 ---
-R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber
+R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &
+       = \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber
 ---
 
 [lang=idoc]
 @code
 ---
- @eqnarray
+ @align
  ---
- R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber
+ R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &
+ 	= \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber
  ---
 ---
 
@@ -333,7 +332,7 @@ R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &=& \frac{8 \pi G}
 ---
 An axiom looks like this.
 
-@eqnarray
+@align
 ---
 x \cdot y = y \cdot x
 ---
@@ -347,7 +346,7 @@ x \cdot y = y \cdot x
  ---
  An axiom looks like this.
  
- @eqnarray
+ @align
  ---
  x \cdot y = y \cdot x
  ---
@@ -375,7 +374,7 @@ a *number* is an element of an field.
 @theorem
 ---
 
-@eqnarray
+@align
 ---
 (x + y)^2 = x^2 + 2 xy + y^2.
 ---
@@ -392,7 +391,7 @@ Use geometry.
  @theorem
  ---
 
- @eqnarray
+ @align
  ---
  (x + y)^2 = x^2 + 2 xy + y^2.
  ---
@@ -411,7 +410,7 @@ This is a lemma.  It's pretty easy to prove.
 
 For $n > 2$ there exists no integer solutions to the equation:
 
-@eqnarray
+@align
 ---
 x^n + y^n = z^n
 ---
@@ -431,7 +430,7 @@ It's trivial.
  
  For $n > 2$ there exists no integer solutions to the equation
  
- @eqnarray
+ @align
  ---
  x^n + y^n = z^n
  ---
@@ -844,8 +843,8 @@ The second flavour is a link within the current doc, called an
 *internal link* or *ilink*.  For example, when we used `\ref{}` back
 in the Math section, we were using ilinks.  Refering to anything on
 the page which has an ID is an ilink.  They are written like
-`<<#important-equation>>{this}`, and appear like
-<<#important-equation>>{this}.  That is, they are the `#` symbol
+`<<#importantEquation>>{this}`, and appear like
+<<#importantEquation>>{this}.  That is, they are the `#` symbol
 followed by a valid ID.
 
 The final flavour is the *back link*, or *blink*.  This is a link to
