@@ -117,6 +117,9 @@ compileToTex title_ inFile outFile = SIO.withFile inFile SIO.ReadMode
                                                Left e -> print e
                                                Right y -> renderFile outFile $ defaultDecorator title_ $ (texy y :: LaTeX))
 
+compileIdocTexFile :: MonadIO m => Doc -> FilePath -> m ()
+compileIdocTexFile doc_ outFile = liftIO $ renderFile outFile $ defaultDecorator (concatMap texy $ unDocTitle $ doc_^.docTitle) (texy doc_ :: LaTeX)
+
 instance Texy Doc where
   texy d = chapter (mLabel (d^.docSetID) $ (texy $ d^.docTitle)) ++
            (vectorBlockTexy $ d^.docSections)
