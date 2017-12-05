@@ -32,7 +32,7 @@ defaultDecorator title_ d =
 
   (usepackage [] hyperref) ++
   (usepackage [] graphicx) ++
-  (usepackage [] "minted") ++
+  (usepackage [] "listings") ++
   (usepackage ["usenames", "dvipsnames"] "xcolor") ++
   (usepackage [] amsmath) ++
   (usepackage [] amsthm) ++
@@ -45,6 +45,8 @@ defaultDecorator title_ d =
   (newtheorem' ["Theorem"] "Proposition" "Proposition") ++
   (newtheorem' ["Theorem"] "Conjecture" "Conjecture") ++
   (newtheorem' ["Theorem"] "Axiom" "Axiom") ++
+
+  (lstset ["basicstyle=\\footnotesize\\ttfamily"]) ++
   (theoremstyle T.Definition) ++
   (newtheorem  "Definition" "Definition") ++
 
@@ -65,7 +67,7 @@ defaultDecorator title_ d =
   d)
 
 mkCode :: LaTeXC l => l -> l -> l
-mkCode lang t = L.between t (raw "\\begin{minted}[frame=single,framesep=5mm,breaklines]{" ++ lang ++ raw "}\n") (raw "\n\\end{minted}\n")
+mkCode lang t = L.between t (raw "\\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={" ++ lang ++ raw "}]\n") (raw "\n\\end{lstlisting}\n")
 
 mkBlock :: LaTeXC l => l -> l -> l -> l
 mkBlock name btitle t = L.between t (raw "\\begin{" ++ name ++ raw "}" ++ 
@@ -74,6 +76,9 @@ mkBlock name btitle t = L.between t (raw "\\begin{" ++ name ++ raw "}" ++
 
 sideNoteBlock :: LaTeXC l => l -> l -> l
 sideNoteBlock = mkBlock "SideNote"
+
+lstset :: LaTeXC l => [Text] -> l
+lstset args = L.between (concatMap raw $ intersperse "," args) (raw "\\lstset{") (raw "}")
 
 infoBlock :: LaTeXC l => l -> l -> l
 infoBlock = mkBlock "Info"
@@ -194,6 +199,7 @@ instance Texy Link where
                   (p ++ "://", h)
                 (Just (Protocol p), Nothing) ->
                   (p ++ "://", "")
+                _ -> error $ "Invalid Outlink:\nProtocol: " ++ (show $ id_^.idProtocol) ++ "\nHash: " ++ (show $ id_^.idHash)
         in
           proto ++
           (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
@@ -214,11 +220,11 @@ instance Texy Token where
   texy t = raw $ unToken t
 
 instance Texy Markup where
-  texy mu = mLabel (mu^.muSetID) $
-    case (mu^.muType) of
-      Footnote -> footnote $ concatMap texy $ mu^.muContents
-      FootnoteRef -> ref $ concatMap texy $ mu^.muContents
-      Citation -> cite $ concatMap texy $ mu^.muContents
+  texy mu_ = mLabel (mu_^.muSetID) $
+    case (mu_^.muType) of
+      Footnote -> footnote $ concatMap texy $ mu_^.muContents
+      FootnoteRef -> ref $ concatMap texy $ mu_^.muContents
+      Citation -> cite $ concatMap texy $ mu_^.muContents
 
 instance Texy Paragraph where
   texy p = (concatMap texy $ p^.paraContents) ++ "\n\n"
@@ -270,9 +276,9 @@ class Blocky b where
   block :: LaTeXC l => Maybe BlockTitle -> Maybe SetID -> b -> l
 
 instance Blocky Prerex where
-  block mt msid (Prerex ps) = subsubsection (mLabel msid title) ++ vectorBlockTexy ps
+  block mt msid (Prerex ps) = subsubsection (mLabel msid title_) ++ vectorBlockTexy ps
     where
-      title = mTitle mt "Prerex"
+      title_ = mTitle mt "Prerex"
 
 instance Texy PrerexItem where
   texy p = (href [] "" $ texy $ fromBack $ p^.prerexItemPath) ++
@@ -284,18 +290,18 @@ instance Texy PrerexItem where
 
 
 instance Blocky Introduction where
-  block mt msid (Introduction i) = subsection (mLabel msid title) ++ vectorBlockTexy i
+  block mt msid (Introduction i) = subsection (mLabel msid title_) ++ vectorBlockTexy i
     where
-      title = mTitle mt "Introduction"
+      title_ = mTitle mt "Introduction"
 
 instance Blocky Math where
-  block mt msid (Math m) = mLabel msid $ mathDisplay $ raw $ concatMap unToken m
+  block _ msid (Math m) = mLabel msid $ mathDisplay $ raw $ concatMap unToken m
 
 instance Blocky Equation where
-  block mt msid (Equation e) = mLabel msid $ M.equation $ raw $ concatMap unToken e
+  block _ msid (Equation e) = mLabel msid $ M.equation $ raw $ concatMap unToken e
 
 instance Blocky Align where
-  block mt msid (Align a) = mLabel msid $ M.align [raw $ concatMap unToken a]
+  block _ msid (Align a) = mLabel msid $ M.align [raw $ concatMap unToken a]
 
 theoremBlock :: LaTeXC l => 
                 Maybe BlockTitle
@@ -304,10 +310,10 @@ theoremBlock :: LaTeXC l =>
              -> Maybe (Vector Core)
              -> String
              -> l
-theoremBlock mt msid thm mprf ttype = mLabel msid $
-                                      T.theorem ttype $
-                                      vectorBlockTexy thm ++
-                                      maybe "" (T.proof Nothing . vectorBlockTexy) mprf
+theoremBlock _ msid thm mprf ttype = mLabel msid $
+                                     T.theorem ttype $
+                                     vectorBlockTexy thm ++
+                                     maybe "" (T.proof Nothing . vectorBlockTexy) mprf
 
 instance Blocky Theorem where
   block mt msid (Theorem (thm, mprf)) = theoremBlock mt msid thm mprf "Theorem"
@@ -322,14 +328,14 @@ instance Blocky Proposition where
   block mt msid (Proposition (thm, mprf)) = theoremBlock mt msid thm mprf "Proposition"
 
 instance Blocky Conjecture where
-  block mt msid (Conjecture c) = mLabel msid $
-                                 T.theorem "Conjecture" $
-                                 vectorBlockTexy c
+  block _ msid (Conjecture c) = mLabel msid $
+                                T.theorem "Conjecture" $
+                                vectorBlockTexy c
 
 instance Blocky Axiom where
-  block mt msid (Axiom a) = mLabel msid $
-                            T.theorem "Axiom" $
-                            vectorBlockTexy a
+  block _ msid (Axiom a) = mLabel msid $
+                           T.theorem "Axiom" $
+                           vectorBlockTexy a
 
 instance Blocky Proof where
   block mt msid (Proof p) = mLabel msid $
@@ -347,8 +353,8 @@ codeBlock (AttrMap attrs) _ msid (Code c) = (mLabel msid $
                                              raw $ concatMap unToken c) ++
                                             "\n"
   where 
-    langName = maybe "text" 
-                     (\(AttrValue x) -> if x == "idoc" then "text" else texy x)
+    langName = maybe "" 
+                     (\(AttrValue x) -> if x == "idoc" then "" else texy x)
                      (join $ attrs ^.at (AttrName "lang"))
 
 instance Blocky Image where
@@ -362,9 +368,9 @@ instance Blocky Video where
                                          maybe "" vectorBlockTexy mcaption
 
 instance Blocky Connection where
-  block mt msid (Connection c) = (subsection $ mLabel msid title) ++
+  block mt msid (Connection c) = (subsection $ mLabel msid title_) ++
                                  vectorBlockTexy c
-    where title = mTitle mt "Connection"
+    where title_ = mTitle mt "Connection"
 
 instance Blocky Definition where
   block _ msid (S.Definition d) = mLabel msid $
@@ -372,58 +378,57 @@ instance Blocky Definition where
                                   vectorBlockTexy d
 
 instance Blocky Intuition where
-  block mt msid (Intuition i) = intuitionBlock (mLabel msid title) (vectorBlockTexy i)
-    where title = mTitle mt "Intuition"
+  block mt msid (Intuition i) = intuitionBlock (mLabel msid title_) (vectorBlockTexy i)
+    where title_ = mTitle mt "Intuition"
 
 instance Blocky YouTube where
-  block mt msid (YouTube (lnk, mcaption)) = mLabel msid $ 
-                                            texy lnk ++
-                                            maybe "" vectorBlockTexy mcaption
+  block _ msid (YouTube (lnk, mcaption)) = mLabel msid $ 
+                                           texy lnk ++
+                                           maybe "" vectorBlockTexy mcaption
 
 instance Blocky Info where
-  block mt msid (Info i) = infoBlock (mLabel msid title) (vectorBlockTexy i)
+  block mt msid (Info i) = infoBlock (mLabel msid title_) (vectorBlockTexy i)
     where
-      title :: LaTeXC l => l
-      title = mTitle mt "Info"
+      title_ = mTitle mt "Info"
 
 instance Blocky Tip where
-  block mt msid (Tip t) = tipBlock (mLabel msid title) (vectorBlockTexy t)
+  block mt msid (Tip t) = tipBlock (mLabel msid title_) (vectorBlockTexy t)
     where
-      title = mTitle mt "Tip"
+      title_ = mTitle mt "Tip"
 
 instance Blocky Caution where
-  block mt msid (Caution c) = cautionBlock (mLabel msid title) (vectorBlockTexy c)
+  block mt msid (Caution c) = cautionBlock (mLabel msid title_) (vectorBlockTexy c)
     where
-      title = mTitle mt "Caution"
+      title_ = mTitle mt "Caution"
 
 instance Blocky Warning  where
-  block mt msid (Warning w) = warningBlock (mLabel msid title) (vectorBlockTexy w)
+  block mt msid (Warning w) = warningBlock (mLabel msid title_) (vectorBlockTexy w)
     where 
-      title = mTitle mt "Warning"
+      title_ = mTitle mt "Warning"
 
 instance Blocky SideNote where
-  block mt msid (SideNote s) = sideNoteBlock (mLabel msid title) (vectorBlockTexy s)
+  block mt msid (SideNote s) = sideNoteBlock (mLabel msid title_) (vectorBlockTexy s)
     where
-      title = mTitle mt "SideNote"
+      title_ = mTitle mt "SideNote"
 
 instance Blocky Example where
-  block mt msid (Example (ex, ans)) = (subsubsection $ mLabel msid title) ++
+  block mt msid (Example (ex, ans)) = (subsubsection $ mLabel msid title_) ++
                                       vectorBlockTexy ex ++
                                       vectorBlockTexy ans
     where
-      title = mTitle mt "Example"
+      title_ = mTitle mt "Example"
 
 instance Blocky Exercise where
-  block mt msid (Exercise e) = (subsubsection $ mLabel msid title) ++
+  block mt msid (Exercise e) = (subsubsection $ mLabel msid title_) ++
                                vectorBlockTexy e
     where
-      title = mTitle mt "Exercise"
+      title_ = mTitle mt "Exercise"
 
 instance Blocky Bibliography where
-  block mt msid (Bibliography b) = (subsection $ mLabel msid title) ++
+  block mt msid (Bibliography b) = (subsection $ mLabel msid title_) ++
                                    vectorBlockTexy b
     where
-      title = mTitle mt "Bibliography"
+      title_ = mTitle mt "Bibliography"
 
 instance Texy BibItem where
   texy bi = texy (bi^.biTitle) ++
@@ -434,22 +439,22 @@ instance Texy BibItem where
             "."
 
 instance Blocky FurtherReading where
-  block mt msid (FurtherReading f) = (subsection $ mLabel msid title) ++
-                                      vectorBlockTexy f
+  block mt msid (FurtherReading f) = (subsection $ mLabel msid title_) ++
+                                     vectorBlockTexy f
     where
-      title = mTitle mt "Further Reading"
+      title_ = mTitle mt "Further Reading"
 
 instance Blocky Summary where
-  block mt msid (Summary s) = (subsection $ mLabel msid title) ++
+  block mt msid (Summary s) = (subsection $ mLabel msid title_) ++
                               vectorBlockTexy s
     where
-      title = mTitle mt "Summary"
+      title_ = mTitle mt "Summary"
 
 instance Blocky Recall where
-  block mt msid (Recall (lnks, r)) = (subsubsection $ mLabel msid title) ++
-                                     vectorBlockTexy r
+  block mt msid (Recall (_, r)) = (subsubsection $ mLabel msid title_) ++
+                                  vectorBlockTexy r
     where
-      title = mTitle mt "Recall"
+      title_ = mTitle mt "Recall"
 
 instance Texy S.List where
   texy (S.List li) = enumerate $
@@ -457,28 +462,5 @@ instance Texy S.List where
                                   mLabel (li_^.liSetID) $ 
                                   item (textbf <$> texy <$> (li_^.liLabel)) ++ (vectorBlockTexy $ li_^.liContents)) li
 
-
 instance Texy ListLabel where
-  texy (ListLabel ll) = vectorBlockTexy ll
-
-
--- instance Blocky Equation where
---   block mt msid = 
-
--- block :: LaTeXC l =>
---          l -- ^ title
---       -> Maybe SetID -- ^ id
---       -> l -- ^ icon
---       -> Maybe l -- ^ footer
---       -> l -- ^ body
---       -> l
--- block title_ id_ icon__ footer_ body_ =
---   mfooterify footer_ $
---   (subsubsection $ mLabel id_ $ icon__ L.<> " " L.<> title_) L.<>
---   body_
---   where
---     mfooterify Nothing x = x
---     mfooterify (Just f) x = (f L.<> newline L.<> x)
-
-
-
+  texy (ListLabel ll_) = vectorBlockTexy ll_

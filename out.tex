@@ -1,4 +1,4 @@
-\documentclass[letterpaper]{memoir}\usepackage{hyperref}\usepackage{graphicx}\usepackage{minted}\usepackage[usenames,dvipsnames]{xcolor}\usepackage{amsmath}\usepackage{amsthm}\usepackage{amssymb}\usepackage{mdframed}\newtheorem{Theorem}{Theorem}\newtheorem{Lemma}[Theorem]{Lemma}\newtheorem{Corollary}[Theorem]{Corollary}\newtheorem{Proposition}[Theorem]{Proposition}\newtheorem{Conjecture}[Theorem]{Conjecture}\newtheorem{Axiom}[Theorem]{Axiom}\theoremstyle{definition}\newtheorem{Definition}{Definition}\newmdenv[frametitlebackgroundcolor=lightgray]{SideNote}\newmdenv[frametitlebackgroundcolor=SkyBlue]{Info}\newmdenv[frametitlebackgroundcolor=SkyBlue]{Tip}\newmdenv[frametitlebackgroundcolor=Goldenrod]{Caution}\newmdenv[frametitlebackgroundcolor=BrickRed]{Warning}\newmdenv[frametitlebackgroundcolor=SkyBlue]{Intuition}\setcounter{tocdepth}{2}\begin{document}\title{idoc User Guide}\author{ILS Contributors}\date{\today{}}\maketitle{}\tableofcontents{}\chapter{\label{idocUserGuide}idoc User Guide}\subsubsection{Prerex}\href{}{http://www.independentlearning.science/tiki/None}: Someone wanted to see what this looked like, so it's here.
+\documentclass[letterpaper]{memoir}\usepackage{hyperref}\usepackage{graphicx}\usepackage{listings}\usepackage[usenames,dvipsnames]{xcolor}\usepackage{amsmath}\usepackage{amsthm}\usepackage{amssymb}\usepackage{mdframed}\newtheorem{Theorem}{Theorem}\newtheorem{Lemma}[Theorem]{Lemma}\newtheorem{Corollary}[Theorem]{Corollary}\newtheorem{Proposition}[Theorem]{Proposition}\newtheorem{Conjecture}[Theorem]{Conjecture}\newtheorem{Axiom}[Theorem]{Axiom}\theoremstyle{definition}\newtheorem{Definition}{Definition}\newmdenv[frametitlebackgroundcolor=lightgray]{SideNote}\newmdenv[frametitlebackgroundcolor=SkyBlue]{Info}\newmdenv[frametitlebackgroundcolor=SkyBlue]{Tip}\newmdenv[frametitlebackgroundcolor=Goldenrod]{Caution}\newmdenv[frametitlebackgroundcolor=BrickRed]{Warning}\newmdenv[frametitlebackgroundcolor=SkyBlue]{Intuition}\setcounter{tocdepth}{2}\begin{document}\title{idoc User Guide}\author{ILS Contributors}\date{\today{}}\maketitle{}\tableofcontents{}\chapter{\label{idocUserGuide}idoc User Guide}\subsubsection{Prerex}\href{}{http://www.independentlearning.science/tiki/None}: Someone wanted to see what this looked like, so it's here.
       Normally you can just leave the prerex block out when
       there are none.\newline{}\subsection{Introduction}idoc is a language and a program.  The language is what was used to
 write this document.  The program is what rendered it (in both
@@ -85,22 +85,22 @@ the \texttt{=} and the title text is important.  To make new \textbf{sections}, 
 \texttt{==Section Name}.  Note that the section title must be separated from
 the previous content by a newline.  For example,
 
-\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
 I am a paragraph!  Hear me roar!
 
 ==New Section!
 
 Another paragraph.  RAAAAAAAAAAAWR!
-\end{minted}
+\end{lstlisting}
 
 is correct, while
 
-\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
 I am a paragraph!  Hear me roar!
 ==New Section!
 
 Another paragraph.  RAAAAAAAAAAAWR!
-\end{minted}
+\end{lstlisting}
 
 would not display what you want correctly.  Subsections are the same
 deal: use \texttt{===Subsection Name}.
@@ -116,11 +116,11 @@ Nearly everything in idoc can be given an identifier (or \textbf{ID}) using
 the syntax \texttt{[[\#idName]]}.  This immediately follows the thing you
 wish to identify.
 
-\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
 Nearly everything in idoc can be given an identifier using the syntax
 `[[#idName]]`.  This immediately follows the thing you wish to
 identify.
-\end{minted}
+\end{lstlisting}
 
 To see how to refer to IDs and link to them, check out the
 \hyperref[secLinks]{section on links}.
@@ -131,29 +131,29 @@ lists, though this is subject to change.  This means you cannot nest
 lists.  You may only write a single paragraph.  We support unordered
 lists, ordered lists and labelled (description) lists.
 
-\begin{enumerate}\item This is an unordered list.  It can contain paragraph contents.\item It will look like bullet points in the final render.\item Third main item.\end{enumerate}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{enumerate}\item This is an unordered list.  It can contain paragraph contents.\item It will look like bullet points in the final render.\item Third main item.\end{enumerate}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
 -This is an unordered list.  It can contain paragraph contents.
 
 -It will look like bullet points in the final render.
 
 -Third main item.
-\end{minted}
+\end{lstlisting}
 
-\begin{enumerate}\item This is a numbered list.\item This is the second guy.\item And so on...\end{enumerate}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{enumerate}\item This is a numbered list.\item This is the second guy.\item And so on...\end{enumerate}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
 .This is a numbered list.
 
 .This is the second guy.
 
 .And so on...
-\end{minted}
+\end{lstlisting}
 
-\begin{enumerate}\item[\textbf{First Item}]This is a list where the items have labels.\item[\textbf{Second Item}]Another item.\item[\textbf{And So On}]...\end{enumerate}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{enumerate}\item[\textbf{First Item}]This is a list where the items have labels.\item[\textbf{Second Item}]Another item.\item[\textbf{And So On}]...\end{enumerate}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
 :First Item::This is a list where the items have labels.
 
 :Second Item::Another item.
 
 :And So On::...
-\end{minted}
+\end{lstlisting}
 
 \section{\label{blocks}Blocks}\textbf{Blocks} are a fundamental construct in idoc.  They all look the same,
 basically.  They begin with \texttt{@blocktype} on a line by itself,
@@ -172,14 +172,14 @@ below.
 text in dollar signs. $f(x) = \exp (-x^2)$.  Display mode is done by
 using a \texttt{math} block, like so:
 
-\label{eqnFDefn}\[f(x) = \int_x^\infty g(t) \mathrm{d}t\]\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\label{eqnFDefn}\[f(x) = \int_x^\infty g(t) \mathrm{d}t\]\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @math
  #Look Ma', I Have Equations!
  ---
  f(x) = \int_x^\infty g(t) \mathrm{d}t
  ---
  [[#eqnFDefn]]{Basic Math}
-\end{minted}
+\end{lstlisting}
 
 Note that that $d$ will not be upright as it should be.  We'll fix
 that later.  (Fixed it!  Use \texttt{mathrm\{d\}}!)  Also note that we added
@@ -193,42 +193,42 @@ side".
 
 \begin{align}f(x) &= 2x + 3 \\
 g(y) &= y^2 \\
-\implies (f \circ g) (x) &= 2 x^2 + 3\end{align}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\implies (f \circ g) (x) &= 2 x^2 + 3\end{align}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @align
  ---
  f(x) &= 2x + 3 \\
  g(y) &= y^2 \\
  \implies (f \circ g) (x) &= 2 x^2 + 3
  ---
-\end{minted}
+\end{lstlisting}
 
 Note that we can use the standard \texttt{label\{\}} macro within the \texttt{math}
 or \texttt{align} environments to assign IDs to individual equations.
 Then we can use \texttt{ref\{\}} or \texttt{\hyperref[idLabel]{}} syntax to refer to them:
 
-\begin{align}\label{importantEquation} y &= mx + b\end{align}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{align}\label{importantEquation} y &= mx + b\end{align}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @align
  ---
  \label{importantEquation} y &= mx + b
  ---
-\end{minted}
+\end{lstlisting}
 
 Refer to the \emph{important equation} $\ref{importantEquation}$.  Refer
 to \hyperref[importantEquation]{the important equation}.  If you want to
 prevent an equation from being numbered, use \texttt{nonumber} as usual.
 
 \begin{align}R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &
-       = \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber\end{align}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+       = \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber\end{align}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @align
  ---
  R_{\mu \nu} - \frac{1}{2} R g_{\mu \nu} + \Lambda g_{\mu \nu} &
  	= \frac{8 \pi G}{c^4} T_{\mu \nu} \nonumber
  ---
-\end{minted}
+\end{lstlisting}
 
 \begin{Axiom}An axiom looks like this.
 
-\begin{align}x \cdot y = y \cdot x\end{align}\end{Axiom}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{align}x \cdot y = y \cdot x\end{align}\end{Axiom}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @axiom
  ---
  An axiom looks like this.
@@ -238,22 +238,22 @@ prevent an equation from being numbered, use \texttt{nonumber} as usual.
  x \cdot y = y \cdot x
  ---
  ---
-\end{minted}
+\end{lstlisting}
 
 \label{def-number}\begin{Definition}a \textbf{number} is an element of an field.
 
-\end{Definition}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\end{Definition}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  [term=number]
  @definition
  ---
  a *number* is an element of an field.
  ---
  [[#def-number]]{Definition: Number}
-\end{minted}
+\end{lstlisting}
 
 \label{thm-foil}\begin{Theorem}\begin{align}(x + y)^2 = x^2 + 2 xy + y^2.\end{align}\begin{proof}Use geometry.
 
-\end{proof}\end{Theorem}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\end{proof}\end{Theorem}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @theorem
  ---
 
@@ -267,7 +267,7 @@ prevent an equation from being numbered, use \texttt{nonumber} as usual.
  Use geometry.
  ---
  [[#thm-foil]]{Theorem: FOIL}
-\end{minted}
+\end{lstlisting}
 
 \label{lemEasyLemma}\begin{Lemma}This is a lemma.  It's pretty easy to prove.
 
@@ -275,7 +275,7 @@ For $n > 2$ there exists no integer solutions to the equation:
 
 \begin{align}x^n + y^n = z^n\end{align}\begin{proof}It's trivial.
 
-\end{proof}\end{Lemma}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\end{proof}\end{Lemma}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @lemma
  #Easy Lemma
  ---
@@ -293,49 +293,49 @@ For $n > 2$ there exists no integer solutions to the equation:
  It's trivial.
  ---
  [[#lemEasyLemma]]{Lemma: Easy One}
-\end{minted}
+\end{lstlisting}
 
 \begin{Proposition}Hey, um, do you want to go out with me next Saturday?
 
-\end{Proposition}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\end{Proposition}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @proposition
  ---
  Hey, um, do you want to go out with me next Saturday?
  ---
-\end{minted}
+\end{lstlisting}
 
 \begin{Corollary}If $x, y > 2$ are prime then $x + y$ is not prime.
 
-\end{Corollary}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\end{Corollary}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @corollary
  ---
  If $x, y > 2$ are prime then $x + y$ is not prime.
  ---
-\end{minted}
+\end{lstlisting}
 
 \begin{Conjecture}The product of any two primes is also prime.
 
-\end{Conjecture}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\end{Conjecture}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @conjecture
  ---
  The product of any two primes is also prime.
  ---
-\end{minted}
+\end{lstlisting}
 
 \begin{proof}Just intuit.
 
-\end{proof}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\end{proof}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  [theorem=lemEasyLemma]
  @proof
  ---
  Just intuit.
  ---
-\end{minted}
+\end{lstlisting}
 
 \subsection{Emphasis Blocks}The following blocks are designed to emphasize certain things within
 the text.  The first is the \texttt{quote} block, used for quotations.
 
-\label{qEinstein}\begin{quote}The internet is the most important invention since gravity.\end{quote}\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\label{qEinstein}\begin{quote}The internet is the most important invention since gravity.\end{quote}\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  [author=Albert Einstein]
  @quote
  #A Quote from the "Great One".
@@ -343,7 +343,7 @@ the text.  The first is the \texttt{quote} block, used for quotations.
  The internet is the most important invention since gravity.
  ---
  [[#qEinstein]]{Einstein Quote}
-\end{minted}
+\end{lstlisting}
 
 Notice in the \texttt{quote} block we added an author attribution above as an
 \emph{attribute} of the quote block contents.  \textbf{Attribute lists} always
@@ -361,7 +361,7 @@ allowed any amount of complex content here.  An equation: $F =
 
 
 \end{SideNote}
-\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @sidenote
  #Please be Aware:
  ---
@@ -369,7 +369,7 @@ allowed any amount of complex content here.  An equation: $F =
  allowed any amount of complex content here.  An equation: $F =
  \frac{dp}{dt}$.
  ---
-\end{minted}
+\end{lstlisting}
 
 For more specialized blocks similar to \texttt{sidenotes}, use an
 \texttt{admonition} instead.  They look nicer and are more eye catching.
@@ -380,53 +380,53 @@ specify the type of admonition.
 
 
 \end{Warning}
-\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @warning
  #This is a Warning Block
  ---
  This will show a little warning symbol next to it.
  ---
  [[#warningBlock]]{Warning}
-\end{minted}
+\end{lstlisting}
 
 \begin{Info}[frametitle=\label{infoBlock}This is an Info Block]This will show a little info symbol next to it.
 
 
 \end{Info}
-\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @info
  #This is an Info Block
  ---
  This will show a little info symbol next to it.
  ---
  [[#infoBlock]]{Info}
-\end{minted}
+\end{lstlisting}
 
 \begin{Caution}[frametitle=\label{cautionBlock}This is a Caution Block]This will show a little caution symbol next to it.
 
 
 \end{Caution}
-\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @caution
  #This is a Caution Block
  ---
  This will show a little caution symbol next to it.
  ---
  [[#cautionBlock]]{Caution}
-\end{minted}
+\end{lstlisting}
 
 \begin{Tip}[frametitle=\label{tipBlock}This is a Tip Block]This will show a little lightbulb symbol next to it.
 
 
 \end{Tip}
-\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @tip
  #This is a Tip Block
  ---
  This will show a little lightbulb symbol next to it.
  ---
  [[#tipBlock]]{Tip}
-\end{minted}
+\end{lstlisting}
 
 If you're worried about all the wasted space in the HTML output, don't
 be!  It's only wasted because I didn't put text between each block.
@@ -469,7 +469,7 @@ needed to understand this small aside.
 When the site is complete, connections will start out open or closed
 depending on if the reader has the necessary prereqs or not.
 
-\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @connection
  #A connection
  ---
@@ -514,7 +514,7 @@ depending on if the reader has the necessary prereqs or not.
  depending on if the reader has the necessary prereqs or not.
  ---
  [[#myConnection]]{A Connection}
-\end{minted}
+\end{lstlisting}
 
 \begin{Intuition}[frametitle=But What \emph{is} the Determinant?! -- An Example Intuition Block]The determinant from a geometric point of view is used to talk about
 \emph{volume}.  If you grok this, then everything else will fall into
@@ -530,7 +530,7 @@ the cube!
 
 
 \end{Intuition}
-\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @intuition
  # But What _is_ the Determinant?! -- An Example Intuition Block
  ---
@@ -546,7 +546,7 @@ the cube!
  space.  It would be like trying to find a linear function that maps
  the square to the cube!
  ---
-\end{minted}
+\end{lstlisting}
 
 \texttt{examples} and \texttt{exercises} are also a key way for people to learn.
 The difference between the two is that essentially an exercise is an
@@ -558,7 +558,7 @@ The proof is pretty simple.  Try to follow along.
 
 First, assume not.  But that's not the case.  QED.
 
-\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @example
  ---
  Prove that every integer greater than zero is positive.
@@ -570,18 +570,18 @@ First, assume not.  But that's not the case.  QED.
  First, assume not.  But that's not the case.  QED.
  ---
  [[#exExample]]{An Example}
-\end{minted}
+\end{lstlisting}
 
 \subsubsection{Exercise}What is largest rational number that can be written as a fraction of
 $5$ and $7$?
 
-\begin{minted}[frame=single,framesep=5mm,breaklines]{text}
+\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={}]
  @exercise
  ---
  What is largest rational number that can be written as a fraction of
  $5$ and $7$?
  ---
-\end{minted}
+\end{lstlisting}
 
 \subsection{\label{secLinks}Links}Links come in three flavours.  The first is your standard link, called
 an \textbf{out link} or \textbf{olink} in idoc.  It's written like
