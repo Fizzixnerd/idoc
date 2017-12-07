@@ -1,8 +1,12 @@
 -- | Syntax.hs
+--
 -- Author: Matt Walker
+--
 -- License: https://opensource.org/licenses/BSD-2-Clause
+--
 -- Created: Aug 24, 2017
--- Summary: 
+--
+-- Summary: Defines the syntax tree of idoc markup.
 
 module Text.IDoc.Syntax where
 
@@ -15,21 +19,38 @@ import Text.Megaparsec.Pos
 
 import Control.Lens
 
+-- * Syntax
+--
+-- Everything in this file is defined Data, Typeable, and Generic, as
+-- well as the usual Eq, Show, Ord.
+
+-- | Type synonym for keeping track of which row we are on.
 type Row = Word
+
+-- | Type synonym for keeping track of which column we are on.
 type Col = Word
 
+-- | The current debug information kept around so that we can tell the
+-- user where an error occured.  More can be added later without
+-- breaking much code.
 data DebugInfo = DebugInfo { _diStart :: !(Row, Col)
                            , _diEnd :: !(Row, Col)
                            }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | A `Token' with attached debug information; the parser never sees
+-- the debug information directly and so doesn't need to worry about
+-- it.
 data DebugToken d = DebugToken { _dtInfo :: d
                                , _dtToken :: Token
                                }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Type synonym for `DebugToken' instantiated on our currently used
+-- `DebugInfo'
 type DToken = DebugToken DebugInfo
 
+-- | The type of Tokens in idoc.
 data Token = 
   -- "regular" text
     TextT Text
@@ -62,8 +83,11 @@ data Token =
   | Plus
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Newtype around a Vector of `DToken's; represents lexed source.
 newtype IDocTokenStream = IDocTokenStream { unStream :: Vector DToken }
 
+-- | Megaparsec Stream instance so that this properly works with the
+-- rest of the library.
 instance Prim.Stream IDocTokenStream where
   type Token IDocTokenStream = DToken
   uncons s = (fmap IDocTokenStream) <$> (CP.uncons $ unStream s)
@@ -79,11 +103,16 @@ instance Prim.Stream IDocTokenStream where
                  }
         in
       (sp1, sp2)
-          
+
+-- | One of a `SimpleCore' or a `ComplexCore'; holds most interesting
+-- constructs in the language.
 data Core = SC SimpleCore
           | CC ComplexCore
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Sum type for holding `Text', `QText' ("quoted text"), `Link's,
+-- `InlineMath' or `Markup'.  Used inside `Paragraph's and titles (like
+-- `Section' headings and so on).
 data SimpleCore =
     TextC Text
   | QTextC QText
@@ -92,25 +121,32 @@ data SimpleCore =
   | MarkupC Markup
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Sum type for holding the major organizing constructs of the
+-- language: `List's, `Block's and `Paragraph's.
 data ComplexCore =
     ListC List
   | BlockC Block
   | ParagraphC Paragraph
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | A single paragraph.  Can have a `SetID'.
 data Paragraph = Paragraph { _paraContents :: Vector SimpleCore
                            , _paraSetID :: Maybe SetID
                            }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | The title of a `Doc'.
 newtype DocTitle = DocTitle { unDocTitle :: Vector SimpleCore }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | A single parsed idoc document.  Its `Section's will be non-empty
+-- if parsed by the parser.
 data Doc = Doc { _docTitle :: DocTitle
                , _docSections :: Vector Section 
                , _docSetID :: Maybe SetID }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Different types of emphasis text.  Used in `QText'.
 data TextType = Strong
               | Emphasis 
               | Monospace
@@ -119,31 +155,47 @@ data TextType = Strong
               | Quoted
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | `Text' that is emphasized or changed in some way (such as being
+-- superscripted).
 data QText = QText { _qtText :: Vector SimpleCore
                    , _qtType :: TextType
                    }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | An `ID' given to an object so that it can be referred to later.
 data SetID = SetID { _sidName :: IDHash
                    , _sidDisplay :: Vector SimpleCore }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | The "hash" bit of an `ID'.  It's the part that comes after the
+-- octothorpe (#).
 newtype IDHash = IDHash { unIDHash :: Text } deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | The type that corresponds to "attribute lists" in the idoc
+-- language.
 data AttrMap = AttrMap { _amMap :: Map AttrName (Maybe AttrValue) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Wrapper around `Text' for attribute names.
 newtype AttrName = AttrName Text deriving (Eq, Ord, Show, Data, Typeable, Generic)
+
+-- | Wrapper around `Text' for attribute values.  Might become a sum
+-- type later.
 newtype AttrValue = AttrValue Text deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Sum type representing what type of link it is, an "ilink", a
+-- "blink" or, an "olink".
 data LinkType = Internal 
               | Back
               | Out
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | The displayed text of a `Link'.
 newtype LinkText = LinkText { unLinkText :: Vector SimpleCore }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | A Link around (or out of) a `Doc'.  See `LinkType' for the types
+-- of possible links.  See `ID' for the format of links.
 data Link = Link { _linkText :: LinkText
                  , _linkAttrs :: AttrMap
                  , _linkLocation :: ID
@@ -151,26 +203,49 @@ data Link = Link { _linkText :: LinkText
                  }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | A reference to either an external website or a `SetID' somewhere
+-- in this or another `Doc'.  Protocol is usually "https:\/\/", but
+-- can also be "youtube:\/\/" or "image:\/\/" in certain cases (see
+-- `YouTube' and `Image' `Block's).
 data ID = ID { _idProtocol :: Maybe Protocol
              , _idBase :: Vector IDBase
              , _idHash :: Maybe IDHash
              }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Type representing a protocol for an `ID'.  May be changed to a
+-- sum type later.
 newtype Protocol = Protocol Text deriving (Eq, Ord, Show, Data, Typeable, Generic)
+
+-- | The "base" of an `ID' is considered the part /after/ the
+-- `Protocol' but /before/ the `IDHash'.  So in
+-- "https:\/\/www.independentlearning.science\/tiki\/ArticleName#myId",
+-- the IDBase would be
+-- "www.independentlearning.science\/tiki\/ArticleName".
 newtype IDBase = IDBase { unIDBase :: Text } deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- FIXME: Add a number to each constructor for nested lists.
+-- | The type of a `List', whether "ordered", "unordered", or
+-- "labelled".
 data ListType = Unordered
               | Ordered
               | Labelled
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- FIXME: Move `_liType' from `ListItem' to `List'
+-- | A List of things, either `Ordered', `Unordered', or `Labelled'
+-- (see `ListType').  Represents things like lists of bullet points,
+-- numbered lists, or lists of definitions, etc.
 data List = List { _listContents :: Vector ListItem }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | A label for a `ListItem' in `Labelled' `List's.
 newtype ListLabel = ListLabel { unListLabel :: Vector SimpleCore }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | A single item in a `List'.  Can be `Link'ed to via its `SetID'.
+-- Currently only contains `SimpleCore' contents.  (No nested lists,
+-- I'm afraid.  This should change soon.)
 data ListItem = ListItem { _liAttrs :: AttrMap
                          , _liLabel :: Maybe ListLabel
                          , _liContents :: Vector SimpleCore
@@ -179,11 +254,18 @@ data ListItem = ListItem { _liAttrs :: AttrMap
                          }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Sum type for the different kinds of `Markup'.  "Footnotes" are
+-- what you would expect.  "FootnoteRefs" are references to previous
+-- footnotes via their `SetID'.  "Citations" are what you would
+-- expect.
 data MarkupType = Footnote
                 | FootnoteRef
                 | Citation
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Inline markup of text.  See `MarkupType' for the valid values of
+-- `_muType'.  May contain an `AttrMap'.  Text to show (if any) is
+-- held in `_muContents'.
 data Markup = Markup { _muType :: MarkupType
                      , _muAttrs :: AttrMap
                      , _muContents :: Vector SimpleCore
@@ -191,12 +273,15 @@ data Markup = Markup { _muType :: MarkupType
                      }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Inline math, LaTeX style.  May have an attached `AttrMap' or
+-- `SetID'.  Contents are unparsed `Token's.
 data InlineMath = InlineMath { _imAttrs :: AttrMap
                              , _imContents :: Vector Token
                              , _imSetID :: Maybe SetID
                              }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Sum type for the various types of blocks allowed in idoc.
 data BlockType = PrerexB { _prerex :: Prerex }
                | IntroductionB { _introduction :: Introduction }
                | MathB { _math :: Math }
@@ -230,9 +315,12 @@ data BlockType = PrerexB { _prerex :: Prerex }
                | RecallB { _recall :: Recall }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Newtype for titles of `Block's.
 newtype BlockTitle = BlockTitle { unBlockTitle :: Vector SimpleCore }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | Common wrapper for blocks.  Most of the interesting parts will be
+-- found inside `_bType'.  See `BlockType'.
 data Block = Block { _bType :: BlockType
                    , _bAttrs :: AttrMap
                    , _bTitle :: Maybe BlockTitle
@@ -240,6 +328,7 @@ data Block = Block { _bType :: BlockType
                    }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+-- | The prerequisites
 data Prerex = Prerex { _prerexContents :: Vector PrerexItem }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
@@ -359,6 +448,10 @@ data Section = Section { _secType :: SectionType
                        , _secSetID :: Maybe SetID
                        }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
+
+-- * Lenses
+--
+-- We then define lenses for nearly everything in the module.
 
 makeLenses ''DebugInfo
 makeLenses ''DebugToken
