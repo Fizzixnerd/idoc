@@ -22,7 +22,7 @@ import Control.Lens
 -- * Syntax
 --
 -- Everything in this file is defined Data, Typeable, and Generic, as
--- well as the usual Eq, Show, Ord.
+-- well as the usual Eq, ShowOrd.
 
 -- | Type synonym for keeping track of which row we are on.
 type Row = Word
@@ -106,8 +106,8 @@ instance Prim.Stream IDocTokenStream where
 
 -- | One of a `SimpleCore' or a `ComplexCore'; holds most interesting
 -- constructs in the language.
-data Core = SC SimpleCore
-          | CC ComplexCore
+data Core a = SC SimpleCore
+            | CC (ComplexCore a)
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | Sum type for holding `Text', `QText' ("quoted text"), `Link's,
@@ -123,9 +123,9 @@ data SimpleCore =
 
 -- | Sum type for holding the major organizing constructs of the
 -- language: `List's, `Block's and `Paragraph's.
-data ComplexCore =
+data ComplexCore a =
     ListC List
-  | BlockC Block
+  | BlockC (Block a)
   | ParagraphC Paragraph
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
@@ -141,9 +141,9 @@ newtype DocTitle = DocTitle { unDocTitle :: Vector SimpleCore }
 
 -- | A single parsed idoc document.  Its `Section's will be non-empty
 -- if parsed by the parser.
-data Doc = Doc { _docTitle :: DocTitle
-               , _docSections :: Vector Section 
-               , _docSetID :: Maybe SetID }
+data Doc a = Doc  { _docTitle :: DocTitle
+                  , _docSections :: Vector (Section a)
+                  , _docSetID :: Maybe SetID }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | Different types of emphasis text.  Used in `QText'.
@@ -275,44 +275,10 @@ data Markup = Markup { _muType :: MarkupType
 
 -- | Inline math, LaTeX style.  May have an attached `AttrMap' or
 -- `SetID'.  Contents are unparsed `Token's.
-data InlineMath = InlineMath { _imAttrs :: AttrMap
+data InlineMath = InlineMath { _imAttrs    :: AttrMap
                              , _imContents :: Vector Token
-                             , _imSetID :: Maybe SetID
+                             , _imSetID    :: Maybe SetID
                              }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
--- | Sum type for the various types of blocks allowed in idoc.
-data BlockType = PrerexB { _prerex :: Prerex }
-               | IntroductionB { _introduction :: Introduction }
-               | MathB { _math :: Math }
-               | EquationB { _equation :: Equation }
-               | AlignB { _align :: Align }
-               | TheoremB { _theorem :: Theorem }
-               | LemmaB { _lemma :: Lemma }
-               | CorollaryB { _corollary :: Corollary }
-               | PropositionB { _proposition :: Proposition }
-               | ConjectureB { _conjecture :: Conjecture }
-               | AxiomB { _axiom :: Axiom }
-               | ProofB { _proof :: Proof }
-               | QuoteB { _quote :: Quote }
-               | CodeB { _code :: Code }
-               | ImageB { _image :: Image }
-               | VideoB { _video :: Video }
-               | YouTubeB { _youTube :: YouTube }
-               | ConnectionB { _connection :: Connection }
-               | DefinitionB { _definition :: Definition }
-               | IntuitionB { _intuition :: Intuition }
-               | InfoB { _info :: Info }
-               | TipB { _tip :: Tip }
-               | CautionB { _caution :: Caution }
-               | WarningB { _warning :: Warning }
-               | SideNoteB { _sidenote :: SideNote }
-               | ExampleB { _example :: Example }
-               | ExerciseB { _exercise :: Exercise }
-               | BibliographyB { _bibliography :: Bibliography }
-               | FurtherReadingB { _furtherReading :: FurtherReading }
-               | SummaryB { _summary :: Summary }
-               | RecallB { _recall :: Recall }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | Newtype for titles of `Block's.
@@ -320,117 +286,13 @@ newtype BlockTitle = BlockTitle { unBlockTitle :: Vector SimpleCore }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | Common wrapper for blocks.  Most of the interesting parts will be
--- found inside `_bType'.  See `BlockType'.
-data Block = Block { _bType :: BlockType
-                   , _bAttrs :: AttrMap
-                   , _bTitle :: Maybe BlockTitle
-                   , _bSetID :: Maybe SetID
-                   }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
--- | The prerequisites
-data Prerex = Prerex { _prerexContents :: Vector PrerexItem }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data PrerexItem = PrerexItem { _prerexItemPath :: ID
-                             , _prerexItemDescription :: Vector SimpleCore
-                             }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Introduction = Introduction { _introductionContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Math = Math { _mathContents :: Vector Token }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Equation = Equation { _equationContents :: Vector Token }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Align = Align { _alignContents :: Vector Token }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Theorem = Theorem { _theoremContents :: (Vector Core, Maybe (Vector Core)) }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Lemma = Lemma { _lemmaContents :: (Vector Core, Maybe (Vector Core)) }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Corollary = Corollary { _corollaryContents :: (Vector Core, Maybe (Vector Core)) }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Proposition = Proposition { _propositionContents :: (Vector Core, Maybe (Vector Core)) }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Conjecture = Conjecture { _conjectureContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Axiom = Axiom { _axiomContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Proof = Proof { _proofContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Quote = Quote { _quoteContents :: Vector SimpleCore }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Code = Code { _codeContents :: Vector Token }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Image = Image { _imageContents :: (Link, Maybe (Vector SimpleCore)) }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Video = Video { _videoContents :: (Link, Maybe (Vector SimpleCore)) }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data YouTube = YouTube { _youTubeContents :: (Link, Maybe (Vector SimpleCore )) }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Connection = Connection { _connectionContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Definition = Definition { _definitionContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Intuition = Intuition { _intuitionContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Info = Info { _infoContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Tip = Tip { _tipContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Caution = Caution { _cautionContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Warning = Warning { _warningContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data SideNote = SideNote { _sideNoteContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Example = Example { _exampleContents :: (Vector Core, Vector Core) }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Exercise = Exercise { _exerciseContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Bibliography = Bibliography { _bibliographyContents :: Vector BibItem }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data BibItem = BibItem { _biAuthor :: Text
-                       , _biTitle :: Text
-                       , _biYear :: Text
-                       }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data FurtherReading = FurtherReading { _furtherReadingContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Summary = Summary { _summaryContents :: Vector Core }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
-data Recall = Recall { _recallContents :: (Vector Link, Vector Core) }
+-- found inside `_bType', which is usually a sum type (either a `CoRec' or
+-- just a regular ADT).
+data Block a = Block { _bType  :: a
+                     , _bAttrs :: AttrMap
+                     , _bTitle :: Maybe BlockTitle
+                     , _bSetID :: Maybe SetID
+                     }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data SectionType = Preamble
@@ -441,12 +303,12 @@ data SectionType = Preamble
 newtype SectionTitle = SectionTitle { unSectionTitle :: Vector SimpleCore }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data Section = Section { _secType :: SectionType
-                       , _secAttrs :: AttrMap
-                       , _secContents :: Vector Core
-                       , _secTitle :: SectionTitle
-                       , _secSetID :: Maybe SetID
-                       }
+data Section a = Section { _secType     :: SectionType
+                         , _secAttrs    :: AttrMap
+                         , _secContents :: Vector (Core a)
+                         , _secTitle    :: SectionTitle
+                         , _secSetID    :: Maybe SetID
+                         }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- * Lenses
@@ -464,42 +326,8 @@ makeLenses ''List
 makeLenses ''ListItem
 makeLenses ''Markup
 makeLenses ''InlineMath
-makeLenses ''BlockType
 makeLenses ''Block
 makeLenses ''Doc
 makeLenses ''Paragraph
 makeLenses ''ID
-makeLenses ''BibItem
 
-makeLenses ''Prerex
-makeLenses ''PrerexItem
-makeLenses ''Introduction
-makeLenses ''Math
-makeLenses ''Equation
-makeLenses ''Align
-makeLenses ''Theorem
-makeLenses ''Lemma
-makeLenses ''Corollary
-makeLenses ''Proposition
-makeLenses ''Conjecture
-makeLenses ''Axiom
-makeLenses ''Proof
-makeLenses ''Quote
-makeLenses ''Code
-makeLenses ''Image
-makeLenses ''Video
-makeLenses ''YouTube
-makeLenses ''Connection
-makeLenses ''Definition
-makeLenses ''Intuition
-makeLenses ''Info
-makeLenses ''Tip
-makeLenses ''Caution
-makeLenses ''Warning
-makeLenses ''SideNote
-makeLenses ''Example
-makeLenses ''Exercise
-makeLenses ''Bibliography
-makeLenses ''FurtherReading
-makeLenses ''Summary
-makeLenses ''Recall

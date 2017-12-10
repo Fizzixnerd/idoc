@@ -3,7 +3,7 @@
 -- see: https://github.com/sol/hpack
 
 name:           idoc
-version:        0.3.0
+version:        0.4.0
 synopsis:       Markup for the Prerex engine.
 description:    idoc is markup that compiles well to HTML5 and LaTeX, with Prerex support.
 category:       Language
@@ -30,17 +30,18 @@ library
       library
   ghc-options: -Wall
   build-depends:
-                    base-noprelude
-                , HaTeX
-                , blaze-html
-                , blaze-markup >= 0.8.0.0
-                , classy-prelude
-                , containers
-                , lens
-                , megaparsec
-                , mtl >= 2.2.1
-                , text
-                , vector
+                base-noprelude
+              , HaTeX
+              , blaze-html
+              , blaze-markup >= 0.8.0.0
+              , classy-prelude
+              , containers
+              , lens
+              , megaparsec
+              , mtl >= 2.2.1
+              , text
+              , vector
+              , vinyl
   exposed-modules: Text.IDoc.Render.Html5.Icons
                  , Text.IDoc.Render.Html5
                  , Text.IDoc.Render.Tex
