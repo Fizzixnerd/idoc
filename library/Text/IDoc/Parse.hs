@@ -19,8 +19,10 @@ import qualified Text.IDoc.Syntax as S
 import qualified Text.IDoc.Lex as L
 
 type IDocParseError = MP.ParseError S.DToken MP.Dec
-
 type IDocParser = MP.Parsec MP.Dec S.IDocTokenStream
+type BlockTypeName = Text
+type InnerBlockParser a = BlockTypeName -> IDocParser a
+type BlockParser a = BlockTypeName -> IDocParser a
 
 manyV :: IDocParser a -> IDocParser (Vector a)
 manyV x = fromList <$> many x
@@ -123,36 +125,7 @@ actualTextP = unText <$> anyTokenP MP.<?> "Some Actual Text"
     unText x = error $ "Not a text: `" ++ (show x) ++ "'."
 
 textP :: IDocParser Text
-textP = unToken <$> anyTokenP
-
-unToken :: S.Token -> Text
-unToken (S.TextT x) = x
-unToken S.Equals = "="
-unToken S.LAngle = "<"
-unToken S.RAngle = ">"
-unToken S.LBracket = "["
-unToken S.RBracket = "]"
-unToken S.LBrace = "{"
-unToken S.RBrace = "}"
-unToken S.Colon = ":"
-unToken S.Newline = "\n"
-unToken S.Dash = "-"
-unToken S.AtSign = "@"
-unToken S.BackTick = "`"
-unToken S.Asterisk = "*"
-unToken S.Underscore = "_"
-unToken S.Octothorpe = "#"
-unToken S.DoubleQuote = "\""
-unToken S.Tilde = "~"
-unToken S.Caret = "^"
-unToken S.FSlash = "/"
-unToken S.Comma = ","
-unToken S.Period = "."
-unToken S.DollarSign = "$"
-unToken S.PercentSign = "%"
-unToken S.SemiColon = ";"
-unToken S.BSlash = "\\"
-unToken S.Plus = "+"
+textP = S.unToken <$> anyTokenP
 
 mkQTextP :: S.Token -> S.TextType -> IDocParser S.QText
 mkQTextP t tt = MP.label "Quoted Text" $ do
@@ -247,7 +220,7 @@ protocolP = do
   x <- satisfy isRecognized
   colonP
   fSlashP
-  return $ S.Protocol $ unToken x
+  return $ S.Protocol $ S.unToken x
   where
     isRecognized (S.TextT x) | x == "https" = True
                              | x == "http"  = True
@@ -420,60 +393,34 @@ paragraphP = do
     lBracketP = void $ tokenP S.LBracket
     doubleLBracketP = lBracketP >> lBracketP
 
+blockTypeName :: IDocParser Text
+blockTypeName = label "A Block Type Name" $ do
+  atSignP
+  x <- textP
+  newlineP
+  return x
+  where  
+    atSignP = void $ tokenP S.AtSign
+
+optionalBlockTitle :: IDocParser (Maybe S.BlockTitle)
+optionalBlockTitle = optional $ fmap S.BlockTitle $ label "A Block Title" $ do
+  octothorpeP
+  someTill newlineP simpleCoreP
+
 -- | Blocks
--- BlockTypes must parse their own block ender.
-blockP :: IDocParser S.Block
-blockP = label "A Block" $ do
+defaultBlockP :: InnerBlockParser a -> IDocParser (S.Block a)
+defaultBlockP b = label "A Block" $ do
   am <- optionalAttrMapP
   void $ optional newlineP
-  tyName <- label "A Block Type Name" $ do
-    atSignP
-    x <- textP
-    newlineP
-    return x
-  title <- optional $ label "A Block Title" $ do
-    octothorpeP
-    someTill newlineP simpleCoreP
-  ty <- case tyName of
-          "prerex" -> S.PrerexB <$> prerexP
-          "introduction" -> S.IntroductionB <$> introductionP
-          "math" -> S.MathB <$> mathP
-          "align" -> S.AlignB <$> alignP
-          "theorem" -> S.TheoremB <$> theoremP
-          "lemma" -> S.LemmaB <$> lemmaP
-          "corollary" -> S.CorollaryB <$> corollaryP
-          "proposition" -> S.PropositionB <$> propositionP
-          "conjecture" -> S.ConjectureB <$> conjectureP
-          "axiom" -> S.AxiomB <$> axiomP
-          "proof" -> S.ProofB <$> proofP
-          "quote" -> S.QuoteB <$> quoteP
-          "code" -> S.CodeB <$> codeP
-          "image" -> S.ImageB <$> imageP
-          "video" -> S.VideoB <$> videoP
-          "youtube" -> S.YouTubeB <$> youTubeP
-          "connection" -> S.ConnectionB <$> connectionP
-          "definition" -> S.DefinitionB <$> definitionP
-          "intuition" -> S.IntuitionB <$> intuitionP
-          "info" -> S.InfoB <$> infoP
-          "tip" -> S.TipB <$> tipP
-          "caution" -> S.CautionB <$> cautionP
-          "warning" -> S.WarningB <$> warningP
-          "sidenote" -> S.SideNoteB <$> sideNoteP
-          "example" -> S.ExampleB <$> exampleP
-          "exercise" -> S.ExerciseB <$> exerciseP
-          "bibliography" -> S.BibliographyB <$> bibliographyP
-          "furtherreading" -> S.FurtherReadingB <$> furtherReadingP
-          "summary" -> S.SummaryB <$> summaryP
-          "recall" -> S.RecallB <$> recallP
-          x -> error $ "unknown block type `" ++ (show x) ++ "'."
+  tyName <- blockTypeName
+  title <- optionalBlockTitle
+  ty <- b tyName
   sid <- optional setIDP
   return $ S.Block { S._bType = ty
                    , S._bAttrs = am
-                   , S._bTitle = S.BlockTitle <$> title
+                   , S._bTitle = title
                    , S._bSetID = sid
                    }
-  where
-    atSignP = void $ tokenP S.AtSign
 
 blockStarterP :: IDocParser ()
 blockStarterP = do
@@ -499,36 +446,40 @@ simpleCoreBlockP = do
   blockStarterP
   someTill blockEnderP' simpleCoreP
 
-coreBlockP :: IDocParser (Vector S.Core)
-coreBlockP = do
+coreBlockP :: BlockParser a -> IDocParser (Vector (S.Core a))
+coreBlockP b = do
   blockStarterP
-  someTill (many newlineP >> blockEnderP) coreP
+  someTill (many newlineP >> blockEnderP) (coreP b)
 
-vectorLinkCoreBlockP :: IDocParser (Vector S.Link, Vector S.Core)
-vectorLinkCoreBlockP = do
+vectorLinkCoreBlockP :: BlockParser a
+                     -> IDocParser (Vector S.Link, Vector (S.Core a))
+vectorLinkCoreBlockP b = do
   blockStarterP
   ls <- someTill (many newlineP >> blockContinuerP) $ do
     l <- linkP
     newlineP
     return l
-  x <- someTill (many newlineP >> blockEnderP) coreP
+  x <- someTill (many newlineP >> blockEnderP) (coreP b)
   return (ls, x)
 
-doubleCoreBlockP :: IDocParser (Vector S.Core, Vector S.Core)
-doubleCoreBlockP = do
+doubleCoreBlockP :: BlockParser a
+                 -> IDocParser (Vector (S.Core a), Vector (S.Core a))
+doubleCoreBlockP b = do
   blockStarterP
-  x <- someTill (many newlineP >> blockContinuerP) coreP
-  y <- someTill (many newlineP >> blockEnderP) coreP
+  x <- someTill (many newlineP >> blockContinuerP) (coreP b)
+  y <- someTill (many newlineP >> blockEnderP) (coreP b)
   return (x, y)
 
-coreBlockWithOptionalP :: IDocParser (Vector S.Core, Maybe (Vector S.Core))
-coreBlockWithOptionalP = do
+coreBlockWithOptionalP :: BlockParser a 
+                       -> IDocParser ( Vector (S.Core a)
+                                     , Maybe (Vector (S.Core a)) )
+coreBlockWithOptionalP b = do
   blockStarterP
   (xs, e) <- someTill' 
              (many newlineP >> 
-               (MP.eitherP (MP.try blockContinuerP) blockEnderP)) coreP
+               (MP.eitherP (MP.try blockContinuerP) blockEnderP)) (coreP b)
   op <- case e of
-          Left _ -> Just <$> (someTill (many newlineP >> blockEnderP) coreP)
+          Left _ -> Just <$> (someTill (many newlineP >> blockEnderP) (coreP b))
           Right _ -> return Nothing
   return (xs, op)
 
@@ -559,134 +510,21 @@ linkBlockWithOptionalP = do
     Right _ -> return Nothing
   return (x, op)
 
-biblioBlockP :: IDocParser (Vector S.BibItem)
-biblioBlockP = do
-  blockStarterP
-  x <- undefined
-  blockEnderP'
-  return x
-
-prerexItemP :: IDocParser S.PrerexItem
-prerexItemP = do
-  path <- idP
-  desc <- markupContentsP
-  return $ S.PrerexItem { S._prerexItemPath = path
-                        , S._prerexItemDescription = desc
-                        }
-
-prerexP :: IDocParser S.Prerex
-prerexP = S.Prerex <$> do
-  blockStarterP
-  someTill blockEnderP $ do
-    x <- prerexItemP
-    newlineP
-    return x
-
-introductionP :: IDocParser S.Introduction
-introductionP = S.Introduction <$> coreBlockP
-
-mathP :: IDocParser S.Math
-mathP = S.Math <$> uninterpretedBlockP
-
-equationP :: IDocParser S.Equation
-equationP = S.Equation <$> uninterpretedBlockP
-
-alignP :: IDocParser S.Align
-alignP = S.Align <$> uninterpretedBlockP
-
-theoremP :: IDocParser S.Theorem
-theoremP = S.Theorem <$> coreBlockWithOptionalP
-
-lemmaP :: IDocParser S.Lemma
-lemmaP = S.Lemma <$> coreBlockWithOptionalP
-
-corollaryP :: IDocParser S.Corollary
-corollaryP = S.Corollary <$> coreBlockWithOptionalP
-
-propositionP :: IDocParser S.Proposition
-propositionP = S.Proposition <$> coreBlockWithOptionalP
-
-conjectureP :: IDocParser S.Conjecture
-conjectureP = S.Conjecture <$> coreBlockP
-
-axiomP :: IDocParser S.Axiom
-axiomP = S.Axiom <$> coreBlockP
-
-proofP :: IDocParser S.Proof
-proofP = S.Proof <$> coreBlockP
-
-quoteP :: IDocParser S.Quote
-quoteP = S.Quote <$> simpleCoreBlockP
-
-codeP :: IDocParser S.Code
-codeP = S.Code <$> uninterpretedBlockP
-
-imageP :: IDocParser S.Image
-imageP = S.Image <$> linkBlockWithOptionalP
-
-videoP :: IDocParser S.Video
-videoP = S.Video <$> linkBlockWithOptionalP
-
-youTubeP :: IDocParser S.YouTube
-youTubeP = S.YouTube <$> linkBlockWithOptionalP
-
-connectionP :: IDocParser S.Connection
-connectionP = S.Connection <$> coreBlockP
-
-definitionP :: IDocParser S.Definition
-definitionP = S.Definition <$> coreBlockP
-
-intuitionP :: IDocParser S.Intuition
-intuitionP = S.Intuition <$> coreBlockP
-
-infoP :: IDocParser S.Info
-infoP = S.Info <$> coreBlockP
-
-tipP :: IDocParser S.Tip
-tipP = S.Tip <$> coreBlockP
-
-cautionP :: IDocParser S.Caution
-cautionP = S.Caution <$> coreBlockP
-
-warningP :: IDocParser S.Warning
-warningP = S.Warning <$> coreBlockP
-
-sideNoteP :: IDocParser S.SideNote
-sideNoteP = S.SideNote <$> coreBlockP
-
-exampleP :: IDocParser S.Example
-exampleP = S.Example <$> doubleCoreBlockP
-
-exerciseP :: IDocParser S.Exercise
-exerciseP = S.Exercise <$> coreBlockP
-
-bibliographyP :: IDocParser S.Bibliography
-bibliographyP = S.Bibliography <$> biblioBlockP
-
-furtherReadingP :: IDocParser S.FurtherReading
-furtherReadingP = S.FurtherReading <$> coreBlockP
-
-summaryP :: IDocParser S.Summary
-summaryP = S.Summary <$> coreBlockP
-
-recallP :: IDocParser S.Recall
-recallP = S.Recall <$> vectorLinkCoreBlockP
-
 -- | Section
-sectionP :: IDocParser S.Section
-sectionP = do
+sectionP :: BlockParser a -> IDocParser (S.Section a)
+sectionP b = do
   am <- optionalAttrMapP
   equalses <- some equalsP
   let ty = case length equalses of
              2 -> S.TopSection
              3 -> S.SubSection
-             _ -> error "only `Section's and `Subsection's are allowed for now."
+             _ -> error "only `Section's and `Subsection's are allowed."
   title <- simpleLineP
   sid <- optional setIDP
   void $ many newlineP
   cnt <- manyV $ do
     MP.notFollowedBy $ many newlineP >> equalsP >> equalsP
-    x <- coreP
+    x <- coreP b
     void $ many newlineP
     return x
   return $ S.Section { S._secType = ty
@@ -716,22 +554,22 @@ simpleCoreP =  S.TextC       <$> MP.try escapedP
            <|> S.QTextC      <$> MP.try qTextP
            <|> S.TextC       <$>        textP
 
-coreP :: IDocParser S.Core
-coreP = S.CC <$> ((S.BlockC     <$> (MP.try blockP))
-             <|>  (S.ListC      <$> (MP.try listP))
-             <|>  (S.ParagraphC <$>         paragraphP))
+coreP :: BlockParser a -> IDocParser (S.Core a)
+coreP b = S.CC <$> ((S.BlockC     <$> (MP.try (defaultBlockP b)))
+               <|>  (S.ListC      <$> (MP.try listP))
+               <|>  (S.ParagraphC <$>         paragraphP))
 
-docP :: IDocParser S.Doc
-docP = do
+docP :: BlockParser a -> IDocParser (S.Doc a)
+docP b = do
   title <- someTween equalsP newlineP simpleCoreP
   docSid <- optional setIDP
   void $ many newlineP
   preamble <- manyV $ do
     MP.notFollowedBy $ many newlineP >> equalsP >> equalsP
-    x <- coreP
+    x <- coreP b
     return x
   void $ many newlineP
-  sections <- sepEndByV sectionP (many newlineP)
+  sections <- sepEndByV (sectionP b) (many newlineP)
   let preambleSection = S.Section { S._secType = S.Preamble
                                   , S._secAttrs = S.AttrMap M.empty
                                   , S._secContents = preamble
@@ -745,15 +583,11 @@ docP = do
   where
     equalsP = void $ tokenP S.Equals
 
-looksLikeEofP :: IDocParser ()
-looksLikeEofP = do
-  void $ some newlineP
-
-errorDoc :: Show e => e -> S.Doc
+errorDoc :: Show e => e -> S.Doc a
 errorDoc e = S.Doc { S._docTitle = S.DocTitle $ singleton $ S.TextC "Error!"
                    , S._docSections = singleton $ S.Section { S._secAttrs = S.AttrMap mempty
                                                             , S._secContents = singleton $ S.CC $ S.ParagraphC $ S.Paragraph { _paraContents = singleton $ S.TextC $ fromString $ show e
-                                                                                                               , _paraSetID = Nothing }
+                                                                                                                             , _paraSetID = Nothing }
                                                       , _secTitle = S.SectionTitle empty
                                                       , _secSetID = Nothing
                                                       , _secType = S.TopSection
@@ -761,10 +595,10 @@ errorDoc e = S.Doc { S._docTitle = S.DocTitle $ singleton $ S.TextC "Error!"
                    , _docSetID = Nothing
                    }
 
-compileIdoc :: Monad m => Text -> m S.Doc
-compileIdoc text_ = case MP.parse L.dTokens "<idoc>" text_ of
-                      Left e -> return $ errorDoc e
-                      Right x -> do
-                        case MP.parse docP "<idoc tokens>" x of
-                          Left e -> return $ errorDoc e
-                          Right y -> return y
+compileIdoc :: Monad m => BlockParser a -> Text -> m (S.Doc a)
+compileIdoc b text_ = case MP.parse L.dTokens "<idoc>" text_ of
+                        Left e -> return $ errorDoc e
+                        Right x -> do
+                          case MP.parse (docP b) "<idoc tokens>" x of
+                            Left e -> return $ errorDoc e
+                            Right y -> return y

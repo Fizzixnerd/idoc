@@ -8,13 +8,9 @@ module Text.IDoc.Lex where
 
 import ClassyPrelude as CP
 
-import System.IO
-
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Data.Maybe
-
-import Data.Text.Encoding as E
 
 import qualified Text.Megaparsec as MP
 import Text.Megaparsec.Text
@@ -93,10 +89,3 @@ tokens = fromList <$> (many token)
 
 dTokens :: Parser IDocTokenStream
 dTokens = IDocTokenStream <$> fromList <$> (many dToken)
-
-megaMain :: IO ()
-megaMain = withFile "source.idoc" ReadMode 
-             (\src -> do
-                cnts <- CP.hGetContents src
-                case MP.parse (tokens :: Parser (Vector Token)) "source.idoc" (E.decodeUtf8 cnts) of
-                  (CP.Right x) -> CP.print x)

@@ -1,3 +1,8 @@
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE DataKinds #-}
 -- | Syntax.hs
 --
 -- Author: Matt Walker
@@ -10,19 +15,31 @@
 
 module Text.IDoc.Syntax where
 
-import ClassyPrelude as CP
+import ClassyPrelude as CP hiding (span)
 
 import Data.Data
+
+import Data.Vinyl
+import Data.Vinyl.CoRec
+import Data.Vinyl.TypeLevel
+import Data.Vinyl.Functor
+
+import qualified Data.Vector as V
+
+import Text.Blaze.Html5 as B
+import Text.Blaze.Html5.Attributes as A
 
 import qualified Text.Megaparsec.Prim as Prim
 import Text.Megaparsec.Pos
 
-import Control.Lens
+import Text.Printf
+
+import Control.Lens hiding (cons, List)
 
 -- * Syntax
 --
--- Everything in this file is defined Data, Typeable, and Generic, as
--- well as the usual Eq, ShowOrd.
+-- | Everything in this file is defined Data, Typeable, and Generic, as
+-- well as the usual Eq, Show, and Ord.
 
 -- | Type synonym for keeping track of which row we are on.
 type Row = Word
@@ -83,6 +100,35 @@ data Token =
   | Plus
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+unToken :: Token -> Text
+unToken (TextT x) = x
+unToken Equals = "="
+unToken LAngle = "<"
+unToken RAngle = ">"
+unToken LBracket = "["
+unToken RBracket = "]"
+unToken LBrace = "{"
+unToken RBrace = "}"
+unToken Colon = ":"
+unToken Newline = "\n"
+unToken Dash = "-"
+unToken AtSign = "@"
+unToken BackTick = "`"
+unToken Asterisk = "*"
+unToken Underscore = "_"
+unToken Octothorpe = "#"
+unToken DoubleQuote = "\""
+unToken Tilde = "~"
+unToken Caret = "^"
+unToken FSlash = "/"
+unToken Comma = ","
+unToken Period = "."
+unToken DollarSign = "$"
+unToken PercentSign = "%"
+unToken SemiColon = ";"
+unToken BSlash = "\\"
+unToken Plus = "+"
+
 -- | Newtype around a Vector of `DToken's; represents lexed source.
 newtype IDocTokenStream = IDocTokenStream { unStream :: Vector DToken }
 
@@ -118,7 +164,7 @@ data SimpleCore =
   | QTextC QText
   | LinkC Link
   | InlineMathC InlineMath
-  | MarkupC Markup
+  | MarkupC Text.IDoc.Syntax.Markup
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | Sum type for holding the major organizing constructs of the
@@ -162,12 +208,13 @@ data QText = QText { _qtText :: Vector SimpleCore
                    }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+
 -- | An `ID' given to an object so that it can be referred to later.
 data SetID = SetID { _sidName :: IDHash
                    , _sidDisplay :: Vector SimpleCore }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
--- | The "hash" bit of an `ID'.  It's the part that comes after the
+-- | The "hash" part of an `ID'.  It's the part that comes after the
 -- octothorpe (#).
 newtype IDHash = IDHash { unIDHash :: Text } deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
@@ -295,6 +342,9 @@ data Block a = Block { _bType  :: a
                      }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+class BlockMarkup a where
+  blockMarkup :: AttrMap -> Maybe BlockTitle -> Maybe SetID -> a -> Html
+
 data SectionType = Preamble
                  | TopSection
                  | SubSection
@@ -313,7 +363,7 @@ data Section a = Section { _secType     :: SectionType
 
 -- * Lenses
 --
--- We then define lenses for nearly everything in the module.
+-- | We then define lenses for nearly everything in the module.
 
 makeLenses ''DebugInfo
 makeLenses ''DebugToken
@@ -324,10 +374,200 @@ makeLenses ''Section
 makeLenses ''Link
 makeLenses ''List
 makeLenses ''ListItem
-makeLenses ''Markup
+makeLenses ''Text.IDoc.Syntax.Markup
 makeLenses ''InlineMath
 makeLenses ''Block
 makeLenses ''Doc
 makeLenses ''Paragraph
 makeLenses ''ID
+
+instance BlockMarkup a => ToMarkup (Section a) where
+  toMarkup s = section ! class_ "idocSection" $
+               titlify $ concatMap toMarkup $ s^.secContents
+    where titlify = case s^.secType of
+            Preamble -> CP.id
+            TopSection -> (mID (s^.secSetID) 
+                            (h2 ! class_ "idocTopSectionTitle clearfix" $
+                             s^.secTitle.to toMarkup) ++)
+            SubSection -> (mID (s^.secSetID) 
+                            (h3 ! class_ "idocSubSectionTitle clearfix" $
+                             s^.secTitle.to toMarkup) ++)
+
+instance ToMarkup SectionTitle where
+  toMarkup (SectionTitle st) = concatMap toMarkup st
+
+instance ToMarkup BlockTitle where
+  toMarkup (BlockTitle bt) = concatMap toMarkup bt
+
+instance ToMarkup InlineMath where
+  toMarkup im = (mID (im^.imSetID) (B.span $ ("\\(" ++ concatMap toMarkup (im^.imContents) ++ "\\)"))) ! class_ "idocInlineMath"
+
+instance ToMarkup Text.IDoc.Syntax.Markup where
+  toMarkup mu = mID (mu^.muSetID) $
+    case (mu^.muType) of
+      Footnote -> B.span ! class_ "idocFootnote" $ 
+                  concatMap toMarkup (mu^.muContents)
+      FootnoteRef -> B.span ! class_ "idocFootnoteRef" $
+                     concatMap toMarkup (mu^.muContents)
+      Citation -> B.span ! class_ "idocCitation" $
+                  concatMap toMarkup (mu^.muContents)
+
+instance ToMarkup ListItem where
+  toMarkup li_ = correctListItemHolder (li_^.liType) (li_^.liLabel) $ 
+                 concatMap toMarkup $ li_^.liContents
+    where
+      correctListItemHolder Labelled (Just l) = 
+        (\x -> (dt ! class_ "idocLabel" $ toMarkup l) ++
+               (dd ! class_ "idocLabelledItem" $ x))
+      correctListItemHolder Ordered Nothing = li ! class_ "idocOrderedItem"
+      correctListItemHolder Unordered Nothing = li ! class_ "idocUnorderedItem"
+      correctListItemHolder lt l = fail $ printf "Failed to match pattern with ListType `%s' and label `%s'." (show lt) (show l)
+
+instance ToMarkup ListLabel where
+  toMarkup (ListLabel ll) = concatMap toMarkup ll
+
+instance ToMarkup List where
+  toMarkup (List l) = correctListHolder ((V.head l)^.liType) $
+                      concatMap toMarkup l
+    where
+      correctListHolder Unordered = ul ! class_ "idocUnorderedList"
+      correctListHolder Ordered = ol ! class_ "idocOrderedList"
+      correctListHolder Labelled = dl ! class_ "idocLabelledList"
+
+instance ToMarkup ID where
+  toMarkup id_ = idHelper toMarkup id_
+
+instance ToValue ID where
+  toValue id_ = idHelper toValue id_
+
+instance ToMarkup Link where
+  toMarkup l = a ! class_ (toValue $ l^.linkType)
+                   ! href (toValue $ l^.linkLocation) $
+                   toMarkup $ l^.linkText
+
+instance ToValue LinkType where
+  toValue Internal = "idocInternal"
+  toValue Back = "idocBackLink"
+  toValue Out = "idocOutLink"
+
+instance ToMarkup LinkText where
+  toMarkup (LinkText lt) = concatMap toMarkup lt
+
+instance ToMarkup Token where
+  toMarkup t = toMarkup $ unToken t
+
+instance ToValue SetID where
+  toValue (SetID { _sidName = (IDHash sid) }) = toValue sid
+
+instance ToMarkup QText where
+  toMarkup qt = decorateTextWith (qt^.qtType) $
+                concatMap toMarkup $ qt^.qtText
+    where
+      decorateTextWith Strong x = strong ! class_ "idocStrong" $ x
+      decorateTextWith Emphasis x = em ! class_ "idocEmphasis" $ x
+      decorateTextWith Monospace x = B.span ! class_ "idocMonospace" $ x
+      decorateTextWith Superscript x = sup ! class_ "idocSuperscript" $ x
+      decorateTextWith Subscript x = sub ! class_ "idocSubscript" $ x
+      decorateTextWith Quoted x = q ! class_ "idocQuoted" $ x
+
+instance BlockMarkup a => ToMarkup (Doc a) where
+  toMarkup d = article ! class_ "idocDoc" $
+               (toMarkup $ d^.docTitle) ++
+               (concatMap toMarkup $ d^.docSections)
+
+instance BlockMarkup a => ToMarkup (Core a) where
+  toMarkup (SC sc) = toMarkup sc
+  toMarkup (CC cc) = toMarkup cc
+
+instance ToMarkup SimpleCore where
+  toMarkup (TextC t) = toMarkup t
+  toMarkup (QTextC qt) = toMarkup qt
+  toMarkup (LinkC l) = toMarkup l
+  toMarkup (InlineMathC im) = toMarkup im
+  toMarkup (MarkupC m) = toMarkup m
+
+instance ToMarkup Paragraph where
+  toMarkup pa = p ! class_ "idocParagraph" $
+                concatMap toMarkup $ pa^.paraContents
+
+instance BlockMarkup a => ToMarkup (ComplexCore a) where
+  toMarkup (ListC l) = toMarkup l
+  toMarkup (BlockC b_) = toMarkup b_
+  toMarkup (ParagraphC p_) = toMarkup p_
+
+instance BlockMarkup a => ToMarkup (Block a) where
+  toMarkup b_ = blockMarkup (b_^.bAttrs) (b_^.bTitle) (b_^.bSetID) (b_^.bType)
+
+instance (RecApplicative xs, AllAllSat '[BlockMarkup] xs) => BlockMarkup (CoRec Data.Vinyl.Functor.Identity xs) where
+  blockMarkup a_ t s x = getIdentity $ onCoRec (Proxy :: Proxy '[BlockMarkup]) (blockMarkup a_ t s) x
+
+instance ToMarkup DocTitle where
+  toMarkup (DocTitle dt_) = h1 ! class_ "idocDocTitle" $
+                            concatMap toMarkup dt_
+-- * Some Helper Functions
+
+-- | FIXME: This is truly fucked.
+idHelper :: (Text -> t) -> ID -> t
+idHelper decorator id_ = let (base_, hash_) =
+                               case (id_^.idProtocol, id_^.idHash) of
+                                 (Just (Protocol "youtube"), Nothing) -> 
+                                   ("https://youtube.com/embed/", "")
+                                 (Just (Protocol "youtube"), Just _) -> 
+                                   error "got youtube protocol with a hash!?"
+                                 (Nothing, Nothing) -> 
+                                   ("http://www.independentlearning.science/tiki/", "")
+                                 (Just (Protocol p_), Just (IDHash h)) ->
+                                   (p_ ++ "://", h)
+                                 (Nothing, Just (IDHash h)) -> ("/", h)
+                                 (Just (Protocol p_), Nothing) -> (p_ ++ "://", "")
+                         in
+                           decorator $ base_ ++
+                           (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
+                           hash_
+
+vectorBlockToMarkup :: B.ToMarkup a => 
+                       B.AttributeValue 
+                    -> (B.Html -> B.Html)
+                    -> Vector a 
+                    -> B.Html
+vectorBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
+                                 dec $
+                                 concatMap B.toMarkup
+                                 vb
+
+verbatimBlockToMarkup :: B.AttributeValue 
+                      -> (B.Html -> B.Html)
+                      -> Vector Token
+                      -> B.Html
+verbatimBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
+                                   dec $
+                                   concatMap (\x -> if x == Newline then
+                                                      B.toMarkup B.br
+                                                    else
+                                                      B.toMarkup x)
+                                   vb
+
+newtype LinkLevel = LinkLevel Int deriving (Eq, Ord, Show)
+
+listLinks :: Doc a -> Vector (SetID, LinkLevel)
+listLinks (Doc { _docSections = ss
+               , _docSetID = dsid }) =
+  catMaybes (singleton ((\x -> (x, LinkLevel 1)) <$> dsid)) <>
+  concatMap (\(Section { _secSetID = ssid
+                       , _secContents = scnts }) ->
+                catMaybes $ ((\case
+                                CC (BlockC (Block { _bSetID = bsid })) -> do
+                                  sid <- bsid
+                                  return (sid, LinkLevel 3)
+                                CC (ParagraphC (Paragraph { _paraSetID = psid })) -> do
+                                  sid <- psid
+                                  return (sid, LinkLevel 3)
+                                _ -> Nothing
+                                -- FIXME: Add lists here
+                            ) <$> scnts) <> singleton ((\x -> (x, LinkLevel 2)) <$> ssid)) ss
+
+mID :: Maybe SetID -> (Html -> Html)
+mID mid = case mid of
+  Nothing -> CP.id
+  Just id_ -> (\x -> x ! A.id (toValue id_))
 

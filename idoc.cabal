@@ -26,40 +26,54 @@ source-repository head
   location: https://github.com/Fizzixnerd/idoc
 
 library
-  hs-source-dirs:
-      library
-  ghc-options: -Wall
-  build-depends:
-                base-noprelude
-              , HaTeX
-              , blaze-html
-              , blaze-markup >= 0.8.0.0
-              , classy-prelude
-              , containers
-              , lens
-              , megaparsec
-              , mtl >= 2.2.1
-              , text
-              , vector
-              , vinyl
+  hs-source-dirs: library
+  ghc-options: -Wall -Wextra
+  build-depends: base-noprelude
+               , HaTeX
+               , blaze-html
+               , blaze-markup >= 0.8.0.0
+               , classy-prelude
+               , containers
+               , lens
+               , megaparsec
+               , mtl >= 2.2.1
+               , text
+               , vector
+               , vinyl
   exposed-modules: Text.IDoc.Render.Html5.Icons
-                 , Text.IDoc.Render.Html5
+                 , Text.IDoc.Render.Html5.Card
                  , Text.IDoc.Render.Tex
                  , Text.IDoc.Lex
                  , Text.IDoc.Parse
                  , Text.IDoc.Syntax
-  default-extensions:      LambdaCase
-                         , OverloadedStrings
-                         , NoImplicitPrelude
-                         , RecordWildCards
-                         , FlexibleContexts
-                         , GeneralizedNewtypeDeriving
-                         , TypeFamilies
-                         , TemplateHaskell
-                         , DeriveDataTypeable
-                         , DeriveGeneric
-                         , RankNTypes
-                         , ScopedTypeVariables
+                 , Text.IDoc.Lang.Ils
+                 , Text.IDoc.Blocks.Admonition
+                 , Text.IDoc.Blocks.BibTex
+                 , Text.IDoc.Blocks.Code
+                 , Text.IDoc.Blocks.Connection
+                 , Text.IDoc.Blocks.Example
+                 , Text.IDoc.Blocks.Exercise
+                 , Text.IDoc.Blocks.FurtherReading
+                 , Text.IDoc.Blocks.IntroOutro
+                 , Text.IDoc.Blocks.Intuition
+                 , Text.IDoc.Blocks.Math
+                 , Text.IDoc.Blocks.Media
+                 , Text.IDoc.Blocks.Prerex
+                 , Text.IDoc.Blocks.Quote
+                 , Text.IDoc.Blocks.Recall
+  default-extensions: LambdaCase
+                    , OverloadedStrings
+                    , NoImplicitPrelude
+                    , RecordWildCards
+                    , FlexibleContexts
+                    , GeneralizedNewtypeDeriving
+                    , TypeFamilies
+                    , TemplateHaskell
+                    , DeriveDataTypeable
+                    , DeriveGeneric
+                    , RankNTypes
+                    , ScopedTypeVariables
+                    , DataKinds
   default-language: Haskell2010
 
 executable idoc
