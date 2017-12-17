@@ -3,7 +3,6 @@ module Text.IDoc.Blocks.FurtherReading where
 import Text.IDoc.Syntax
 import Text.IDoc.Parse
 import Text.IDoc.Render.Html5.Card
-import Text.IDoc.Render.Html5.Icons
 
 import Text.Blaze.Html5
 

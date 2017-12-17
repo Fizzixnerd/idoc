@@ -2,6 +2,8 @@ module Text.IDoc.Blocks.Quote where
 
 import Text.IDoc.Syntax
 import Text.IDoc.Parse
+import Text.IDoc.Render.Html5.Card
+import Text.IDoc.Render.Html5.Icons
 
 import Text.Blaze.Html5
 
@@ -16,6 +18,15 @@ data Quote = Quote { _quoteContents :: Vector SimpleCore }
 
 instance ToMarkup Quote where
   toMarkup (Quote q_) = vectorBlockToMarkup "idocQuote" id q_
+
+instance BlockMarkup Quote where
+  blockMarkup (AttrMap a_) t s q_ = card
+                                    defaultCardOptions
+                                    (mTitle "Quote" t)
+                                    s
+                                    (icon "fa-quote-left")
+                                    ((\(AttrValue v) -> toMarkup v) <$> (a_^.at (AttrName "author").to join))
+                                    (toMarkup q_)
 
 quoteP :: IDocParser Quote
 quoteP = Quote <$> simpleCoreBlockP

@@ -55,6 +55,8 @@ newtype BlockType = BlockType { _unBlockType :: CoRec Identity IlsBlocks }
 instance BlockMarkup BlockType where
   blockMarkup attrs title_ sid (BlockType coRec) = blockMarkup attrs title_ sid coRec
 
+x = blockMarkup (AttrMap $ mempty) Nothing Nothing (BlockType $ CoRec $ Identity $ Quote $ fromList [TextC $ "Hello!"])
+
 mkBlockType :: (Functor f, RElem a IlsBlocks (RIndex a IlsBlocks)) => f a -> f BlockType
 mkBlockType = (BlockType <$> CoRec <$> Identity <$>)
 

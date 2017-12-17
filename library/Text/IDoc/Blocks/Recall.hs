@@ -2,6 +2,7 @@ module Text.IDoc.Blocks.Recall where
 
 import Text.IDoc.Syntax
 import Text.IDoc.Parse
+import Text.IDoc.Render.Html5.Card
 
 import Text.Blaze.Html5
 
@@ -17,6 +18,16 @@ data Recall a = Recall { _recallLinks :: Vector Link
 
 instance BlockMarkup a => ToMarkup (Recall a) where
   toMarkup (Recall _ r) = vectorBlockToMarkup "idocRecall" id r
+
+-- FIXME: Requires an icon.
+instance BlockMarkup a => BlockMarkup (Recall a) where
+  blockMarkup _ t s r = card
+                        defaultCardOptions
+                        (mTitle "Recall" t)
+                        s
+                        ""
+                        Nothing
+                        (toMarkup r)
 
 recallP :: BlockParser a -> IDocParser (Recall a)
 recallP b_ = do
