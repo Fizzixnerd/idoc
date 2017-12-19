@@ -54,6 +54,7 @@ type IlsBlocks = '[ AdmonitionB BlockType
                   , Recall BlockType ]
 
 newtype BlockType = BlockType { _unBlockType :: CoRec Identity IlsBlocks }
+  deriving (Eq, Show)
 
 instance BlockMarkup BlockType where
   blockMarkup attrs title_ sid (BlockType coRec) = blockMarkup attrs title_ sid coRec

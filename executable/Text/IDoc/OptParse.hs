@@ -39,11 +39,12 @@ program p =
                     (\inh ->
                         withOutFile
                         (\outh -> m inh outh))
+      fix f = let {x = f x} in x
       doIt m = withFiles (\inh outh -> do
                              cnts <- TIO.hGetContents inh
                              case MP.parse dTokens "<file>" cnts of
                                Left e -> print e
-                               Right x -> case MP.parse (docP blockTypeP) "<tokens>" x of
+                               Right x -> case MP.parse (docP (fix blockTypeP)) "<tokens>" x of
                                  Left e -> print e
                                  Right y -> m y outh)
       action' Parse = doIt (\y outh -> TIO.hPutStr outh (fromString $ show y))
@@ -68,13 +69,17 @@ idoc =  Program
        <> help "File to which to write the output.  Will write to stdout if omitted." )
     <*> subparser (parse <> html <> tex)
 
+
+parse :: Mod CommandFields Action
 parse = command "parse" (info (pure Parse) $
                           (progDesc "Parse the input and dump the parse tree to the output."))
 
 
+html :: Mod CommandFields Action
 html = command "html" (info (pure Html) $
                         progDesc "Output the HTML representation of the input.")
 
+tex :: Mod CommandFields Action
 tex = command "tex" (info (pure Tex) $
                       progDesc "Output the TeX representation of the input.")
 
