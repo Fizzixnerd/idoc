@@ -4,8 +4,11 @@ import Text.IDoc.Syntax
 import Text.IDoc.Parse
 import Text.IDoc.Render.Html5.Card
 import Text.IDoc.Render.Html5.Icons
+import Text.IDoc.Render.Tex
 
 import Text.Blaze.Html5
+
+import Text.LaTeX
 
 import Data.Data
 
@@ -27,6 +30,11 @@ instance BlockMarkup Quote where
                                     (icon "fa-quote-left")
                                     ((\(AttrValue v) -> toMarkup v) <$> (a_^.at (AttrName "author").to join))
                                     (toMarkup q_)
+
+instance Blocky Quote where
+  block _ _ msid (Quote q_) = mLabel msid $
+                              quote $
+                              vectorTexy q_
 
 quoteP :: IDocParser Quote
 quoteP = Quote <$> simpleCoreBlockP

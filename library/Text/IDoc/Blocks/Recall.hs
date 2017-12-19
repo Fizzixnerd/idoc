@@ -3,8 +3,11 @@ module Text.IDoc.Blocks.Recall where
 import Text.IDoc.Syntax
 import Text.IDoc.Parse
 import Text.IDoc.Render.Html5.Card
+import Text.IDoc.Render.Tex
 
 import Text.Blaze.Html5
+
+import Text.LaTeX
 
 import Data.Data
 
@@ -28,6 +31,12 @@ instance BlockMarkup a => BlockMarkup (Recall a) where
                         ""
                         Nothing
                         (toMarkup r)
+
+instance Blocky a => Blocky (Recall a) where
+  block _ mt msid (Recall _ r) = (subsubsection $ mLabel msid title_) ++
+                                 vectorTexy r
+    where
+      title_ = mTitleT mt "Recall"
 
 recallP :: BlockParser a -> IDocParser (Recall a)
 recallP b_ = do

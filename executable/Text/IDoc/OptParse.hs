@@ -14,7 +14,7 @@ import qualified System.IO as IO
 import Text.IDoc.Parse
 import Text.IDoc.Lex
 import qualified Text.IDoc.Syntax as S
-import Text.IDoc.Render.Html5 ()
+import Text.IDoc.Lang.Ils
 import Text.IDoc.Render.Tex
 
 import qualified Text.Megaparsec as MP
@@ -43,7 +43,7 @@ program p =
                              cnts <- TIO.hGetContents inh
                              case MP.parse dTokens "<file>" cnts of
                                Left e -> print e
-                               Right x -> case MP.parse docP "<tokens>" x of
+                               Right x -> case MP.parse (docP blockTypeP) "<tokens>" x of
                                  Left e -> print e
                                  Right y -> m y outh)
       action' Parse = doIt (\y outh -> TIO.hPutStr outh (fromString $ show y))

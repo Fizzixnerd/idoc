@@ -4,6 +4,7 @@ import Text.IDoc.Syntax
 import Text.IDoc.Parse
 import Text.IDoc.Render.Html5.Card
 import Text.IDoc.Render.Html5.Icons
+import Text.IDoc.Render.Tex
 
 import Text.Blaze.Html5
 
@@ -24,5 +25,9 @@ instance BlockMarkup a => BlockMarkup (Intuition a) where
 
 intuitionP :: BlockParser a -> IDocParser (Intuition a)
 intuitionP b_ = Intuition <$> coreBlockP b_
+
+instance Blocky a => Blocky (Intuition a) where
+  block _ mt msid (Intuition i_) = intuitionBlock (mLabel msid title_) (vectorTexy i_)
+    where title_ = mTitleT mt "Intuition"
 
 makeLenses ''Intuition

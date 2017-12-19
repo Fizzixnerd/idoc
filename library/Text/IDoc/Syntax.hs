@@ -29,7 +29,14 @@ import qualified Data.Vector as V
 import Text.Blaze.Html5 as B
 import Text.Blaze.Html5.Attributes as A
 
-import qualified Text.Megaparsec.Prim as Prim
+import Text.LaTeX as L hiding ((<>))
+import Text.LaTeX.Base.Class
+import Text.LaTeX.Packages.AMSMath as M hiding (to)
+import Text.LaTeX.Packages.Hyperref as H
+
+import Text.IDoc.Render.Tex
+
+import Text.Megaparsec.Stream
 import Text.Megaparsec.Pos
 
 import Text.Printf
@@ -42,10 +49,10 @@ import Control.Lens hiding (cons, List)
 -- well as the usual Eq, Show, and Ord.
 
 -- | Type synonym for keeping track of which row we are on.
-type Row = Word
+type Row = Int
 
 -- | Type synonym for keeping track of which column we are on.
-type Col = Word
+type Col = Int
 
 -- | The current debug information kept around so that we can tell the
 -- user where an error occured.  More can be added later without
@@ -59,7 +66,7 @@ data DebugInfo = DebugInfo { _diStart :: !(Row, Col)
 -- the debug information directly and so doesn't need to worry about
 -- it.
 data DebugToken d = DebugToken { _dtInfo :: d
-                               , _dtToken :: Token
+                               , _dtToken :: Text.IDoc.Syntax.Token
                                }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
@@ -100,7 +107,7 @@ data Token =
   | Plus
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-unToken :: Token -> Text
+unToken :: Text.IDoc.Syntax.Token -> Text
 unToken (TextT x) = x
 unToken Equals = "="
 unToken LAngle = "<"
@@ -134,21 +141,28 @@ newtype IDocTokenStream = IDocTokenStream { unStream :: Vector DToken }
 
 -- | Megaparsec Stream instance so that this properly works with the
 -- rest of the library.
-instance Prim.Stream IDocTokenStream where
+instance Stream IDocTokenStream where
   type Token IDocTokenStream = DToken
-  uncons s = (fmap IDocTokenStream) <$> (CP.uncons $ unStream s)
-  updatePos _ _ sp t = 
-    let info = _dtInfo t
-        (r1, c1) = bimap unsafePos unsafePos $ _diStart info
-        (r2, c2) = bimap unsafePos unsafePos $ _diEnd info
-        sp1 = sp { sourceLine = r1
-                 , sourceColumn = c1
-                 }
-        sp2 = sp { sourceLine = r2
-                 , sourceColumn = c2
-                 }
-        in
-      (sp1, sp2)
+  type Tokens IDocTokenStream = Vector DToken
+  tokensToChunk _ = fromList
+  chunkToTokens _ = toList
+  chunkLength _ = length
+  advance1 _ _ (SourcePos {sourceName = sn}) (DebugToken { _dtInfo = info }) = 
+    let (r, c) = _diEnd info
+    in
+      SourcePos { sourceName = sn
+                , sourceLine = mkPos $ fromIntegral r
+                , sourceColumn = mkPos $ fromIntegral c
+                }
+  advanceN pxy p_ sp ts = advance1 pxy p_ sp (V.last ts)
+  take1_ (IDocTokenStream ts) = if V.null ts then
+                                  Nothing
+                                else
+                                  Just (V.head ts, IDocTokenStream $ V.tail ts)
+  takeN_ n its | n <= 0 = Just (V.empty, its)
+  takeN_ _ (IDocTokenStream ts) | V.null ts = Nothing
+  takeN_ n (IDocTokenStream ts) = Just $ IDocTokenStream <$> (V.splitAt n ts)
+  takeWhile_ p_ (IDocTokenStream ts) = IDocTokenStream <$> (V.span p_ ts)
 
 -- | One of a `SimpleCore' or a `ComplexCore'; holds most interesting
 -- constructs in the language.
@@ -323,7 +337,7 @@ data Markup = Markup { _muType :: MarkupType
 -- | Inline math, LaTeX style.  May have an attached `AttrMap' or
 -- `SetID'.  Contents are unparsed `Token's.
 data InlineMath = InlineMath { _imAttrs    :: AttrMap
-                             , _imContents :: Vector Token
+                             , _imContents :: Vector Text.IDoc.Syntax.Token
                              , _imSetID    :: Maybe SetID
                              }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -382,7 +396,7 @@ makeLenses ''Paragraph
 makeLenses ''ID
 
 instance BlockMarkup a => ToMarkup (Section a) where
-  toMarkup s = section ! class_ "idocSection" $
+  toMarkup s = B.section ! class_ "idocSection" $
                titlify $ concatMap toMarkup $ s^.secContents
     where titlify = case s^.secType of
             Preamble -> CP.id
@@ -403,14 +417,14 @@ instance ToMarkup InlineMath where
   toMarkup im = (mID (im^.imSetID) (B.span $ ("\\(" ++ concatMap toMarkup (im^.imContents) ++ "\\)"))) ! class_ "idocInlineMath"
 
 instance ToMarkup Text.IDoc.Syntax.Markup where
-  toMarkup mu = mID (mu^.muSetID) $
-    case (mu^.muType) of
+  toMarkup mu_ = mID (mu_^.muSetID) $
+    case (mu_^.muType) of
       Footnote -> B.span ! class_ "idocFootnote" $ 
-                  concatMap toMarkup (mu^.muContents)
+                  concatMap toMarkup (mu_^.muContents)
       FootnoteRef -> B.span ! class_ "idocFootnoteRef" $
-                     concatMap toMarkup (mu^.muContents)
+                     concatMap toMarkup (mu_^.muContents)
       Citation -> B.span ! class_ "idocCitation" $
-                  concatMap toMarkup (mu^.muContents)
+                  concatMap toMarkup (mu_^.muContents)
 
 instance ToMarkup ListItem where
   toMarkup li_ = correctListItemHolder (li_^.liType) (li_^.liLabel) $ 
@@ -424,7 +438,7 @@ instance ToMarkup ListItem where
       correctListItemHolder lt l = fail $ printf "Failed to match pattern with ListType `%s' and label `%s'." (show lt) (show l)
 
 instance ToMarkup ListLabel where
-  toMarkup (ListLabel ll) = concatMap toMarkup ll
+  toMarkup (ListLabel ll_) = concatMap toMarkup ll_
 
 instance ToMarkup List where
   toMarkup (List l) = correctListHolder ((V.head l)^.liType) $
@@ -442,8 +456,8 @@ instance ToValue ID where
 
 instance ToMarkup Link where
   toMarkup l = a ! class_ (toValue $ l^.linkType)
-                   ! href (toValue $ l^.linkLocation) $
-                   toMarkup $ l^.linkText
+                 ! A.href (toValue $ l^.linkLocation) $
+                 toMarkup $ l^.linkText
 
 instance ToValue LinkType where
   toValue Internal = "idocInternal"
@@ -453,7 +467,7 @@ instance ToValue LinkType where
 instance ToMarkup LinkText where
   toMarkup (LinkText lt) = concatMap toMarkup lt
 
-instance ToMarkup Token where
+instance ToMarkup Text.IDoc.Syntax.Token where
   toMarkup t = toMarkup $ unToken t
 
 instance ToValue SetID where
@@ -471,7 +485,7 @@ instance ToMarkup QText where
       decorateTextWith Quoted x = q ! class_ "idocQuoted" $ x
 
 instance BlockMarkup a => ToMarkup (Doc a) where
-  toMarkup d = article ! class_ "idocDoc" $
+  toMarkup d = B.article ! class_ "idocDoc" $
                (toMarkup $ d^.docTitle) ++
                (concatMap toMarkup $ d^.docSections)
 
@@ -537,7 +551,7 @@ vectorBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
 
 verbatimBlockToMarkup :: B.AttributeValue 
                       -> (B.Html -> B.Html)
-                      -> Vector Token
+                      -> Vector Text.IDoc.Syntax.Token
                       -> B.Html
 verbatimBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
                                    dec $
@@ -571,3 +585,137 @@ mID mid = case mid of
   Nothing -> CP.id
   Just id_ -> (\x -> x ! A.id (toValue id_))
 
+mLabel :: (LaTeXC l) => Maybe SetID -> (l -> l)
+mLabel mid = case mid of
+  Nothing -> CP.id
+  Just id_ -> ((texy id_) ++)
+
+mTitleT :: LaTeXC l => Maybe BlockTitle -> Text -> l
+mTitleT mbt defaultTitle = maybe (texy defaultTitle) texy mbt
+
+type LIcon = LaTeX
+
+class Blocky b where
+  block :: LaTeXC l => AttrMap -> Maybe BlockTitle -> Maybe SetID -> b -> l
+
+instance Blocky a => Texy (Doc a) where
+  texy d = chapter (mLabel (d^.docSetID) $ (texy $ d^.docTitle)) ++
+           (vectorTexy $ d^.docSections)
+
+instance Blocky a => Texy (Section a) where
+  texy s = starter (mLabel (s^.secSetID) $ texy $ s^.secTitle) ++
+           (vectorTexy $ s^.secContents)
+    where starter = case s^.secType of
+            Preamble -> const ""
+            TopSection -> L.section
+            SubSection -> L.subsection
+
+instance Texy SectionTitle where
+  texy (SectionTitle s) = vectorTexy s
+
+instance Texy DocTitle where
+  texy (DocTitle dt_) = vectorTexy dt_
+
+instance Blocky a => Texy (Core a) where
+  texy (SC sc) = texy sc
+  texy (CC cc) = texy cc
+
+instance Texy SimpleCore where
+  texy (TextC t) = texy t
+  texy (QTextC qt) = texy qt
+  texy (LinkC l) = texy l
+  texy (InlineMathC im) = texy im
+  texy (MarkupC m) = texy m
+
+instance Blocky a => Texy (ComplexCore a) where
+  texy (ListC l) = texy l
+  texy (BlockC b_) = texy b_
+  texy (ParagraphC p_) = texy p_
+
+instance Texy QText where
+  texy qt = decorateTextWith (qt^.qtType) $
+            concatMap texy $ qt^.qtText
+    where
+      decorateTextWith Strong = textbf
+      decorateTextWith Emphasis = emph
+      decorateTextWith Monospace = texttt
+      decorateTextWith Superscript = textsuperscript
+      decorateTextWith Subscript = textsubscript
+      decorateTextWith Quoted = qts
+
+      textsuperscript x = between x (raw "\textsuperscript{") (raw "}")
+
+      textsubscript x = between x (raw "\textsubscript{") (raw "}")
+
+instance Texy SetID where
+  texy (SetID { _sidName = IDHash sid }) = L.label $ texy sid
+
+instance Texy Link where
+  texy l = case l^.linkType of
+             Out -> H.href []
+                    (createURL $ unpack $ fromOut $ l^.linkLocation) 
+                    (concatMap texy $ unLinkText $ l^.linkText)
+             Internal -> hyperref' (fromInternal $ l^.linkLocation)
+                                   (concatMap texy $ unLinkText $ l^.linkText)
+             Back -> H.href [] 
+                     (createURL $ unpack $ fromBack $ l^.linkLocation)
+                     (concatMap texy $ unLinkText $ l^.linkText)
+    where
+      fromOut id_ =
+        let (proto, hash_) =
+              case (id_^.idProtocol, id_^.idHash) of
+                (Just (Protocol "youtube"), Nothing) -> 
+                  ("https://youtube.com/embed/", "")
+                (Just (Protocol "youtube"), Just _) -> 
+                  error "got youtube protocol with a hash!?"
+                (Just (Protocol p_), Just (IDHash h)) ->
+                  (p_ ++ "://", h)
+                (Just (Protocol p_), Nothing) ->
+                  (p_ ++ "://", "")
+                _ -> error $ "Invalid Outlink:\nProtocol: " ++ (show $ id_^.idProtocol) ++ "\nHash: " ++ (show $ id_^.idHash)
+        in
+          proto ++
+          (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
+          (if hash_ /= "" then "#" ++ hash_ else "")
+      fromInternal id_ = case id_^.idHash of
+                           Just (IDHash h) -> h
+                           _ -> "WTF"
+      fromBack id_ = "http://www.independentlearning.science/tiki/" ++ 
+                     (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
+
+instance Texy LinkText where
+  texy (LinkText lt) = concatMap texy lt
+
+instance Texy InlineMath where
+  texy im = M.math $ concatMap texy $ im^.imContents
+
+instance Texy Text.IDoc.Syntax.Token where
+  texy t = raw $ unToken t
+
+instance Texy Text.IDoc.Syntax.Markup where
+  texy mu_ = mLabel (mu_^.muSetID) $
+    case (mu_^.muType) of
+      Footnote -> footnote $ concatMap texy $ mu_^.muContents
+      FootnoteRef -> ref $ concatMap texy $ mu_^.muContents
+      Citation -> L.cite $ concatMap texy $ mu_^.muContents
+
+instance Texy Paragraph where
+  texy p_ = (concatMap texy $ p_^.paraContents) ++ "\n\n"
+
+instance Texy BlockTitle where
+  texy (BlockTitle bt) = concatMap texy bt
+
+instance Texy List where
+  texy (List li_) = enumerate $
+                     concatMap (\li'_ -> 
+                                  mLabel (li'_^.liSetID) $ 
+                                  L.item (textbf <$> texy <$> (li'_^.liLabel)) ++ (vectorTexy $ li'_^.liContents)) li_
+
+instance Texy ListLabel where
+  texy (ListLabel ll_) = vectorTexy ll_
+
+instance Blocky a => Texy (Block a) where
+  texy b_ = block (b_^.bAttrs) (b_^.bTitle) (b_^.bSetID) (b_^.bType)
+
+instance (RecApplicative xs, AllAllSat '[Blocky] xs) => Blocky (CoRec Data.Vinyl.Functor.Identity xs) where
+  block a_ t s x = getIdentity $ onCoRec (Proxy :: Proxy '[Blocky]) (block a_ t s) x

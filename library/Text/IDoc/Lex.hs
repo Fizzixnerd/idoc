@@ -12,12 +12,15 @@ import qualified Data.Map as M
 import qualified Data.Set as S
 import Data.Maybe
 
+import Data.Void
+
 import qualified Text.Megaparsec as MP
-import Text.Megaparsec.Text
+import Text.Megaparsec
+import Text.Megaparsec.Char
 
-import Text.IDoc.Syntax
+import Text.IDoc.Syntax as S
 
-reservedPunctuation :: Map Char Token
+reservedPunctuation :: Map Char S.Token
 reservedPunctuation = M.fromList [ ('=', Equals)
                                  , ('<', LAngle)
                                  , ('>', RAngle)
@@ -51,7 +54,7 @@ reservedPunctuationL = fst <$> (M.toList reservedPunctuation)
 reservedPunctuationS :: Set Char
 reservedPunctuationS = S.fromList reservedPunctuationL
 
-mkDTokenP :: Parser Token -> Parser DToken
+mkDTokenP :: Parsec (ErrorFancy Void) Text S.Token -> Parsec (ErrorFancy Void) Text DToken
 mkDTokenP p = do
   MP.SourcePos _ r1 c1 <- MP.getPosition
   x <- p
@@ -59,33 +62,33 @@ mkDTokenP p = do
   let di = DebugInfo (MP.unPos r1, MP.unPos c1) (MP.unPos r2, MP.unPos c2)
   return $ DebugToken di x
 
-puncT :: Parser Token
+puncT :: Parsec (ErrorFancy Void) Text S.Token
 puncT = MP.label "Punctuation" $ do
-  (\c -> fromJust $ lookup c reservedPunctuation) <$> (MP.oneOf reservedPunctuationL)
+  (\c -> fromJust $ lookup c reservedPunctuation) <$> (oneOf reservedPunctuationL)
 
-dPuncT :: Parser DToken
+dPuncT :: Parsec (ErrorFancy Void) Text DToken
 dPuncT = MP.label "Punctuation" $ mkDTokenP puncT
 
-dashT :: Parser Token
+dashT :: Parsec (ErrorFancy Void) Text S.Token
 dashT = MP.label "Dash" $ do
-  const Dash <$> (MP.char '-')
+  const Dash <$> (char '-')
 
-regularTextT :: Parser Token
-regularTextT = TextT . fromString <$> (some $ MP.satisfy (\c -> c `notElem` reservedPunctuationS))
+regularTextT :: Parsec (ErrorFancy Void) Text S.Token
+regularTextT = TextT . fromString <$> (some $ satisfy (\c -> c `notElem` reservedPunctuationS))
 
-dRegularTextT :: Parser DToken
+dRegularTextT :: Parsec (ErrorFancy Void) Text DToken
 dRegularTextT = mkDTokenP regularTextT
 
-token :: Parser Token
+token :: Parsec (ErrorFancy Void) Text S.Token
 token =  MP.try puncT
      <|>        regularTextT
 
-dToken :: Parser DToken
+dToken :: Parsec (ErrorFancy Void) Text DToken
 dToken =  MP.try dPuncT
       <|>        dRegularTextT
 
-tokens :: Parser (Vector Token)
-tokens = fromList <$> (many token)
+tokens :: Parsec (ErrorFancy Void) Text (Vector S.Token)
+tokens = fromList <$> (many Text.IDoc.Lex.token)
 
-dTokens :: Parser IDocTokenStream
+dTokens :: Parsec (ErrorFancy Void) Text IDocTokenStream
 dTokens = IDocTokenStream <$> fromList <$> (many dToken)

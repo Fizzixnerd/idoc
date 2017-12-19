@@ -4,9 +4,12 @@ import Text.IDoc.Syntax
 import Text.IDoc.Parse
 import Text.IDoc.Render.Html5.Card
 import Text.IDoc.Render.Html5.Icons
+import Text.IDoc.Render.Tex
 
 import Text.Blaze.Html5
 import Text.Blaze.Html5.Attributes hiding (id, icon)
+
+import Text.LaTeX
 
 import Control.Lens
 
@@ -21,6 +24,10 @@ data SimpleMediaB = ImageB { _image :: Image }
 instance BlockMarkup SimpleMediaB where
   blockMarkup a_ t s (ImageB i_) = blockMarkup a_ t s i_
   blockMarkup a_ t s (VideoB v)  = blockMarkup a_ t s v
+
+instance Blocky SimpleMediaB where
+  block a_ t s (ImageB i_) = block a_ t s i_
+  block a_ t s (VideoB v)  = block a_ t s v
 
 data Image = Image { _imageLink :: Link
                    , _imageCaption :: Maybe (Vector SimpleCore) }
@@ -87,6 +94,21 @@ youTubeP :: IDocParser YouTube
 youTubeP = do
   (l, sc) <- linkBlockWithOptionalP
   return $ YouTube l sc
+
+instance Blocky YouTube where
+  block _ _ msid (YouTube lnk mcaption) = mLabel msid $ 
+                                        texy lnk ++
+                                        maybe "" vectorTexy mcaption
+
+instance Blocky Image where
+  block _ _ msid (Image lnk mcaption) = mLabel msid $
+                                      texy lnk ++
+                                      maybe "" vectorTexy mcaption
+
+instance Blocky Video where
+  block _ _ msid (Video lnk mcaption) = mLabel msid $ 
+                                      texy lnk ++
+                                      maybe "" vectorTexy mcaption
 
 makeLenses ''SimpleMediaB
 

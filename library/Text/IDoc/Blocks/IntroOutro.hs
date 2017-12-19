@@ -3,8 +3,11 @@ module Text.IDoc.Blocks.IntroOutro where
 import Text.IDoc.Syntax
 import Text.IDoc.Parse
 import Text.IDoc.Render.Html5.Card
+import Text.IDoc.Render.Tex
 
 import Text.Blaze.Html5
+
+import Text.LaTeX
 
 import Data.Data
 
@@ -30,6 +33,11 @@ instance BlockMarkup a => ToMarkup (Introduction a) where
 instance BlockMarkup a => BlockMarkup (Introduction a) where
   blockMarkup _ t s i_ = card defaultCardOptions (mTitle "Introduction" t) s "" Nothing (toMarkup i_)
 
+instance Blocky a => Blocky (Introduction a) where
+  block _ mt msid (Introduction i_) = subsection (mLabel msid title_) ++ vectorTexy i_
+    where
+      title_ = mTitleT mt "Introduction"
+
 introductionP :: BlockParser a -> IDocParser (Introduction a)
 introductionP b_ = Introduction <$> coreBlockP b_
 
@@ -42,6 +50,12 @@ instance BlockMarkup a => ToMarkup (Summary a) where
 -- FIXME: Needs an icon.
 instance BlockMarkup a => BlockMarkup (Summary a) where
   blockMarkup _ t s sum_ = card defaultCardOptions (mTitle "Summary" t) s "" Nothing (toMarkup sum_)
+
+instance Blocky a => Blocky (Summary a) where
+  block _ mt msid (Summary s) = (subsection $ mLabel msid title_) ++
+                                vectorTexy s
+    where
+      title_ = mTitleT mt "Summary"
 
 summaryP :: BlockParser a -> IDocParser (Summary a)
 summaryP b_ = Summary <$> coreBlockP b_

@@ -2,8 +2,11 @@ module Text.IDoc.Blocks.BibTex where
 
 import Text.IDoc.Syntax
 import Text.IDoc.Render.Html5.Card
+import Text.IDoc.Render.Tex
 
 import Text.Blaze.Html5
+
+import Text.LaTeX
 
 import Text.Printf
 
@@ -29,8 +32,22 @@ data BibItem = BibItem { _biAuthor :: Text
                        }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+instance Blocky BibTex where
+  block _ mt msid (BibTex b_) = (subsection $ mLabel msid title_) ++
+                                vectorTexy b_
+    where
+      title_ = mTitleT mt "Bibliography"
+
 makeLenses ''BibTex
 makeLenses ''BibItem
+
+instance Texy BibItem where
+  texy bi = texy (bi^.biTitle) ++
+            ": " ++
+            texy (bi^.biAuthor) ++
+            "; " ++
+            texy (bi^.biYear) ++
+            "."
 
 instance ToMarkup BibItem where
   toMarkup bi = text $ fromString $ printf "author: %s; title: %s; year: %s" (bi^.biAuthor.to show) (bi^.biTitle.to show) (bi^.biYear.to show)

@@ -1,4 +1,3 @@
-
 {-# LANGUAGE NoImplicitPrelude #-}
 
 -- It is generally a good idea to keep all your business logic in your library

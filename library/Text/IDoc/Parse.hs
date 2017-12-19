@@ -8,18 +8,17 @@ module Text.IDoc.Parse where
 import ClassyPrelude as CP
 
 import qualified Data.List.NonEmpty as NE
-import qualified Data.Set as Set
 import qualified Data.Map as M
 import qualified Data.Vector as V
+import Data.Void
 
 import qualified Text.Megaparsec as MP
-import Text.Megaparsec.Prim as Prim
 
 import qualified Text.IDoc.Syntax as S
 import qualified Text.IDoc.Lex as L
 
-type IDocParseError = MP.ParseError S.DToken MP.Dec
-type IDocParser = MP.Parsec MP.Dec S.IDocTokenStream
+type IDocParseError = MP.ParseError S.DToken (MP.ErrorFancy Void)
+type IDocParser = MP.Parsec (MP.ErrorFancy Void) S.IDocTokenStream
 type BlockTypeName = Text
 type InnerBlockParser a = BlockTypeName -> IDocParser a
 type BlockParser a = BlockTypeName -> IDocParser a
@@ -46,7 +45,7 @@ manyTween :: IDocParser l -> IDocParser r -> IDocParser a -> IDocParser (Vector 
 manyTween l r x = do
   void l
   xs <- manyV $ do
-    notFollowedBy r
+    MP.notFollowedBy r
     x
   void r
   return xs
@@ -55,7 +54,7 @@ someTween :: IDocParser l -> IDocParser r -> IDocParser a -> IDocParser (Vector 
 someTween l r x = do
   void l
   xs <- someV $ do
-    notFollowedBy r
+    MP.notFollowedBy r
     x
   void r
   return xs
@@ -63,7 +62,7 @@ someTween l r x = do
 someTill :: IDocParser ender -> IDocParser a -> IDocParser (Vector a)
 someTill e x = do
   xs <- someV $ do
-    notFollowedBy e
+    MP.notFollowedBy e
     x
   void e
   return xs
@@ -71,7 +70,7 @@ someTill e x = do
 someTill' :: IDocParser ender -> IDocParser a -> IDocParser (Vector a, ender)
 someTill' e x = do
   xs <- someV $ do
-    notFollowedBy e
+    MP.notFollowedBy e
     x
   e_ <- e
   return (xs, e_)
@@ -79,25 +78,25 @@ someTill' e x = do
 manyTill :: IDocParser ender -> IDocParser a -> IDocParser (Vector a)
 manyTill e x = do
   xs <- manyV $ do
-    notFollowedBy e
+    MP.notFollowedBy e
     x
   void e
   return xs
 
-satisfy :: (MonadParsec e s m, Token s ~ S.DToken) => (S.Token -> Bool) -> m S.Token
-satisfy f = Prim.token test Nothing
+satisfy :: (MP.MonadParsec e s m, MP.Token s ~ S.DToken) => (S.Token -> Bool) -> m S.Token
+satisfy f = MP.token test Nothing
   where
     test (y@S.DebugToken { S._dtToken = x }) =
       if f x then
         Right x
       else
-        Left (Set.singleton (MP.Tokens (y NE.:| [])), mempty, mempty)
+        Left (pure (MP.Tokens (y NE.:| [])), mempty)
 
 tokenP :: S.Token -> IDocParser S.Token
-tokenP t = satisfy (== t) <?> (show t)
+tokenP t = Text.IDoc.Parse.satisfy (== t) MP.<?> (show t)
 
 anyTokenP :: IDocParser S.Token
-anyTokenP = satisfy (const True) <?> "Any Token"
+anyTokenP = Text.IDoc.Parse.satisfy (const True) MP.<?> "Any Token"
 
 newlineP :: IDocParser ()
 newlineP = void $ tokenP S.Newline
@@ -169,7 +168,7 @@ attrValPairP = MP.label "Attribute-Value Pair" $ do
     equalsP = void $ tokenP S.Equals
 
 attrMapP :: IDocParser S.AttrMap
-attrMapP = label "An AttrMap" $ do
+attrMapP = MP.label "An AttrMap" $ do
   lBracketP
   avps <- MP.sepBy1 attrValPairP commaP
   let am = S.AttrMap $ M.fromList avps
@@ -181,7 +180,7 @@ attrMapP = label "An AttrMap" $ do
     commaP = void $ tokenP S.Comma
 
 optionalAttrMapP :: IDocParser S.AttrMap
-optionalAttrMapP = label "An Optional AttrMap" $ do
+optionalAttrMapP = MP.label "An Optional AttrMap" $ do
   am <- optional attrMapP
   case am of
     Nothing -> return $ S.AttrMap M.empty
@@ -189,7 +188,7 @@ optionalAttrMapP = label "An Optional AttrMap" $ do
 
 -- | SetID
 setIDP :: IDocParser S.SetID
-setIDP = label "A SetID" $ do
+setIDP = MP.label "A SetID" $ do
   lBracketP >> lBracketP
   h <- idHashP
   rBracketP >> rBracketP
@@ -217,7 +216,7 @@ linkCloserP = do
 
 protocolP :: IDocParser S.Protocol
 protocolP = do
-  x <- satisfy isRecognized
+  x <- Text.IDoc.Parse.satisfy isRecognized
   colonP
   fSlashP
   return $ S.Protocol $ S.unToken x
@@ -233,7 +232,7 @@ idBaseP :: IDocParser S.IDBase
 idBaseP = S.IDBase <$> do
   fSlashP
   concat <$> (manyV $ do
-                 notFollowedBy $ MP.eitherP (MP.try fSlashP) $
+                 MP.notFollowedBy $ MP.eitherP (MP.try fSlashP) $
                    MP.eitherP (MP.try rAngleP) $
                    MP.eitherP (MP.try octothorpeP) lBraceP
                  textP)
@@ -245,7 +244,7 @@ idHashP :: IDocParser S.IDHash
 idHashP = S.IDHash <$> do
   octothorpeP
   concat <$> (manyV $ do
-                 notFollowedBy $ MP.eitherP (MP.try rBracketP) rAngleP
+                 MP.notFollowedBy $ MP.eitherP (MP.try rBracketP) rAngleP
                  textP)
   where
     rBracketP = void $ tokenP S.RBracket
@@ -263,7 +262,7 @@ idP = do
   where
 
 linkP :: IDocParser S.Link
-linkP = label "A Link" $ do
+linkP = MP.label "A Link" $ do
   am <- optionalAttrMapP
   linkOpenerP
   i <- idP
@@ -288,7 +287,7 @@ mkListItemP starter hasLabel ty = do
          else
            return Nothing
   cnt <- someV $ do
-    notFollowedBy $ newlineP >> some newlineP
+    MP.notFollowedBy $ newlineP >> some newlineP
     simpleCoreP
   return $ S.ListItem { S._liAttrs = S.AttrMap M.empty
                       , S._liLabel = S.ListLabel <$> lbl
@@ -302,22 +301,22 @@ mkListItemP starter hasLabel ty = do
     doubleStarterP = starterP >> starterP
 
 unorderedItemP :: IDocParser S.ListItem
-unorderedItemP = mkListItemP S.Dash False S.Unordered <?> "An Unordered List Item"
+unorderedItemP = mkListItemP S.Dash False S.Unordered MP.<?> "An Unordered List Item"
 
 orderedItemP :: IDocParser S.ListItem
-orderedItemP = mkListItemP S.Period False S.Ordered <?> "An Ordered List Item"
+orderedItemP = mkListItemP S.Period False S.Ordered MP.<?> "An Ordered List Item"
 
 labelledItemP :: IDocParser S.ListItem
-labelledItemP = mkListItemP S.Colon True S.Labelled <?> "A Labelled List Item"
+labelledItemP = mkListItemP S.Colon True S.Labelled MP.<?> "A Labelled List Item"
 
 listP :: IDocParser S.List
-listP = label "A List" $ S.List <$> (     MP.try (sepEndBy1V unorderedItemP (some newlineP))
+listP = MP.label "A List" $ S.List <$> (     MP.try (sepEndBy1V unorderedItemP (some newlineP))
                                       <|> MP.try (sepEndBy1V orderedItemP   (some newlineP))
                                       <|>        (sepEndBy1V labelledItemP  (some newlineP)))
 
 -- | Inline Math
 inlineMathP :: IDocParser S.InlineMath 
-inlineMathP = label "Some Inline Math" $ do
+inlineMathP = MP.label "Some Inline Math" $ do
   am <- optionalAttrMapP
   cnt <- someTween dollarSignP dollarSignP anyTokenP
   sid <- optional setIDP
@@ -330,7 +329,7 @@ inlineMathP = label "Some Inline Math" $ do
 
 -- | Markup
 markupContentsP :: IDocParser (Vector S.SimpleCore)
-markupContentsP = label "Some Text Between Braces" $ do
+markupContentsP = MP.label "Some Text Between Braces" $ do
   someTween lBraceP rBraceP simpleCoreP
   where
     lBraceP = tokenP S.LBrace
@@ -347,7 +346,7 @@ mkMarkupP :: Text -> S.MarkupType -> IDocParser S.Markup
 mkMarkupP name ty = do
   am <- optionalAttrMapP
   percentSignP
-  void $ satisfy (== (S.TextT name))
+  void $ Text.IDoc.Parse.satisfy (== (S.TextT name))
   percentSignP
   cnt <- markupContentsP
   return $ S.Markup { S._muType = ty
@@ -359,19 +358,19 @@ mkMarkupP name ty = do
     percentSignP = void $ tokenP S.PercentSign
 
 citationP :: IDocParser S.Markup
-citationP = mkMarkupP "cite" S.Citation <?> "A Citation"
+citationP = mkMarkupP "cite" S.Citation MP.<?> "A Citation"
 
 footnoteP :: IDocParser S.Markup
-footnoteP = label "A Footnote" $ do
+footnoteP = MP.label "A Footnote" $ do
   mu <- mkMarkupP "footnote" S.Footnote 
   sid <- setIDP
   return $ mu { S._muSetID = Just sid }
 
 footnoteRefP :: IDocParser S.Markup
-footnoteRefP = mkMarkupP "footenoteref" S.FootnoteRef <?> "A Footnote Reference"
+footnoteRefP = mkMarkupP "footenoteref" S.FootnoteRef MP.<?> "A Footnote Reference"
 
 markupP :: IDocParser S.Markup
-markupP = label "Some Markup" $ MP.try citationP
+markupP = MP.label "Some Markup" $ MP.try citationP
                             <|> MP.try footnoteP
                             <|>        footnoteRefP
 
@@ -380,7 +379,7 @@ paragraphP :: IDocParser S.Paragraph
 paragraphP = do
   void $ many newlineP
   cnt <- someV $ do
-    notFollowedBy $ MP.eitherP (MP.try $ newlineP >> some newlineP) $
+    MP.notFollowedBy $ MP.eitherP (MP.try $ newlineP >> some newlineP) $
                     MP.eitherP (MP.try $ blockEnderP') $
                                doubleLBracketP
     simpleCoreP
@@ -394,7 +393,7 @@ paragraphP = do
     doubleLBracketP = lBracketP >> lBracketP
 
 blockTypeName :: IDocParser Text
-blockTypeName = label "A Block Type Name" $ do
+blockTypeName = MP.label "A Block Type Name" $ do
   atSignP
   x <- textP
   newlineP
@@ -403,13 +402,13 @@ blockTypeName = label "A Block Type Name" $ do
     atSignP = void $ tokenP S.AtSign
 
 optionalBlockTitle :: IDocParser (Maybe S.BlockTitle)
-optionalBlockTitle = optional $ fmap S.BlockTitle $ label "A Block Title" $ do
+optionalBlockTitle = optional $ fmap S.BlockTitle $ MP.label "A Block Title" $ do
   octothorpeP
   someTill newlineP simpleCoreP
 
 -- | Blocks
 defaultBlockP :: InnerBlockParser a -> IDocParser (S.Block a)
-defaultBlockP b = label "A Block" $ do
+defaultBlockP b = MP.label "A Block" $ do
   am <- optionalAttrMapP
   void $ optional newlineP
   tyName <- blockTypeName
@@ -487,7 +486,7 @@ uninterpretedBlockP :: IDocParser (Vector S.Token)
 uninterpretedBlockP = do
   blockStarterP
   xs <- someV $ do
-    notFollowedBy blockEnderP'
+    MP.notFollowedBy blockEnderP'
     anyTokenP
   blockEnderP'
   return xs
