@@ -6,28 +6,29 @@ import Text.IDoc.Render.Html5.Card
 import Text.IDoc.Render.Html5.Icons
 import Text.IDoc.Render.Tex
 
-import Text.Blaze.Html5
-
 import Data.Data
 
 import Control.Lens
 
 import ClassyPrelude
 
-data Intuition a = Intuition { _intuitionContents :: Vector (Core a) }
+data Intuition m b = Intuition { _intuitionContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup a => ToMarkup (Intuition a) where
-  toMarkup (Intuition i_) = vectorBlockToMarkup "idocIntuition" id i_
+instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Intuition m b) where
+  blockMarkup _ t s (Intuition i_) = card
+                                     primaryCardOptions
+                                     (mTitle "Intuition" t)
+                                     s
+                                     (icon "fa-puzzle-piece")
+                                     Nothing
+                                     (vectorBlockToMarkup "idocIntuition" id i_)
 
-instance BlockMarkup a => BlockMarkup (Intuition a) where
-  blockMarkup _ t s i_ = card primaryCardOptions (mTitle "Intuition" t) s (icon "fa-puzzle-piece") Nothing (toMarkup i_)
+intuitionP :: MarkupParser m -> BlockParser m b -> IDocParser (Intuition m b)
+intuitionP m b_ = Intuition <$> coreBlockP m b_
 
-intuitionP :: BlockParser a -> IDocParser (Intuition a)
-intuitionP b_ = Intuition <$> coreBlockP b_
-
-instance Blocky a => Blocky (Intuition a) where
-  block _ mt msid (Intuition i_) = intuitionBlock (mLabel msid title_) (vectorTexy i_)
+instance (Markupy m, Blocky m (b m)) => Blocky m (Intuition m b) where
+  blocky _ mt msid (Intuition i_) = intuitionBlock (mLabel msid title_) (vectorTexy i_)
     where title_ = mTitleT mt "Intuition"
 
 makeLenses ''Intuition

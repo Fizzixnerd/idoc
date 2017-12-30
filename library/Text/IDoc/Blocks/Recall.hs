@@ -5,8 +5,6 @@ import Text.IDoc.Parse
 import Text.IDoc.Render.Html5.Card
 import Text.IDoc.Render.Tex
 
-import Text.Blaze.Html5
-
 import Text.LaTeX
 
 import Data.Data
@@ -15,32 +13,29 @@ import Control.Lens
 
 import ClassyPrelude
 
-data Recall a = Recall { _recallLinks :: Vector Link
-                       , _recallCore  :: Vector (Core a) }
+data Recall m b = Recall { _recallLinks :: Vector (Link m)
+                         , _recallCore  :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup a => ToMarkup (Recall a) where
-  toMarkup (Recall _ r) = vectorBlockToMarkup "idocRecall" id r
-
 -- FIXME: Requires an icon.
-instance BlockMarkup a => BlockMarkup (Recall a) where
-  blockMarkup _ t s r = card
-                        defaultCardOptions
-                        (mTitle "Recall" t)
-                        s
-                        ""
-                        Nothing
-                        (toMarkup r)
+instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Recall m b) where
+  blockMarkup _ t s (Recall _ r) = card
+                                   defaultCardOptions
+                                   (mTitle "Recall" t)
+                                   s
+                                   ""
+                                   Nothing
+                                   (vectorBlockToMarkup "idocRecall" id r)
 
-instance Blocky a => Blocky (Recall a) where
-  block _ mt msid (Recall _ r) = (subsubsection $ mLabel msid title_) ++
+instance (Markupy m, Blocky m (b m)) => Blocky m (Recall m b) where
+  blocky _ mt msid (Recall _ r) = (subsubsection $ mLabel msid title_) ++
                                  vectorTexy r
     where
       title_ = mTitleT mt "Recall"
 
-recallP :: BlockParser a -> IDocParser (Recall a)
-recallP b_ = do
-  (l, c) <- vectorLinkCoreBlockP b_
+recallP :: MarkupParser m -> BlockParser m b -> IDocParser (Recall m b)
+recallP m b_ = do
+  (l, c) <- vectorLinkCoreBlockP m b_
   return $ Recall l c
 
 makeLenses ''Recall

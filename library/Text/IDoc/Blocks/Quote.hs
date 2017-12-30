@@ -16,27 +16,24 @@ import Control.Lens
 
 import ClassyPrelude
 
-data Quote = Quote { _quoteContents :: Vector SimpleCore }
+data Quote m = Quote { _quoteContents :: Vector (SimpleCore m) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance ToMarkup Quote where
-  toMarkup (Quote q_) = vectorBlockToMarkup "idocQuote" id q_
+instance MarkupMarkup m => BlockMarkup m (Quote m) where
+  blockMarkup (AttrMap a_) t s (Quote q_) = card
+                                            defaultCardOptions
+                                            (mTitle "Quote" t)
+                                            s
+                                            (icon "fa-quote-left")
+                                            ((\(AttrValue v) -> toMarkup v) <$> (a_^.at (AttrName "author").to join))
+                                            (vectorBlockToMarkup "idocQuote" id q_)
 
-instance BlockMarkup Quote where
-  blockMarkup (AttrMap a_) t s q_ = card
-                                    defaultCardOptions
-                                    (mTitle "Quote" t)
-                                    s
-                                    (icon "fa-quote-left")
-                                    ((\(AttrValue v) -> toMarkup v) <$> (a_^.at (AttrName "author").to join))
-                                    (toMarkup q_)
+instance Markupy m => Blocky m (Quote m) where
+  blocky _ _ msid (Quote q_) = mLabel msid $
+                               quote $
+                               vectorTexy q_
 
-instance Blocky Quote where
-  block _ _ msid (Quote q_) = mLabel msid $
-                              quote $
-                              vectorTexy q_
-
-quoteP :: IDocParser Quote
-quoteP = Quote <$> simpleCoreBlockP
+quoteP :: MarkupParser m -> IDocParser (Quote m)
+quoteP m = Quote <$> simpleCoreBlockP m
 
 makeLenses ''Quote

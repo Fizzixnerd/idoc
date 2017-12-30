@@ -23,13 +23,13 @@ data Code = Code { _codeContents :: Vector Token }
 instance ToMarkup Code where
   toMarkup (Code c) = verbatimBlockToMarkup "idocCode" id c
 
-instance BlockMarkup Code where
+instance MarkupMarkup m => BlockMarkup m Code where
   blockMarkup _ title_ sid c = card defaultCardOptions (mTitle "Code" title_) sid (icon "fa-code") Nothing (toMarkup c)
 
-instance Blocky Code where
-  block = codeBlock
+instance Markupy m => Blocky m Code where
+  blocky = codeBlock
 
-codeBlock :: LaTeXC l => AttrMap -> Maybe BlockTitle -> Maybe SetID -> Code -> l
+codeBlock :: (LaTeXC l, Markupy m) => AttrMap -> Maybe (BlockTitle m) -> Maybe (SetID m) -> Code -> l
 codeBlock (AttrMap attrs) _ msid (Code c) = (mLabel msid $
                                              mkCode langName $
                                              raw $ concatMap unToken c) ++

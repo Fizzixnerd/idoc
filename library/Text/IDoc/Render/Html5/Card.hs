@@ -94,5 +94,5 @@ card (CardOptions {..}) title_ id_ icon__ footer_ body_ =
     mID' (Just i') = (B.! A.id (B.toValue i'))
     mID' Nothing = id
 
-mTitle :: B.Html -> Maybe BlockTitle -> B.Html
+mTitle :: B.ToMarkup (BlockTitle m) => B.Html -> Maybe (BlockTitle m) -> B.Html
 mTitle defaultTitle blkTitle = maybe defaultTitle B.toMarkup blkTitle

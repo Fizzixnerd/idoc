@@ -3,6 +3,8 @@
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE DeriveFunctor #-}
 -- | Syntax.hs
 --
 -- Author: Matt Walker
@@ -164,46 +166,45 @@ instance Stream IDocTokenStream where
   takeN_ n (IDocTokenStream ts) = Just $ IDocTokenStream <$> (V.splitAt n ts)
   takeWhile_ p_ (IDocTokenStream ts) = IDocTokenStream <$> (V.span p_ ts)
 
--- | One of a `SimpleCore' or a `ComplexCore'; holds most interesting
--- constructs in the language.
-data Core a = SC SimpleCore
-            | CC (ComplexCore a)
+-- | One of a `SimpleCore' or a `ComplexCore'; holds most -- constructs in the language.
+data Core m b = SC (SimpleCore m)
+              | CC (ComplexCore m b)
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | Sum type for holding `Text', `QText' ("quoted text"), `Link's,
 -- `InlineMath' or `Markup'.  Used inside `Paragraph's and titles (like
 -- `Section' headings and so on).
-data SimpleCore =
+data SimpleCore m =
     TextC Text
-  | QTextC QText
-  | LinkC Link
-  | InlineMathC InlineMath
-  | MarkupC Text.IDoc.Syntax.Markup
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+  | QTextC (QText m)
+  | LinkC (Link m)
+  | InlineMathC (InlineMath m)
+  | MarkupC (Text.IDoc.Syntax.Markup m)
+  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | Sum type for holding the major organizing constructs of the
 -- language: `List's, `Block's and `Paragraph's.
-data ComplexCore a =
-    ListC List
-  | BlockC (Block a)
-  | ParagraphC Paragraph
+data ComplexCore m b =
+    ListC (List m)
+  | BlockC (Block m b)
+  | ParagraphC (Paragraph m)
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | A single paragraph.  Can have a `SetID'.
-data Paragraph = Paragraph { _paraContents :: Vector SimpleCore
-                           , _paraSetID :: Maybe SetID
-                           }
+data Paragraph m = Paragraph { _paraContents :: Vector (SimpleCore m)
+                             , _paraSetID :: Maybe (SetID m)
+                             }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | The title of a `Doc'.
-newtype DocTitle = DocTitle { unDocTitle :: Vector SimpleCore }
+newtype DocTitle m = DocTitle { unDocTitle :: Vector (SimpleCore m) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | A single parsed idoc document.  Its `Section's will be non-empty
 -- if parsed by the parser.
-data Doc a = Doc  { _docTitle :: DocTitle
-                  , _docSections :: Vector (Section a)
-                  , _docSetID :: Maybe SetID }
+data Doc m b = Doc { _docTitle :: DocTitle m
+                   , _docSections :: Vector (Section m b)
+                   , _docSetID :: Maybe (SetID m) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | Different types of emphasis text.  Used in `QText'.
@@ -217,16 +218,15 @@ data TextType = Strong
 
 -- | `Text' that is emphasized or changed in some way (such as being
 -- superscripted).
-data QText = QText { _qtText :: Vector SimpleCore
-                   , _qtType :: TextType
-                   }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
+data QText m = QText { _qtText :: Vector (SimpleCore m)
+                     , _qtType :: TextType
+                     }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | An `ID' given to an object so that it can be referred to later.
-data SetID = SetID { _sidName :: IDHash
-                   , _sidDisplay :: Vector SimpleCore }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+data SetID m = SetID { _sidName :: IDHash
+                     , _sidDisplay :: Vector (SimpleCore m) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | The "hash" part of an `ID'.  It's the part that comes after the
 -- octothorpe (#).
@@ -252,17 +252,17 @@ data LinkType = Internal
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | The displayed text of a `Link'.
-newtype LinkText = LinkText { unLinkText :: Vector SimpleCore }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+newtype LinkText m = LinkText { unLinkText :: Vector (SimpleCore m) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | A Link around (or out of) a `Doc'.  See `LinkType' for the types
 -- of possible links.  See `ID' for the format of links.
-data Link = Link { _linkText :: LinkText
-                 , _linkAttrs :: AttrMap
-                 , _linkLocation :: ID
-                 , _linkType :: LinkType
-                 }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+data Link m = Link { _linkText :: LinkText m 
+                   , _linkAttrs :: AttrMap
+                   , _linkLocation :: ID
+                   , _linkType :: LinkType
+                   }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | A reference to either an external website or a `SetID' somewhere
 -- in this or another `Doc'.  Protocol is usually "https:\/\/", but
@@ -274,8 +274,7 @@ data ID = ID { _idProtocol :: Maybe Protocol
              }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
--- | Type representing a protocol for an `ID'.  May be changed to a
--- sum type later.
+-- | Type representing a protocol for an `ID'.
 newtype Protocol = Protocol Text deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | The "base" of an `ID' is considered the part /after/ the
@@ -297,82 +296,89 @@ data ListType = Unordered
 -- | A List of things, either `Ordered', `Unordered', or `Labelled'
 -- (see `ListType').  Represents things like lists of bullet points,
 -- numbered lists, or lists of definitions, etc.
-data List = List { _listContents :: Vector ListItem }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+data List m = List { _listContents :: Vector (ListItem m) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | A label for a `ListItem' in `Labelled' `List's.
-newtype ListLabel = ListLabel { unListLabel :: Vector SimpleCore }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+newtype ListLabel m = ListLabel { unListLabel :: Vector (SimpleCore m) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | A single item in a `List'.  Can be `Link'ed to via its `SetID'.
 -- Currently only contains `SimpleCore' contents.  (No nested lists,
 -- I'm afraid.  This should change soon.)
-data ListItem = ListItem { _liAttrs :: AttrMap
-                         , _liLabel :: Maybe ListLabel
-                         , _liContents :: Vector SimpleCore
-                         , _liSetID :: Maybe SetID
-                         , _liType :: ListType
-                         }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+data ListItem m = ListItem { _liAttrs :: AttrMap
+                           , _liLabel :: Maybe (ListLabel m)
+                           , _liContents :: Vector (SimpleCore m)
+                           , _liSetID :: Maybe (SetID m)
+                           , _liType :: ListType
+                           }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
--- | Sum type for the different kinds of `Markup'.  "Footnotes" are
--- what you would expect.  "FootnoteRefs" are references to previous
--- footnotes via their `SetID'.  "Citations" are what you would
--- expect.
-data MarkupType = Footnote
-                | FootnoteRef
-                | Citation
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+-- -- | Sum type for the different kinds of `Markup'.  "Footnotes" are
+-- -- what you would expect.  "FootnoteRefs" are references to previous
+-- -- footnotes via their `SetID'.  "Citations" are what you would
+-- -- expect.
+-- data MarkupType = Footnote
+--                 | FootnoteRef
+--                 | Citation
+--   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | Inline markup of text.  See `MarkupType' for the valid values of
--- `_muType'.  May contain an `AttrMap'.  Text to show (if any) is
--- held in `_muContents'.
-data Markup = Markup { _muType :: MarkupType
-                     , _muAttrs :: AttrMap
-                     , _muContents :: Vector SimpleCore
-                     , _muSetID :: Maybe SetID
-                     }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+-- `_muType'.  May contain a non-empty `AttrMap'.
+data Markup m = Markup { _muType :: m
+                       , _muAttrs :: AttrMap
+                       , _muSetID :: Maybe (SetID m)
+                       }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
+
+class MarkupMarkup m where
+  markupMarkup :: AttrMap -> Maybe (SetID n) -> m -> Html
+
+class Markupy m where
+  markupy :: LaTeXC l => AttrMap -> Maybe (SetID n) -> m -> l
 
 -- | Inline math, LaTeX style.  May have an attached `AttrMap' or
 -- `SetID'.  Contents are unparsed `Token's.
-data InlineMath = InlineMath { _imAttrs    :: AttrMap
-                             , _imContents :: Vector Text.IDoc.Syntax.Token
-                             , _imSetID    :: Maybe SetID
-                             }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+data InlineMath m = InlineMath { _imAttrs    :: AttrMap
+                               , _imContents :: Vector Text.IDoc.Syntax.Token
+                               , _imSetID    :: Maybe (SetID m)
+                               }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | Newtype for titles of `Block's.
-newtype BlockTitle = BlockTitle { unBlockTitle :: Vector SimpleCore }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+newtype BlockTitle m = BlockTitle { unBlockTitle :: Vector (SimpleCore m) }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | Common wrapper for blocks.  Most of the interesting parts will be
 -- found inside `_bType', which is usually a sum type (either a `CoRec' or
 -- just a regular ADT).
-data Block a = Block { _bType  :: a
-                     , _bAttrs :: AttrMap
-                     , _bTitle :: Maybe BlockTitle
-                     , _bSetID :: Maybe SetID
-                     }
+data Block m b = Block { _bType  :: b m
+                       , _bAttrs :: AttrMap
+                       , _bTitle :: Maybe (BlockTitle m)
+                       , _bSetID :: Maybe (SetID m)
+                       }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-class BlockMarkup a where
-  blockMarkup :: AttrMap -> Maybe BlockTitle -> Maybe SetID -> a -> Html
+class BlockMarkup m b where
+  blockMarkup :: AttrMap -> Maybe (BlockTitle m) -> Maybe (SetID m) -> b -> Html
+
+class Blocky m b where
+  blocky :: LaTeXC l => AttrMap -> Maybe (BlockTitle m) -> Maybe (SetID m) -> b -> l
 
 data SectionType = Preamble
                  | TopSection
                  | SubSection
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-newtype SectionTitle = SectionTitle { unSectionTitle :: Vector SimpleCore }
+newtype SectionTitle m = SectionTitle { unSectionTitle :: Vector (SimpleCore m) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-data Section a = Section { _secType     :: SectionType
-                         , _secAttrs    :: AttrMap
-                         , _secContents :: Vector (Core a)
-                         , _secTitle    :: SectionTitle
-                         , _secSetID    :: Maybe SetID
-                         }
+data Section m b = Section { _secType     :: SectionType
+                           , _secAttrs    :: AttrMap
+                           , _secContents :: Vector (Core m b)
+                           , _secTitle    :: (SectionTitle m)
+                           , _secSetID    :: Maybe (SetID m)
+                           }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- * Lenses
@@ -395,7 +401,7 @@ makeLenses ''Doc
 makeLenses ''Paragraph
 makeLenses ''ID
 
-instance BlockMarkup a => ToMarkup (Section a) where
+instance (BlockMarkup m (b m), MarkupMarkup m) => ToMarkup (Section m b) where
   toMarkup s = B.section ! class_ "idocSection" $
                titlify $ concatMap toMarkup $ s^.secContents
     where titlify = case s^.secType of
@@ -407,26 +413,27 @@ instance BlockMarkup a => ToMarkup (Section a) where
                             (h3 ! class_ "idocSubSectionTitle clearfix" $
                              s^.secTitle.to toMarkup) ++)
 
-instance ToMarkup SectionTitle where
+instance MarkupMarkup m => ToMarkup (SectionTitle m) where
   toMarkup (SectionTitle st) = concatMap toMarkup st
 
-instance ToMarkup BlockTitle where
+instance MarkupMarkup m => ToMarkup (BlockTitle m) where
   toMarkup (BlockTitle bt) = concatMap toMarkup bt
 
-instance ToMarkup InlineMath where
+instance MarkupMarkup m => ToMarkup (InlineMath m) where
   toMarkup im = (mID (im^.imSetID) (B.span $ ("\\(" ++ concatMap toMarkup (im^.imContents) ++ "\\)"))) ! class_ "idocInlineMath"
 
-instance ToMarkup Text.IDoc.Syntax.Markup where
-  toMarkup mu_ = mID (mu_^.muSetID) $
-    case (mu_^.muType) of
-      Footnote -> B.span ! class_ "idocFootnote" $ 
-                  concatMap toMarkup (mu_^.muContents)
-      FootnoteRef -> B.span ! class_ "idocFootnoteRef" $
-                     concatMap toMarkup (mu_^.muContents)
-      Citation -> B.span ! class_ "idocCitation" $
-                  concatMap toMarkup (mu_^.muContents)
+instance MarkupMarkup m => ToMarkup (Text.IDoc.Syntax.Markup m) where
+  toMarkup mu_ = markupMarkup (mu_^.muAttrs) (mu_^.muSetID) (mu_^.muType)
+    --  $
+    -- case (mu_^.muType) of
+    --   Footnote -> B.span ! class_ "idocFootnote" $ 
+    --               concatMap toMarkup (mu_^.muContents)
+    --   FootnoteRef -> B.span ! class_ "idocFootnoteRef" $
+    --                  concatMap toMarkup (mu_^.muContents)
+    --   Citation -> B.span ! class_ "idocCitation" $
+    --               concatMap toMarkup (mu_^.muContents)
 
-instance ToMarkup ListItem where
+instance MarkupMarkup m => ToMarkup (ListItem m) where
   toMarkup li_ = correctListItemHolder (li_^.liType) (li_^.liLabel) $ 
                  concatMap toMarkup $ li_^.liContents
     where
@@ -435,12 +442,12 @@ instance ToMarkup ListItem where
                (dd ! class_ "idocLabelledItem" $ x))
       correctListItemHolder Ordered Nothing = li ! class_ "idocOrderedItem"
       correctListItemHolder Unordered Nothing = li ! class_ "idocUnorderedItem"
-      correctListItemHolder lt l = fail $ printf "Failed to match pattern with ListType `%s' and label `%s'." (show lt) (show l)
+      correctListItemHolder _ _ = fail $ printf "Failed to match pattern in ToMarkup (ListItem m)."
 
-instance ToMarkup ListLabel where
+instance MarkupMarkup m => ToMarkup (ListLabel m) where
   toMarkup (ListLabel ll_) = concatMap toMarkup ll_
 
-instance ToMarkup List where
+instance MarkupMarkup m => ToMarkup (List m) where
   toMarkup (List l) = correctListHolder ((V.head l)^.liType) $
                       concatMap toMarkup l
     where
@@ -454,7 +461,7 @@ instance ToMarkup ID where
 instance ToValue ID where
   toValue id_ = idHelper toValue id_
 
-instance ToMarkup Link where
+instance MarkupMarkup m => ToMarkup (Link m) where
   toMarkup l = a ! class_ (toValue $ l^.linkType)
                  ! A.href (toValue $ l^.linkLocation) $
                  toMarkup $ l^.linkText
@@ -464,16 +471,16 @@ instance ToValue LinkType where
   toValue Back = "idocBackLink"
   toValue Out = "idocOutLink"
 
-instance ToMarkup LinkText where
+instance MarkupMarkup m => ToMarkup (LinkText m) where
   toMarkup (LinkText lt) = concatMap toMarkup lt
 
 instance ToMarkup Text.IDoc.Syntax.Token where
   toMarkup t = toMarkup $ unToken t
 
-instance ToValue SetID where
+instance MarkupMarkup m => ToValue (SetID m) where
   toValue (SetID { _sidName = (IDHash sid) }) = toValue sid
 
-instance ToMarkup QText where
+instance MarkupMarkup m => ToMarkup (QText m) where
   toMarkup qt = decorateTextWith (qt^.qtType) $
                 concatMap toMarkup $ qt^.qtText
     where
@@ -484,40 +491,50 @@ instance ToMarkup QText where
       decorateTextWith Subscript x = sub ! class_ "idocSubscript" $ x
       decorateTextWith Quoted x = q ! class_ "idocQuoted" $ x
 
-instance BlockMarkup a => ToMarkup (Doc a) where
+instance (MarkupMarkup m, BlockMarkup m (b m)) => ToMarkup (Doc m b) where
   toMarkup d = B.article ! class_ "idocDoc" $
                (toMarkup $ d^.docTitle) ++
                (concatMap toMarkup $ d^.docSections)
 
-instance BlockMarkup a => ToMarkup (Core a) where
+instance (MarkupMarkup m, BlockMarkup m (b m)) => ToMarkup (Core m b) where
   toMarkup (SC sc) = toMarkup sc
   toMarkup (CC cc) = toMarkup cc
 
-instance ToMarkup SimpleCore where
+instance MarkupMarkup m => ToMarkup (SimpleCore m) where
   toMarkup (TextC t) = toMarkup t
   toMarkup (QTextC qt) = toMarkup qt
   toMarkup (LinkC l) = toMarkup l
   toMarkup (InlineMathC im) = toMarkup im
   toMarkup (MarkupC m) = toMarkup m
 
-instance ToMarkup Paragraph where
+instance MarkupMarkup m => ToMarkup (Paragraph m) where
   toMarkup pa = p ! class_ "idocParagraph" $
                 concatMap toMarkup $ pa^.paraContents
 
-instance BlockMarkup a => ToMarkup (ComplexCore a) where
+instance (MarkupMarkup m, BlockMarkup m (b m)) => ToMarkup (ComplexCore m b) where
   toMarkup (ListC l) = toMarkup l
   toMarkup (BlockC b_) = toMarkup b_
   toMarkup (ParagraphC p_) = toMarkup p_
 
-instance BlockMarkup a => ToMarkup (Block a) where
+instance (MarkupMarkup m, BlockMarkup m (b m)) => ToMarkup (Block m b) where
   toMarkup b_ = blockMarkup (b_^.bAttrs) (b_^.bTitle) (b_^.bSetID) (b_^.bType)
 
-instance (RecApplicative xs, AllAllSat '[BlockMarkup] xs) => BlockMarkup (CoRec Data.Vinyl.Functor.Identity xs) where
-  blockMarkup a_ t s x = getIdentity $ onCoRec (Proxy :: Proxy '[BlockMarkup]) (blockMarkup a_ t s) x
-
-instance ToMarkup DocTitle where
+instance MarkupMarkup m => ToMarkup (DocTitle m) where
   toMarkup (DocTitle dt_) = h1 ! class_ "idocDocTitle" $
                             concatMap toMarkup dt_
+
+instance ( RecApplicative xs
+         , MarkupMarkup m
+         , AllAllSat '[BlockMarkup m] xs) =>
+  BlockMarkup m (CoRec Data.Vinyl.Functor.Identity xs) where
+  blockMarkup a_ t s x = getIdentity $ onCoRec (Proxy :: Proxy '[BlockMarkup m]) (blockMarkup a_ t s) x
+
+instance ( RecApplicative xs
+         , AllAllSat '[MarkupMarkup] xs) =>
+  MarkupMarkup (CoRec Data.Vinyl.Functor.Identity xs) where
+  markupMarkup a_ s x = getIdentity $ onCoRec (Proxy :: Proxy '[MarkupMarkup]) (markupMarkup a_ s) x
+
+
 -- * Some Helper Functions
 
 -- | FIXME: This is truly fucked.
@@ -563,7 +580,8 @@ verbatimBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
 
 newtype LinkLevel = LinkLevel Int deriving (Eq, Ord, Show)
 
-listLinks :: Doc a -> Vector (SetID, LinkLevel)
+-- | Dear god, don't look at the definition of this.
+listLinks :: Doc m b -> Vector ((SetID m), LinkLevel)
 listLinks (Doc { _docSections = ss
                , _docSetID = dsid }) =
   catMaybes (singleton ((\x -> (x, LinkLevel 1)) <$> dsid)) <>
@@ -580,29 +598,26 @@ listLinks (Doc { _docSections = ss
                                 -- FIXME: Add lists here
                             ) <$> scnts) <> singleton ((\x -> (x, LinkLevel 2)) <$> ssid)) ss
 
-mID :: Maybe SetID -> (Html -> Html)
+mID :: ToValue (SetID m) => Maybe (SetID m) -> (Html -> Html)
 mID mid = case mid of
   Nothing -> CP.id
   Just id_ -> (\x -> x ! A.id (toValue id_))
 
-mLabel :: (LaTeXC l) => Maybe SetID -> (l -> l)
+mLabel :: (LaTeXC l, Texy (SetID m)) => Maybe (SetID m) -> (l -> l)
 mLabel mid = case mid of
   Nothing -> CP.id
   Just id_ -> ((texy id_) ++)
 
-mTitleT :: LaTeXC l => Maybe BlockTitle -> Text -> l
+mTitleT :: (LaTeXC l, Texy (BlockTitle m)) => Maybe (BlockTitle m) -> Text -> l
 mTitleT mbt defaultTitle = maybe (texy defaultTitle) texy mbt
 
 type LIcon = LaTeX
 
-class Blocky b where
-  block :: LaTeXC l => AttrMap -> Maybe BlockTitle -> Maybe SetID -> b -> l
-
-instance Blocky a => Texy (Doc a) where
+instance (Markupy m, Blocky m (b m)) => Texy (Doc m b) where
   texy d = chapter (mLabel (d^.docSetID) $ (texy $ d^.docTitle)) ++
            (vectorTexy $ d^.docSections)
 
-instance Blocky a => Texy (Section a) where
+instance (Markupy m, Blocky m (b m)) => Texy (Section m b) where
   texy s = starter (mLabel (s^.secSetID) $ texy $ s^.secTitle) ++
            (vectorTexy $ s^.secContents)
     where starter = case s^.secType of
@@ -610,29 +625,29 @@ instance Blocky a => Texy (Section a) where
             TopSection -> L.section
             SubSection -> L.subsection
 
-instance Texy SectionTitle where
+instance Markupy m => Texy (SectionTitle m) where
   texy (SectionTitle s) = vectorTexy s
 
-instance Texy DocTitle where
+instance Markupy m => Texy (DocTitle m) where
   texy (DocTitle dt_) = vectorTexy dt_
 
-instance Blocky a => Texy (Core a) where
+instance (Markupy m, Blocky m (b m)) => Texy (Core m b) where
   texy (SC sc) = texy sc
   texy (CC cc) = texy cc
 
-instance Texy SimpleCore where
+instance Markupy m => Texy (SimpleCore m) where
   texy (TextC t) = texy t
   texy (QTextC qt) = texy qt
   texy (LinkC l) = texy l
   texy (InlineMathC im) = texy im
   texy (MarkupC m) = texy m
 
-instance Blocky a => Texy (ComplexCore a) where
+instance (Markupy m, Blocky m (b m)) => Texy (ComplexCore m b) where
   texy (ListC l) = texy l
   texy (BlockC b_) = texy b_
   texy (ParagraphC p_) = texy p_
 
-instance Texy QText where
+instance Markupy m => Texy (QText m) where
   texy qt = decorateTextWith (qt^.qtType) $
             concatMap texy $ qt^.qtText
     where
@@ -647,10 +662,10 @@ instance Texy QText where
 
       textsubscript x = between x (raw "\textsubscript{") (raw "}")
 
-instance Texy SetID where
+instance Markupy m => Texy (SetID m) where
   texy (SetID { _sidName = IDHash sid }) = L.label $ texy sid
 
-instance Texy Link where
+instance Markupy m => Texy (Link m) where
   texy l = case l^.linkType of
              Out -> H.href []
                     (createURL $ unpack $ fromOut $ l^.linkLocation) 
@@ -683,39 +698,50 @@ instance Texy Link where
       fromBack id_ = "http://www.independentlearning.science/tiki/" ++ 
                      (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 
-instance Texy LinkText where
+instance Markupy m => Texy (LinkText m) where
   texy (LinkText lt) = concatMap texy lt
 
-instance Texy InlineMath where
+instance Markupy m => Texy (InlineMath m) where
   texy im = M.math $ concatMap texy $ im^.imContents
 
 instance Texy Text.IDoc.Syntax.Token where
   texy t = raw $ unToken t
 
-instance Texy Text.IDoc.Syntax.Markup where
-  texy mu_ = mLabel (mu_^.muSetID) $
-    case (mu_^.muType) of
-      Footnote -> footnote $ concatMap texy $ mu_^.muContents
-      FootnoteRef -> ref $ concatMap texy $ mu_^.muContents
-      Citation -> L.cite $ concatMap texy $ mu_^.muContents
+instance Markupy m => Texy (Text.IDoc.Syntax.Markup m) where
+  texy mu_ = markupy (mu_^.muAttrs) (mu_^.muSetID) (mu_^.muType)
 
-instance Texy Paragraph where
+  -- mLabel (mu_^.muSetID) $
+  --   case (mu_^.muType) of
+  --     Footnote -> footnote $ concatMap texy $ mu_^.muContents
+  --     FootnoteRef -> ref $ concatMap texy $ mu_^.muContents
+  --     Citation -> L.cite $ concatMap texy $ mu_^.muContents
+
+instance Markupy m => Texy (Paragraph m) where
   texy p_ = (concatMap texy $ p_^.paraContents) ++ "\n\n"
 
-instance Texy BlockTitle where
+instance Markupy m => Texy (BlockTitle m) where
   texy (BlockTitle bt) = concatMap texy bt
 
-instance Texy List where
+instance Markupy m => Texy (List m) where
   texy (List li_) = enumerate $
                      concatMap (\li'_ -> 
                                   mLabel (li'_^.liSetID) $ 
                                   L.item (textbf <$> texy <$> (li'_^.liLabel)) ++ (vectorTexy $ li'_^.liContents)) li_
 
-instance Texy ListLabel where
+instance Markupy m => Texy (ListLabel m) where
   texy (ListLabel ll_) = vectorTexy ll_
 
-instance Blocky a => Texy (Block a) where
-  texy b_ = block (b_^.bAttrs) (b_^.bTitle) (b_^.bSetID) (b_^.bType)
+instance Blocky m (b m) => Texy (Block m b) where
+  texy b_ = blocky (b_^.bAttrs) (b_^.bTitle) (b_^.bSetID) (b_^.bType)
 
-instance (RecApplicative xs, AllAllSat '[Blocky] xs) => Blocky (CoRec Data.Vinyl.Functor.Identity xs) where
-  block a_ t s x = getIdentity $ onCoRec (Proxy :: Proxy '[Blocky]) (block a_ t s) x
+-- Type-level magic!
+instance ( RecApplicative xs
+         , Markupy m
+         , AllAllSat '[Blocky m] xs) =>
+  Blocky m (CoRec Data.Vinyl.Functor.Identity xs) where
+  blocky a_ t s x = getIdentity $ onCoRec (Proxy :: Proxy '[Blocky m]) (blocky a_ t s) x
+
+instance ( RecApplicative xs
+         , AllAllSat '[Markupy] xs) =>
+  Markupy (CoRec Data.Vinyl.Functor.Identity xs) where
+  markupy a_ s x = getIdentity $ onCoRec (Proxy :: Proxy '[Markupy]) (markupy a_ s) x

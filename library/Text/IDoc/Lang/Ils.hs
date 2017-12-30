@@ -27,80 +27,99 @@ import Text.IDoc.Blocks.Media
 import Text.IDoc.Blocks.Prerex
 import Text.IDoc.Blocks.Quote
 import Text.IDoc.Blocks.Recall
+import Text.IDoc.Markup.Footnote
 import Text.IDoc.Render.Tex
 
 import Text.LaTeX
 
-type IlsBlocks = '[ AdmonitionB BlockType
-                  , BibTex
-                  , Code
-                  , Connection BlockType
-                  , Example BlockType
-                  , Exercise BlockType
-                  , FurtherReading BlockType
-                  , Introduction BlockType
-                  , Summary BlockType
-                  , Intuition BlockType
-                  , DisplayMathB
-                  , TheoremLikeB BlockType
-                  , Conjecture BlockType
-                  , Definition BlockType
-                  , Proof BlockType
-                  , Axiom BlockType
-                  , SimpleMediaB
-                  , YouTube
-                  , Prerex
-                  , Quote
-                  , Recall BlockType ]
+type IlsBlocks m = '[ AdmonitionB m BlockType
+                    , BibTex
+                    , Code
+                    , Connection m BlockType
+                    , Example m BlockType
+                    , Exercise m BlockType
+                    , FurtherReading m BlockType
+                    , Introduction m BlockType
+                    , Summary m BlockType
+                    , Intuition m BlockType
+                    , DisplayMathB
+                    , TheoremLikeB m BlockType
+                    , Conjecture m BlockType
+                    , Definition m BlockType
+                    , Proof m BlockType
+                    , Axiom m BlockType
+                    , SimpleMediaB m
+                    , YouTube m
+                    , Prerex m
+                    , Quote m
+                    , Recall m BlockType ]
 
-newtype BlockType = BlockType { _unBlockType :: CoRec Identity IlsBlocks }
+newtype BlockType m = BlockType { _unBlockType :: CoRec Identity (IlsBlocks m) }
   deriving (Eq, Show)
 
-instance BlockMarkup BlockType where
+instance BlockMarkup MarkupType (BlockType MarkupType) where
   blockMarkup attrs title_ sid (BlockType coRec) = blockMarkup attrs title_ sid coRec
 
-instance Blocky BlockType where
-  block attrs title_ sid (BlockType coRec) = block attrs title_ sid coRec
+instance Blocky MarkupType (BlockType MarkupType) where
+  blocky attrs title_ sid (BlockType coRec) = blocky attrs title_ sid coRec
 
-mkBlockType :: (Functor f, RElem a IlsBlocks (RIndex a IlsBlocks)) => f a -> f BlockType
+type IlsMarkup = '[ Footnote MarkupType ]
+
+newtype MarkupType = MarkupType { _unMarkupType :: CoRec Identity IlsMarkup }
+  deriving (Eq, Show)
+
+instance MarkupMarkup MarkupType where
+  markupMarkup attrs sid (MarkupType coRec) = markupMarkup attrs sid coRec
+
+instance Markupy MarkupType where
+  markupy attrs sid (MarkupType coRec) = markupy attrs sid coRec
+
+mkBlockType :: (Functor f, RElem a (IlsBlocks m) (RIndex a (IlsBlocks m))) => f a -> f (BlockType m)
 mkBlockType = (BlockType <$> CoRec <$> Identity <$>)
 
-compileIdocTexFile :: (Blocky a, MonadIO m) => (Doc a) -> FilePath -> m ()
+mkMarkupType :: (Functor f, RElem a IlsMarkup (RIndex a IlsMarkup)) => f a -> f MarkupType
+mkMarkupType = (MarkupType <$> CoRec <$> Identity <$>)
+
+compileIdocTexFile :: (Markupy m, Blocky m (b m), MonadIO n) => (Doc m b) -> FilePath -> n ()
 compileIdocTexFile doc_ outFile = liftIO $ renderFile outFile $ defaultDecorator (concatMap texy $ unDocTitle $ doc_^.docTitle) (texy doc_ :: LaTeX)
 
-type IlsDoc = Doc BlockType
+type IlsDoc = Doc MarkupType BlockType
 
-blockTypeP :: BlockParser BlockType -> BlockTypeName -> IDocParser BlockType
-blockTypeP b "info" = mkBlockType $ InfoB <$> infoP b
-blockTypeP b "tip" = mkBlockType $ TipB <$> tipP b
-blockTypeP b "caution" = mkBlockType $ CautionB <$> cautionP b
-blockTypeP b "warning" = mkBlockType $ WarningB <$> warningP b
-blockTypeP b "sidenote" = mkBlockType $ SideNoteB <$> sideNoteP b
-blockTypeP _ "code" = mkBlockType codeP
-blockTypeP b "connection" = mkBlockType $ connectionP b
-blockTypeP b "example" = mkBlockType $ exampleP b
-blockTypeP b "exercise" = mkBlockType $ exerciseP b
-blockTypeP b "furtherreading" = mkBlockType $ furtherReadingP b
-blockTypeP b "introduction" = mkBlockType $ introductionP b
-blockTypeP b "summary" = mkBlockType $ summaryP b
-blockTypeP b "intuition" = mkBlockType $ intuitionP b
-blockTypeP _ "math" = mkBlockType $ MathB <$> mathP
-blockTypeP _ "equation" = mkBlockType $ EquationB <$> equationP
-blockTypeP _ "align" = mkBlockType $ AlignB <$> alignP
-blockTypeP b "theorem" = mkBlockType $ TheoremB <$> theoremP b
-blockTypeP b "lemma" = mkBlockType $ LemmaB <$> lemmaP b
-blockTypeP b "corollary" = mkBlockType $ CorollaryB <$> corollaryP b
-blockTypeP b "proposition" = mkBlockType $ PropositionB <$> propositionP b
-blockTypeP b "conjecture" = mkBlockType $ conjectureP b
-blockTypeP b "definition" = mkBlockType $ definitionP b
-blockTypeP b "proof" = mkBlockType $ proofP b
-blockTypeP b "axiom" = mkBlockType $ axiomP b
-blockTypeP _ "image" = mkBlockType $ ImageB <$> imageP
-blockTypeP _ "video" = mkBlockType $ VideoB <$> videoP
-blockTypeP _ "youtube" = mkBlockType $ youTubeP
-blockTypeP _ "prerex" = mkBlockType $ prerexP
-blockTypeP _ "quote" = mkBlockType $ quoteP
-blockTypeP b "recall" = mkBlockType $ recallP b
-blockTypeP _ s = fail $ unpack $ "Did not recognize block type: " ++ s
+blockTypeP :: MarkupParser m -> BlockParser m BlockType -> BlockTypeName -> IDocParser (BlockType m)
+blockTypeP m b "info" = mkBlockType $ InfoB <$> infoP m b
+blockTypeP m b "tip" = mkBlockType $ TipB <$> tipP m b
+blockTypeP m b "caution" = mkBlockType $ CautionB <$> cautionP m b
+blockTypeP m b "warning" = mkBlockType $ WarningB <$> warningP m b
+blockTypeP m b "sidenote" = mkBlockType $ SideNoteB <$> sideNoteP m b
+blockTypeP _ _ "code" = mkBlockType codeP
+blockTypeP m b "connection" = mkBlockType $ connectionP m b
+blockTypeP m b "example" = mkBlockType $ exampleP m b
+blockTypeP m b "exercise" = mkBlockType $ exerciseP m b
+blockTypeP m b "furtherreading" = mkBlockType $ furtherReadingP m b
+blockTypeP m b "introduction" = mkBlockType $ introductionP m b
+blockTypeP m b "summary" = mkBlockType $ summaryP m b
+blockTypeP m b "intuition" = mkBlockType $ intuitionP m b
+blockTypeP _ _ "math" = mkBlockType $ MathB <$> mathP
+blockTypeP _ _ "equation" = mkBlockType $ EquationB <$> equationP
+blockTypeP _ _ "align" = mkBlockType $ AlignB <$> alignP
+blockTypeP m b "theorem" = mkBlockType $ TheoremB <$> theoremP m b
+blockTypeP m b "lemma" = mkBlockType $ LemmaB <$> lemmaP m b
+blockTypeP m b "corollary" = mkBlockType $ CorollaryB <$> corollaryP m b
+blockTypeP m b "proposition" = mkBlockType $ PropositionB <$> propositionP m b
+blockTypeP m b "conjecture" = mkBlockType $ conjectureP m b
+blockTypeP m b "definition" = mkBlockType $ definitionP m b
+blockTypeP m b "proof" = mkBlockType $ proofP m b
+blockTypeP m b "axiom" = mkBlockType $ axiomP m b
+blockTypeP m _ "image" = mkBlockType $ ImageB <$> imageP m
+blockTypeP m _ "video" = mkBlockType $ VideoB <$> videoP m
+blockTypeP m _ "youtube" = mkBlockType $ youTubeP m
+blockTypeP m _ "prerex" = mkBlockType $ prerexP m
+blockTypeP m _ "quote" = mkBlockType $ quoteP m
+blockTypeP m b "recall" = mkBlockType $ recallP m b
+blockTypeP _ _ s = fail $ unpack $ "Did not recognize block type: " ++ s
+
+markupTypeP :: MarkupParser MarkupType -> MarkupTypeName -> IDocParser MarkupType
+markupTypeP m "footnote" = mkMarkupType $ footnoteP m
 
 makeLenses ''BlockType
+makeLenses ''MarkupType

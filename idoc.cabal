@@ -3,7 +3,7 @@
 -- see: https://github.com/sol/hpack
 
 name:           idoc
-version:        0.4.0
+version:        0.5.0
 synopsis:       Markup for the Prerex engine.
 description:    idoc is markup that compiles well to HTML5 and LaTeX, with Prerex support.
 category:       Language
@@ -61,16 +61,19 @@ library
                  , Text.IDoc.Blocks.Prerex
                  , Text.IDoc.Blocks.Quote
                  , Text.IDoc.Blocks.Recall
+                 , Text.IDoc.Markup.Footnote
   default-extensions: LambdaCase
                     , OverloadedStrings
                     , NoImplicitPrelude
                     , RecordWildCards
                     , FlexibleContexts
+                    , FlexibleInstances
                     , GeneralizedNewtypeDeriving
                     , TypeFamilies
                     , TemplateHaskell
                     , DeriveDataTypeable
                     , DeriveGeneric
+                    , MultiParamTypeClasses
                     , RankNTypes
                     , ScopedTypeVariables
                     , DataKinds

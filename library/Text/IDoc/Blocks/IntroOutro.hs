@@ -5,8 +5,6 @@ import Text.IDoc.Parse
 import Text.IDoc.Render.Html5.Card
 import Text.IDoc.Render.Tex
 
-import Text.Blaze.Html5
-
 import Text.LaTeX
 
 import Data.Data
@@ -15,50 +13,56 @@ import Control.Lens
 
 import ClassyPrelude
 
-data IntroOutroB a = IntroductionB { _introduction :: Introduction a }
-                   | SummaryB { _summary :: Summary a }
+data IntroOutroB m b = IntroductionB { _introduction :: Introduction m b }
+                     | SummaryB { _summary :: Summary m b }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup a => BlockMarkup (IntroOutroB a) where
+instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (IntroOutroB m b) where
   blockMarkup a_ t s (IntroductionB i_) = blockMarkup a_ t s i_
   blockMarkup a_ t s (SummaryB sum_) = blockMarkup a_ t s sum_
 
-data Introduction a = Introduction { _introductionContents :: Vector (Core a) }
+data Introduction m b = Introduction { _introductionContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup a => ToMarkup (Introduction a) where
-  toMarkup (Introduction i_) = vectorBlockToMarkup "idocIntroduction" id i_
-
 -- FIXME: Needs an icon.
-instance BlockMarkup a => BlockMarkup (Introduction a) where
-  blockMarkup _ t s i_ = card defaultCardOptions (mTitle "Introduction" t) s "" Nothing (toMarkup i_)
+instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Introduction m b) where
+  blockMarkup _ t s (Introduction i_) = card
+                                        defaultCardOptions
+                                        (mTitle "Introduction" t)
+                                        s
+                                        ""
+                                        Nothing
+                                        (vectorBlockToMarkup "idocIntroduction" id i_)
 
-instance Blocky a => Blocky (Introduction a) where
-  block _ mt msid (Introduction i_) = subsection (mLabel msid title_) ++ vectorTexy i_
+instance (Markupy m, Blocky m (b m)) => Blocky m (Introduction m b) where
+  blocky _ mt msid (Introduction i_) = subsection (mLabel msid title_) ++ vectorTexy i_
     where
       title_ = mTitleT mt "Introduction"
 
-introductionP :: BlockParser a -> IDocParser (Introduction a)
-introductionP b_ = Introduction <$> coreBlockP b_
+introductionP :: MarkupParser m -> BlockParser m b -> IDocParser (Introduction m b)
+introductionP m b_ = Introduction <$> coreBlockP m b_
 
-data Summary a = Summary { _summaryContents :: Vector (Core a) }
+data Summary m b = Summary { _summaryContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup a => ToMarkup (Summary a) where
-  toMarkup (Summary s) = vectorBlockToMarkup "idocSummary" id s
-
 -- FIXME: Needs an icon.
-instance BlockMarkup a => BlockMarkup (Summary a) where
-  blockMarkup _ t s sum_ = card defaultCardOptions (mTitle "Summary" t) s "" Nothing (toMarkup sum_)
+instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Summary m b) where
+  blockMarkup _ t s (Summary sum_) = card
+                                     defaultCardOptions
+                                     (mTitle "Summary" t)
+                                     s
+                                     ""
+                                     Nothing
+                                     (vectorBlockToMarkup "idocSummary" id sum_)
 
-instance Blocky a => Blocky (Summary a) where
-  block _ mt msid (Summary s) = (subsection $ mLabel msid title_) ++
+instance (Markupy m, Blocky m (b m)) => Blocky m (Summary m b) where
+  blocky _ mt msid (Summary s) = (subsection $ mLabel msid title_) ++
                                 vectorTexy s
     where
       title_ = mTitleT mt "Summary"
 
-summaryP :: BlockParser a -> IDocParser (Summary a)
-summaryP b_ = Summary <$> coreBlockP b_
+summaryP :: MarkupParser m -> BlockParser m b -> IDocParser (Summary m b)
+summaryP m b_ = Summary <$> coreBlockP m b_
 
 makeLenses ''IntroOutroB
 

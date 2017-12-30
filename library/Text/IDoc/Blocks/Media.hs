@@ -17,23 +17,23 @@ import Data.Data
 
 import ClassyPrelude hiding (div)
 
-data SimpleMediaB = ImageB { _image :: Image }
-                  | VideoB { _video :: Video }
+data SimpleMediaB m = ImageB { _image :: Image m }
+                    | VideoB { _video :: Video m }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup SimpleMediaB where
+instance MarkupMarkup m => BlockMarkup m (SimpleMediaB m) where
   blockMarkup a_ t s (ImageB i_) = blockMarkup a_ t s i_
   blockMarkup a_ t s (VideoB v)  = blockMarkup a_ t s v
 
-instance Blocky SimpleMediaB where
-  block a_ t s (ImageB i_) = block a_ t s i_
-  block a_ t s (VideoB v)  = block a_ t s v
+instance Markupy m => Blocky m (SimpleMediaB m) where
+  blocky a_ t s (ImageB i_) = blocky a_ t s i_
+  blocky a_ t s (VideoB v)  = blocky a_ t s v
 
-data Image = Image { _imageLink :: Link
-                   , _imageCaption :: Maybe (Vector SimpleCore) }
+data Image m = Image { _imageLink :: Link m
+                     , _imageCaption :: Maybe (Vector (SimpleCore m)) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup Image where
+instance MarkupMarkup m => BlockMarkup m (Image m) where
   blockMarkup _ t s (Image il cap) = card 
                                      defaultCardOptions
                                      (mTitle "Image" t)
@@ -43,13 +43,12 @@ instance BlockMarkup Image where
                                      (img ! class_ "idocImage img-responsive"
                                           ! src (toValue $ il^.linkLocation))
 
-data Video = Video { _videoLink :: Link
-                   , _videoCaption :: Maybe (Vector SimpleCore) }
+data Video m = Video { _videoLink :: Link m
+                     , _videoCaption :: Maybe (Vector (SimpleCore m)) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-
 -- FIXME: Find an icon for this.
-instance BlockMarkup Video where
+instance MarkupMarkup m => BlockMarkup m (Video m) where
   blockMarkup _ t s (Video vl cap) = card
                                      defaultCardOptions
                                      (mTitle "Video" t)
@@ -61,12 +60,12 @@ instance BlockMarkup Video where
                                             ! src (toValue $ vl^.linkLocation) $
                                             "")
 
-data YouTube = YouTube { _youTubeLink :: Link
-                       , _youTubeCaption :: Maybe (Vector SimpleCore) }
+data YouTube m = YouTube { _youTubeLink :: Link m
+                         , _youTubeCaption :: Maybe (Vector (SimpleCore m)) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- FIXME: The link location needs to be fixed.
-instance BlockMarkup YouTube where
+instance MarkupMarkup m => BlockMarkup m (YouTube m) where
   blockMarkup _ t s (YouTube yl cap) = card
                                        defaultCardOptions
                                        (mTitle "YouTube" t)
@@ -80,33 +79,33 @@ instance BlockMarkup YouTube where
                                                    "")
     where allowFullscreen = customAttribute "allowfullscreen"
 
-imageP :: IDocParser Image
-imageP = do
-  (l, sc) <- linkBlockWithOptionalP
+imageP :: MarkupParser m -> IDocParser (Image m)
+imageP m = do
+  (l, sc) <- linkBlockWithOptionalP m
   return $ Image l sc
 
-videoP :: IDocParser Video
-videoP = do
-  (l, sc) <- linkBlockWithOptionalP
+videoP :: MarkupParser m -> IDocParser (Video m)
+videoP m = do
+  (l, sc) <- linkBlockWithOptionalP m
   return $ Video l sc
 
-youTubeP :: IDocParser YouTube
-youTubeP = do
-  (l, sc) <- linkBlockWithOptionalP
+youTubeP :: MarkupParser m -> IDocParser (YouTube m)
+youTubeP m = do
+  (l, sc) <- linkBlockWithOptionalP m
   return $ YouTube l sc
 
-instance Blocky YouTube where
-  block _ _ msid (YouTube lnk mcaption) = mLabel msid $ 
+instance Markupy m => Blocky m (YouTube m) where
+  blocky _ _ msid (YouTube lnk mcaption) = mLabel msid $ 
                                         texy lnk ++
                                         maybe "" vectorTexy mcaption
 
-instance Blocky Image where
-  block _ _ msid (Image lnk mcaption) = mLabel msid $
+instance Markupy m => Blocky m (Image m) where
+  blocky _ _ msid (Image lnk mcaption) = mLabel msid $
                                       texy lnk ++
                                       maybe "" vectorTexy mcaption
 
-instance Blocky Video where
-  block _ _ msid (Video lnk mcaption) = mLabel msid $ 
+instance Markupy m => Blocky m (Video m) where
+  blocky _ _ msid (Video lnk mcaption) = mLabel msid $ 
                                       texy lnk ++
                                       maybe "" vectorTexy mcaption
 

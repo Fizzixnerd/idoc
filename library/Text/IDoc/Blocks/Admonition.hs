@@ -15,26 +15,26 @@ import Control.Lens
 
 import ClassyPrelude hiding (span)
 
-data AdmonitionB a = InfoB { _info :: Info a }
-                   | TipB { _tip :: Tip a }
-                   | CautionB { _caution :: Caution a }
-                   | WarningB { _warning :: Warning a }
-                   | SideNoteB { _sidenote :: SideNote a }
+data AdmonitionB m b = InfoB { _info :: Info m b }
+                     | TipB { _tip :: Tip m b }
+                     | CautionB { _caution :: Caution m b }
+                     | WarningB { _warning :: Warning m b }
+                     | SideNoteB { _sidenote :: SideNote m b }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup a => BlockMarkup (AdmonitionB a) where
+instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (AdmonitionB m b) where
   blockMarkup a_ t s (InfoB i_) = blockMarkup a_ t s i_
   blockMarkup a_ t s (TipB tip) = blockMarkup a_ t s tip
   blockMarkup a_ t s (CautionB c) = blockMarkup a_ t s c
   blockMarkup a_ t s (WarningB w) = blockMarkup a_ t s w
   blockMarkup a_ t s (SideNoteB sn) = blockMarkup a_ t s sn
 
-instance Blocky a => Blocky (AdmonitionB a) where
-  block a_ t s (InfoB i_) = block a_ t s i_
-  block a_ t s (TipB tip) = block a_ t s tip
-  block a_ t s (CautionB c) = block a_ t s c
-  block a_ t s (WarningB w) = block a_ t s w
-  block a_ t s (SideNoteB sn) = block a_ t s sn
+instance (Markupy m, Blocky m (b m)) => Blocky m (AdmonitionB m b) where
+  blocky a_ t s (InfoB i_) = blocky a_ t s i_
+  blocky a_ t s (TipB tip) = blocky a_ t s tip
+  blocky a_ t s (CautionB c) = blocky a_ t s c
+  blocky a_ t s (WarningB w) = blocky a_ t s w
+  blocky a_ t s (SideNoteB sn) = blocky a_ t s sn
 
 decorateAdmonition :: CardType -> Html -> Html
 decorateAdmonition pt cnt = (B.span ! class_ 
@@ -49,94 +49,99 @@ decorateAdmonition pt cnt = (B.span ! class_
       CPrimary -> "fa-lightbulb-o"
       _ -> error "I can't decorate like that!"
 
-data Info a = Info { _infoContents :: Vector (Core a) }
+data Info m b = Info { _infoContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup a => ToMarkup (Info a) where
-  toMarkup (Info a_) = decorateAdmonition CInfo $
-                       vectorBlockToMarkup "idocInfo" id a_
+instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Info m b) where
+  blockMarkup _ title_ sid (Info a_) = card
+                                       primaryCardOptions
+                                       (mTitle "Info" title_)
+                                       sid
+                                       infoIcon
+                                       Nothing
+                                       (decorateAdmonition CInfo $ vectorBlockToMarkup "idocInfo" id a_)
 
-instance BlockMarkup a => BlockMarkup (Info a) where
-  blockMarkup _ title_ sid i_ = card primaryCardOptions (mTitle "Info" title_) sid infoIcon Nothing (toMarkup i_)
-
-instance Blocky a => Blocky (Info a) where
-  block _ mt msid (Info i_) = infoBlock (mLabel msid title_) (vectorTexy i_)
+instance (Markupy m, Blocky m (b m)) => Blocky m (Info m b) where
+  blocky _ mt msid (Info i_) = infoBlock (mLabel msid title_) (vectorTexy i_)
     where
       title_ = mTitleT mt "Info"
 
-infoP :: BlockParser a -> IDocParser (Info a)
-infoP b_ = Info <$> coreBlockP b_
+infoP :: MarkupParser m -> BlockParser m b -> IDocParser (Info m b)
+infoP m b_ = Info <$> coreBlockP m b_
 
-data Tip a = Tip { _tipContents :: Vector (Core a) }
+data Tip m b = Tip { _tipContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup a => ToMarkup (Tip a) where
-  toMarkup (Tip a_) = decorateAdmonition CPrimary $ 
-                      vectorBlockToMarkup "idocTip" id a_
+instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Tip m b) where
+  blockMarkup _ title_ sid (Tip t) = card
+                                     tipCardOptions
+                                     (mTitle "Tip" title_)
+                                     sid
+                                     tipIcon
+                                     Nothing
+                                     (decorateAdmonition CPrimary $ vectorBlockToMarkup "idocTip" id t)
 
-instance BlockMarkup a => BlockMarkup (Tip a) where
-  blockMarkup _ title_ sid t = card tipCardOptions (mTitle "Tip" title_) sid tipIcon Nothing (toMarkup t)
-
-instance Blocky a => Blocky (Tip a) where
-  block _ mt msid (Tip t) = tipBlock (mLabel msid title_) (vectorTexy t)
+instance (Markupy m, Blocky m (b m)) => Blocky m (Tip m b) where
+  blocky _ mt msid (Tip t) = tipBlock (mLabel msid title_) (vectorTexy t)
     where
       title_ = mTitleT mt "Tip"
 
-tipP :: BlockParser a -> IDocParser (Tip a)
-tipP b_ = Tip <$> coreBlockP b_
+tipP :: MarkupParser m -> BlockParser m b -> IDocParser (Tip m b)
+tipP m b_ = Tip <$> coreBlockP m b_
 
-data Caution a = Caution { _cautionContents :: Vector (Core a) }
+data Caution m b = Caution { _cautionContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup a => ToMarkup (Caution a) where
-  toMarkup (Caution a_) = decorateAdmonition CWarning $ 
-                          vectorBlockToMarkup "idocCaution" id a_
+instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Caution m b) where
+  blockMarkup _ title_ sid (Caution c) = card
+                                         cautionCardOptions
+                                         (mTitle "Caution" title_)
+                                         sid
+                                         cautionIcon
+                                         Nothing
+                                         (decorateAdmonition CWarning $ vectorBlockToMarkup "idocCaution" id c)
 
-instance BlockMarkup a => BlockMarkup (Caution a) where
-  blockMarkup _ title_ sid c = card cautionCardOptions (mTitle "Caution" title_) sid cautionIcon Nothing (toMarkup c)
-
-instance Blocky a => Blocky (Caution a) where
-  block _ mt msid (Caution c) = cautionBlock (mLabel msid title_) (vectorTexy c)
+instance (Markupy m, Blocky m (b m)) => Blocky m (Caution m b) where
+  blocky _ mt msid (Caution c) = cautionBlock (mLabel msid title_) (vectorTexy c)
     where
       title_ = mTitleT mt "Caution"
 
-cautionP :: BlockParser a -> IDocParser (Caution a)
-cautionP b_ = Caution <$> coreBlockP b_
+cautionP :: MarkupParser m -> BlockParser m b -> IDocParser (Caution m b)
+cautionP m b_ = Caution <$> coreBlockP m b_
 
-data Warning a = Warning { _warningContents :: Vector (Core a) }
+data Warning m b = Warning { _warningContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup a => ToMarkup (Warning a) where
-  toMarkup (Warning a_) = decorateAdmonition CDanger $ 
-                          vectorBlockToMarkup "idocWarning" id a_
+instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Warning m b) where
+  blockMarkup _ title_ sid (Warning w) = card
+                                         warningCardOptions
+                                         (mTitle "Info" title_)
+                                         sid
+                                         warningIcon
+                                         Nothing
+                                         (decorateAdmonition CDanger $ vectorBlockToMarkup "idocWarning" id w)
 
-instance BlockMarkup a => BlockMarkup (Warning a) where
-  blockMarkup _ title_ sid w = card warningCardOptions (mTitle "Info" title_) sid warningIcon Nothing (toMarkup w)
-
-instance Blocky a => Blocky (Warning a) where
-  block _ mt msid (Warning w) = warningBlock (mLabel msid title_) (vectorTexy w)
+instance (Markupy m, Blocky m (b m)) => Blocky m (Warning m b) where
+  blocky _ mt msid (Warning w) = warningBlock (mLabel msid title_) (vectorTexy w)
     where 
       title_ = mTitleT mt "Warning"
 
-warningP :: BlockParser a -> IDocParser (Warning a)
-warningP b_ = Warning <$> coreBlockP b_
+warningP :: MarkupParser m -> BlockParser m b -> IDocParser (Warning m b)
+warningP m b_ = Warning <$> coreBlockP m b_
 
-data SideNote a = SideNote { _sideNoteContents :: Vector (Core a) }
+data SideNote m b = SideNote { _sideNoteContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup a => ToMarkup (SideNote a) where
-  toMarkup (SideNote s) = vectorBlockToMarkup "idocSideNote" id s
+instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (SideNote m b) where
+  blockMarkup _ title_ sid (SideNote s) = card defaultCardOptions (mTitle "Info" title_) sid (icon "fa-sticky-note-o") Nothing (vectorBlockToMarkup "idocSideNote" id s)
 
-instance BlockMarkup a => BlockMarkup (SideNote a) where
-  blockMarkup _ title_ sid sn = card defaultCardOptions (mTitle "Info" title_) sid (icon "fa-sticky-note-o") Nothing (toMarkup sn)
-
-instance Blocky a => Blocky (SideNote a) where
-  block _ mt msid (SideNote s) = sideNoteBlock (mLabel msid title_) (vectorTexy s)
+instance (Markupy m, Blocky m (b m)) => Blocky m (SideNote m b) where
+  blocky _ mt msid (SideNote s) = sideNoteBlock (mLabel msid title_) (vectorTexy s)
     where
       title_ = mTitleT mt "SideNote"
 
-sideNoteP :: BlockParser a -> IDocParser (SideNote a)
-sideNoteP b_ = SideNote <$> coreBlockP b_
+sideNoteP :: MarkupParser m -> BlockParser m b -> IDocParser (SideNote m b)
+sideNoteP m b_ = SideNote <$> coreBlockP m b_
 
 makeLenses ''AdmonitionB
 

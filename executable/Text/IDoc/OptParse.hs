@@ -44,7 +44,7 @@ program p =
                              cnts <- TIO.hGetContents inh
                              case MP.parse dTokens "<file>" cnts of
                                Left e -> print e
-                               Right x -> case MP.parse (docP (fix blockTypeP)) "<tokens>" x of
+                               Right x -> case MP.parse ((docP (fix markupTypeP) (fix (\b m_ n -> blockTypeP m_ b n))) :: IDocParser IlsDoc) "<tokens>" x of
                                  Left e -> print e
                                  Right y -> m y outh)
       action' Parse = doIt (\y outh -> TIO.hPutStr outh (fromString $ show y))

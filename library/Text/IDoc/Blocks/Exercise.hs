@@ -6,8 +6,6 @@ import Text.IDoc.Render.Html5.Card
 import Text.IDoc.Render.Html5.Icons
 import Text.IDoc.Render.Tex
 
-import Text.Blaze.Html5
-
 import Text.LaTeX
 
 import Data.Data
@@ -16,22 +14,25 @@ import Control.Lens
 
 import ClassyPrelude
 
-data Exercise a = Exercise { _exerciseContents :: Vector (Core a) }
+data Exercise m b = Exercise { _exerciseContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-instance BlockMarkup a => ToMarkup (Exercise a) where
-  toMarkup (Exercise e) = vectorBlockToMarkup "idocExercise" id e
+instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Exercise m b) where
+  blockMarkup _ t s (Exercise e) = card
+                                   primaryCardOptions
+                                   (mTitle "Exercise" t)
+                                   s
+                                   (icon "fa-pencil")
+                                   Nothing
+                                   (vectorBlockToMarkup "idocExercise" id e)
 
-instance BlockMarkup a => BlockMarkup (Exercise a) where
-  blockMarkup _ t s e = card primaryCardOptions (mTitle "Exercise" t) s (icon "fa-pencil") Nothing (toMarkup e)
-
-instance Blocky a => Blocky (Exercise a) where
-  block _ mt msid (Exercise e) = (subsubsection $ mLabel msid title_) ++
+instance (Markupy m, Blocky m (b m)) => Blocky m (Exercise m b) where
+  blocky _ mt msid (Exercise e) = (subsubsection $ mLabel msid title_) ++
                                  vectorTexy e
     where
       title_ = mTitleT mt "Exercise"
 
-exerciseP :: BlockParser a -> IDocParser (Exercise a)
-exerciseP b_ = Exercise <$> coreBlockP b_
+exerciseP :: MarkupParser m -> BlockParser m b -> IDocParser (Exercise m b)
+exerciseP m b_ = Exercise <$> coreBlockP m b_
 
 makeLenses ''Exercise

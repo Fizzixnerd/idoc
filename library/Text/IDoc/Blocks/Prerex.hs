@@ -18,26 +18,26 @@ import Control.Lens
 
 import ClassyPrelude hiding (div)
 
-data Prerex = Prerex { _prerexContents :: Vector PrerexItem }
+data Prerex m = Prerex { _prerexContents :: Vector (PrerexItem m) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-prerexP :: IDocParser Prerex
-prerexP = Prerex <$> do
+prerexP :: MarkupParser m -> IDocParser (Prerex m)
+prerexP m = Prerex <$> do
   blockStarterP
   someTill blockEnderP $ do
-    x <- prerexItemP
+    x <- prerexItemP m
     newlineP
     return x
 
-data PrerexItem = PrerexItem { _prerexItemPath :: ID
-                             , _prerexItemDescription :: Vector SimpleCore
-                             }
+data PrerexItem m = PrerexItem { _prerexItemPath :: ID
+                               , _prerexItemDescription :: Vector (SimpleCore m)
+                               }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-prerexItemP :: IDocParser PrerexItem
-prerexItemP = do
+prerexItemP :: MarkupParser m -> IDocParser (PrerexItem m)
+prerexItemP m = do
   path <- idP
-  desc <- markupContentsP
+  desc <- markupContentsP m
   return $ PrerexItem { _prerexItemPath = path
                       , _prerexItemDescription = desc
                       }
@@ -45,26 +45,23 @@ prerexItemP = do
 makeLenses ''Prerex
 makeLenses ''PrerexItem
 
-instance ToMarkup Prerex where
-  toMarkup p_ = div ! class_ "idocPrerex" $
-                    concatMap toMarkup (p_^.prerexContents)
-
 -- FIXME: Find an icon for this.
-instance BlockMarkup Prerex where
+instance MarkupMarkup m => BlockMarkup m (Prerex m) where
   blockMarkup _ t s p_ = card 
                          primaryCardOptions
                          (mTitle "Prerex" t)
                          s
                          ""
                          Nothing
-                         (toMarkup p_)
+                         (div ! class_ "idocPrerex" $
+                          concatMap toMarkup (p_^.prerexContents))
 
-instance Blocky Prerex where
-  block _ mt msid (Prerex ps) = subsubsection (mLabel msid title_) ++ vectorTexy ps
+instance Markupy m => Blocky m (Prerex m) where
+  blocky _ mt msid (Prerex ps) = subsubsection (mLabel msid title_) ++ vectorTexy ps
     where
       title_ = mTitleT mt "Prerex"
 
-instance ToMarkup PrerexItem where
+instance MarkupMarkup m => ToMarkup (PrerexItem m) where
   toMarkup p_ = card (defaultCardOptions { cardType = CInfo
                                          , cardDefaultCollapseState = Collapsed
                                          })
@@ -76,7 +73,7 @@ instance ToMarkup PrerexItem where
                                "Go to " ++ (p_^.prerexItemPath.to toMarkup))
                      (concatMap toMarkup $ p_^.prerexItemDescription)
 
-instance Texy PrerexItem where
+instance Markupy m => Texy (PrerexItem m) where
   texy p_ = (H.href [] "" $ texy $ fromBack $ p_^.prerexItemPath) ++
             ": " ++
             (concatMap texy $ p_^.prerexItemDescription) ++
