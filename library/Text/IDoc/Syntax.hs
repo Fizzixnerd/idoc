@@ -424,14 +424,6 @@ instance MarkupMarkup m => ToMarkup (InlineMath m) where
 
 instance MarkupMarkup m => ToMarkup (Text.IDoc.Syntax.Markup m) where
   toMarkup mu_ = markupMarkup (mu_^.muAttrs) (mu_^.muSetID) (mu_^.muType)
-    --  $
-    -- case (mu_^.muType) of
-    --   Footnote -> B.span ! class_ "idocFootnote" $ 
-    --               concatMap toMarkup (mu_^.muContents)
-    --   FootnoteRef -> B.span ! class_ "idocFootnoteRef" $
-    --                  concatMap toMarkup (mu_^.muContents)
-    --   Citation -> B.span ! class_ "idocCitation" $
-    --               concatMap toMarkup (mu_^.muContents)
 
 instance MarkupMarkup m => ToMarkup (ListItem m) where
   toMarkup li_ = correctListItemHolder (li_^.liType) (li_^.liLabel) $ 
@@ -455,16 +447,37 @@ instance MarkupMarkup m => ToMarkup (List m) where
       correctListHolder Ordered = ol ! class_ "idocOrderedList"
       correctListHolder Labelled = dl ! class_ "idocLabelledList"
 
-instance ToMarkup ID where
-  toMarkup id_ = idHelper toMarkup id_
+-- instance ToMarkup ID where
+--   toMarkup id_ = idHelper toMarkup id_
 
-instance ToValue ID where
-  toValue id_ = idHelper toValue id_
+-- instance ToValue ID where
+--   toValue id_ = idHelper toValue id_
 
 instance MarkupMarkup m => ToMarkup (Link m) where
   toMarkup l = a ! class_ (toValue $ l^.linkType)
-                 ! A.href (toValue $ l^.linkLocation) $
-                 toMarkup $ l^.linkText
+                 ! A.href (toValue $ l) $
+                 l^.linkText.to toMarkup
+
+instance ToValue (Link m) where
+  toValue l = 
+    let id_ = l^.linkLocation 
+    in 
+      case l^.linkType of
+        Out -> let (proto, hash_) =
+                     case (id_^.idProtocol, id_^.idHash) of
+                       (Just (Protocol p_), Just (IDHash h)) -> (p_ ++ "://", h)
+                       (Just (Protocol p_), Nothing) -> (p_ ++ "://", "")
+                       _ -> error $ "Invalid Outlink:\nProtocol: " ++ (show $ id_^.idProtocol) ++ "\nHash: " ++ (show $ id_^.idHash)
+               in
+                 toValue $ 
+                 proto ++
+                 (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
+                 (if hash_ /= "" then "#" ++ hash_ else "")
+        Internal -> case id_^.idHash of
+                      (Just (IDHash h)) -> toValue $ "#" ++ h
+                      _ -> "WTF"
+        Back -> toValue $ "https://www.independentlearning.science/tiki/" ++
+                (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 
 instance ToValue LinkType where
   toValue Internal = "idocInternal"
@@ -534,28 +547,30 @@ instance ( RecApplicative xs
   MarkupMarkup (CoRec Data.Vinyl.Functor.Identity xs) where
   markupMarkup a_ s x = getIdentity $ onCoRec (Proxy :: Proxy '[MarkupMarkup]) (markupMarkup a_ s) x
 
-
 -- * Some Helper Functions
 
--- | FIXME: This is truly fucked.
-idHelper :: (Text -> t) -> ID -> t
-idHelper decorator id_ = let (base_, hash_) =
-                               case (id_^.idProtocol, id_^.idHash) of
-                                 (Just (Protocol "youtube"), Nothing) -> 
-                                   ("https://youtube.com/embed/", "")
-                                 (Just (Protocol "youtube"), Just _) -> 
-                                   error "got youtube protocol with a hash!?"
-                                 (Nothing, Nothing) -> 
-                                   ("http://www.independentlearning.science/tiki/", "")
-                                 (Just (Protocol p_), Just (IDHash h)) ->
-                                   (p_ ++ "://", h)
-                                 (Nothing, Just (IDHash h)) -> ("/", h)
-                                 (Just (Protocol p_), Nothing) -> (p_ ++ "://", "")
-                         in
-                           decorator $ base_ ++
-                           (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
-                           hash_
+-- -- | FIXME: This is truly fucked.
+-- idHelper :: (Text -> t) -> ID -> t
+-- idHelper decorator id_ = 
+  
 
+--   let (base_, hash_) =
+--         case (id_^.idProtocol, id_^.idHash) of
+--           (Just (Protocol "youtube"), Nothing) -> 
+--             ("https://youtube.com/embed/", "")
+--           (Just (Protocol "youtube"), Just _) -> 
+--             error "got youtube protocol with a hash!?"
+--           (Nothing, Nothing) -> 
+--             ("http://www.independentlearning.science/tiki/", "")
+--           (Just (Protocol p_), Just (IDHash h)) ->
+--             (p_ ++ "://", h)
+--           (Nothing, Just (IDHash h)) -> ("/", h)
+--             (Just (Protocol p_), Nothing) -> (p_ ++ "://", "")
+--   in
+-- decorator $ base_ ++
+--   (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
+--   hash_
+        
 vectorBlockToMarkup :: B.ToMarkup a => 
                        B.AttributeValue 
                     -> (B.Html -> B.Html)
@@ -679,10 +694,6 @@ instance Markupy m => Texy (Link m) where
       fromOut id_ =
         let (proto, hash_) =
               case (id_^.idProtocol, id_^.idHash) of
-                (Just (Protocol "youtube"), Nothing) -> 
-                  ("https://youtube.com/embed/", "")
-                (Just (Protocol "youtube"), Just _) -> 
-                  error "got youtube protocol with a hash!?"
                 (Just (Protocol p_), Just (IDHash h)) ->
                   (p_ ++ "://", h)
                 (Just (Protocol p_), Nothing) ->
@@ -692,9 +703,11 @@ instance Markupy m => Texy (Link m) where
           proto ++
           (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
           (if hash_ /= "" then "#" ++ hash_ else "")
+
       fromInternal id_ = case id_^.idHash of
                            Just (IDHash h) -> h
                            _ -> "WTF"
+
       fromBack id_ = "http://www.independentlearning.science/tiki/" ++ 
                      (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 

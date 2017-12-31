@@ -32,6 +32,8 @@ import Text.IDoc.Render.Tex
 
 import Text.LaTeX
 
+import Control.Monad.Fix
+
 type IlsBlocks m = '[ AdmonitionB m BlockType
                     , BibTex
                     , Code
@@ -74,16 +76,19 @@ instance MarkupMarkup MarkupType where
 instance Markupy MarkupType where
   markupy attrs sid (MarkupType coRec) = markupy attrs sid coRec
 
+type IlsDoc = Doc MarkupType BlockType
+
 mkBlockType :: (Functor f, RElem a (IlsBlocks m) (RIndex a (IlsBlocks m))) => f a -> f (BlockType m)
 mkBlockType = (BlockType <$> CoRec <$> Identity <$>)
 
 mkMarkupType :: (Functor f, RElem a IlsMarkup (RIndex a IlsMarkup)) => f a -> f MarkupType
 mkMarkupType = (MarkupType <$> CoRec <$> Identity <$>)
 
-compileIdocTexFile :: (Markupy m, Blocky m (b m), MonadIO n) => (Doc m b) -> FilePath -> n ()
-compileIdocTexFile doc_ outFile = liftIO $ renderFile outFile $ defaultDecorator (concatMap texy $ unDocTitle $ doc_^.docTitle) (texy doc_ :: LaTeX)
+compileIls :: Text -> IlsDoc
+compileIls t = runIdentity $ compileIdoc (fix markupTypeP) (fix (\b_ m_ n -> blockTypeP m_ b_ n)) t
 
-type IlsDoc = Doc MarkupType BlockType
+compileIdocTexFile :: (Markupy m, Blocky m (b m), MonadIO n) => Doc m b -> FilePath -> n ()
+compileIdocTexFile doc_ outFile = liftIO $ renderFile outFile $ defaultDecorator (concatMap texy $ unDocTitle $ doc_^.docTitle) (texy doc_ :: LaTeX)
 
 blockTypeP :: MarkupParser m -> BlockParser m BlockType -> BlockTypeName -> IDocParser (BlockType m)
 blockTypeP m b "info" = mkBlockType $ InfoB <$> infoP m b
@@ -120,6 +125,7 @@ blockTypeP _ _ s = fail $ unpack $ "Did not recognize block type: " ++ s
 
 markupTypeP :: MarkupParser MarkupType -> MarkupTypeName -> IDocParser MarkupType
 markupTypeP m "footnote" = mkMarkupType $ footnoteP m
+markupTypeP _ s = fail $ unpack $ "Did not recognize markup type: " ++ s
 
 makeLenses ''BlockType
 makeLenses ''MarkupType
