@@ -475,9 +475,14 @@ instance ToValue (Link m) where
                  (if hash_ /= "" then "#" ++ hash_ else "")
         Internal -> case id_^.idHash of
                       (Just (IDHash h)) -> toValue $ "#" ++ h
-                      _ -> "WTF"
+                      _ -> "WTF: ToValue (Link m)"
         Back -> toValue $ "https://www.independentlearning.science/tiki/" ++
                 (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
+
+instance ToValue ID where
+  toValue id_ = case id_^.idHash of
+                  (Just (IDHash h)) -> toValue $ "#" ++ h
+                  _ -> "WTF: ToValue ID"
 
 instance ToValue LinkType where
   toValue Internal = "idocInternal"
@@ -548,42 +553,19 @@ instance ( RecApplicative xs
   markupMarkup a_ s x = getIdentity $ onCoRec (Proxy :: Proxy '[MarkupMarkup]) (markupMarkup a_ s) x
 
 -- * Some Helper Functions
-
--- -- | FIXME: This is truly fucked.
--- idHelper :: (Text -> t) -> ID -> t
--- idHelper decorator id_ = 
-  
-
---   let (base_, hash_) =
---         case (id_^.idProtocol, id_^.idHash) of
---           (Just (Protocol "youtube"), Nothing) -> 
---             ("https://youtube.com/embed/", "")
---           (Just (Protocol "youtube"), Just _) -> 
---             error "got youtube protocol with a hash!?"
---           (Nothing, Nothing) -> 
---             ("http://www.independentlearning.science/tiki/", "")
---           (Just (Protocol p_), Just (IDHash h)) ->
---             (p_ ++ "://", h)
---           (Nothing, Just (IDHash h)) -> ("/", h)
---             (Just (Protocol p_), Nothing) -> (p_ ++ "://", "")
---   in
--- decorator $ base_ ++
---   (concatMap (\(IDBase x) -> x) $ intersperse (IDBase "/") (id_^.idBase)) ++
---   hash_
-        
 vectorBlockToMarkup :: B.ToMarkup a => 
-                       B.AttributeValue 
-                    -> (B.Html -> B.Html)
-                    -> Vector a 
+                       B.AttributeValue -- ^ Html class
+                    -> (B.Html -> B.Html) -- ^ decorator
+                    -> Vector a -- ^ vector block
                     -> B.Html
 vectorBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
                                  dec $
                                  concatMap B.toMarkup
                                  vb
 
-verbatimBlockToMarkup :: B.AttributeValue 
-                      -> (B.Html -> B.Html)
-                      -> Vector Text.IDoc.Syntax.Token
+verbatimBlockToMarkup :: B.AttributeValue -- ^ Html class
+                      -> (B.Html -> B.Html) -- ^ decorator
+                      -> Vector Text.IDoc.Syntax.Token -- ^ verbatim block
                       -> B.Html
 verbatimBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
                                    dec $
@@ -593,7 +575,8 @@ verbatimBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
                                                       B.toMarkup x)
                                    vb
 
-newtype LinkLevel = LinkLevel Int deriving (Eq, Ord, Show)
+newtype LinkLevel = LinkLevel Int
+  deriving (Eq, Ord, Show)
 
 -- | Dear god, don't look at the definition of this.
 listLinks :: Doc m b -> Vector ((SetID m), LinkLevel)

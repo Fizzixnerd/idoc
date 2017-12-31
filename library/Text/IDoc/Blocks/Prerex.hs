@@ -65,13 +65,17 @@ instance MarkupMarkup m => ToMarkup (PrerexItem m) where
   toMarkup p_ = card (defaultCardOptions { cardType = CInfo
                                          , cardDefaultCollapseState = Collapsed
                                          })
-                     (toMarkup $ p_^.prerexItemPath)
+                     itemPath
                      (Just $ p_^.prerexItemPath)
                      prerexItemIcon
                      (Just $ a ! class_ "idocPrerexItemLink"
                                ! A.href (p_^.prerexItemPath.to toValue) $
-                               "Go to " ++ (p_^.prerexItemPath.to toMarkup))
+                               "Go to " ++ itemPath)
                      (concatMap toMarkup $ p_^.prerexItemDescription)
+    where
+      itemPath = toMarkup $ "https://www.independentlearning.science/tiki/" ++
+                 (concatMap unIDBase $ intersperse (IDBase "/") (p_^.prerexItemPath.idBase))
+
 
 instance Markupy m => Texy (PrerexItem m) where
   texy p_ = (H.href [] "" $ texy $ fromBack $ p_^.prerexItemPath) ++

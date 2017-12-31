@@ -75,7 +75,7 @@ instance MarkupMarkup m => BlockMarkup m (YouTube m) where
                                        (div ! class_ "embed-responsive embed-responsive-16by9" $
                                             iframe ! class_ "idocYouTubeEmbed embed-responsive-item"
                                                    ! allowFullscreen "true"
-                                                   ! src (toValue $ yl^.linkLocation) $
+                                                   ! src (toValue ("https://www.youtube.com/embed/" :: Text) ++ (yl^.linkLocation.idBase.to (intersperse (IDBase "/")).to (concatMap unIDBase).to toValue)) $
                                                    "")
     where allowFullscreen = customAttribute "allowfullscreen"
 
