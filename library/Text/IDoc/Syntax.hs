@@ -247,7 +247,7 @@ newtype AttrValue = AttrValue Text deriving (Eq, Ord, Show, Data, Typeable, Gene
 -- | Sum type representing what type of link it is, an "ilink", a
 -- "blink" or, an "olink".
 data LinkType = Internal 
-              | Back
+              | Back Text -- ^ Relative base
               | Out
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
@@ -447,12 +447,6 @@ instance MarkupMarkup m => ToMarkup (List m) where
       correctListHolder Ordered = ol ! class_ "idocOrderedList"
       correctListHolder Labelled = dl ! class_ "idocLabelledList"
 
--- instance ToMarkup ID where
---   toMarkup id_ = idHelper toMarkup id_
-
--- instance ToValue ID where
---   toValue id_ = idHelper toValue id_
-
 instance MarkupMarkup m => ToMarkup (Link m) where
   toMarkup l = a ! class_ (toValue $ l^.linkType)
                  ! A.href (toValue $ l) $
@@ -476,8 +470,8 @@ instance ToValue (Link m) where
         Internal -> case id_^.idHash of
                       (Just (IDHash h)) -> toValue $ "#" ++ h
                       _ -> "WTF: ToValue (Link m)"
-        Back -> toValue $ "https://www.independentlearning.science/tiki/" ++
-                (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
+        Back rel_ -> toValue $ rel_ ++
+                     (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 
 instance ToValue ID where
   toValue id_ = case id_^.idHash of
@@ -486,7 +480,7 @@ instance ToValue ID where
 
 instance ToValue LinkType where
   toValue Internal = "idocInternal"
-  toValue Back = "idocBackLink"
+  toValue (Back _) = "idocBackLink"
   toValue Out = "idocOutLink"
 
 instance MarkupMarkup m => ToMarkup (LinkText m) where
@@ -670,9 +664,9 @@ instance Markupy m => Texy (Link m) where
                     (concatMap texy $ unLinkText $ l^.linkText)
              Internal -> hyperref' (fromInternal $ l^.linkLocation)
                                    (concatMap texy $ unLinkText $ l^.linkText)
-             Back -> H.href [] 
-                     (createURL $ unpack $ fromBack $ l^.linkLocation)
-                     (concatMap texy $ unLinkText $ l^.linkText)
+             Back rel_ -> H.href [] 
+                         (createURL $ unpack $ fromBack (l^.linkLocation) rel_)
+                         (concatMap texy $ unLinkText $ l^.linkText)
     where
       fromOut id_ =
         let (proto, hash_) =
@@ -691,8 +685,8 @@ instance Markupy m => Texy (Link m) where
                            Just (IDHash h) -> h
                            _ -> "WTF"
 
-      fromBack id_ = "http://www.independentlearning.science/tiki/" ++ 
-                     (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
+      fromBack id_ rel_ = rel_ ++ 
+                          (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 
 instance Markupy m => Texy (LinkText m) where
   texy (LinkText lt) = concatMap texy lt
