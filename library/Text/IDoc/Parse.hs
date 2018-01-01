@@ -610,10 +610,19 @@ errorDoc e = S.Doc { S._docTitle = S.DocTitle $ singleton $ S.TextC "Error!"
                    , _docSetID = Nothing
                    }
 
-compileIdoc :: Monad n => MarkupParser m b -> BlockParser m b -> Text -> Text -> n (S.Doc m b)
+compileIdoc :: MarkupParser m b -> BlockParser m b -> Text -> Text -> S.Doc m b
 compileIdoc m b rel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
-                          Left e -> return $ errorDoc e
+                          Left e -> errorDoc e
                           Right x -> do
                             case runIdentity $ runReaderT (MP.runParserT (unIDocParser docP) "<idoc tokens>" x) (IDocReadState rel_ m b) of
-                              Left e -> return $ errorDoc e
-                              Right y -> return y
+                              Left e -> errorDoc e
+                              Right y -> y
+
+compileIdoc' :: MarkupParser m b -> BlockParser m b -> Text -> Text 
+             -> Either (MP.ParseError (MP.Token Text) (MP.ErrorFancy Void)) 
+                       (Either (MP.ParseError (MP.Token S.IDocTokenStream) (MP.ErrorFancy Void))
+                               (S.Doc m b))
+compileIdoc' m b rel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
+  Left e -> Left e
+  Right x -> return $ runIdentity $ runReaderT (MP.runParserT (unIDocParser docP) "<idoc tokens>" x) (IDocReadState rel_ m b)
+

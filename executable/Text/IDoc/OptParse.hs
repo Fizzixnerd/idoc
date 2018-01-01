@@ -11,13 +11,10 @@ import Options.Applicative as OP
 import qualified Data.Text.IO as TIO
 import qualified System.IO as IO
 
-import Text.IDoc.Parse
-import Text.IDoc.Lex
 import qualified Text.IDoc.Syntax as S
 import Text.IDoc.Lang.Ils
 import Text.IDoc.Render.Tex
 
-import qualified Text.Megaparsec as MP
 import qualified Text.Blaze.Html5 as B
 import qualified Text.Blaze.Html.Renderer.Text as R
 import qualified Text.LaTeX as L
@@ -39,12 +36,11 @@ program p =
                     (\inh ->
                         withOutFile
                         (\outh -> m inh outh))
-      fix f = let {x = f x} in x
       doIt m = withFiles (\inh outh -> do
                              cnts <- TIO.hGetContents inh
-                             case MP.parse dTokens "<file>" cnts of
+                             case compileIls' cnts of
                                Left e -> print e
-                               Right x -> case MP.parse ((docP (fix markupTypeP) (fix (\b m_ n -> blockTypeP m_ b n))) :: IDocParser IlsDoc) "<tokens>" x of
+                               Right x -> case x of
                                  Left e -> print e
                                  Right y -> m y outh)
       action' Parse = doIt (\y outh -> TIO.hPutStr outh (fromString $ show y))

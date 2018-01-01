@@ -32,6 +32,10 @@ import Text.IDoc.Render.Tex
 
 import Text.LaTeX
 
+import Data.Void
+
+import qualified Text.Megaparsec as MP
+
 type IlsBlocks m = '[ AdmonitionB m BlockType
                     , BibTex
                     , Code
@@ -83,7 +87,12 @@ mkMarkupType :: (Functor f, RElem a IlsMarkup (RIndex a IlsMarkup)) => f a -> f 
 mkMarkupType = (MarkupType <$> CoRec <$> Identity <$>)
 
 compileIls :: Text -> IlsDoc
-compileIls t = runIdentity $ compileIdoc markupTypeP blockTypeP "http://www.independentlearning.science/tiki/" t
+compileIls t = compileIdoc markupTypeP blockTypeP "http://www.independentlearning.science/tiki/" t
+
+compileIls' :: Text -> Either (MP.ParseError (MP.Token Text) (MP.ErrorFancy Void)) 
+                              (Either (MP.ParseError (MP.Token IDocTokenStream) (MP.ErrorFancy Void))
+                                      IlsDoc)
+compileIls' t = compileIdoc' markupTypeP blockTypeP "http://www.independentlearning.science/tiki/" t
 
 compileIdocTexFile :: (Markupy m, Blocky m (b m), MonadIO n) => Doc m b -> FilePath -> n ()
 compileIdocTexFile doc_ outFile = liftIO $ renderFile outFile $ defaultDecorator (concatMap texy $ unDocTitle $ doc_^.docTitle) (texy doc_ :: LaTeX)
