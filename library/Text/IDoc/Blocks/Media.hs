@@ -79,19 +79,19 @@ instance MarkupMarkup m => BlockMarkup m (YouTube m) where
                                                    "")
     where allowFullscreen = customAttribute "allowfullscreen"
 
-imageP :: MarkupParser m -> IDocParser (Image m)
-imageP m = do
-  (l, sc) <- linkBlockWithOptionalP m
+imageP :: IDocParser m b (Image m)
+imageP = do
+  (l, sc) <- linkBlockWithOptionalP
   return $ Image l sc
 
-videoP :: MarkupParser m -> IDocParser (Video m)
-videoP m = do
-  (l, sc) <- linkBlockWithOptionalP m
+videoP :: IDocParser m b (Video m)
+videoP = do
+  (l, sc) <- linkBlockWithOptionalP
   return $ Video l sc
 
-youTubeP :: MarkupParser m -> IDocParser (YouTube m)
-youTubeP m = do
-  (l, sc) <- linkBlockWithOptionalP m
+youTubeP :: IDocParser m b (YouTube m)
+youTubeP = do
+  (l, sc) <- linkBlockWithOptionalP
   return $ YouTube l sc
 
 instance Markupy m => Blocky m (YouTube m) where

@@ -39,8 +39,8 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Introduction m b) where
     where
       title_ = mTitleT mt "Introduction"
 
-introductionP :: MarkupParser m -> BlockParser m b -> IDocParser (Introduction m b)
-introductionP m b_ = Introduction <$> coreBlockP m b_
+introductionP :: IDocParser m b (Introduction m b)
+introductionP = Introduction <$> coreBlockP
 
 data Summary m b = Summary { _summaryContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -61,8 +61,8 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Summary m b) where
     where
       title_ = mTitleT mt "Summary"
 
-summaryP :: MarkupParser m -> BlockParser m b -> IDocParser (Summary m b)
-summaryP m b_ = Summary <$> coreBlockP m b_
+summaryP :: IDocParser m b (Summary m b)
+summaryP = Summary <$> coreBlockP
 
 makeLenses ''IntroOutroB
 

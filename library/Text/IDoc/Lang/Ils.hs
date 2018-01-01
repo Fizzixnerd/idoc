@@ -32,8 +32,6 @@ import Text.IDoc.Render.Tex
 
 import Text.LaTeX
 
-import Control.Monad.Fix
-
 type IlsBlocks m = '[ AdmonitionB m BlockType
                     , BibTex
                     , Code
@@ -85,47 +83,47 @@ mkMarkupType :: (Functor f, RElem a IlsMarkup (RIndex a IlsMarkup)) => f a -> f 
 mkMarkupType = (MarkupType <$> CoRec <$> Identity <$>)
 
 compileIls :: Text -> IlsDoc
-compileIls t = runIdentity $ compileIdoc (fix markupTypeP) (fix (\b_ m_ n -> blockTypeP m_ b_ n)) t
+compileIls t = runIdentity $ compileIdoc markupTypeP blockTypeP "http://www.independentlearning.science/tiki/" t
 
 compileIdocTexFile :: (Markupy m, Blocky m (b m), MonadIO n) => Doc m b -> FilePath -> n ()
 compileIdocTexFile doc_ outFile = liftIO $ renderFile outFile $ defaultDecorator (concatMap texy $ unDocTitle $ doc_^.docTitle) (texy doc_ :: LaTeX)
 
-blockTypeP :: MarkupParser m -> BlockParser m BlockType -> BlockTypeName -> IDocParser (BlockType m)
-blockTypeP m b "info" = mkBlockType $ InfoB <$> infoP m b
-blockTypeP m b "tip" = mkBlockType $ TipB <$> tipP m b
-blockTypeP m b "caution" = mkBlockType $ CautionB <$> cautionP m b
-blockTypeP m b "warning" = mkBlockType $ WarningB <$> warningP m b
-blockTypeP m b "sidenote" = mkBlockType $ SideNoteB <$> sideNoteP m b
-blockTypeP _ _ "code" = mkBlockType codeP
-blockTypeP m b "connection" = mkBlockType $ connectionP m b
-blockTypeP m b "example" = mkBlockType $ exampleP m b
-blockTypeP m b "exercise" = mkBlockType $ exerciseP m b
-blockTypeP m b "furtherreading" = mkBlockType $ furtherReadingP m b
-blockTypeP m b "introduction" = mkBlockType $ introductionP m b
-blockTypeP m b "summary" = mkBlockType $ summaryP m b
-blockTypeP m b "intuition" = mkBlockType $ intuitionP m b
-blockTypeP _ _ "math" = mkBlockType $ MathB <$> mathP
-blockTypeP _ _ "equation" = mkBlockType $ EquationB <$> equationP
-blockTypeP _ _ "align" = mkBlockType $ AlignB <$> alignP
-blockTypeP m b "theorem" = mkBlockType $ TheoremB <$> theoremP m b
-blockTypeP m b "lemma" = mkBlockType $ LemmaB <$> lemmaP m b
-blockTypeP m b "corollary" = mkBlockType $ CorollaryB <$> corollaryP m b
-blockTypeP m b "proposition" = mkBlockType $ PropositionB <$> propositionP m b
-blockTypeP m b "conjecture" = mkBlockType $ conjectureP m b
-blockTypeP m b "definition" = mkBlockType $ definitionP m b
-blockTypeP m b "proof" = mkBlockType $ proofP m b
-blockTypeP m b "axiom" = mkBlockType $ axiomP m b
-blockTypeP m _ "image" = mkBlockType $ ImageB <$> imageP m
-blockTypeP m _ "video" = mkBlockType $ VideoB <$> videoP m
-blockTypeP m _ "youtube" = mkBlockType $ youTubeP m
-blockTypeP m _ "prerex" = mkBlockType $ prerexP m
-blockTypeP m _ "quote" = mkBlockType $ quoteP m
-blockTypeP m b "recall" = mkBlockType $ recallP m b
-blockTypeP _ _ s = fail $ unpack $ "Did not recognize block type: " ++ s
+blockTypeP :: BlockTypeName -> IDocParser m BlockType (BlockType m)
+blockTypeP "info" = mkBlockType $ InfoB <$> infoP
+blockTypeP "tip" = mkBlockType $ TipB <$> tipP
+blockTypeP "caution" = mkBlockType $ CautionB <$> cautionP
+blockTypeP "warning" = mkBlockType $ WarningB <$> warningP
+blockTypeP "sidenote" = mkBlockType $ SideNoteB <$> sideNoteP
+blockTypeP "code" = mkBlockType codeP
+blockTypeP "connection" = mkBlockType $ connectionP
+blockTypeP "example" = mkBlockType $ exampleP
+blockTypeP "exercise" = mkBlockType $ exerciseP
+blockTypeP "furtherreading" = mkBlockType $ furtherReadingP
+blockTypeP "introduction" = mkBlockType $ introductionP
+blockTypeP "summary" = mkBlockType $ summaryP
+blockTypeP "intuition" = mkBlockType $ intuitionP
+blockTypeP "math" = mkBlockType $ MathB <$> mathP
+blockTypeP "equation" = mkBlockType $ EquationB <$> equationP
+blockTypeP "align" = mkBlockType $ AlignB <$> alignP
+blockTypeP "theorem" = mkBlockType $ TheoremB <$> theoremP
+blockTypeP "lemma" = mkBlockType $ LemmaB <$> lemmaP
+blockTypeP "corollary" = mkBlockType $ CorollaryB <$> corollaryP
+blockTypeP "proposition" = mkBlockType $ PropositionB <$> propositionP
+blockTypeP "conjecture" = mkBlockType $ conjectureP
+blockTypeP "definition" = mkBlockType $ definitionP
+blockTypeP "proof" = mkBlockType $ proofP
+blockTypeP "axiom" = mkBlockType $ axiomP
+blockTypeP "image" = mkBlockType $ ImageB <$> imageP
+blockTypeP "video" = mkBlockType $ VideoB <$> videoP
+blockTypeP "youtube" = mkBlockType $ youTubeP
+blockTypeP "prerex" = mkBlockType $ prerexP
+blockTypeP "quote" = mkBlockType $ quoteP
+blockTypeP "recall" = mkBlockType $ recallP
+blockTypeP s = fail $ unpack $ "Did not recognize block type: " ++ s
 
-markupTypeP :: MarkupParser MarkupType -> MarkupTypeName -> IDocParser MarkupType
-markupTypeP m "footnote" = mkMarkupType $ footnoteP m
-markupTypeP _ s = fail $ unpack $ "Did not recognize markup type: " ++ s
+markupTypeP :: MarkupTypeName -> IDocParser MarkupType b MarkupType
+markupTypeP "footnote" = mkMarkupType $ footnoteP
+markupTypeP s = fail $ unpack $ "Did not recognize markup type: " ++ s
 
 makeLenses ''BlockType
 makeLenses ''MarkupType

@@ -34,9 +34,9 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Example m b) where
     where
       title_ = mTitleT mt "Example"
 
-exampleP :: MarkupParser m -> BlockParser m b -> IDocParser (Example m b)
-exampleP m b_ = do
-  (q_, s) <- doubleCoreBlockP m b_
+exampleP :: IDocParser m b (Example m b)
+exampleP = do
+  (q_, s) <- doubleCoreBlockP
   return $ Example q_ s
 
 makeLenses ''Example

@@ -39,7 +39,7 @@ codeBlock (AttrMap attrs) _ msid (Code c) = (mLabel msid $
                      (\(AttrValue x) -> if x == "idoc" then "" else texy x)
                      (join $ attrs ^.at (AttrName "lang"))
 
-codeP :: IDocParser Code
+codeP :: IDocParser m b Code
 codeP = Code <$> uninterpretedBlockP
 
 makeLenses ''Code

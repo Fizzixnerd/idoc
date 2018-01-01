@@ -29,13 +29,13 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Recall m b) whe
 
 instance (Markupy m, Blocky m (b m)) => Blocky m (Recall m b) where
   blocky _ mt msid (Recall _ r) = (subsubsection $ mLabel msid title_) ++
-                                 vectorTexy r
+                                  vectorTexy r
     where
       title_ = mTitleT mt "Recall"
 
-recallP :: MarkupParser m -> BlockParser m b -> IDocParser (Recall m b)
-recallP m b_ = do
-  (l, c) <- vectorLinkCoreBlockP m b_
+recallP :: IDocParser m b (Recall m b)
+recallP = do
+  (l, c) <- vectorLinkCoreBlockP
   return $ Recall l c
 
 makeLenses ''Recall

@@ -28,6 +28,5 @@ instance MarkupMarkup m => MarkupMarkup (Footnote m) where
 instance Markupy m => Markupy (Footnote m) where
   markupy _ _ fn = footnote $ concatMap texy $ fn^.footnoteContents
 
-footnoteP :: MarkupParser m -> IDocParser (Footnote m)
-footnoteP m = do
-  Footnote <$> markupContentsP m
+footnoteP :: IDocParser m b (Footnote m)
+footnoteP = Footnote <$> markupContentsP

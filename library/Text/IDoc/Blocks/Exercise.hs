@@ -32,7 +32,7 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Exercise m b) where
     where
       title_ = mTitleT mt "Exercise"
 
-exerciseP :: MarkupParser m -> BlockParser m b -> IDocParser (Exercise m b)
-exerciseP m b_ = Exercise <$> coreBlockP m b_
+exerciseP :: IDocParser m b (Exercise m b)
+exerciseP = Exercise <$> coreBlockP
 
 makeLenses ''Exercise

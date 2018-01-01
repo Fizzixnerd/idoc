@@ -66,8 +66,8 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Info m b) where
     where
       title_ = mTitleT mt "Info"
 
-infoP :: MarkupParser m -> BlockParser m b -> IDocParser (Info m b)
-infoP m b_ = Info <$> coreBlockP m b_
+infoP :: IDocParser m b (Info m b)
+infoP = Info <$> coreBlockP
 
 data Tip m b = Tip { _tipContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -86,8 +86,8 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Tip m b) where
     where
       title_ = mTitleT mt "Tip"
 
-tipP :: MarkupParser m -> BlockParser m b -> IDocParser (Tip m b)
-tipP m b_ = Tip <$> coreBlockP m b_
+tipP :: IDocParser m b (Tip m b)
+tipP = Tip <$> coreBlockP
 
 data Caution m b = Caution { _cautionContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -106,8 +106,8 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Caution m b) where
     where
       title_ = mTitleT mt "Caution"
 
-cautionP :: MarkupParser m -> BlockParser m b -> IDocParser (Caution m b)
-cautionP m b_ = Caution <$> coreBlockP m b_
+cautionP :: IDocParser m b (Caution m b)
+cautionP = Caution <$> coreBlockP
 
 data Warning m b = Warning { _warningContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -126,8 +126,8 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Warning m b) where
     where 
       title_ = mTitleT mt "Warning"
 
-warningP :: MarkupParser m -> BlockParser m b -> IDocParser (Warning m b)
-warningP m b_ = Warning <$> coreBlockP m b_
+warningP :: IDocParser m b (Warning m b)
+warningP = Warning <$> coreBlockP
 
 data SideNote m b = SideNote { _sideNoteContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -140,8 +140,8 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (SideNote m b) where
     where
       title_ = mTitleT mt "SideNote"
 
-sideNoteP :: MarkupParser m -> BlockParser m b -> IDocParser (SideNote m b)
-sideNoteP m b_ = SideNote <$> coreBlockP m b_
+sideNoteP :: IDocParser m b (SideNote m b)
+sideNoteP = SideNote <$> coreBlockP
 
 makeLenses ''AdmonitionB
 

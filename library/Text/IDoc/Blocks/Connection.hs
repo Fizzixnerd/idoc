@@ -31,7 +31,7 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Connection m b) where
                                    vectorTexy c
     where title_ = mTitleT mt "Connection"
 
-connectionP :: MarkupParser m -> BlockParser m b -> IDocParser (Connection m b)
-connectionP m b_ = Connection <$> coreBlockP m b_
+connectionP :: IDocParser m b (Connection m b)
+connectionP = Connection <$> coreBlockP
 
 makeLenses ''Connection

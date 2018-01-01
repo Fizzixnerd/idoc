@@ -194,46 +194,46 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Text.IDoc.Block
                                                            Nothing
                                                            (vectorBlockToMarkup "idocDefinition" id d)
 
-mathP :: IDocParser Math
+mathP :: IDocParser m b Math
 mathP = Math <$> uninterpretedBlockP
 
-equationP :: IDocParser Equation
+equationP :: IDocParser m b Equation
 equationP = Equation <$> uninterpretedBlockP
 
-alignP :: IDocParser Align
+alignP :: IDocParser m b Align
 alignP = Align <$> uninterpretedBlockP
 
-theoremP :: MarkupParser m -> BlockParser m b -> IDocParser (Theorem m b)
-theoremP m b_ = do
-  (s, p_) <- coreBlockWithOptionalP m b_
+theoremP :: IDocParser m b (Theorem m b)
+theoremP = do
+  (s, p_) <- coreBlockWithOptionalP
   return $ Theorem s p_
 
-lemmaP :: MarkupParser m -> BlockParser m b -> IDocParser (Lemma m b)
-lemmaP m b_ = do
-  (s, p_) <- coreBlockWithOptionalP m b_
+lemmaP :: IDocParser m b (Lemma m b)
+lemmaP = do
+  (s, p_) <- coreBlockWithOptionalP
   return $ Lemma s p_
 
-corollaryP :: MarkupParser m -> BlockParser m b -> IDocParser (Corollary m b)
-corollaryP m b_ = do
-  (s, p_) <- coreBlockWithOptionalP m b_
+corollaryP :: IDocParser m b (Corollary m b)
+corollaryP = do
+  (s, p_) <- coreBlockWithOptionalP
   return $ Corollary s p_
 
-propositionP :: MarkupParser m -> BlockParser m b -> IDocParser (Proposition m b)
-propositionP m b_ = do
-  (s, p_) <- coreBlockWithOptionalP m b_
+propositionP :: IDocParser m b (Proposition m b)
+propositionP = do
+  (s, p_) <- coreBlockWithOptionalP
   return $ Proposition s p_
 
-conjectureP :: MarkupParser m -> BlockParser m b -> IDocParser (Conjecture m b)
-conjectureP m b_ = Conjecture <$> coreBlockP m b_
+conjectureP :: IDocParser m b (Conjecture m b)
+conjectureP = Conjecture <$> coreBlockP
 
-axiomP :: MarkupParser m -> BlockParser m b -> IDocParser (Axiom m b)
-axiomP m b_ = Axiom <$> coreBlockP m b_
+axiomP :: IDocParser m b (Axiom m b)
+axiomP = Axiom <$> coreBlockP
 
-proofP :: MarkupParser m -> BlockParser m b -> IDocParser (Proof m b)
-proofP m b_ = Proof <$> coreBlockP m b_
+proofP :: IDocParser m b (Proof m b)
+proofP = Proof <$> coreBlockP
 
-definitionP :: MarkupParser m -> BlockParser m b -> IDocParser (Definition m b)
-definitionP m b_ = Text.IDoc.Blocks.Math.Definition <$> coreBlockP m b_
+definitionP :: IDocParser m b (Definition m b)
+definitionP = Text.IDoc.Blocks.Math.Definition <$> coreBlockP
 
 theoremBlock :: (LaTeXC l, Markupy m, Blocky m (b m)) => 
                 Maybe (BlockTitle m)

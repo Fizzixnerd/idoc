@@ -33,7 +33,7 @@ instance Markupy m => Blocky m (Quote m) where
                                quote $
                                vectorTexy q_
 
-quoteP :: MarkupParser m -> IDocParser (Quote m)
-quoteP m = Quote <$> simpleCoreBlockP m
+quoteP :: IDocParser m b (Quote m)
+quoteP = Quote <$> simpleCoreBlockP
 
 makeLenses ''Quote

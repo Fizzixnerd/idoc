@@ -21,11 +21,11 @@ import ClassyPrelude hiding (div)
 data Prerex m = Prerex { _prerexContents :: Vector (PrerexItem m) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-prerexP :: MarkupParser m -> IDocParser (Prerex m)
-prerexP m = Prerex <$> do
+prerexP :: IDocParser m b (Prerex m)
+prerexP = Prerex <$> do
   blockStarterP
   someTill blockEnderP $ do
-    x <- prerexItemP m
+    x <- prerexItemP
     newlineP
     return x
 
@@ -34,10 +34,10 @@ data PrerexItem m = PrerexItem { _prerexItemPath :: ID
                                }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-prerexItemP :: MarkupParser m -> IDocParser (PrerexItem m)
-prerexItemP m = do
+prerexItemP :: IDocParser m b (PrerexItem m)
+prerexItemP = do
   path <- idP
-  desc <- markupContentsP m
+  desc <- markupContentsP
   return $ PrerexItem { _prerexItemPath = path
                       , _prerexItemDescription = desc
                       }

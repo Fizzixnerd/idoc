@@ -24,8 +24,8 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Intuition m b) 
                                      Nothing
                                      (vectorBlockToMarkup "idocIntuition" id i_)
 
-intuitionP :: MarkupParser m -> BlockParser m b -> IDocParser (Intuition m b)
-intuitionP m b_ = Intuition <$> coreBlockP m b_
+intuitionP :: IDocParser m b (Intuition m b)
+intuitionP = Intuition <$> coreBlockP
 
 instance (Markupy m, Blocky m (b m)) => Blocky m (Intuition m b) where
   blocky _ mt msid (Intuition i_) = intuitionBlock (mLabel msid title_) (vectorTexy i_)

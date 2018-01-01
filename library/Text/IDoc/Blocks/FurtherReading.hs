@@ -32,7 +32,7 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (FurtherReading m b) where
     where
       title_ = mTitleT mt "Further Reading"
 
-furtherReadingP :: MarkupParser m -> BlockParser m b -> IDocParser (FurtherReading m b)
-furtherReadingP m b_ = FurtherReading <$> coreBlockP m b_
+furtherReadingP :: IDocParser m b (FurtherReading m b)
+furtherReadingP = FurtherReading <$> coreBlockP
 
 makeLenses ''FurtherReading

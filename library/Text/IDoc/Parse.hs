@@ -17,35 +17,47 @@ import qualified Text.Megaparsec as MP
 import qualified Text.IDoc.Syntax as S
 import qualified Text.IDoc.Lex as L
 
+import Control.Lens
+
 type IDocParseError = MP.ParseError S.DToken (MP.ErrorFancy Void)
-type IDocParser = MP.Parsec (MP.ErrorFancy Void) S.IDocTokenStream
+
+data IDocReadState m b = IDocReadState { _rel :: Text
+                                       , _mp  :: MarkupParser m b
+                                       , _bp  :: BlockParser m b
+                                       }
+
+newtype IDocParser m b a = IDocParser { unIDocParser :: (MP.ParsecT (MP.ErrorFancy Void) S.IDocTokenStream (ReaderT (IDocReadState m b) Identity)  a) }
+  deriving (Functor, Applicative, Monad, MonadReader (IDocReadState m b), MonadPlus,
+            MP.MonadParsec (MP.ErrorFancy Void) S.IDocTokenStream, Alternative)
 
 type BlockTypeName = Text
-type InnerBlockParser m b = MarkupParser m -> BlockTypeName -> IDocParser (b m)
-type BlockParser m b = MarkupParser m -> BlockTypeName -> IDocParser (b m)
+type InnerBlockParser m b = MarkupParser m b -> BlockTypeName -> IDocParser m b (b m)
+type BlockParser m b = BlockTypeName -> IDocParser m b (b m)
 
 type MarkupTypeName = Text
-type MarkupParser m = MarkupTypeName -> IDocParser m
+type MarkupParser m b = MarkupTypeName -> IDocParser m b m
 
-manyV :: IDocParser a -> IDocParser (Vector a)
+makeLenses ''IDocReadState
+
+manyV :: IDocParser m b a -> IDocParser m b (Vector a)
 manyV x = fromList <$> many x
 
-someV :: IDocParser a -> IDocParser (Vector a)
+someV :: IDocParser m b a -> IDocParser m b (Vector a)
 someV x = fromList <$> some x
 
-sepEndByV :: IDocParser a -> IDocParser sep -> IDocParser (Vector a)
+sepEndByV :: IDocParser m b a -> IDocParser m b sep -> IDocParser m b (Vector a)
 sepEndByV x sep = fromList <$> (MP.sepEndBy x sep)
 
-sepEndBy1V :: IDocParser a -> IDocParser sep -> IDocParser (Vector a)
+sepEndBy1V :: IDocParser m b a -> IDocParser m b sep -> IDocParser m b (Vector a)
 sepEndBy1V x sep = fromList <$> (MP.sepEndBy1 x sep)
 
-sepByV :: IDocParser a -> IDocParser sep -> IDocParser (Vector a)
+sepByV :: IDocParser m b a -> IDocParser m b sep -> IDocParser m b (Vector a)
 sepByV x sep = fromList <$> (MP.sepBy x sep)
 
-sepBy1V :: IDocParser a -> IDocParser sep -> IDocParser (Vector a)
+sepBy1V :: IDocParser m b a -> IDocParser m b sep -> IDocParser m b (Vector a)
 sepBy1V x sep = fromList <$> (MP.sepBy1 x sep)
 
-manyTween :: IDocParser l -> IDocParser r -> IDocParser a -> IDocParser (Vector a)
+manyTween :: IDocParser m b l -> IDocParser m b r -> IDocParser m b a -> IDocParser m b (Vector a)
 manyTween l r x = do
   void l
   xs <- manyV $ do
@@ -54,7 +66,7 @@ manyTween l r x = do
   void r
   return xs
 
-someTween :: IDocParser l -> IDocParser r -> IDocParser a -> IDocParser (Vector a)
+someTween :: IDocParser m b l -> IDocParser m b r -> IDocParser m b a -> IDocParser m b (Vector a)
 someTween l r x = do
   void l
   xs <- someV $ do
@@ -63,7 +75,7 @@ someTween l r x = do
   void r
   return xs
 
-someTill :: IDocParser ender -> IDocParser a -> IDocParser (Vector a)
+someTill :: IDocParser m b ender -> IDocParser m b a -> IDocParser m b (Vector a)
 someTill e x = do
   xs <- someV $ do
     MP.notFollowedBy e
@@ -71,7 +83,7 @@ someTill e x = do
   void e
   return xs
 
-someTill' :: IDocParser ender -> IDocParser a -> IDocParser (Vector a, ender)
+someTill' :: IDocParser m b ender -> IDocParser m b a -> IDocParser m b (Vector a, ender)
 someTill' e x = do
   xs <- someV $ do
     MP.notFollowedBy e
@@ -79,7 +91,7 @@ someTill' e x = do
   e_ <- e
   return (xs, e_)
 
-manyTill :: IDocParser ender -> IDocParser a -> IDocParser (Vector a)
+manyTill :: IDocParser m b ender -> IDocParser m b a -> IDocParser m b (Vector a)
 manyTill e x = do
   xs <- manyV $ do
     MP.notFollowedBy e
@@ -96,72 +108,72 @@ satisfy f = MP.token test Nothing
       else
         Left (pure (MP.Tokens (y NE.:| [])), mempty)
 
-tokenP :: S.Token -> IDocParser S.Token
+tokenP :: S.Token -> IDocParser m b S.Token
 tokenP t = Text.IDoc.Parse.satisfy (== t) MP.<?> (show t)
 
-anyTokenP :: IDocParser S.Token
+anyTokenP :: IDocParser m b S.Token
 anyTokenP = Text.IDoc.Parse.satisfy (const True) MP.<?> "Any Token"
 
-newlineP :: IDocParser ()
+newlineP :: IDocParser m b ()
 newlineP = void $ tokenP S.Newline
 
-dashP :: IDocParser ()
+dashP :: IDocParser m b ()
 dashP = void $ tokenP S.Dash
 
-plusP :: IDocParser ()
+plusP :: IDocParser m b ()
 plusP = void $ tokenP S.Plus
 
-fSlashP :: IDocParser ()
+fSlashP :: IDocParser m b ()
 fSlashP = void $ tokenP S.FSlash
 
-octothorpeP :: IDocParser ()
+octothorpeP :: IDocParser m b ()
 octothorpeP = void $ tokenP S.Octothorpe
 
-asteriskP :: IDocParser ()
+asteriskP :: IDocParser m b ()
 asteriskP = void $ tokenP S.Asterisk
 
 -- | Text
-actualTextP :: IDocParser Text
+actualTextP :: IDocParser m b Text
 actualTextP = unText <$> anyTokenP MP.<?> "Some Actual Text"
   where
     unText (S.TextT x) = x
     unText x = error $ "Not a text: `" ++ (show x) ++ "'."
 
-textP :: IDocParser Text
+textP :: IDocParser m b Text
 textP = S.unToken <$> anyTokenP
 
-mkQTextP :: MarkupParser m -> Text -> S.Token -> S.TextType -> IDocParser (S.QText m)
-mkQTextP m rel t tt = MP.label "Quoted Text" $ do
-  txt <- someTween tP tP (simpleCoreP m rel)
+mkQTextP :: S.Token -> S.TextType -> IDocParser m b (S.QText m)
+mkQTextP t tt = MP.label "Quoted Text" $ do
+  txt <- someTween tP tP simpleCoreP
   return $ S.QText { S._qtText = txt
                    , S._qtType = tt
                    }
   where tP = tokenP t
 
-strongP :: MarkupParser m -> Text -> IDocParser (S.QText m)
-strongP m rel = mkQTextP m rel S.Asterisk S.Strong
+strongP :: IDocParser m b (S.QText m)
+strongP = mkQTextP S.Asterisk S.Strong
   
-emphasisP :: MarkupParser m -> Text -> IDocParser (S.QText m)
-emphasisP m rel = mkQTextP m rel S.Underscore S.Emphasis
+emphasisP :: IDocParser m b (S.QText m)
+emphasisP = mkQTextP S.Underscore S.Emphasis
 
-monospaceP :: MarkupParser m -> Text -> IDocParser (S.QText m)
-monospaceP m rel = mkQTextP m rel S.BackTick S.Monospace
+monospaceP :: IDocParser m b (S.QText m)
+monospaceP = mkQTextP S.BackTick S.Monospace
 
-superscriptP :: MarkupParser m -> Text -> IDocParser (S.QText m)
-superscriptP m rel = mkQTextP m rel S.Caret S.Superscript
+superscriptP :: IDocParser m b (S.QText m)
+superscriptP = mkQTextP S.Caret S.Superscript
 
-subscriptP :: MarkupParser m -> Text -> IDocParser (S.QText m)
-subscriptP m rel = mkQTextP m rel S.Tilde S.Subscript
+subscriptP :: IDocParser m b (S.QText m)
+subscriptP = mkQTextP S.Tilde S.Subscript
 
-qTextP :: MarkupParser m -> Text -> IDocParser (S.QText m)
-qTextP m rel =  MP.try (strongP m rel)
-            <|> MP.try (emphasisP m rel)
-            <|> MP.try (monospaceP m rel)
-            <|> MP.try (superscriptP m rel)
-            <|>        (subscriptP m rel)
+qTextP :: IDocParser m b (S.QText m)
+qTextP =  MP.try strongP
+      <|> MP.try emphasisP
+      <|> MP.try monospaceP
+      <|> MP.try superscriptP
+      <|>        subscriptP
 
 -- | AttrMaps
-attrValPairP :: IDocParser (S.AttrName, Maybe S.AttrValue)
+attrValPairP :: IDocParser m b (S.AttrName, Maybe S.AttrValue)
 attrValPairP = MP.label "Attribute-Value Pair" $ do
   n <- S.AttrName <$> actualTextP
   v <- optional $ do
@@ -171,7 +183,7 @@ attrValPairP = MP.label "Attribute-Value Pair" $ do
   where
     equalsP = void $ tokenP S.Equals
 
-attrMapP :: IDocParser S.AttrMap
+attrMapP :: IDocParser m b S.AttrMap
 attrMapP = MP.label "An AttrMap" $ do
   lBracketP
   avps <- MP.sepBy1 attrValPairP commaP
@@ -183,7 +195,7 @@ attrMapP = MP.label "An AttrMap" $ do
     rBracketP = void $ tokenP S.RBracket
     commaP = void $ tokenP S.Comma
 
-optionalAttrMapP :: IDocParser S.AttrMap
+optionalAttrMapP :: IDocParser m b S.AttrMap
 optionalAttrMapP = MP.label "An Optional AttrMap" $ do
   am <- optional attrMapP
   case am of
@@ -191,12 +203,12 @@ optionalAttrMapP = MP.label "An Optional AttrMap" $ do
     Just am' -> return $ am'
 
 -- | SetID
-setIDP :: MarkupParser m -> Text -> IDocParser (S.SetID m)
-setIDP m rel = MP.label "A SetID" $ do
+setIDP :: IDocParser m b (S.SetID m)
+setIDP = MP.label "A SetID" $ do
   lBracketP >> lBracketP
   h <- idHashP
   rBracketP >> rBracketP
-  d <- markupContentsP m rel
+  d <- markupContentsP
   return $ S.SetID { S._sidName = h
                    , S._sidDisplay = d }
   where
@@ -204,21 +216,21 @@ setIDP m rel = MP.label "A SetID" $ do
     rBracketP = void $ tokenP S.RBracket
 
 -- | Links
-linkOpenerP :: IDocParser ()
+linkOpenerP :: IDocParser m b ()
 linkOpenerP = do
   void $ langle
   void $ langle
   where
     langle = tokenP S.LAngle
 
-linkCloserP :: IDocParser ()
+linkCloserP :: IDocParser m b ()
 linkCloserP = do
   void $ rangle
   void $ rangle
   where
     rangle = tokenP S.RAngle
 
-protocolP :: IDocParser S.Protocol
+protocolP :: IDocParser m b S.Protocol
 protocolP = do
   x <- Text.IDoc.Parse.satisfy isRecognized
   colonP
@@ -232,7 +244,7 @@ protocolP = do
     isRecognized _ = False
     colonP = void $ tokenP S.Colon
 
-idBaseP :: IDocParser S.IDBase
+idBaseP :: IDocParser m b S.IDBase
 idBaseP = S.IDBase <$> do
   fSlashP
   concat <$> (manyV $ do
@@ -244,7 +256,7 @@ idBaseP = S.IDBase <$> do
     rAngleP = void $ tokenP S.RAngle
     lBraceP = void $ tokenP S.LBrace
 
-idHashP :: IDocParser S.IDHash
+idHashP :: IDocParser m b S.IDHash
 idHashP = S.IDHash <$> do
   octothorpeP
   concat <$> (manyV $ do
@@ -254,7 +266,7 @@ idHashP = S.IDHash <$> do
     rBracketP = void $ tokenP S.RBracket
     rAngleP = void $ tokenP S.RAngle
 
-idP :: IDocParser S.ID
+idP :: IDocParser m b S.ID
 idP = do
   p <- optional protocolP
   b <- manyV idBaseP
@@ -265,17 +277,18 @@ idP = do
                 }
   where
 
-linkP :: MarkupParser m -> Text -> IDocParser (S.Link m)
-linkP m rel = MP.label "A Link" $ do
+linkP :: IDocParser m b (S.Link m)
+linkP = MP.label "A Link" $ do
+  r <- view rel
   am <- optionalAttrMapP
   linkOpenerP
   i <- idP
   let ty = case i of
         S.ID { S._idProtocol = Just _ } -> S.Out
         S.ID { S._idBase = b } | null b -> S.Internal
-        _                               -> S.Back rel
+        _                               -> S.Back r
   linkCloserP
-  txt <- optionalMarkupContentsP m rel
+  txt <- optionalMarkupContentsP
   return $ S.Link { S._linkText = S.LinkText txt
                   , S._linkAttrs = am
                   , S._linkLocation = i
@@ -283,16 +296,16 @@ linkP m rel = MP.label "A Link" $ do
                   }
 
 -- | Lists
-mkListItemP :: MarkupParser m -> Text -> S.Token -> Bool -> S.ListType-> IDocParser (S.ListItem m)
-mkListItemP m rel starter hasLabel ty = do
+mkListItemP :: S.Token -> Bool -> S.ListType-> IDocParser m b (S.ListItem m)
+mkListItemP starter hasLabel ty = do
   starterP
   lbl <- if hasLabel then
-           Just <$> (someTill doubleStarterP (simpleCoreP m rel))
+           Just <$> (someTill doubleStarterP simpleCoreP)
          else
            return Nothing
   cnt <- someV $ do
     MP.notFollowedBy $ newlineP >> some newlineP
-    simpleCoreP m rel
+    simpleCoreP
   return $ S.ListItem { S._liAttrs = S.AttrMap M.empty
                       , S._liLabel = S.ListLabel <$> lbl
                       , S._liContents = cnt
@@ -304,26 +317,26 @@ mkListItemP m rel starter hasLabel ty = do
     starterP = void $ tokenP starter
     doubleStarterP = starterP >> starterP
 
-unorderedItemP :: MarkupParser m -> Text -> IDocParser (S.ListItem m)
-unorderedItemP m rel = mkListItemP m rel S.Dash False S.Unordered MP.<?> "An Unordered List Item"
+unorderedItemP :: IDocParser m b (S.ListItem m)
+unorderedItemP = mkListItemP S.Dash False S.Unordered MP.<?> "An Unordered List Item"
 
-orderedItemP :: MarkupParser m -> Text -> IDocParser (S.ListItem m)
-orderedItemP m rel = mkListItemP m rel S.Period False S.Ordered MP.<?> "An Ordered List Item"
+orderedItemP :: IDocParser m b (S.ListItem m)
+orderedItemP = mkListItemP S.Period False S.Ordered MP.<?> "An Ordered List Item"
 
-labelledItemP :: MarkupParser m -> Text -> IDocParser (S.ListItem m)
-labelledItemP m rel = mkListItemP m rel S.Colon True S.Labelled MP.<?> "A Labelled List Item"
+labelledItemP :: IDocParser m b (S.ListItem m)
+labelledItemP = mkListItemP S.Colon True S.Labelled MP.<?> "A Labelled List Item"
 
-listP :: MarkupParser m -> Text -> IDocParser (S.List m)
-listP m rel = MP.label "A List" $ S.List <$> (MP.try (sepEndBy1V (unorderedItemP m rel) (some newlineP))
-                                         <|>  MP.try (sepEndBy1V (orderedItemP m rel)   (some newlineP))
-                                         <|>         (sepEndBy1V (labelledItemP m rel)  (some newlineP)))
+listP :: IDocParser m b (S.List m)
+listP = MP.label "A List" $ S.List <$> (MP.try (sepEndBy1V unorderedItemP (some newlineP))
+                                   <|>  MP.try (sepEndBy1V orderedItemP   (some newlineP))
+                                   <|>         (sepEndBy1V labelledItemP  (some newlineP)))
 
 -- | Inline Math
-inlineMathP :: MarkupParser m -> Text -> IDocParser (S.InlineMath m)
-inlineMathP m rel = MP.label "Some Inline Math" $ do
+inlineMathP :: IDocParser m b (S.InlineMath m)
+inlineMathP = MP.label "Some Inline Math" $ do
   am <- optionalAttrMapP
   cnt <- someTween dollarSignP dollarSignP anyTokenP
-  sid <- optional (setIDP m rel)
+  sid <- optional setIDP
   return $ S.InlineMath { S._imAttrs = am
                         , S._imContents = cnt
                         , S._imSetID = sid
@@ -332,28 +345,29 @@ inlineMathP m rel = MP.label "Some Inline Math" $ do
     dollarSignP = void $ tokenP S.DollarSign
 
 -- | Markup
-markupContentsP :: MarkupParser m -> Text -> IDocParser (Vector (S.SimpleCore m))
-markupContentsP m rel = MP.label "Some Text Between Braces" $ do
-  someTween lBraceP rBraceP (simpleCoreP m rel)
+markupContentsP :: IDocParser m b (Vector (S.SimpleCore m))
+markupContentsP = MP.label "Some Text Between Braces" $ do
+  someTween lBraceP rBraceP simpleCoreP
   where
     lBraceP = tokenP S.LBrace
     rBraceP = tokenP S.RBrace
 
-optionalMarkupContentsP :: MarkupParser m -> Text -> IDocParser (Vector (S.SimpleCore m))
-optionalMarkupContentsP m rel = do
-  mu <- optional (markupContentsP m rel)
+optionalMarkupContentsP :: IDocParser m b (Vector (S.SimpleCore m))
+optionalMarkupContentsP = do
+  mu <- optional markupContentsP
   case mu of
     Nothing -> return empty
     Just xs -> return xs
 
-defaultMarkupP :: MarkupParser m -> Text -> IDocParser (S.Markup m)
-defaultMarkupP m rel = do
+defaultMarkupP :: IDocParser m b (S.Markup m)
+defaultMarkupP = do
+  m <- view mp
   am <- optionalAttrMapP
   percentSignP
   name <- textP
   percentSignP
   cnt <- m name
-  sid <- optional (setIDP m rel)
+  sid <- optional setIDP
   return $ S.Markup { S._muType = cnt
                     , S._muAttrs = am
                     , S._muSetID = sid
@@ -361,33 +375,33 @@ defaultMarkupP m rel = do
   where
     percentSignP = void $ tokenP S.PercentSign
 
--- citationP :: IDocParser S.Markup
+-- citationP :: IDocParser m b S.Markup
 -- citationP = mkMarkupP "cite" S.Citation MP.<?> "A Citation"
 
--- footnoteP :: IDocParser S.Markup
+-- footnoteP :: IDocParser m b S.Markup
 -- footnoteP = MP.label "A Footnote" $ do
 --   mu <- mkMarkupP "footnote" S.Footnote 
 --   sid <- setIDP
 --   return $ mu { S._muSetID = Just sid }
 
--- footnoteRefP :: IDocParser S.Markup
+-- footnoteRefP :: IDocParser m b S.Markup
 -- footnoteRefP = mkMarkupP "footenoteref" S.FootnoteRef MP.<?> "A Footnote Reference"
 
--- markupP :: IDocParser S.Markup
+-- markupP :: IDocParser m b S.Markup
 -- markupP = MP.label "Some Markup" $ MP.try citationP
 --                             <|> MP.try footnoteP
 --                             <|>        footnoteRefP
 
 -- | Paragraphs
-paragraphP :: MarkupParser m -> Text -> IDocParser (S.Paragraph m)
-paragraphP m rel = do
+paragraphP :: IDocParser m b (S.Paragraph m)
+paragraphP = do
   void $ many newlineP
   cnt <- someV $ do
     MP.notFollowedBy $ MP.eitherP (MP.try $ newlineP >> some newlineP) $
                        MP.eitherP (MP.try $ blockEnderP') $
                                             doubleLBracketP
-    simpleCoreP m rel
-  sid <- optional (setIDP m rel)
+    simpleCoreP
+  sid <- optional setIDP
   void $ many newlineP
   return $ S.Paragraph { S._paraContents = cnt
                        , S._paraSetID = sid
@@ -396,7 +410,7 @@ paragraphP m rel = do
     lBracketP = void $ tokenP S.LBracket
     doubleLBracketP = lBracketP >> lBracketP
 
-blockTypeName :: IDocParser Text
+blockTypeName :: IDocParser m b Text
 blockTypeName = MP.label "A Block Type Name" $ do
   atSignP
   x <- textP
@@ -405,89 +419,86 @@ blockTypeName = MP.label "A Block Type Name" $ do
   where  
     atSignP = void $ tokenP S.AtSign
 
-optionalBlockTitle :: MarkupParser m -> Text -> IDocParser (Maybe (S.BlockTitle m))
-optionalBlockTitle m rel = optional $ fmap S.BlockTitle $ MP.label "A Block Title" $ do
+optionalBlockTitle :: IDocParser m b (Maybe (S.BlockTitle m))
+optionalBlockTitle = optional $ fmap S.BlockTitle $ MP.label "A Block Title" $ do
   octothorpeP
-  someTill newlineP (simpleCoreP m rel)
+  someTill newlineP simpleCoreP
 
 -- | Blocks
-defaultBlockP :: MarkupParser m -> Text -> InnerBlockParser m b -> IDocParser (S.Block m b)
-defaultBlockP m rel b = MP.label "A Block" $ do
+defaultBlockP :: IDocParser m b (S.Block m b)
+defaultBlockP = MP.label "A Block" $ do
+  b <- view bp
   am <- optionalAttrMapP
   void $ optional newlineP
   tyName <- blockTypeName
-  title <- optionalBlockTitle m rel
-  ty <- b m tyName
-  sid <- optional (setIDP m rel)
+  title <- optionalBlockTitle
+  ty <- b tyName
+  sid <- optional setIDP
   return $ S.Block { S._bType = ty
                    , S._bAttrs = am
                    , S._bTitle = title
                    , S._bSetID = sid
                    }
 
-blockStarterP :: IDocParser ()
+blockStarterP :: IDocParser m b ()
 blockStarterP = do
   dashP >> dashP >> dashP >> newlineP
 
-blockEnderP :: IDocParser ()
+blockEnderP :: IDocParser m b ()
 blockEnderP = do
   dashP >> dashP >> dashP >> newlineP
 
-blockContinuerP :: IDocParser ()
+blockContinuerP :: IDocParser m b ()
 blockContinuerP = do
   plusP >> plusP >> plusP >> newlineP
 
-blockEnderP' :: IDocParser ()
+blockEnderP' :: IDocParser m b ()
 blockEnderP' = newlineP >> blockEnderP
 
-multipartSeparatorP :: IDocParser ()
+multipartSeparatorP :: IDocParser m b ()
 multipartSeparatorP = do
   asteriskP >> asteriskP >> asteriskP >> newlineP
 
-simpleCoreBlockP :: MarkupParser m -> Text -> IDocParser (Vector (S.SimpleCore m))
-simpleCoreBlockP m rel = do
+simpleCoreBlockP :: IDocParser m b (Vector (S.SimpleCore m))
+simpleCoreBlockP = do
   blockStarterP
-  someTill blockEnderP' (simpleCoreP m rel)
+  someTill blockEnderP' simpleCoreP
 
-coreBlockP :: MarkupParser m -> BlockParser m b -> Text 
-           -> IDocParser (Vector (S.Core m b))
-coreBlockP m b rel = do
+coreBlockP :: IDocParser m b (Vector (S.Core m b))
+coreBlockP = do
   blockStarterP
-  someTill (many newlineP >> blockEnderP) (coreP m b rel)
+  someTill (many newlineP >> blockEnderP) coreP
 
-vectorLinkCoreBlockP :: MarkupParser m -> BlockParser m b -> Text
-                     -> IDocParser (Vector (S.Link m), Vector (S.Core m b))
-vectorLinkCoreBlockP m b rel = do
+vectorLinkCoreBlockP :: IDocParser m b (Vector (S.Link m), Vector (S.Core m b))
+vectorLinkCoreBlockP = do
   blockStarterP
   ls <- someTill (many newlineP >> blockContinuerP) $ do
-    l <- (linkP m rel)
+    l <- linkP
     newlineP
     return l
-  x <- someTill (many newlineP >> blockEnderP) (coreP m b rel)
+  x <- someTill (many newlineP >> blockEnderP) coreP
   return (ls, x)
 
-doubleCoreBlockP :: MarkupParser m -> BlockParser m b -> Text
-                 -> IDocParser (Vector (S.Core m b), Vector (S.Core m b))
-doubleCoreBlockP m b rel = do
+doubleCoreBlockP :: IDocParser m b (Vector (S.Core m b), Vector (S.Core m b))
+doubleCoreBlockP = do
   blockStarterP
-  x <- someTill (many newlineP >> blockContinuerP) (coreP m b rel)
-  y <- someTill (many newlineP >> blockEnderP) (coreP m b rel)
+  x <- someTill (many newlineP >> blockContinuerP) coreP
+  y <- someTill (many newlineP >> blockEnderP) coreP
   return (x, y)
 
-coreBlockWithOptionalP :: MarkupParser m -> BlockParser m b -> Text
-                       -> IDocParser ( Vector (S.Core m b)
-                                     , Maybe (Vector (S.Core m b)) )
-coreBlockWithOptionalP m b rel = do
+coreBlockWithOptionalP :: IDocParser m b ( Vector (S.Core m b)
+                                         , Maybe (Vector (S.Core m b)) )
+coreBlockWithOptionalP = do
   blockStarterP
   (xs, e) <- someTill' 
              (many newlineP >> 
-               (MP.eitherP (MP.try blockContinuerP) blockEnderP)) (coreP m b rel)
-  op <- case e of
-          Left _ -> Just <$> (someTill (many newlineP >> blockEnderP) (coreP m b rel))
-          Right _ -> return Nothing
-  return (xs, op)
+              (MP.eitherP (MP.try blockContinuerP) blockEnderP)) coreP
+  op_ <- case e of
+    Left _ -> Just <$> someTill (many newlineP >> blockEnderP) coreP
+    Right _ -> return Nothing
+  return (xs, op_)
 
-uninterpretedBlockP :: IDocParser (Vector S.Token)
+uninterpretedBlockP :: IDocParser m b (Vector S.Token)
 uninterpretedBlockP = do
   blockStarterP
   xs <- someV $ do
@@ -496,27 +507,27 @@ uninterpretedBlockP = do
   blockEnderP'
   return xs
 
-linkBlockP :: MarkupParser m -> Text -> IDocParser (S.Link m)
-linkBlockP m rel = do
+linkBlockP :: IDocParser m b (S.Link m)
+linkBlockP = do
   blockStarterP
-  x <- linkP m rel
+  x <- linkP
   blockEnderP'
   return x
 
-linkBlockWithOptionalP :: MarkupParser m -> Text -> IDocParser (S.Link m, Maybe (Vector (S.SimpleCore m)))
-linkBlockWithOptionalP m rel = do
+linkBlockWithOptionalP :: IDocParser m b (S.Link m, Maybe (Vector (S.SimpleCore m)))
+linkBlockWithOptionalP = do
   blockStarterP
-  x <- linkP m rel
+  x <- linkP
   newlineP
   e <- MP.eitherP (MP.try blockContinuerP) blockEnderP
-  op <- case e of
-    Left _ -> Just <$> (someTill blockEnderP' (simpleCoreP m rel))
+  op_ <- case e of
+    Left _ -> Just <$> someTill blockEnderP' simpleCoreP
     Right _ -> return Nothing
-  return (x, op)
+  return (x, op_)
 
 -- | Section
-sectionP :: MarkupParser m -> Text -> BlockParser m b -> IDocParser (S.Section m b)
-sectionP m rel b = do
+sectionP :: IDocParser m b (S.Section m b)
+sectionP = do
   am <- optionalAttrMapP
   equalses <- some equalsP
   let ty = case length equalses of
@@ -524,11 +535,11 @@ sectionP m rel b = do
              3 -> S.SubSection
              _ -> error "only `Section's and `Subsection's are allowed."
   title <- simpleLineP
-  sid <- optional (setIDP m rel)
+  sid <- optional setIDP
   void $ many newlineP
   cnt <- manyV $ do
     MP.notFollowedBy $ many newlineP >> equalsP >> equalsP
-    x <- coreP m b rel
+    x <- coreP
     void $ many newlineP
     return x
   return $ S.Section { S._secType = ty
@@ -539,9 +550,9 @@ sectionP m rel b = do
                      }
   where
     equalsP = void $ tokenP S.Equals
-    simpleLineP = someTill newlineP (simpleCoreP m rel)
+    simpleLineP = someTill newlineP simpleCoreP
 
-escapedP :: IDocParser Text
+escapedP :: IDocParser m b Text
 escapedP = do
   bSlashP
   textP
@@ -550,30 +561,30 @@ escapedP = do
 
 -- | Core
 -- Putting it all together.
-simpleCoreP :: MarkupParser m -> Text -> IDocParser (S.SimpleCore m)
-simpleCoreP m rel =  S.TextC       <$> MP.try escapedP
-                 <|> S.MarkupC     <$> MP.try (defaultMarkupP m rel)
-                 <|> S.InlineMathC <$> MP.try (inlineMathP m rel)
-                 <|> S.LinkC       <$> MP.try (linkP m rel)
-                 <|> S.QTextC      <$> MP.try (qTextP m rel)
-                 <|> S.TextC       <$>        textP
+simpleCoreP :: IDocParser m b (S.SimpleCore m)
+simpleCoreP =  S.TextC       <$> MP.try escapedP
+           <|> S.MarkupC     <$> MP.try defaultMarkupP
+           <|> S.InlineMathC <$> MP.try inlineMathP
+           <|> S.LinkC       <$> MP.try linkP
+           <|> S.QTextC      <$> MP.try qTextP
+           <|> S.TextC       <$>        textP
 
-coreP :: MarkupParser m -> BlockParser m b -> Text -> IDocParser (S.Core m b)
-coreP m b rel = S.CC <$> ((S.BlockC     <$> (MP.try (defaultBlockP m rel b)))
-                     <|>  (S.ListC      <$> (MP.try (listP m rel)))
-                     <|>  (S.ParagraphC <$>         (paragraphP m rel)))
+coreP :: IDocParser m b (S.Core m b)
+coreP = S.CC <$> ((S.BlockC     <$> (MP.try defaultBlockP))
+             <|>  (S.ListC      <$> (MP.try listP))
+             <|>  (S.ParagraphC <$>         paragraphP))
 
-docP :: MarkupParser m -> BlockParser m b -> Text -> IDocParser (S.Doc m b)
-docP m b rel = do
-  title <- someTween equalsP newlineP (simpleCoreP m rel)
-  docSid <- optional (setIDP m rel)
+docP :: IDocParser m b (S.Doc m b)
+docP = do
+  title <- someTween equalsP newlineP simpleCoreP
+  docSid <- optional setIDP
   void $ many newlineP
   preamble <- manyV $ do
     MP.notFollowedBy $ many newlineP >> equalsP >> equalsP
-    x <- coreP m b rel
+    x <- coreP
     return x
   void $ many newlineP
-  sections <- sepEndByV (sectionP m rel b) (many newlineP)
+  sections <- sepEndByV sectionP (many newlineP)
   let preambleSection = S.Section { S._secType = S.Preamble
                                   , S._secAttrs = S.AttrMap M.empty
                                   , S._secContents = preamble
@@ -599,10 +610,10 @@ errorDoc e = S.Doc { S._docTitle = S.DocTitle $ singleton $ S.TextC "Error!"
                    , _docSetID = Nothing
                    }
 
-compileIdoc :: Monad n => MarkupParser m -> BlockParser m b -> Text -> Text -> n (S.Doc m b)
-compileIdoc m b rel text_ = case MP.parse L.dTokens "<idoc>" text_ of
+compileIdoc :: Monad n => MarkupParser m b -> BlockParser m b -> Text -> Text -> n (S.Doc m b)
+compileIdoc m b rel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
                           Left e -> return $ errorDoc e
                           Right x -> do
-                            case MP.parse (docP m b rel) "<idoc tokens>" x of
+                            case runIdentity $ runReaderT (MP.runParserT (unIDocParser docP) "<idoc tokens>" x) (IDocReadState rel_ m b) of
                               Left e -> return $ errorDoc e
                               Right y -> return y
