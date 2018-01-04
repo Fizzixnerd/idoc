@@ -47,14 +47,9 @@ makeLenses ''PrerexItem
 
 -- FIXME: Find an icon for this.
 instance MarkupMarkup m => BlockMarkup m (Prerex m) where
-  blockMarkup _ t s p_ = card 
-                         primaryCardOptions
-                         (mTitle "Prerex" t)
-                         s
-                         ""
-                         Nothing
-                         (div ! class_ "idocPrerex" $
-                          concatMap toMarkup (p_^.prerexContents))
+  blockMarkup _ t _ p_ = (div ! class_ "idocPrerex" $ do
+                             h3 $ maybe (toMarkup ("Prerex" :: Text)) toMarkup t
+                             concatMap toMarkup (p_^.prerexContents))
 
 instance Markupy m => Blocky m (Prerex m) where
   blocky _ mt msid (Prerex ps) = subsubsection (mLabel msid title_) ++ vectorTexy ps
