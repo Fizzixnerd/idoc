@@ -95,7 +95,7 @@ compileIls' :: Text -> Either (MP.ParseError (MP.Token Text) (MP.ErrorFancy Void
 compileIls' t = compileIdoc' markupTypeP blockTypeP "http://www.independentlearning.science/tiki/" t
 
 compileIdocTexFile :: (Markupy m, Blocky m (b m), MonadIO n) => Doc m b -> FilePath -> n ()
-compileIdocTexFile doc_ outFile = liftIO $ renderFile outFile $ defaultDecorator (concatMap texy $ unDocTitle $ doc_^.docTitle) (texy doc_ :: LaTeX)
+compileIdocTexFile doc_ outFile = liftIO $ renderFile outFile $ defaultDecorator (concatMap texy $ doc_^.docTitle.unDocTitle) (texy doc_ :: LaTeX)
 
 blockTypeP :: BlockTypeName -> IDocParser m BlockType (BlockType m)
 blockTypeP "info" = mkBlockType $ InfoB <$> infoP

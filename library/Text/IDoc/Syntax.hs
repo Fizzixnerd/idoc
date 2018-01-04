@@ -197,7 +197,7 @@ data Paragraph m = Paragraph { _paraContents :: Vector (SimpleCore m)
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | The title of a `Doc'.
-newtype DocTitle m = DocTitle { unDocTitle :: Vector (SimpleCore m) }
+newtype DocTitle m = DocTitle { _unDocTitle :: Vector (SimpleCore m) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | A single parsed idoc document.  Its `Section's will be non-empty
@@ -370,7 +370,7 @@ data SectionType = Preamble
                  | SubSection
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
-newtype SectionTitle m = SectionTitle { unSectionTitle :: Vector (SimpleCore m) }
+newtype SectionTitle m = SectionTitle { _unSectionTitle :: Vector (SimpleCore m) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 data Section m b = Section { _secType     :: SectionType
@@ -400,6 +400,8 @@ makeLenses ''Block
 makeLenses ''Doc
 makeLenses ''Paragraph
 makeLenses ''ID
+makeLenses ''DocTitle
+makeLenses ''SectionTitle
 
 instance (BlockMarkup m (b m), MarkupMarkup m) => ToMarkup (Section m b) where
   toMarkup s = B.section ! class_ "idocSection" $
@@ -572,24 +574,44 @@ verbatimBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
 newtype LinkLevel = LinkLevel Int
   deriving (Eq, Ord, Show)
 
--- | Dear god, don't look at the definition of this.
-listLinks :: Doc m b -> Vector ((SetID m), LinkLevel)
-listLinks (Doc { _docSections = ss
-               , _docSetID = dsid }) =
-  catMaybes (singleton ((\x -> (x, LinkLevel 1)) <$> dsid)) <>
-  concatMap (\(Section { _secSetID = ssid
-                       , _secContents = scnts }) ->
-                catMaybes $ ((\case
-                                CC (BlockC (Block { _bSetID = bsid })) -> do
-                                  sid <- bsid
-                                  return (sid, LinkLevel 3)
-                                CC (ParagraphC (Paragraph { _paraSetID = psid })) -> do
-                                  sid <- psid
-                                  return (sid, LinkLevel 3)
-                                _ -> Nothing
-                                -- FIXME: Add lists here
-                            ) <$> scnts) <> singleton ((\x -> (x, LinkLevel 2)) <$> ssid)) ss
+-- -- | Dear god, don't look at the definition of this.
+-- listLinks :: Doc m b -> Vector (SetID m, LinkLevel)
+-- listLinks (Doc { _docSections = ss
+--                , _docSetID = dsid }) =
+--   catMaybes (singleton ((\x -> (x, LinkLevel 1)) <$> dsid)) <>
+--   concatMap (\(Section { _secSetID = ssid
+--                        , _secContents = scnts }) ->
+--                 catMaybes $ ((\case
+--                                 CC (BlockC (Block { _bSetID = bsid })) -> do
+--                                   sid <- bsid
+--                                   return (sid, LinkLevel 3)
+--                                 CC (ParagraphC (Paragraph { _paraSetID = psid })) -> do
+--                                   sid <- psid
+--                                   return (sid, LinkLevel 3)
+--                                 _ -> Nothing
+--                                 -- FIXME: Add lists here
+--                             ) <$> scnts) <> singleton ((\x -> (x, LinkLevel 2)) <$> ssid)) ss
 
+listLinks' :: Doc m b -> Protocol -> Vector IDBase -> Vector (Link m, LinkLevel)
+listLinks' d proto rel_ = singleton (docLink, LinkLevel 1) <> sectionLinks
+  where
+    docLink = Link { _linkText = LinkText $ d^.docTitle.unDocTitle
+                   , _linkAttrs = AttrMap CP.mempty
+                   , _linkLocation = ID { _idProtocol = Just proto
+                                        , _idBase = rel_
+                                        , _idHash = Just $ IDHash "" }
+                   , _linkType = Internal
+                   }
+    sectionLinks = (\s -> ( Link { _linkText = LinkText $ s^.secTitle.unSectionTitle
+                                 , _linkAttrs = AttrMap CP.mempty
+                                 , _linkLocation = ID { _idProtocol = Just proto
+                                                      , _idBase = rel_
+                                                      , _idHash = _sidName <$> (s^.secSetID)
+                                                      }
+                                 , _linkType = Internal
+                                 }
+                          , LinkLevel 2)) <$> (d^.docSections)
+                          
 mID :: ToValue (SetID m) => Maybe (SetID m) -> (Html -> Html)
 mID mid = case mid of
   Nothing -> CP.id
@@ -679,7 +701,7 @@ instance Markupy m => Texy (Link m) where
         in
           proto ++
           (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
-          (if hash_ /= "" then "#" ++ hash_ else "")
+          "#" ++ hash_
 
       fromInternal id_ = case id_^.idHash of
                            Just (IDHash h) -> h
