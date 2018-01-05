@@ -230,7 +230,7 @@ data SetID m = SetID { _sidName :: IDHash
 
 -- | The "hash" part of an `ID'.  It's the part that comes after the
 -- octothorpe (#).
-newtype IDHash = IDHash { unIDHash :: Text } deriving (Eq, Ord, Show, Data, Typeable, Generic)
+newtype IDHash = IDHash { _unIDHash :: Text } deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | The type that corresponds to "attribute lists" in the idoc
 -- language.
@@ -252,7 +252,7 @@ data LinkType = Internal
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | The displayed text of a `Link'.
-newtype LinkText m = LinkText { unLinkText :: Vector (SimpleCore m) }
+newtype LinkText m = LinkText { _unLinkText :: Vector (SimpleCore m) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | A Link around (or out of) a `Doc'.  See `LinkType' for the types
@@ -282,7 +282,7 @@ newtype Protocol = Protocol Text deriving (Eq, Ord, Show, Data, Typeable, Generi
 -- "https:\/\/www.independentlearning.science\/tiki\/ArticleName#myId",
 -- the IDBase would be
 -- "www.independentlearning.science\/tiki\/ArticleName".
-newtype IDBase = IDBase { unIDBase :: Text } deriving (Eq, Ord, Show, Data, Typeable, Generic)
+newtype IDBase = IDBase { _unIDBase :: Text } deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- FIXME: Add a number to each constructor for nested lists.
 -- | The type of a `List', whether "ordered", "unordered", or
@@ -391,6 +391,7 @@ makeLenses ''AttrMap
 makeLenses ''QText
 makeLenses ''SetID
 makeLenses ''Section
+makeLenses ''LinkText
 makeLenses ''Link
 makeLenses ''List
 makeLenses ''ListItem
@@ -402,6 +403,8 @@ makeLenses ''Paragraph
 makeLenses ''ID
 makeLenses ''DocTitle
 makeLenses ''SectionTitle
+makeLenses ''IDBase
+makeLenses ''IDHash
 
 instance (BlockMarkup m (b m), MarkupMarkup m) => ToMarkup (Section m b) where
   toMarkup s = B.section ! class_ "idocSection" $
@@ -467,13 +470,13 @@ instance ToValue (Link m) where
                in
                  toValue $ 
                  proto ++
-                 (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
+                 (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
                  (if hash_ /= "" then "#" ++ hash_ else "")
         Internal -> case id_^.idHash of
                       (Just (IDHash h)) -> toValue $ "#" ++ h
                       _ -> "WTF: ToValue (Link m)"
         Back rel_ -> toValue $ rel_ ++
-                     (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
+                     (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 
 instance ToValue ID where
   toValue id_ = case id_^.idHash of
@@ -592,8 +595,8 @@ newtype LinkLevel = LinkLevel Int
 --                                 -- FIXME: Add lists here
 --                             ) <$> scnts) <> singleton ((\x -> (x, LinkLevel 2)) <$> ssid)) ss
 
-listLinks' :: Doc m b -> Protocol -> Vector IDBase -> Vector (Link m, LinkLevel)
-listLinks' d proto rel_ = singleton (docLink, LinkLevel 1) <> sectionLinks
+listLinks :: Doc m b -> Protocol -> Vector IDBase -> Vector (Link m, LinkLevel)
+listLinks d proto rel_ = singleton (docLink, LinkLevel 1) <> sectionLinks
   where
     docLink = Link { _linkText = LinkText $ d^.docTitle.unDocTitle
                    , _linkAttrs = AttrMap CP.mempty
@@ -683,12 +686,12 @@ instance Markupy m => Texy (Link m) where
   texy l = case l^.linkType of
              Out -> H.href []
                     (createURL $ unpack $ fromOut $ l^.linkLocation) 
-                    (concatMap texy $ unLinkText $ l^.linkText)
+                    (concatMap texy $ l^.linkText.unLinkText)
              Internal -> hyperref' (fromInternal $ l^.linkLocation)
-                                   (concatMap texy $ unLinkText $ l^.linkText)
+                                   (concatMap texy $ l^.linkText.unLinkText)
              Back rel_ -> H.href [] 
                          (createURL $ unpack $ fromBack (l^.linkLocation) rel_)
-                         (concatMap texy $ unLinkText $ l^.linkText)
+                         (concatMap texy $ l^.linkText.unLinkText)
     where
       fromOut id_ =
         let (proto, hash_) =
@@ -700,7 +703,7 @@ instance Markupy m => Texy (Link m) where
                 _ -> error $ "Invalid Outlink:\nProtocol: " ++ (show $ id_^.idProtocol) ++ "\nHash: " ++ (show $ id_^.idHash)
         in
           proto ++
-          (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
+          (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
           "#" ++ hash_
 
       fromInternal id_ = case id_^.idHash of
@@ -708,7 +711,7 @@ instance Markupy m => Texy (Link m) where
                            _ -> "WTF"
 
       fromBack id_ rel_ = rel_ ++ 
-                          (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
+                          (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 
 instance Markupy m => Texy (LinkText m) where
   texy (LinkText lt) = concatMap texy lt

@@ -69,7 +69,7 @@ instance MarkupMarkup m => ToMarkup (PrerexItem m) where
                      (concatMap toMarkup $ p_^.prerexItemDescription)
     where
       itemPath = toMarkup $ "https://www.independentlearning.science/tiki/" ++
-                 (concatMap unIDBase $ intersperse (IDBase "/") (p_^.prerexItemPath.idBase))
+                 (concatMap _unIDBase $ intersperse (IDBase "/") (p_^.prerexItemPath.idBase))
 
 
 instance Markupy m => Texy (PrerexItem m) where
@@ -78,5 +78,5 @@ instance Markupy m => Texy (PrerexItem m) where
             (concatMap texy $ p_^.prerexItemDescription) ++
             newline
     where fromBack id_ = "http://www.independentlearning.science/tiki/" ++ 
-                         (concatMap unIDBase $ intersperse (IDBase "/") (id_^.idBase))
+                         (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 

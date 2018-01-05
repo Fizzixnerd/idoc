@@ -45,7 +45,7 @@ program p =
                                  Right y -> m y outh)
       action' Parse = doIt (\y outh -> TIO.hPutStr outh (fromString $ show y))
       action' Html  = doIt (\y outh -> TIO.hPutStr outh (pack $ unpack $ R.renderHtml $ B.toMarkup y))
-      action' Tex   = doIt (\y outh -> TIO.hPutStr outh (L.render $ defaultDecorator (concatMap L.texy $ S.unDocTitle $ y^.S.docTitle) $ (L.texy y :: L.LaTeX)))
+      action' Tex   = doIt (\y outh -> TIO.hPutStr outh (L.render $ defaultDecorator (concatMap L.texy $ y^.S.docTitle.S.unDocTitle) $ (L.texy y :: L.LaTeX)))
   in 
     action' $ p^.action_
 
