@@ -208,9 +208,7 @@ setIDP = MP.label "A SetID" $ do
   lBracketP >> lBracketP
   h <- idHashP
   rBracketP >> rBracketP
-  d <- markupContentsP
-  return $ S.SetID { S._sidName = h
-                   , S._sidDisplay = d }
+  return $ S.SetID { S._sidName = h }
   where
     lBracketP = void $ tokenP S.LBracket
     rBracketP = void $ tokenP S.RBracket
@@ -289,7 +287,7 @@ linkP = MP.label "A Link" $ do
         _                               -> S.Back r
   linkCloserP
   txt <- optionalMarkupContentsP
-  return $ S.Link { S._linkText = S.LinkText txt
+  return $ S.Link { S._linkText = if null txt then Nothing else Just $ S.LinkText txt
                   , S._linkAttrs = am
                   , S._linkLocation = i
                   , S._linkType = ty

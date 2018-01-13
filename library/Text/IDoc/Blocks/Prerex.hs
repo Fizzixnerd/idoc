@@ -29,17 +29,19 @@ prerexP = Prerex <$> do
     newlineP
     return x
 
-data PrerexItem m = PrerexItem { _prerexItemPath :: ID
-                               , _prerexItemDescription :: Vector (SimpleCore m)
-                               }
+data PrerexItem m = PrerexItem { _prerexItemPath :: Link m }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 prerexItemP :: IDocParser m b (PrerexItem m)
 prerexItemP = do
+  r <- view Text.IDoc.Parse.rel
   path <- idP
   desc <- markupContentsP
-  return $ PrerexItem { _prerexItemPath = path
-                      , _prerexItemDescription = desc
+  return $ PrerexItem { _prerexItemPath = Link { _linkText = Just $ LinkText desc
+                                               , _linkAttrs = AttrMap mempty
+                                               , _linkLocation = path
+                                               , _linkType = Back r
+                                               }
                       }
 
 makeLenses ''Prerex
@@ -61,21 +63,21 @@ instance MarkupMarkup m => ToMarkup (PrerexItem m) where
                                          , cardDefaultCollapseState = Collapsed
                                          })
                      itemPath
-                     (Just $ p_^.prerexItemPath)
+                     (Just $ (p_^.prerexItemPath) { _linkText = Nothing })
                      prerexItemIcon
                      (Just $ a ! class_ "idocPrerexItemLink"
                                ! A.href (p_^.prerexItemPath.to toValue) $
                                "Go to " ++ itemPath)
-                     (concatMap toMarkup $ p_^.prerexItemDescription)
+                     (p_^.prerexItemPath.to toText.to toMarkup)
     where
       itemPath = toMarkup $ "https://www.independentlearning.science/tiki/" ++
-                 (concatMap _unIDBase $ intersperse (IDBase "/") (p_^.prerexItemPath.idBase))
+                 (concatMap _unIDBase $ intersperse (IDBase "/") (p_^.prerexItemPath.linkLocation.idBase))
 
 
 instance Markupy m => Texy (PrerexItem m) where
-  texy p_ = (H.href [] "" $ texy $ fromBack $ p_^.prerexItemPath) ++
+  texy p_ = (H.href [] "" $ texy $ fromBack $ p_^.prerexItemPath.linkLocation) ++
             ": " ++
-            (concatMap texy $ p_^.prerexItemDescription) ++
+            (p_^.prerexItemPath.to toText.to texy) ++
             newline
     where fromBack id_ = "http://www.independentlearning.science/tiki/" ++ 
                          (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase))

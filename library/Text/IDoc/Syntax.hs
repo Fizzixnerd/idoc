@@ -224,8 +224,7 @@ data QText m = QText { _qtText :: Vector (SimpleCore m)
   deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | An `ID' given to an object so that it can be referred to later.
-data SetID m = SetID { _sidName :: IDHash
-                     , _sidDisplay :: Vector (SimpleCore m) }
+data SetID m = SetID { _sidName :: IDHash }
   deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | The "hash" part of an `ID'.  It's the part that comes after the
@@ -257,7 +256,7 @@ newtype LinkText m = LinkText { _unLinkText :: Vector (SimpleCore m) }
 
 -- | A Link around (or out of) a `Doc'.  See `LinkType' for the types
 -- of possible links.  See `ID' for the format of links.
-data Link m = Link { _linkText :: LinkText m 
+data Link m = Link { _linkText :: Maybe (LinkText m)
                    , _linkAttrs :: AttrMap
                    , _linkLocation :: ID
                    , _linkType :: LinkType
@@ -455,33 +454,33 @@ instance MarkupMarkup m => ToMarkup (List m) where
 instance MarkupMarkup m => ToMarkup (Link m) where
   toMarkup l = a ! class_ (toValue $ l^.linkType)
                  ! A.href (toValue $ l) $
-                 l^.linkText.to toMarkup
+                 maybe (l^.to toText.to toMarkup) toMarkup (l^.linkText)
+
+toText :: Link m -> Text
+toText l = 
+  let id_ = l^.linkLocation 
+  in 
+    case l^.linkType of
+      Out -> let (proto, hash_) =
+                   case (id_^.idProtocol, id_^.idHash) of
+                     (Just (Protocol p_), Just (IDHash h)) -> (p_ ++ "://", h)
+                     (Just (Protocol p_), Nothing) -> (p_ ++ "://", "")
+                     _ -> error $ "Invalid Outlink:\nProtocol: " ++ (show $ id_^.idProtocol) ++ "\nHash: " ++ (show $ id_^.idHash)
+             in
+               proto ++
+               (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
+               (if hash_ /= "" then "#" ++ hash_ else "")
+      Internal -> case id_^.idHash of
+                    (Just (IDHash h)) -> "#" ++ h
+                    _ -> "WTF: ToValue (Link m)"
+      Back rel_ -> rel_ ++
+                   (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++
+                   (case id_^.idHash of
+                      (Just (IDHash h)) -> "#" ++ h
+                      _ -> mempty)
 
 instance ToValue (Link m) where
-  toValue l = 
-    let id_ = l^.linkLocation 
-    in 
-      case l^.linkType of
-        Out -> let (proto, hash_) =
-                     case (id_^.idProtocol, id_^.idHash) of
-                       (Just (Protocol p_), Just (IDHash h)) -> (p_ ++ "://", h)
-                       (Just (Protocol p_), Nothing) -> (p_ ++ "://", "")
-                       _ -> error $ "Invalid Outlink:\nProtocol: " ++ (show $ id_^.idProtocol) ++ "\nHash: " ++ (show $ id_^.idHash)
-               in
-                 toValue $ 
-                 proto ++
-                 (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
-                 (if hash_ /= "" then "#" ++ hash_ else "")
-        Internal -> case id_^.idHash of
-                      (Just (IDHash h)) -> toValue $ "#" ++ h
-                      _ -> "WTF: ToValue (Link m)"
-        Back rel_ -> toValue $ rel_ ++
-                     (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase))
-
-instance ToValue ID where
-  toValue id_ = case id_^.idHash of
-                  (Just (IDHash h)) -> toValue $ "#" ++ h
-                  _ -> "WTF: ToValue ID"
+  toValue l = toValue $ toText l
 
 instance ToValue LinkType where
   toValue Internal = "idocInternal"
@@ -598,14 +597,14 @@ newtype LinkLevel = LinkLevel Int
 listLinks :: Doc m b -> Protocol -> Vector IDBase -> Vector (Link m, LinkLevel)
 listLinks d proto rel_ = singleton (docLink, LinkLevel 1) <> sectionLinks
   where
-    docLink = Link { _linkText = LinkText $ d^.docTitle.unDocTitle
+    docLink = Link { _linkText = Just $ LinkText $ d^.docTitle.unDocTitle
                    , _linkAttrs = AttrMap CP.mempty
                    , _linkLocation = ID { _idProtocol = Just proto
                                         , _idBase = rel_
                                         , _idHash = Just $ IDHash "" }
                    , _linkType = Internal
                    }
-    sectionLinks = (\s -> ( Link { _linkText = LinkText $ s^.secTitle.unSectionTitle
+    sectionLinks = (\s -> ( Link { _linkText = Just $ LinkText $ s^.secTitle.unSectionTitle
                                  , _linkAttrs = AttrMap CP.mempty
                                  , _linkLocation = ID { _idProtocol = Just proto
                                                       , _idBase = rel_
@@ -686,12 +685,12 @@ instance Markupy m => Texy (Link m) where
   texy l = case l^.linkType of
              Out -> H.href []
                     (createURL $ unpack $ fromOut $ l^.linkLocation) 
-                    (concatMap texy $ l^.linkText.unLinkText)
+                    (maybe (l^.to toText.to texy) texy (l^.linkText))
              Internal -> hyperref' (fromInternal $ l^.linkLocation)
-                                   (concatMap texy $ l^.linkText.unLinkText)
+                                   (maybe (l^.to toText.to texy) texy (l^.linkText))
              Back rel_ -> H.href [] 
                          (createURL $ unpack $ fromBack (l^.linkLocation) rel_)
-                         (concatMap texy $ l^.linkText.unLinkText)
+                         (maybe (l^.to toText.to texy) texy (l^.linkText))
     where
       fromOut id_ =
         let (proto, hash_) =

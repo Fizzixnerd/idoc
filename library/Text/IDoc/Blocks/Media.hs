@@ -41,7 +41,7 @@ instance MarkupMarkup m => BlockMarkup m (Image m) where
                                      (icon "fa-image")
                                      (vectorBlockToMarkup "idocImageCaption" id <$> cap)
                                      (img ! class_ "idocImage img-responsive"
-                                          ! src (toValue $ il^.linkLocation))
+                                          ! src (toValue il))
 
 data Video m = Video { _videoLink :: Link m
                      , _videoCaption :: Maybe (Vector (SimpleCore m)) }
@@ -57,7 +57,7 @@ instance MarkupMarkup m => BlockMarkup m (Video m) where
                                      (vectorBlockToMarkup "idocVideoCaption" id <$> cap)
                                      (video ! class_ "idocVideo"
                                             ! controls "true"
-                                            ! src (toValue $ vl^.linkLocation) $
+                                            ! src (toValue vl) $
                                             "")
 
 data YouTube m = YouTube { _youTubeLink :: Link m
