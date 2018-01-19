@@ -524,8 +524,8 @@ instance MarkupMarkup m => ToMarkup (SimpleCore m) where
   toMarkup (MarkupC m) = toMarkup m
 
 instance MarkupMarkup m => ToMarkup (Paragraph m) where
-  toMarkup pa = p ! class_ "idocParagraph" $
-                concatMap toMarkup $ pa^.paraContents
+  toMarkup p_ = p ! class_ "idocParagraph" $
+                concatMap toMarkup $ p_^.paraContents
 
 instance (MarkupMarkup m, BlockMarkup m (b m)) => ToMarkup (ComplexCore m b) where
   toMarkup (ListC l) = toMarkup l

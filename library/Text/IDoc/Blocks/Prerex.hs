@@ -68,10 +68,9 @@ instance MarkupMarkup m => ToMarkup (PrerexItem m) where
                      (Just $ a ! class_ "idocPrerexItemLink"
                                ! A.href (p_^.prerexItemPath.to toValue) $
                                "Go to " ++ itemPath)
-                     (p_^.prerexItemPath.to toText.to toMarkup)
+                     (toMarkup $ maybe (LinkText ClassyPrelude.empty) ClassyPrelude.id (p_^.prerexItemPath.linkText))
     where
-      itemPath = toMarkup $ "https://www.independentlearning.science/tiki/" ++
-                 (concatMap _unIDBase $ intersperse (IDBase "/") (p_^.prerexItemPath.linkLocation.idBase))
+      itemPath = toMarkup $ (concatMap _unIDBase $ intersperse (IDBase "/") (p_^.prerexItemPath.linkLocation.idBase))
 
 
 instance Markupy m => Texy (PrerexItem m) where

@@ -97,6 +97,10 @@ compileIls' t = compileIdoc' markupTypeP blockTypeP "http://www.independentlearn
 compileIdocTexFile :: (Markupy m, Blocky m (b m), MonadIO n) => Doc m b -> FilePath -> n ()
 compileIdocTexFile doc_ outFile = liftIO $ renderFile outFile $ defaultDecorator (concatMap texy $ doc_^.docTitle.unDocTitle) (texy doc_ :: LaTeX)
 
+compileIdocBook :: (Markupy m, Blocky m (b m), MonadIO n) => 
+                   LaTeX -> Vector (Doc m b) -> FilePath -> n ()
+compileIdocBook dTitle docs outFile = liftIO $ renderFile outFile $ defaultDecorator dTitle (concatMap texy docs)
+
 blockTypeP :: BlockTypeName -> IDocParser m BlockType (BlockType m)
 blockTypeP "info" = mkBlockType $ InfoB <$> infoP
 blockTypeP "tip" = mkBlockType $ TipB <$> tipP
