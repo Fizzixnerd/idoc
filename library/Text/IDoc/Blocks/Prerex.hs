@@ -14,6 +14,8 @@ import Text.LaTeX.Packages.Hyperref as H
 
 import Data.Data
 
+import qualified Data.Vector as V
+
 import Control.Lens
 
 import ClassyPrelude hiding (div)
@@ -70,14 +72,14 @@ instance MarkupMarkup m => ToMarkup (PrerexItem m) where
                                "Go to " ++ itemPath)
                      (toMarkup $ maybe (LinkText ClassyPrelude.empty) ClassyPrelude.id (p_^.prerexItemPath.linkText))
     where
-      itemPath = toMarkup $ (concatMap _unIDBase $ intersperse (IDBase "/") (p_^.prerexItemPath.linkLocation.idBase))
+      itemPath = toMarkup $ (concatMap _unIDBase $ IDBase "/" `V.cons` (intersperse (IDBase "/") (p_^.prerexItemPath.linkLocation.idBase)))
 
 
 instance Markupy m => Texy (PrerexItem m) where
   texy p_ = (H.href [] "" $ texy $ fromBack $ p_^.prerexItemPath.linkLocation) ++
             ": " ++
-            (p_^.prerexItemPath.to toText.to texy) ++
+            newline ++
+            (texy $ maybe (LinkText ClassyPrelude.empty) ClassyPrelude.id (p_^.prerexItemPath.linkText)) ++
             newline
-    where fromBack id_ = "http://www.independentlearning.science/tiki/" ++ 
-                         (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase))
+    where fromBack id_ = "/" ++ (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 

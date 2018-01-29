@@ -107,6 +107,7 @@ blockTypeP "tip" = mkBlockType $ TipB <$> tipP
 blockTypeP "caution" = mkBlockType $ CautionB <$> cautionP
 blockTypeP "warning" = mkBlockType $ WarningB <$> warningP
 blockTypeP "sidenote" = mkBlockType $ SideNoteB <$> sideNoteP
+blockTypeP "bibliography" = mkBlockType $ bibTexP
 blockTypeP "code" = mkBlockType codeP
 blockTypeP "connection" = mkBlockType $ connectionP
 blockTypeP "example" = mkBlockType $ exampleP

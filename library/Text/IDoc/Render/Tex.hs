@@ -24,6 +24,9 @@ defaultDecorator title_ d =
   (usepackage [] amsthm) ++
   (usepackage [] amssymb) ++
   (usepackage [] "mdframed") ++
+  (usepackage [] "filecontents") ++
+  (usepackage ["backend=biber"] "biblatex-chicago") ++
+  (addbibresource "refs.bib") ++
 
   (newtheorem  "Theorem" "Theorem") ++
   (newtheorem' ["Theorem"] "Lemma" "Lemma") ++
@@ -45,12 +48,14 @@ defaultDecorator title_ d =
   (setcounter "tocdepth" "2") ++
 
   (document $
-  title title_ ++
-  author "ILS Contributors" ++
-  date today ++
-  maketitle ++
-  tableofcontents ++
-  d)
+    title title_ ++
+    author "ILS Contributors" ++
+    date today ++
+    maketitle ++
+    tableofcontents ++
+    d ++
+    printbibliography
+  )
 
 mkCode :: LaTeXC l => l -> l -> l
 mkCode lang t = L.between t (raw "\\begin{lstlisting}[frame=single,framesep=5mm,breaklines,language={" ++ lang ++ raw "}]\n") (raw "\n\\end{lstlisting}\n")
@@ -59,6 +64,20 @@ mkBlock :: LaTeXC l => l -> l -> l -> l
 mkBlock name btitle t = L.between t (raw "\\begin{" ++ name ++ raw "}" ++ 
                                      raw "[frametitle=" ++ btitle ++ raw "]") 
                                     (raw "\n\\end{" ++ name ++ raw "}\n")
+
+fileContents :: LaTeXC l => FilePath -> l -> l
+fileContents fname contents = L.between contents (raw "\\begin{filecontents*}{" ++ 
+                                                  raw (pack fname) ++
+                                                  raw "}\n")
+                                                 (raw "\n\\end{filecontents*}\n")
+
+
+
+printbibliography :: LaTeXC l => l
+printbibliography = raw "\\nocite{*}\n\\printbibliography"
+
+addbibresource :: LaTeXC l => l -> l
+addbibresource res = raw "\\addbibresource{" ++ res ++ raw "}"
 
 sideNoteBlock :: LaTeXC l => l -> l -> l
 sideNoteBlock = mkBlock "SideNote"
@@ -99,3 +118,9 @@ setcounter name_ val = raw "\\setcounter{" ++ name_ ++ raw "}{" ++ val ++ raw "}
 
 vectorTexy :: (Texy a, LaTeXC l) => Vector a -> l
 vectorTexy vb = concatMap texy vb
+
+bibliography :: LaTeXC m => m -> m
+bibliography bibName = raw "\\bibliography{" ++ bibName ++ raw "}"
+
+bibliographyStyle :: LaTeXC m => m -> m
+bibliographyStyle styleName = raw "\\bibliographyStyle{" ++ styleName ++ raw "}"
