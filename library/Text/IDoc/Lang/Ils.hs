@@ -28,6 +28,8 @@ import Text.IDoc.Blocks.Prerex
 import Text.IDoc.Blocks.Quote
 import Text.IDoc.Blocks.Recall
 import Text.IDoc.Markup.Footnote
+import Text.IDoc.Markup.FootnoteRef
+import Text.IDoc.Markup.Citation
 import Text.IDoc.Render.Tex
 
 import Text.LaTeX
@@ -67,7 +69,9 @@ instance BlockMarkup MarkupType (BlockType MarkupType) where
 instance Blocky MarkupType (BlockType MarkupType) where
   blocky attrs title_ sid (BlockType coRec) = blocky attrs title_ sid coRec
 
-type IlsMarkup = '[ Footnote MarkupType ]
+type IlsMarkup = '[ Footnote MarkupType 
+                  , FootnoteRef
+                  , Citation ]
 
 newtype MarkupType = MarkupType { _unMarkupType :: CoRec Identity IlsMarkup }
   deriving (Eq, Show)
@@ -137,6 +141,8 @@ blockTypeP s = fail $ unpack $ "Did not recognize block type: " ++ s
 
 markupTypeP :: MarkupTypeName -> IDocParser MarkupType b MarkupType
 markupTypeP "footnote" = mkMarkupType $ footnoteP
+markupTypeP "footnotref" = mkMarkupType $ footnoteRefP
+markupTypeP "cite" = mkMarkupType $ citationP
 markupTypeP s = fail $ unpack $ "Did not recognize markup type: " ++ s
 
 makeLenses ''BlockType

@@ -2,7 +2,7 @@
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause
 -- Created: Aug 24, 2017
--- Summary: 
+-- Summary:
 
 module Text.IDoc.Lex where
 
@@ -49,7 +49,7 @@ reservedPunctuation = M.fromList [ ('=', Equals)
                                  , ('+', Plus) ]
 
 reservedPunctuationL :: [Char]
-reservedPunctuationL = fst <$> (M.toList reservedPunctuation)
+reservedPunctuationL = fst <$> M.toList reservedPunctuation
 
 reservedPunctuationS :: Set Char
 reservedPunctuationS = S.fromList reservedPunctuationL
@@ -63,18 +63,19 @@ mkDTokenP p = do
   return $ DebugToken di x
 
 puncT :: Parsec (ErrorFancy Void) Text S.Token
-puncT = MP.label "Punctuation" $ do
-  (\c -> fromJust $ lookup c reservedPunctuation) <$> (oneOf reservedPunctuationL)
+puncT = MP.label "Punctuation" $
+        (\c -> isJust $ lookup c reservedPunctuation) <$>
+        oneOf reservedPunctuationL
 
 dPuncT :: Parsec (ErrorFancy Void) Text DToken
 dPuncT = MP.label "Punctuation" $ mkDTokenP puncT
 
 dashT :: Parsec (ErrorFancy Void) Text S.Token
-dashT = MP.label "Dash" $ do
-  const Dash <$> (char '-')
+dashT = MP.label "Dash" $
+  const Dash <$> char '-'
 
 regularTextT :: Parsec (ErrorFancy Void) Text S.Token
-regularTextT = TextT . fromString <$> (some $ satisfy (\c -> c `notElem` reservedPunctuationS))
+regularTextT = TextT . fromString <$> (some $ satisfy (`notElem` reservedPunctuationS))
 
 dRegularTextT :: Parsec (ErrorFancy Void) Text DToken
 dRegularTextT = mkDTokenP regularTextT

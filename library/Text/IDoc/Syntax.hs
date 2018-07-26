@@ -229,7 +229,14 @@ data SetID m = SetID { _sidName :: IDHash }
 
 -- | The "hash" part of an `ID'.  It's the part that comes after the
 -- octothorpe (#).
-newtype IDHash = IDHash { _unIDHash :: Text } deriving (Eq, Ord, Show, Data, Typeable, Generic)
+newtype IDHash = IDHash { _unIDHash :: Text }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+
+instance ToValue IDHash where
+  toValue (IDHash h) = toValue $ "#" ++ h
+
+instance Texy IDHash where
+  texy (IDHash h) = raw h
 
 -- | The type that corresponds to "attribute lists" in the idoc
 -- language.
@@ -313,15 +320,6 @@ data ListItem m = ListItem { _liAttrs :: AttrMap
                            }
   deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
--- -- | Sum type for the different kinds of `Markup'.  "Footnotes" are
--- -- what you would expect.  "FootnoteRefs" are references to previous
--- -- footnotes via their `SetID'.  "Citations" are what you would
--- -- expect.
--- data MarkupType = Footnote
---                 | FootnoteRef
---                 | Citation
---   deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
 -- | Inline markup of text.  See `MarkupType' for the valid values of
 -- `_muType'.  May contain a non-empty `AttrMap'.
 data Markup m = Markup { _muType :: m
@@ -334,7 +332,7 @@ class MarkupMarkup m where
   markupMarkup :: AttrMap -> Maybe (SetID n) -> m -> Html
 
 class Markupy m where
-  markupy :: LaTeXC l => AttrMap -> Maybe (SetID n) -> m -> l
+  markupy :: (LaTeXC l, Markupy n) => AttrMap -> Maybe (SetID n) -> m -> l
 
 -- | Inline math, LaTeX style.  May have an attached `AttrMap' or
 -- `SetID'.  Contents are unparsed `Token's.

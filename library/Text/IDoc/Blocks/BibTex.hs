@@ -21,6 +21,7 @@ import Text.Printf
 import Data.Data
 import qualified Data.Map as M
 import Data.Char
+import qualified Data.Text as T
 
 import Control.Lens
 
@@ -482,17 +483,13 @@ newtype Fields = Fields { _unFields :: M.Map Identifier Value }
 
 valuePBraced :: IDocParser m b Value
 valuePBraced = do
-  void $ tokenP LBrace
-  v <- textP
-  void $ tokenP RBrace
-  return $ Value v
+  v <- bracedTokensP
+  return $ Value $ uninterpret v
 
 valuePQuoted :: IDocParser m b Value
 valuePQuoted = do
-  void $ tokenP DoubleQuote
-  v <- textP
-  void $ tokenP DoubleQuote
-  return $ Value v
+  v <- quotedTokensP
+  return $ Value $ uninterpret v
 
 valueP :: IDocParser m b Value
 valueP = do
@@ -510,18 +507,19 @@ identifierP :: IDocParser m b Identifier
 identifierP = do
   t <- textP
   let t' = stripSpaces t
-  if (' ' `elem` t') || ('#' `elem` t') || null t'
+  if any (not . isAlphaNum) t' || null t'
     then fail $ printf "invalid identifier in bibliography: \"%s\"" t'
     else return $ Identifier t'
 
 typeP :: IDocParser m b Identifier
 typeP = do
   t <- textP
-  void $ tokenP Comma
   let t' = stripSpaces t
-  if (' ' `elem` t') || ('#' `elem` t') || null t'
+  if any (not . isAlpha) t' || null t'
     then fail $ printf "invalid identifier in bibliography: \"%s\"" t'
-    else return $ Identifier t'
+    else do
+    void $ tokenP Comma
+    return $ Identifier t'
 
 fieldsP :: IDocParser m b Fields
 fieldsP = do
@@ -536,7 +534,7 @@ fieldsP = do
 
 canonicalizeField :: Identifier -> Value -> IDocParser m b FieldType
 canonicalizeField (Identifier i_) (Value v) =
-  case i_ of
+  case T.toLower i_ of
     "address" -> return $ AddressFT v
     "annote"  -> return $ AnnoteFT v
     "author"  -> return $ AuthorFT v
@@ -567,7 +565,7 @@ entryTypeP :: IDocParser m b EntryType
 entryTypeP = do
   void $ tokenP AtSign
   text_ <- textP
-  case text_ of
+  case T.toLower text_ of
     "article"       -> return ArticleET
     "book"          -> return BookET
     "booklet"       -> return BookletET

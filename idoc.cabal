@@ -62,6 +62,8 @@ library
                  , Text.IDoc.Blocks.Quote
                  , Text.IDoc.Blocks.Recall
                  , Text.IDoc.Markup.Footnote
+                 , Text.IDoc.Markup.FootnoteRef
+                 , Text.IDoc.Markup.Citation
   default-extensions: LambdaCase
                     , OverloadedStrings
                     , NoImplicitPrelude

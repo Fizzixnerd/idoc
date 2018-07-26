@@ -25,7 +25,7 @@ defaultDecorator title_ d =
   (usepackage [] amssymb) ++
   (usepackage [] "mdframed") ++
   (usepackage [] "filecontents") ++
-  (usepackage ["backend=biber"] "biblatex-chicago") ++
+  (usepackage ["backend=biber,strict,authordate"] "biblatex-chicago") ++
   (addbibresource "refs.bib") ++
 
   (newtheorem  "Theorem" "Theorem") ++

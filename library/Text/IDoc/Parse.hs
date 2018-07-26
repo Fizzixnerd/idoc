@@ -26,7 +26,7 @@ data IDocReadState m b = IDocReadState { _rel :: Text
                                        , _bp  :: BlockParser m b
                                        }
 
-newtype IDocParser m b a = IDocParser { unIDocParser :: (MP.ParsecT (MP.ErrorFancy Void) S.IDocTokenStream (ReaderT (IDocReadState m b) Identity)  a) }
+newtype IDocParser m b a = IDocParser { unIDocParser :: MP.ParsecT (MP.ErrorFancy Void) S.IDocTokenStream (ReaderT (IDocReadState m b) Identity)  a }
   deriving (Functor, Applicative, Monad, MonadReader (IDocReadState m b), MonadPlus,
             MP.MonadParsec (MP.ErrorFancy Void) S.IDocTokenStream, Alternative)
 
@@ -46,16 +46,16 @@ someV :: IDocParser m b a -> IDocParser m b (Vector a)
 someV x = fromList <$> some x
 
 sepEndByV :: IDocParser m b a -> IDocParser m b sep -> IDocParser m b (Vector a)
-sepEndByV x sep = fromList <$> (MP.sepEndBy x sep)
+sepEndByV x sep = fromList <$> MP.sepEndBy x sep
 
 sepEndBy1V :: IDocParser m b a -> IDocParser m b sep -> IDocParser m b (Vector a)
-sepEndBy1V x sep = fromList <$> (MP.sepEndBy1 x sep)
+sepEndBy1V x sep = fromList <$> MP.sepEndBy1 x sep
 
 sepByV :: IDocParser m b a -> IDocParser m b sep -> IDocParser m b (Vector a)
-sepByV x sep = fromList <$> (MP.sepBy x sep)
+sepByV x sep = fromList <$> MP.sepBy x sep
 
 sepBy1V :: IDocParser m b a -> IDocParser m b sep -> IDocParser m b (Vector a)
-sepBy1V x sep = fromList <$> (MP.sepBy1 x sep)
+sepBy1V x sep = fromList <$> MP.sepBy1 x sep
 
 manyTween :: IDocParser m b l -> IDocParser m b r -> IDocParser m b a -> IDocParser m b (Vector a)
 manyTween l r x = do
@@ -114,6 +114,20 @@ tokenP t = Text.IDoc.Parse.satisfy (== t) MP.<?> (show t)
 anyTokenP :: IDocParser m b S.Token
 anyTokenP = Text.IDoc.Parse.satisfy (const True) MP.<?> "Any Token"
 
+bracedTokensP :: IDocParser m b (Vector S.Token)
+bracedTokensP = do
+  void $ tokenP S.LBrace
+  someV $ do
+    MP.notFollowedBy (tokenP S.RBrace)
+    anyTokenP
+
+quotedTokensP :: IDocParser m b (Vector S.Token)
+quotedTokensP = do
+  void $ tokenP S.DoubleQuote
+  someV $ do
+    MP.notFollowedBy (tokenP S.DoubleQuote)
+    anyTokenP
+
 newlineP :: IDocParser m b ()
 newlineP = void $ tokenP S.Newline
 
@@ -152,7 +166,7 @@ mkQTextP t tt = MP.label "Quoted Text" $ do
 
 strongP :: IDocParser m b (S.QText m)
 strongP = mkQTextP S.Asterisk S.Strong
-  
+
 emphasisP :: IDocParser m b (S.QText m)
 emphasisP = mkQTextP S.Underscore S.Emphasis
 
@@ -200,7 +214,7 @@ optionalAttrMapP = MP.label "An Optional AttrMap" $ do
   am <- optional attrMapP
   case am of
     Nothing -> return $ S.AttrMap M.empty
-    Just am' -> return $ am'
+    Just am' -> return am'
 
 -- | SetID
 setIDP :: IDocParser m b (S.SetID m)
@@ -208,7 +222,7 @@ setIDP = MP.label "A SetID" $ do
   lBracketP >> lBracketP
   h <- idHashP
   rBracketP >> rBracketP
-  return $ S.SetID { S._sidName = h }
+  return S.SetID { S._sidName = h }
   where
     lBracketP = void $ tokenP S.LBracket
     rBracketP = void $ tokenP S.RBracket
@@ -216,15 +230,15 @@ setIDP = MP.label "A SetID" $ do
 -- | Links
 linkOpenerP :: IDocParser m b ()
 linkOpenerP = do
-  void $ langle
-  void $ langle
+  void langle
+  void langle
   where
     langle = tokenP S.LAngle
 
 linkCloserP :: IDocParser m b ()
 linkCloserP = do
-  void $ rangle
-  void $ rangle
+  void rangle
+  void rangle
   where
     rangle = tokenP S.RAngle
 
@@ -258,22 +272,22 @@ idHashP :: IDocParser m b S.IDHash
 idHashP = S.IDHash <$> do
   octothorpeP
   concat <$> (manyV $ do
-                 MP.notFollowedBy $ MP.eitherP (MP.try rBracketP) rAngleP
+                 MP.notFollowedBy $ MP.eitherP (MP.eitherP (MP.try rBracketP) rAngleP) rBraceP
                  textP)
   where
     rBracketP = void $ tokenP S.RBracket
-    rAngleP = void $ tokenP S.RAngle
+    rAngleP   = void $ tokenP S.RAngle
+    rBraceP   = void $ tokenP S.RBrace
 
 idP :: IDocParser m b S.ID
 idP = do
   p <- optional protocolP
   b <- manyV idBaseP
   h <- optional idHashP
-  return $ S.ID { S._idProtocol = p
-                , S._idBase = b
-                , S._idHash = h
-                }
-  where
+  return S.ID { S._idProtocol = p
+              , S._idBase = b
+              , S._idHash = h
+              }
 
 linkP :: IDocParser m b (S.Link m)
 linkP = MP.label "A Link" $ do
@@ -287,11 +301,11 @@ linkP = MP.label "A Link" $ do
         _                               -> S.Back r
   linkCloserP
   txt <- optionalMarkupContentsP
-  return $ S.Link { S._linkText = if null txt then Nothing else Just $ S.LinkText txt
-                  , S._linkAttrs = am
-                  , S._linkLocation = i
-                  , S._linkType = ty
-                  }
+  return S.Link { S._linkText = if null txt then Nothing else Just $ S.LinkText txt
+                , S._linkAttrs = am
+                , S._linkLocation = i
+                , S._linkType = ty
+                }
 
 -- | Lists
 mkListItemP :: S.Token -> Bool -> S.ListType-> IDocParser m b (S.ListItem m)
@@ -350,6 +364,22 @@ markupContentsP = MP.label "Some Text Between Braces" $ do
     lBraceP = tokenP S.LBrace
     rBraceP = tokenP S.RBrace
 
+markupIDHashP :: IDocParser m b S.IDHash
+markupIDHashP = do
+  void $ lBraceP
+  s <- idHashP
+  void $ rBraceP
+  return s
+  where
+    lBraceP = tokenP S.LBrace
+    rBraceP = tokenP S.RBrace
+
+markupContentsWithSetIDP :: IDocParser m b ((Vector (S.SimpleCore m)), S.SetID m)
+markupContentsWithSetIDP = do
+  v <- markupContentsP
+  s <- setIDP
+  return (v, s)
+
 optionalMarkupContentsP :: IDocParser m b (Vector (S.SimpleCore m))
 optionalMarkupContentsP = do
   mu <- optional markupContentsP
@@ -363,13 +393,11 @@ defaultMarkupP = do
   am <- optionalAttrMapP
   percentSignP
   name <- textP
-  percentSignP
   cnt <- m name
   sid <- optional setIDP
   return $ S.Markup { S._muType = cnt
                     , S._muAttrs = am
-                    , S._muSetID = sid
-                    }
+                    , S._muSetID = sid }
   where
     percentSignP = void $ tokenP S.PercentSign
 
@@ -595,6 +623,9 @@ docP = do
                  }
   where
     equalsP = void $ tokenP S.Equals
+
+uninterpret :: Vector S.Token -> Text
+uninterpret = concatMap S.unToken
 
 errorDoc :: Show e => e -> S.Doc m b
 errorDoc e = S.Doc { S._docTitle = S.DocTitle $ singleton $ S.TextC "Error!"
