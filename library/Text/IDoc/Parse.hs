@@ -295,6 +295,11 @@ linkP = MP.label "A Link" $ do
   am <- optionalAttrMapP
   linkOpenerP
   i <- idP
+  case i of
+    S.ID { S._idBase = b
+         , S._idHash = Nothing
+         , S._idProtocol = Nothing } | null b -> fail "Empty link."
+    _ -> return ()
   let ty = case i of
         S.ID { S._idProtocol = Just _ } -> S.Out
         S.ID { S._idBase = b } | null b -> S.Internal
@@ -432,7 +437,7 @@ paragraphP = do
   return $ S.Paragraph { S._paraContents = cnt
                        , S._paraSetID = sid
                        }
-  where 
+  where
     lBracketP = void $ tokenP S.LBracket
     doubleLBracketP = lBracketP >> lBracketP
 
@@ -442,7 +447,7 @@ blockTypeName = MP.label "A Block Type Name" $ do
   x <- textP
   newlineP
   return x
-  where  
+  where
     atSignP = void $ tokenP S.AtSign
 
 optionalBlockTitle :: IDocParser m b (Maybe (S.BlockTitle m))

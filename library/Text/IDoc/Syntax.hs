@@ -77,7 +77,7 @@ data DebugToken d = DebugToken { _dtInfo :: d
 type DToken = DebugToken DebugInfo
 
 -- | The type of Tokens in idoc.
-data Token = 
+data Token =
   -- "regular" text
     TextT Text
   -- symbols and punctuation
@@ -149,7 +149,7 @@ instance Stream IDocTokenStream where
   tokensToChunk _ = fromList
   chunkToTokens _ = toList
   chunkLength _ = length
-  advance1 _ _ (SourcePos {sourceName = sn}) (DebugToken { _dtInfo = info }) = 
+  advance1 _ _ (SourcePos {sourceName = sn}) (DebugToken { _dtInfo = info }) =
     let (r, c) = _diEnd info
     in
       SourcePos { sourceName = sn
@@ -209,7 +209,7 @@ data Doc m b = Doc { _docTitle :: DocTitle m
 
 -- | Different types of emphasis text.  Used in `QText'.
 data TextType = Strong
-              | Emphasis 
+              | Emphasis
               | Monospace
               | Superscript
               | Subscript
@@ -252,7 +252,7 @@ newtype AttrValue = AttrValue Text deriving (Eq, Ord, Show, Data, Typeable, Gene
 
 -- | Sum type representing what type of link it is, an "ilink", a
 -- "blink" or, an "olink".
-data LinkType = Internal 
+data LinkType = Internal
               | Back Text -- ^ Relative base
               | Out
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -408,10 +408,10 @@ instance (BlockMarkup m (b m), MarkupMarkup m) => ToMarkup (Section m b) where
                titlify $ concatMap toMarkup $ s^.secContents
     where titlify = case s^.secType of
             Preamble -> CP.id
-            TopSection -> (mID (s^.secSetID) 
+            TopSection -> (mID (s^.secSetID)
                             (h2 ! class_ "idocTopSectionTitle clearfix" $
                              s^.secTitle.to toMarkup) ++)
-            SubSection -> (mID (s^.secSetID) 
+            SubSection -> (mID (s^.secSetID)
                             (h3 ! class_ "idocSubSectionTitle clearfix" $
                              s^.secTitle.to toMarkup) ++)
 
@@ -428,10 +428,10 @@ instance MarkupMarkup m => ToMarkup (Text.IDoc.Syntax.Markup m) where
   toMarkup mu_ = markupMarkup (mu_^.muAttrs) (mu_^.muSetID) (mu_^.muType)
 
 instance MarkupMarkup m => ToMarkup (ListItem m) where
-  toMarkup li_ = correctListItemHolder (li_^.liType) (li_^.liLabel) $ 
+  toMarkup li_ = correctListItemHolder (li_^.liType) (li_^.liLabel) $
                  concatMap toMarkup $ li_^.liContents
     where
-      correctListItemHolder Labelled (Just l) = 
+      correctListItemHolder Labelled (Just l) =
         (\x -> (dt ! class_ "idocLabel" $ toMarkup l) ++
                (dd ! class_ "idocLabelledItem" $ x))
       correctListItemHolder Ordered Nothing = li ! class_ "idocOrderedItem"
@@ -455,9 +455,9 @@ instance MarkupMarkup m => ToMarkup (Link m) where
                  maybe (l^.to toText.to toMarkup) toMarkup (l^.linkText)
 
 toText :: Link m -> Text
-toText l = 
-  let id_ = l^.linkLocation 
-  in 
+toText l =
+  let id_ = l^.linkLocation
+  in
     case l^.linkType of
       Out -> let (proto, hash_) =
                    case (id_^.idProtocol, id_^.idHash) of
@@ -549,7 +549,7 @@ instance ( RecApplicative xs
   markupMarkup a_ s x = getIdentity $ onCoRec (Proxy :: Proxy '[MarkupMarkup]) (markupMarkup a_ s) x
 
 -- * Some Helper Functions
-vectorBlockToMarkup :: B.ToMarkup a => 
+vectorBlockToMarkup :: B.ToMarkup a =>
                        B.AttributeValue -- ^ Html class
                     -> (B.Html -> B.Html) -- ^ decorator
                     -> Vector a -- ^ vector block
@@ -611,7 +611,7 @@ listLinks d proto rel_ = singleton (docLink, LinkLevel 1) <> sectionLinks
                                  , _linkType = Internal
                                  }
                           , LinkLevel 2)) <$> (d^.docSections)
-                          
+
 mID :: ToValue (SetID m) => Maybe (SetID m) -> (Html -> Html)
 mID mid = case mid of
   Nothing -> CP.id
@@ -682,11 +682,11 @@ instance Markupy m => Texy (SetID m) where
 instance Markupy m => Texy (Link m) where
   texy l = case l^.linkType of
              Out -> H.href []
-                    (createURL $ unpack $ fromOut $ l^.linkLocation) 
+                    (createURL $ unpack $ fromOut $ l^.linkLocation)
                     (maybe (l^.to toText.to texy) texy (l^.linkText))
              Internal -> hyperref' (fromInternal $ l^.linkLocation)
                                    (maybe (l^.to toText.to texy) texy (l^.linkText))
-             Back rel_ -> H.href [] 
+             Back rel_ -> H.href []
                          (createURL $ unpack $ fromBack (l^.linkLocation) rel_)
                          (maybe (l^.to toText.to texy) texy (l^.linkText))
     where
@@ -697,7 +697,7 @@ instance Markupy m => Texy (Link m) where
                   (p_ ++ "://", h)
                 (Just (Protocol p_), Nothing) ->
                   (p_ ++ "://", "")
-                _ -> error $ "Invalid Outlink:\nProtocol: " ++ (show $ id_^.idProtocol) ++ "\nHash: " ++ (show $ id_^.idHash)
+                _ -> error $ "Invalid Out Link:\nProtocol: " ++ (show $ id_^.idProtocol) ++ "\nHash: " ++ (show $ id_^.idHash)
         in
           proto ++
           (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
@@ -705,9 +705,9 @@ instance Markupy m => Texy (Link m) where
 
       fromInternal id_ = case id_^.idHash of
                            Just (IDHash h) -> h
-                           _ -> "WTF"
+                           _ -> error "Invalid Internal Link: No hash provided."
 
-      fromBack id_ rel_ = rel_ ++ 
+      fromBack id_ rel_ = rel_ ++
                           (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 
 instance Markupy m => Texy (LinkText m) where
@@ -736,7 +736,7 @@ instance Markupy m => Texy (BlockTitle m) where
 
 instance Markupy m => Texy (List m) where
   texy (List li_) = enumerate $
-                     concatMap (\li'_ -> 
+                     concatMap (\li'_ ->
                                   mLabel (li'_^.liSetID) $ 
                                   L.item (textbf <$> texy <$> (li'_^.liLabel)) ++ (vectorTexy $ li'_^.liContents)) li_
 

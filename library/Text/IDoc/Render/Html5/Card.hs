@@ -10,16 +10,16 @@ import qualified Text.Blaze.Html5.Attributes as A
 import ClassyPrelude as CP
 
 
-data DefaultCollapseState = Collapsed 
+data DefaultCollapseState = Collapsed
                           | Uncollapsed deriving (Eq, Show)
 
 instance B.ToValue DefaultCollapseState where
   toValue Collapsed = ""
   toValue Uncollapsed = "in"
 
-data CardType = CDefault 
-              | CPrimary 
-              | CInfo 
+data CardType = CDefault
+              | CPrimary
+              | CInfo
               | CSuccess
               | CWarning
               | CDanger deriving (Eq, Show)
@@ -66,23 +66,23 @@ infoCardOptions = CardOptions Uncollapsed CInfo GridTwelve
 tipCardOptions :: CardOptions
 tipCardOptions = infoCardOptions
 
-card :: B.ToValue a => 
-        CardOptions 
+card :: B.ToValue a =>
+        CardOptions
      -> B.Html -- ^ title
      -> Maybe a -- ^ id
      -> Icon -- ^ icon
      -> Maybe B.Html -- ^ footer
      -> B.Html -- ^ body
      -> B.Html
-card (CardOptions {..}) title_ id_ icon__ footer_ body_ = 
+card (CardOptions {..}) title_ id_ icon__ footer_ body_ =
   B.div B.! A.class_ (B.toValue cardGridWidth) $
   B.div B.! A.class_ "card" $
                (B.h5 B.! A.class_ ("card-header " ++ B.toValue cardType) $
-                    (mHrefV id_ $ 
+                    (mHrefV id_ $
                      B.a B.! A.class_ (if cardType == CDefault then "idocCardHeaderLink" else "idocCardHeaderLinkInverse")
                          B.! B.dataAttribute "toggle" "collapse" $
                      (icon__ ++ " " ++ title_ ++ " " ++ (B.span B.! A.class_ "fa fa-angle-double-down" $ "")))) ++
-         (mID' id_ $ 
+         (mID' id_ $
           B.div B.! A.class_ "card-collapse show" $
                 mfooterify footer_ $ (B.div B.! A.class_ "card-block" $
                                             body_))

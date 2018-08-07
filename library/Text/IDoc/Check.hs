@@ -133,7 +133,7 @@ checkLinks d@(S.Doc { S._docSections = s }) = do
     checkBlock ps allowOlinks b = checkBlockType ps allowOlinks $ b^.S.bType
 
     checkBlockType :: Set PrerexConstraint -> Bool -> S.BlockType -> Check ()
-    checkBlockType ps allowOlinks bt = 
+    checkBlockType ps allowOlinks bt =
       case bt of
         S.PrerexB (S.Prerex pitems) -> CP.mapM_ checkPrerexItemForLinks pitems
         S.IntroductionB (S.Introduction i) -> checkCores ps allowOlinks i
@@ -186,24 +186,24 @@ checkLinks d@(S.Doc { S._docSections = s }) = do
         S.RecallB (S.Recall (ls, xs)) -> do
           CP.mapM_ (checkLink ps allowOlinks) ls
           checkCores ps allowOlinks xs
-          
-    checkList ps allowOlinks (S.List { S._listContents = l }) = 
+
+    checkList ps allowOlinks (S.List { S._listContents = l }) =
       CP.mapM_ (checkListItem ps allowOlinks) l
 
-    checkListItem ps allowOlinks (S.ListItem { S._liContents = li }) = 
+    checkListItem ps allowOlinks (S.ListItem { S._liContents = li }) =
       checkSimpleCores ps allowOlinks li
-    
-    checkParagraph ps allowOlinks (S.Paragraph 
+
+    checkParagraph ps allowOlinks (S.Paragraph
                                    { S._paraContents = p }) =
       checkSimpleCores ps allowOlinks p
-    
+
     checkSimpleCores :: Set PrerexConstraint
                      -> Bool
                      -> Vector S.SimpleCore
                      -> Check ()
     checkSimpleCores ps allowOlinks ls =
       CP.mapM_ (checkSimpleCore ps allowOlinks) ls
-    
+
     checkSimpleCore ps allowOlinks (S.LinkC l) = checkLink ps allowOlinks l
     checkSimpleCore ps allowOlinks _ = return ()
 
@@ -211,9 +211,8 @@ checkLinks d@(S.Doc { S._docSections = s }) = do
     checkLink ps allowOlinks l = case l^.S.linkType of
       S.Internal -> return ()
       S.Back -> undefined
-      S.Out -> do 
+      S.Out -> do
         unless allowOlinks $
           throwError $ OLinkNotAllowed l
         return ()
-             
-      
+
