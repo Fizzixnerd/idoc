@@ -37,10 +37,12 @@ library
                , containers
                , lens
                , megaparsec
+               , parsec
                , mtl >= 2.2.1
                , text
                , vector
                , vinyl
+               , bibtex
   exposed-modules: Text.IDoc.Render.Html5.Icons
                  , Text.IDoc.Render.Html5.Card
                  , Text.IDoc.Render.Tex

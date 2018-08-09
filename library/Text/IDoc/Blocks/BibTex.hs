@@ -1,9 +1,13 @@
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Text.IDoc.Blocks.BibTex where
 
 import Text.Megaparsec as MP
+import qualified Text.Parsec as P
+import qualified Text.BibTeX.Parse as B
+import qualified Text.BibTeX.Entry as B
 
 import Text.IDoc.Syntax
 import Text.IDoc.Parse
@@ -591,13 +595,34 @@ bibItemP = do
   void $ tokenP RBrace
   return $ BibItem et rn fields
 
+-- bibTexP :: IDocParser m b BibTex
+-- bibTexP = do
+--   blockStarterP
+--   bibItems <- someV bibItemP
+--   bibEntries <- sequence $ itemToEntry <$> bibItems
+--   tokenP Newline >> blockEnderP
+--   return $ BibTex bibEntries
+
 bibTexP :: IDocParser m b BibTex
 bibTexP = do
-  blockStarterP
-  bibItems <- someV bibItemP
-  bibEntries <- sequence $ itemToEntry <$> bibItems
-  tokenP Newline >> blockEnderP
-  return $ BibTex bibEntries
+  tokens_ <- uninterpretedBlockP
+  let s = unpack $ uninterpret tokens_
+      result :: Either P.ParseError [B.T] = (fmap B.lowerCaseFieldNames) <$> (P.runParser (B.skippingSpace B.file) () "<@bibliography>" s)
+  case result of
+    Left err -> fail $ printf "Parse Error in bibliography block: %s" (show err)
+    Right entries -> do
+      BibTex <$> fromList <$> mapM (\B.Cons {..} ->
+                                       let fields' = Fields $ M.fromList $
+                                                     fmap (\(id_, val) ->
+                                                             (Identifier $ fromString id_, Value $ fromString val)) fields
+                                           identifier' = Identifier $ fromString identifier
+                                       in
+                                         case entryType of
+                                           "book" -> BookBE <$> (toBook identifier' fields')
+                                           "article" -> ArticleBE <$> (toArticle identifier' fields')
+                                           "misc" -> MiscBE <$> (toMisc identifier' fields')
+                                           x -> error $ printf "Can't parse bibliography entry: %s" x
+                                   ) entries
 
 makeLenses ''BibTex
 makeLenses ''BibItem

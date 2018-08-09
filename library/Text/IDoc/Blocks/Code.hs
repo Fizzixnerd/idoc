@@ -34,8 +34,8 @@ codeBlock (AttrMap attrs) _ msid (Code c) = (mLabel msid $
                                              mkCode langName $
                                              raw $ concatMap unToken c) ++
                                             "\n"
-  where 
-    langName = maybe "" 
+  where
+    langName = maybe ""
                      (\(AttrValue x) -> if x == "idoc" then "" else texy x)
                      (join $ attrs ^.at (AttrName "lang"))
 
