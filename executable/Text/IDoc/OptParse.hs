@@ -38,7 +38,7 @@ program p =
                         (\outh -> m inh outh))
       doIt m = withFiles (\inh outh -> do
                              cnts <- TIO.hGetContents inh
-                             case compileIls' cnts of
+                             case compileIls' False cnts of
                                Left e -> print e
                                Right x -> case x of
                                  Left e -> print e
@@ -46,7 +46,7 @@ program p =
       action' Parse = doIt (\y outh -> TIO.hPutStr outh (fromString $ show y))
       action' Html  = doIt (\y outh -> TIO.hPutStr outh (pack $ unpack $ R.renderHtml $ B.toMarkup y))
       action' Tex   = doIt (\y outh -> TIO.hPutStr outh (L.render $ defaultDecorator (concatMap L.texy $ y^.S.docTitle.S.unDocTitle) $ (L.texy y :: L.LaTeX)))
-  in 
+  in
     action' $ p^.action_
 
 idoc :: Parser Program

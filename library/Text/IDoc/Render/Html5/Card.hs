@@ -25,12 +25,12 @@ data CardType = CDefault
               | CDanger deriving (Eq, Show)
 
 instance B.ToValue CardType where
-  toValue CDefault = "card-default idocCardHeader"
-  toValue CPrimary = "card-primary card-inverse idocCardHeaderInverse"
-  toValue CInfo    = "card-info card-inverse idocCardHeaderInverse"
-  toValue CSuccess = "card-success card-inverse idocCardHeaderInverse"
-  toValue CWarning = "card-warning card-inverse idocCardHeaderInverse"
-  toValue CDanger  = "card-danger card-inverse idocCardHeaderInverse"
+  toValue CDefault = "bg-default"
+  toValue CPrimary = "bg-primary"
+  toValue CInfo    = "bg-info"
+  toValue CSuccess = "bg-success"
+  toValue CWarning = "bg-warning"
+  toValue CDanger  = "bg-danger"
 
 data GridWidth = GridFour
                | GridSix
@@ -75,17 +75,15 @@ card :: B.ToValue a =>
      -> B.Html -- ^ body
      -> B.Html
 card (CardOptions {..}) title_ id_ icon__ footer_ body_ =
-  B.div B.! A.class_ (B.toValue cardGridWidth) $
-  B.div B.! A.class_ "card" $
-               (B.h5 B.! A.class_ ("card-header " ++ B.toValue cardType) $
-                    (mHrefV id_ $
-                     B.a B.! A.class_ (if cardType == CDefault then "idocCardHeaderLink" else "idocCardHeaderLinkInverse")
-                         B.! B.dataAttribute "toggle" "collapse" $
-                     (icon__ ++ " " ++ title_ ++ " " ++ (B.span B.! A.class_ "fa fa-angle-double-down" $ "")))) ++
-         (mID' id_ $
-          B.div B.! A.class_ "card-collapse show" $
-                mfooterify footer_ $ (B.div B.! A.class_ "card-block" $
-                                            body_))
+  (B.div B.! A.class_ (B.toValue cardGridWidth) $
+        (B.div B.! A.class_ "card" $
+              ((B.div B.! A.class_ (B.toValue cardType ++ " card-header") $
+                     B.h5 B.! A.class_ "text-white mb-3" $
+                          icon__ ++ " " ++ title_) ++
+              (mfooterify footer_ $ B.div B.! A.class_ "card-body text-left" $
+                                          (B.p B.! A.class_ "card-text" $
+                                               body_))))) ++
+  B.br
   where
     mfooterify Nothing = id
     mfooterify (Just f) = ((flip (++)) (B.div B.! A.class_ "card-footer" $ f))

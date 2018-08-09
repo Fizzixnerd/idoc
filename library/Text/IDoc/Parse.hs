@@ -7,6 +7,7 @@ module Text.IDoc.Parse where
 
 import ClassyPrelude as CP
 
+import Data.Char
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Map as M
 import qualified Data.Vector as V
@@ -116,17 +117,25 @@ anyTokenP = Text.IDoc.Parse.satisfy (const True) MP.<?> "Any Token"
 
 bracedTokensP :: IDocParser m b (Vector S.Token)
 bracedTokensP = do
-  void $ tokenP S.LBrace
-  someV $ do
-    MP.notFollowedBy (tokenP S.RBrace)
-    anyTokenP
+  t <- textP
+  if not $ all isSpace t
+    then fail "Found non-spaces where there shouldn't be."
+    else do
+    void $ tokenP S.LBrace
+    someV $ do
+      MP.notFollowedBy (tokenP S.RBrace)
+      anyTokenP
 
 quotedTokensP :: IDocParser m b (Vector S.Token)
 quotedTokensP = do
-  void $ tokenP S.DoubleQuote
-  someV $ do
-    MP.notFollowedBy (tokenP S.DoubleQuote)
-    anyTokenP
+  t <- textP
+  if not $ all isSpace t
+    then fail "Found non-spaces where there shouldn't be."
+    else do
+    void $ tokenP S.DoubleQuote
+    someV $ do
+      MP.notFollowedBy (tokenP S.DoubleQuote)
+      anyTokenP
 
 newlineP :: IDocParser m b ()
 newlineP = void $ tokenP S.Newline
@@ -652,11 +661,18 @@ compileIdoc m b rel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
                               Left e -> errorDoc e
                               Right y -> y
 
-compileIdoc' :: MarkupParser m b -> BlockParser m b -> Text -> Text 
-             -> Either (MP.ParseError (MP.Token Text) (MP.ErrorFancy Void)) 
+compileIdoc' :: MarkupParser m b -> BlockParser m b -> Text -> Text
+             -> Either (MP.ParseError (MP.Token Text) (MP.ErrorFancy Void))
                        (Either (MP.ParseError (MP.Token S.IDocTokenStream) (MP.ErrorFancy Void))
                                (S.Doc m b))
 compileIdoc' m b rel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
   Left e -> Left e
   Right x -> return $ runIdentity $ runReaderT (MP.runParserT (unIDocParser docP) "<idoc tokens>" x) (IDocReadState rel_ m b)
 
+parseIdoc' :: IDocParser m b p -> MarkupParser m b -> BlockParser m b -> Text -> Text
+             -> Either (MP.ParseError (MP.Token Text) (MP.ErrorFancy Void))
+                       (Either (MP.ParseError (MP.Token S.IDocTokenStream) (MP.ErrorFancy Void))
+                               p)
+parseIdoc' p m b rel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
+  Left e -> Left e
+  Right x -> return $ runIdentity $ runReaderT (MP.runParserT (unIDocParser p) "<idoc tokens>" x) (IDocReadState rel_ m b)

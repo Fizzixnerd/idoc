@@ -6,7 +6,7 @@ import Text.IDoc.Render.Html5.Card
 import Text.IDoc.Render.Html5.Icons
 import Text.IDoc.Render.Tex
 
-import Text.Blaze.Html5
+import Text.Blaze.Html5 as B
 
 import Text.LaTeX
 import Text.LaTeX.Base.Class
@@ -24,7 +24,7 @@ instance ToMarkup Code where
   toMarkup (Code c) = verbatimBlockToMarkup "idocCode" id c
 
 instance MarkupMarkup m => BlockMarkup m Code where
-  blockMarkup _ title_ sid c = card defaultCardOptions (mTitle "Code" title_) sid (icon "fa-code") Nothing (toMarkup c)
+  blockMarkup _ title_ sid c = card defaultCardOptions (mTitle "Code" title_) sid (icon "fa-code") Nothing (B.pre $ toMarkup c)
 
 instance Markupy m => Blocky m Code where
   blocky = codeBlock

@@ -90,18 +90,24 @@ mkBlockType = (BlockType <$> CoRec <$> Identity <$>)
 mkMarkupType :: (Functor f, RElem a IlsMarkup (RIndex a IlsMarkup)) => f a -> f MarkupType
 mkMarkupType = (MarkupType <$> CoRec <$> Identity <$>)
 
-compileIls :: Text -> IlsDoc
-compileIls t = compileIdoc markupTypeP blockTypeP "http://www.independentlearning.science/tiki/" t
+compileIls :: Bool -> Text -> IlsDoc
+compileIls development t = compileIdoc markupTypeP blockTypeP
+               (if development
+                then "https://localhost:3443/tiki/"
+                else "https://www.independentlearning.science/tiki/") t
 
-compileIls' :: Text -> Either (MP.ParseError (MP.Token Text) (MP.ErrorFancy Void)) 
+compileIls' :: Bool -> Text -> Either (MP.ParseError (MP.Token Text) (MP.ErrorFancy Void))
                               (Either (MP.ParseError (MP.Token IDocTokenStream) (MP.ErrorFancy Void))
                                       IlsDoc)
-compileIls' t = compileIdoc' markupTypeP blockTypeP "http://www.independentlearning.science/tiki/" t
+compileIls' development t = compileIdoc' markupTypeP blockTypeP
+                            (if development
+                             then "https://localhost:3443/tiki/"
+                             else "https://www.independentlearning.science/tiki/") t
 
 compileIdocTexFile :: (Markupy m, Blocky m (b m), MonadIO n) => Doc m b -> FilePath -> n ()
 compileIdocTexFile doc_ outFile = liftIO $ renderFile outFile $ defaultDecorator (concatMap texy $ doc_^.docTitle.unDocTitle) (texy doc_ :: LaTeX)
 
-compileIdocBook :: (Markupy m, Blocky m (b m), MonadIO n) => 
+compileIdocBook :: (Markupy m, Blocky m (b m), MonadIO n) =>
                    LaTeX -> Vector (Doc m b) -> FilePath -> n ()
 compileIdocBook dTitle docs outFile = liftIO $ renderFile outFile $ defaultDecorator dTitle (concatMap texy docs)
 

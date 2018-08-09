@@ -3,7 +3,7 @@
 
 module Text.IDoc.Blocks.BibTex where
 
-import Text.Megaparsec
+import Text.Megaparsec as MP
 
 import Text.IDoc.Syntax
 import Text.IDoc.Parse
@@ -54,7 +54,7 @@ itemToEntry bi = do
     MiscET    -> MiscBE <$> (toMisc (_itemRefName bi) $ _itemFields bi)
     _         -> fail "only supported entry types are @article, @book, and @misc right now."
 
-data BibItem = BibItem { _itemType :: EntryType 
+data BibItem = BibItem { _itemType :: EntryType
                        , _itemRefName :: Identifier
                        , _itemFields :: Fields }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -178,7 +178,7 @@ instance ToMarkup Book where
       i H.! class_ "idocBibTitle" $ text $ _unTitle _bookTitle
       text " "
       maybe "" (\x -> H.span H.! class_ "idocBibEdition" $ text $ _unEdition x ++ " ") _bookEdition
-      maybe "" (\x -> either 
+      maybe "" (\x -> either
                       (\vol -> H.span H.! class_ "idocBibVolume" $ text $ "Vol. " ++ _unVolume vol ++ ". ")
                       (\num -> H.span H.! class_ "idocBibNumber" $ text $ "No. " ++ _unNumber num ++ ". ")
                       x) _bookVolumeOrNumber
@@ -191,7 +191,7 @@ instance ToMarkup Book where
       maybe "" (\x -> do
                    br
                    H.span H.! class_ "idocBibNote" $ text $ _unNote x) _bookNote
-  
+
 instance Texy Book where
   texy (Book {..}) = (raw $ "@misc{" ++ _unIdentifier _bookIdentifier ++ ",\n") ++
                      (either texy texy _bookAuthorOrEditor) ++
@@ -226,7 +226,7 @@ data Misc = Misc { _miscAuthor :: Maybe AuthorF
                  , _miscHowPublished :: Maybe HowPublishedF
                  , _miscMonth :: Maybe MonthF
                  , _miscYear :: Maybe YearF
-                 , _miscNote :: Maybe NoteF 
+                 , _miscNote :: Maybe NoteF
                  , _miscIdentifier :: Identifier }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
@@ -242,7 +242,7 @@ instance ToMarkup Misc where
       maybe "" (\x -> do
                    br
                    H.span H.! class_ "idocBibNote" $ text $ _unNote x) _miscNote
-  
+
 instance Texy Misc where
   texy (Misc {..}) = (raw $ "@misc{" ++ _unIdentifier _miscIdentifier ++ ",\n") ++
                      mTexy _miscAuthor ++

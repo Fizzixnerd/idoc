@@ -30,6 +30,7 @@ library
   ghc-options: -Wall -Wextra
   build-depends: base-noprelude
                , HaTeX
+               , bibtex
                , blaze-html
                , blaze-markup >= 0.8.0.0
                , classy-prelude
