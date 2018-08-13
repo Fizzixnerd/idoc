@@ -94,7 +94,14 @@ compileIls :: Bool -> Text -> IlsDoc
 compileIls development t = compileIdoc markupTypeP blockTypeP
                (if development
                 then "https://localhost:3443/tiki/"
-                else "https://www.independentlearning.science/tiki/") t
+                else "https://www.independentlearning.science/tiki/")
+               (if development
+                 then "https://localhost:3443/tiki/media/image/"
+                 else "https://www.independentlearning.science/tiki/media/image/")
+               (if development
+                 then "https://localhost:3443/tiki/media/audio/"
+                 else "https://www.independentlearning.science/tiki/media/audio/")
+  t
 
 compileIls' :: Bool -> Text -> Either (MP.ParseError (MP.Token Text) (MP.ErrorFancy Void))
                               (Either (MP.ParseError (MP.Token IDocTokenStream) (MP.ErrorFancy Void))
@@ -102,7 +109,14 @@ compileIls' :: Bool -> Text -> Either (MP.ParseError (MP.Token Text) (MP.ErrorFa
 compileIls' development t = compileIdoc' markupTypeP blockTypeP
                             (if development
                              then "https://localhost:3443/tiki/"
-                             else "https://www.independentlearning.science/tiki/") t
+                             else "https://www.independentlearning.science/tiki/")
+                            (if development
+                             then "https://localhost:3443/tiki/media/image/"
+                             else "https://www.independentlearning.science/tiki/media/image/")
+                            (if development
+                             then "https://localhost:3443/tiki/media/audio/"
+                             else "https://www.independentlearning.science/tiki/media/audio/")
+                            t
 
 compileIdocTexFile :: (Markupy m, Blocky m (b m), MonadIO n) => Doc m b -> FilePath -> n ()
 compileIdocTexFile doc_ outFile = liftIO $ renderFile outFile $ defaultDecorator (concatMap texy $ doc_^.docTitle.unDocTitle) (texy doc_ :: LaTeX)
@@ -139,6 +153,7 @@ blockTypeP "proof" = mkBlockType $ proofP
 blockTypeP "axiom" = mkBlockType $ axiomP
 blockTypeP "image" = mkBlockType $ ImageB <$> imageP
 blockTypeP "video" = mkBlockType $ VideoB <$> videoP
+blockTypeP "audio" = mkBlockType $ AudioB <$> audioP
 blockTypeP "youtube" = mkBlockType $ youTubeP
 blockTypeP "prerex" = mkBlockType $ prerexP
 blockTypeP "quote" = mkBlockType $ quoteP

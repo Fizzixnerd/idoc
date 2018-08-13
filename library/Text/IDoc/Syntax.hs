@@ -254,7 +254,8 @@ newtype AttrValue = AttrValue Text deriving (Eq, Ord, Show, Data, Typeable, Gene
 -- "blink" or, an "olink".
 data LinkType = Internal
               | Back Text -- ^ Relative base
-              | Out
+              | Out (Maybe Text) -- ^ Relative base; assumed absolute if
+                                 -- missing.
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | The displayed text of a `Link'.
@@ -459,15 +460,15 @@ toText l =
   let id_ = l^.linkLocation
   in
     case l^.linkType of
-      Out -> let (proto, hash_) =
-                   case (id_^.idProtocol, id_^.idHash) of
-                     (Just (Protocol p_), Just (IDHash h)) -> (p_ ++ "://", h)
-                     (Just (Protocol p_), Nothing) -> (p_ ++ "://", "")
-                     _ -> error $ "Invalid Outlink:\nProtocol: " ++ (show $ id_^.idProtocol) ++ "\nHash: " ++ (show $ id_^.idHash)
-             in
-               proto ++
-               (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
-               (if hash_ /= "" then "#" ++ hash_ else "")
+      Out rel_ -> let (proto, hash_) =
+                        case (id_^.idProtocol, id_^.idHash) of
+                          (Just (Protocol p_), Just (IDHash h)) -> (p_ ++ "://", h)
+                          (Just (Protocol p_), Nothing) -> (p_ ++ "://", "")
+                          _ -> error $ "Invalid Outlink:\nProtocol: " ++ (show $ id_^.idProtocol) ++ "\nHash: " ++ (show $ id_^.idHash)
+                  in
+                    (maybe proto CP.id rel_) ++
+                    (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++
+                    (if hash_ /= "" then "#" ++ hash_ else "")
       Internal -> case id_^.idHash of
                     (Just (IDHash h)) -> "#" ++ h
                     _ -> "WTF: ToValue (Link m)"
@@ -483,7 +484,7 @@ instance ToValue (Link m) where
 instance ToValue LinkType where
   toValue Internal = "idocInternal"
   toValue (Back _) = "idocBackLink"
-  toValue Out = "idocOutLink"
+  toValue (Out _) = "idocOutLink"
 
 instance MarkupMarkup m => ToMarkup (LinkText m) where
   toMarkup (LinkText lt) = concatMap toMarkup lt
@@ -681,16 +682,17 @@ instance Markupy m => Texy (SetID m) where
 
 instance Markupy m => Texy (Link m) where
   texy l = case l^.linkType of
-             Out -> H.href []
-                    (createURL $ unpack $ fromOut $ l^.linkLocation)
-                    (maybe (l^.to toText.to texy) texy (l^.linkText))
+             Out rel_ -> H.href []
+                         (createURL $ unpack $ fromOut (l^.linkLocation) rel_)
+                         (maybe (l^.to toText.to texy) texy (l^.linkText))
              Internal -> hyperref' (fromInternal $ l^.linkLocation)
                                    (maybe (l^.to toText.to texy) texy (l^.linkText))
              Back rel_ -> H.href []
                          (createURL $ unpack $ fromBack (l^.linkLocation) rel_)
                          (maybe (l^.to toText.to texy) texy (l^.linkText))
     where
-      fromOut id_ =
+      -- TODO: Make sense of this with rel_ being passed in.
+      fromOut id_ _ =
         let (proto, hash_) =
               case (id_^.idProtocol, id_^.idHash) of
                 (Just (Protocol p_), Just (IDHash h)) ->

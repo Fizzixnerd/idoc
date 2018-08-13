@@ -22,9 +22,11 @@ import Control.Lens
 
 type IDocParseError = MP.ParseError S.DToken (MP.ErrorFancy Void)
 
-data IDocReadState m b = IDocReadState { _rel :: Text
-                                       , _mp  :: MarkupParser m b
-                                       , _bp  :: BlockParser m b
+data IDocReadState m b = IDocReadState { _rel    :: Text
+                                       , _imgRel :: Text
+                                       , _audioRel :: Text
+                                       , _mp     :: MarkupParser m b
+                                       , _bp     :: BlockParser m b
                                        }
 
 newtype IDocParser m b a = IDocParser { unIDocParser :: MP.ParsecT (MP.ErrorFancy Void) S.IDocTokenStream (ReaderT (IDocReadState m b) Identity)  a }
@@ -261,6 +263,8 @@ protocolP = do
     isRecognized (S.TextT x) | x == "https" = True
                              | x == "http"  = True
                              | x == "youtube" = True
+                             | x == "image" = True
+                             | x == "audio" = True
                              | otherwise = False
     isRecognized _ = False
     colonP = void $ tokenP S.Colon
@@ -301,6 +305,8 @@ idP = do
 linkP :: IDocParser m b (S.Link m)
 linkP = MP.label "A Link" $ do
   r <- view rel
+  ir <- view imgRel
+  ar <- view audioRel
   am <- optionalAttrMapP
   linkOpenerP
   i <- idP
@@ -310,7 +316,9 @@ linkP = MP.label "A Link" $ do
          , S._idProtocol = Nothing } | null b -> fail "Empty link."
     _ -> return ()
   let ty = case i of
-        S.ID { S._idProtocol = Just _ } -> S.Out
+        S.ID { S._idProtocol = Just (S.Protocol "image") } -> S.Out (Just ir)
+        S.ID { S._idProtocol = Just (S.Protocol "audio") } -> S.Out (Just ar)
+        S.ID { S._idProtocol = Just _ } -> S.Out Nothing
         S.ID { S._idBase = b } | null b -> S.Internal
         _                               -> S.Back r
   linkCloserP
@@ -653,26 +661,26 @@ errorDoc e = S.Doc { S._docTitle = S.DocTitle $ singleton $ S.TextC "Error!"
                    , _docSetID = Nothing
                    }
 
-compileIdoc :: MarkupParser m b -> BlockParser m b -> Text -> Text -> S.Doc m b
-compileIdoc m b rel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
-                          Left e -> errorDoc e
-                          Right x -> do
-                            case runIdentity $ runReaderT (MP.runParserT (unIDocParser docP) "<idoc tokens>" x) (IDocReadState rel_ m b) of
-                              Left e -> errorDoc e
-                              Right y -> y
+compileIdoc :: MarkupParser m b -> BlockParser m b -> Text -> Text -> Text -> Text -> S.Doc m b
+compileIdoc m b rel_ imgRel_ audioRel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
+  Left e -> errorDoc e
+  Right x -> do
+    case runIdentity $ runReaderT (MP.runParserT (unIDocParser docP) "<idoc tokens>" x) (IDocReadState rel_ imgRel_ audioRel_ m b) of
+      Left e -> errorDoc e
+      Right y -> y
 
-compileIdoc' :: MarkupParser m b -> BlockParser m b -> Text -> Text
+compileIdoc' :: MarkupParser m b -> BlockParser m b -> Text -> Text -> Text -> Text
              -> Either (MP.ParseError (MP.Token Text) (MP.ErrorFancy Void))
                        (Either (MP.ParseError (MP.Token S.IDocTokenStream) (MP.ErrorFancy Void))
                                (S.Doc m b))
-compileIdoc' m b rel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
+compileIdoc' m b rel_ imgRel_ audioRel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
   Left e -> Left e
-  Right x -> return $ runIdentity $ runReaderT (MP.runParserT (unIDocParser docP) "<idoc tokens>" x) (IDocReadState rel_ m b)
+  Right x -> return $ runIdentity $ runReaderT (MP.runParserT (unIDocParser docP) "<idoc tokens>" x) (IDocReadState rel_ imgRel_ audioRel_ m b)
 
-parseIdoc' :: IDocParser m b p -> MarkupParser m b -> BlockParser m b -> Text -> Text
+parseIdoc' :: IDocParser m b p -> MarkupParser m b -> BlockParser m b -> Text -> Text -> Text -> Text
              -> Either (MP.ParseError (MP.Token Text) (MP.ErrorFancy Void))
                        (Either (MP.ParseError (MP.Token S.IDocTokenStream) (MP.ErrorFancy Void))
                                p)
-parseIdoc' p m b rel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
+parseIdoc' p m b rel_ imgRel_ audioRel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
   Left e -> Left e
-  Right x -> return $ runIdentity $ runReaderT (MP.runParserT (unIDocParser p) "<idoc tokens>" x) (IDocReadState rel_ m b)
+  Right x -> return $ runIdentity $ runReaderT (MP.runParserT (unIDocParser p) "<idoc tokens>" x) (IDocReadState rel_ imgRel_ audioRel_ m b)

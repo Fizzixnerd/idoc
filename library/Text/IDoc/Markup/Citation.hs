@@ -21,7 +21,7 @@ makeLenses ''Citation
 
 instance MarkupMarkup Citation where
   markupMarkup _ _ c = a ! class_ "idocCitation"
-                         ! href (toValue $ c^.citationContents) $ ""
+                         ! href (toValue $ c^.citationContents) $ "I'M A CITATION"
 
 instance Markupy Citation where
   markupy _ msid c = mLabel msid $ L.cite $ texy $ c^.citationContents

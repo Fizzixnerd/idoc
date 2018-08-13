@@ -19,11 +19,13 @@ import ClassyPrelude hiding (div)
 
 data SimpleMediaB m = ImageB { _image :: Image m }
                     | VideoB { _video :: Video m }
+                    | AudioB { _audio :: Audio m }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 instance MarkupMarkup m => BlockMarkup m (SimpleMediaB m) where
-  blockMarkup a_ t s (ImageB i_) = blockMarkup a_ t s i_
-  blockMarkup a_ t s (VideoB v)  = blockMarkup a_ t s v
+  blockMarkup a_ t s (ImageB i_)  = blockMarkup a_ t s i_
+  blockMarkup a_ t s (VideoB v)   = blockMarkup a_ t s v
+  blockMarkup a_ t s (AudioB aud) = blockMarkup a_ t s aud
 
 instance Markupy m => Blocky m (SimpleMediaB m) where
   blocky a_ t s (ImageB i_) = blocky a_ t s i_
@@ -34,7 +36,7 @@ data Image m = Image { _imageLink :: Link m
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 instance MarkupMarkup m => BlockMarkup m (Image m) where
-  blockMarkup _ t s (Image il cap) = card 
+  blockMarkup _ t s (Image il cap) = card
                                      defaultCardOptions
                                      (mTitle "Image" t)
                                      s
@@ -79,6 +81,24 @@ instance MarkupMarkup m => BlockMarkup m (YouTube m) where
                                                    "")
     where allowFullscreen = customAttribute "allowfullscreen"
 
+data Audio m = Audio
+  { _audioLink :: Link m
+  , _audioCaption :: Maybe (Vector (SimpleCore m))
+  } deriving (Eq, Ord, Show, Data, Typeable, Generic)
+
+instance MarkupMarkup m => BlockMarkup m (Audio m) where
+  blockMarkup _ t s (Audio al cap) = card
+                                     defaultCardOptions
+                                     (mTitle "Audio" t)
+                                     s
+                                     (icon "fa-headphones")
+                                     (vectorBlockToMarkup "idocAudioCaption" id <$> cap)
+                                     (div ! class_ "idocAudioContainer d-flex justify-content-center" $
+                                         (audio ! class_ "idocAudio"
+                                                ! controls "true"
+                                                ! src (toValue al) $
+                                                ""))
+
 imageP :: IDocParser m b (Image m)
 imageP = do
   (l, sc) <- linkBlockWithOptionalP
@@ -94,8 +114,13 @@ youTubeP = do
   (l, sc) <- linkBlockWithOptionalP
   return $ YouTube l sc
 
+audioP :: IDocParser m b (Audio m)
+audioP = do
+  (l, sc) <- linkBlockWithOptionalP
+  return $ Audio l sc
+
 instance Markupy m => Blocky m (YouTube m) where
-  blocky _ _ msid (YouTube lnk mcaption) = mLabel msid $ 
+  blocky _ _ msid (YouTube lnk mcaption) = mLabel msid $
                                         texy lnk ++
                                         maybe "" vectorTexy mcaption
 
@@ -105,13 +130,18 @@ instance Markupy m => Blocky m (Image m) where
                                       maybe "" vectorTexy mcaption
 
 instance Markupy m => Blocky m (Video m) where
-  blocky _ _ msid (Video lnk mcaption) = mLabel msid $ 
+  blocky _ _ msid (Video lnk mcaption) = mLabel msid $
                                       texy lnk ++
                                       maybe "" vectorTexy mcaption
+
+instance Markupy m => Blocky m (Audio m) where
+  blocky _ _ msid (Audio lnk mCaption) = mLabel msid $
+                                         texy lnk ++
+                                         maybe "" vectorTexy mCaption
 
 makeLenses ''SimpleMediaB
 
 makeLenses ''Image
 makeLenses ''Video
 makeLenses ''YouTube
-
+makeLenses ''Audio
