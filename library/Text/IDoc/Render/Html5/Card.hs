@@ -75,20 +75,19 @@ card :: B.ToValue a =>
      -> B.Html -- ^ body
      -> B.Html
 card (CardOptions {..}) title_ id_ icon__ footer_ body_ =
-  (B.div B.! A.class_ (B.toValue cardGridWidth) $
-        (B.div B.! A.class_ "card" $
-              ((B.div B.! A.class_ (B.toValue cardType ++ " card-header") $
-                     B.h5 B.! A.class_ "text-white mb-3" $
-                          icon__ ++ " " ++ title_) ++
-              (mfooterify footer_ $ B.div B.! A.class_ "card-body text-left" $
-                                          (B.p B.! A.class_ "card-text" $
-                                               body_))))) ++
-  B.br
+  (B.div B.! A.class_ ("mb-3" ++ (B.toValue cardGridWidth)) $
+         mID' id_ $ (B.div B.! A.class_ "card" $
+                           ((B.div B.! A.class_ (B.toValue cardType ++ " card-header") $
+                                   B.h5 B.! A.class_ "text-white mb-3" $
+                                        icon__ ++ " " ++ title_) ++
+                            (mfooterify footer_ $ B.div B.! A.class_ "card-body text-left" $
+                                                        (B.p B.! A.class_ "card-text" $
+                                                             body_)))))
   where
     mfooterify Nothing = id
     mfooterify (Just f) = ((flip (++)) (B.div B.! A.class_ "card-footer" $ f))
-    mHrefV (Just i') = (B.! A.href ("#" ++ (B.toValue i')))
-    mHrefV Nothing  = id
+    --mHrefV (Just i') = (B.! A.href ("#" ++ (B.toValue i')))
+    --mHrefV Nothing  = id
     mID' (Just i') = (B.! A.id (B.toValue i'))
     mID' Nothing = id
 

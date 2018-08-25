@@ -28,8 +28,9 @@ instance MarkupMarkup m => BlockMarkup m (SimpleMediaB m) where
   blockMarkup a_ t s (AudioB aud) = blockMarkup a_ t s aud
 
 instance Markupy m => Blocky m (SimpleMediaB m) where
-  blocky a_ t s (ImageB i_) = blocky a_ t s i_
-  blocky a_ t s (VideoB v)  = blocky a_ t s v
+  blocky a_ t s (ImageB i_)  = blocky a_ t s i_
+  blocky a_ t s (VideoB v)   = blocky a_ t s v
+  blocky a_ t s (AudioB aud) = blocky a_ t s aud
 
 data Image m = Image { _imageLink :: Link m
                      , _imageCaption :: Maybe (Vector (SimpleCore m)) }
