@@ -201,8 +201,7 @@ data Paragraph m = Paragraph { _paraContents :: Vector (SimpleCore m)
 newtype DocTitle m = DocTitle { _unDocTitle :: Vector (SimpleCore m) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
--- | A single parsed idoc document.  Its `Section's will be non-empty
--- if parsed by the parser.
+-- | A single parsed idoc document.
 data Doc m b = Doc { _docTitle :: DocTitle m
                    , _docSections :: Vector (Section m b)
                    , _docSetID :: Maybe (SetID m) }
@@ -260,7 +259,7 @@ data LinkType = Internal
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 -- | The displayed text of a `Link'.
-newtype LinkText m = LinkText { _unLinkText :: Vector (SimpleCore m) }
+newtype LinkText m = LinkText { _unLinkText :: Text }
   deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | A Link around (or out of) a `Doc'.  See `LinkType' for the types
@@ -574,8 +573,8 @@ verbatimBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
                                                       B.toMarkup x)
                                    vb
 
-newtype LinkLevel = LinkLevel Int
-  deriving (Eq, Ord, Show)
+-- newtype LinkLevel = LinkLevel Int
+--   deriving (Eq, Ord, Show)
 
 -- -- | Dear god, don't look at the definition of this.
 -- listLinks :: Doc m b -> Vector (SetID m, LinkLevel)
@@ -595,25 +594,25 @@ newtype LinkLevel = LinkLevel Int
 --                                 -- FIXME: Add lists here
 --                             ) <$> scnts) <> singleton ((\x -> (x, LinkLevel 2)) <$> ssid)) ss
 
-listLinks :: Doc m b -> Protocol -> Vector IDBase -> Vector (Link m, LinkLevel)
-listLinks d proto rel_ = singleton (docLink, LinkLevel 1) <> sectionLinks
-  where
-    docLink = Link { _linkText = Just $ LinkText $ d^.docTitle.unDocTitle
-                   , _linkAttrs = AttrMap CP.mempty
-                   , _linkLocation = ID { _idProtocol = Just proto
-                                        , _idBase = rel_
-                                        , _idHash = Just $ IDHash "" }
-                   , _linkType = Internal
-                   }
-    sectionLinks = (\s -> ( Link { _linkText = Just $ LinkText $ s^.secTitle.unSectionTitle
-                                 , _linkAttrs = AttrMap CP.mempty
-                                 , _linkLocation = ID { _idProtocol = Just proto
-                                                      , _idBase = rel_
-                                                      , _idHash = _sidName <$> (s^.secSetID)
-                                                      }
-                                 , _linkType = Internal
-                                 }
-                          , LinkLevel 2)) <$> (d^.docSections)
+-- listLinks :: Doc m b -> Protocol -> Vector IDBase -> Vector (Link m, LinkLevel)
+-- listLinks d proto rel_ = singleton (docLink, LinkLevel 1) <> sectionLinks
+--   where
+--     docLink = Link { _linkText = Just $ LinkText $ d^.docTitle.unDocTitle
+--                    , _linkAttrs = AttrMap CP.mempty
+--                    , _linkLocation = ID { _idProtocol = Just proto
+--                                         , _idBase = rel_
+--                                         , _idHash = Just $ IDHash "" }
+--                    , _linkType = Internal
+--                    }
+--     sectionLinks = (\s -> ( Link { _linkText = Just $ LinkText $ s^.secTitle.unSectionTitle
+--                                  , _linkAttrs = AttrMap CP.mempty
+--                                  , _linkLocation = ID { _idProtocol = Just proto
+--                                                       , _idBase = rel_
+--                                                       , _idHash = _sidName <$> (s^.secSetID)
+--                                                       }
+--                                  , _linkType = Internal
+--                                  }
+--                           , LinkLevel 2)) <$> (d^.docSections)
 
 mID :: ToValue (SetID m) => Maybe (SetID m) -> (Html -> Html)
 mID mid = case mid of

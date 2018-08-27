@@ -322,7 +322,7 @@ linkP = MP.label "A Link" $ do
         S.ID { S._idBase = b } | null b -> S.Internal
         _                               -> S.Back r
   linkCloserP
-  txt <- optionalMarkupContentsP
+  txt <- optionalSimpleMarkupContentsP
   return S.Link { S._linkText = if null txt then Nothing else Just $ S.LinkText txt
                 , S._linkAttrs = am
                 , S._linkLocation = i
@@ -402,12 +402,18 @@ markupContentsWithSetIDP = do
   s <- setIDP
   return (v, s)
 
+optionalSimpleMarkupContentsP :: IDocParser m b Text
+optionalSimpleMarkupContentsP = do
+  mu <- optional $ someTween lBraceP rBraceP anyTokenP
+  return $ maybe mempty (concatMap S.unToken) mu
+  where
+    lBraceP = tokenP S.LBrace
+    rBraceP = tokenP S.RBrace
+
 optionalMarkupContentsP :: IDocParser m b (Vector (S.SimpleCore m))
 optionalMarkupContentsP = do
   mu <- optional markupContentsP
-  case mu of
-    Nothing -> return empty
-    Just xs -> return xs
+  return $ maybe mempty id mu
 
 defaultMarkupP :: IDocParser m b (S.Markup m)
 defaultMarkupP = do

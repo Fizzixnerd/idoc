@@ -31,19 +31,22 @@ prerexP = Prerex <$> do
     newlineP
     return x
 
-data PrerexItem m = PrerexItem { _prerexItemPath :: Link m }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+data PrerexItem m = PrerexItem
+  { _prerexItemPath :: Link m
+  , _prerexItemDescription :: Vector (SimpleCore m)
+  } deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 prerexItemP :: IDocParser m b (PrerexItem m)
 prerexItemP = do
   r <- view Text.IDoc.Parse.rel
   path <- idP
   desc <- markupContentsP
-  return $ PrerexItem { _prerexItemPath = Link { _linkText = Just $ LinkText desc
+  return $ PrerexItem { _prerexItemPath = Link { _linkText = Nothing
                                                , _linkAttrs = AttrMap mempty
                                                , _linkLocation = path
                                                , _linkType = Back r
                                                }
+                      , _prerexItemDescription = desc
                       }
 
 makeLenses ''Prerex
@@ -70,7 +73,7 @@ instance MarkupMarkup m => ToMarkup (PrerexItem m) where
                      (Just $ a ! class_ "idocPrerexItemLink"
                                ! A.href (p_^.prerexItemPath.to toValue) $
                                "Go to " ++ itemPath)
-                     (toMarkup $ maybe (LinkText ClassyPrelude.empty) ClassyPrelude.id (p_^.prerexItemPath.linkText))
+                     (concatMap toMarkup $ p_^.prerexItemDescription)
     where
       itemPath = toMarkup $ (concatMap _unIDBase $ IDBase "/" `V.cons` (intersperse (IDBase "/") (p_^.prerexItemPath.linkLocation.idBase)))
 
@@ -79,7 +82,7 @@ instance Markupy m => Texy (PrerexItem m) where
   texy p_ = (H.href [] "" $ texy $ fromBack $ p_^.prerexItemPath.linkLocation) ++
             ": " ++
             newline ++
-            (texy $ maybe (LinkText ClassyPrelude.empty) ClassyPrelude.id (p_^.prerexItemPath.linkText)) ++
+            (concatMap texy $ p_^.prerexItemDescription) ++
             newline
     where fromBack id_ = "/" ++ (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 
