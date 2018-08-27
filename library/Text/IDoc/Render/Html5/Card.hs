@@ -25,7 +25,7 @@ data CardType = CDefault
               | CDanger deriving (Eq, Show)
 
 instance B.ToValue CardType where
-  toValue CDefault = "bg-default"
+  toValue CDefault = "bg-secondary"
   toValue CPrimary = "bg-primary"
   toValue CInfo    = "bg-info"
   toValue CSuccess = "bg-success"
@@ -78,7 +78,7 @@ card (CardOptions {..}) title_ id_ icon__ footer_ body_ =
   (B.div B.! A.class_ ("mb-3" ++ (B.toValue cardGridWidth)) $
          mID' id_ $ (B.div B.! A.class_ "card" $
                            ((B.div B.! A.class_ (B.toValue cardType ++ " card-header") $
-                                   B.h5 B.! A.class_ "text-white mb-3" $
+                                   B.h5 B.! A.class_ "text-white mb-0" $
                                         icon__ ++ " " ++ title_) ++
                             (mfooterify footer_ $ B.div B.! A.class_ "card-body text-left" $
                                                         (B.p B.! A.class_ "card-text" $

@@ -607,6 +607,11 @@ escapedP = do
   where
     bSlashP = void $ tokenP S.BSlash
 
+commentP :: IDocParser m b (Vector S.Token)
+commentP = do
+  fSlashP >> fSlashP
+  someTill newlineP anyTokenP
+
 -- | Core
 -- Putting it all together.
 simpleCoreP :: IDocParser m b (S.SimpleCore m)
@@ -615,6 +620,7 @@ simpleCoreP =  S.TextC       <$> MP.try escapedP
            <|> S.InlineMathC <$> MP.try inlineMathP
            <|> S.LinkC       <$> MP.try linkP
            <|> S.QTextC      <$> MP.try qTextP
+           <|> S.CommentC    <$> MP.try commentP
            <|> S.TextC       <$>        textP
 
 coreP :: IDocParser m b (S.Core m b)

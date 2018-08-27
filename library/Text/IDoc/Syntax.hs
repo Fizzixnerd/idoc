@@ -180,6 +180,7 @@ data SimpleCore m =
   | LinkC (Link m)
   | InlineMathC (InlineMath m)
   | MarkupC (Text.IDoc.Syntax.Markup m)
+  | CommentC (Vector Text.IDoc.Syntax.Token)
   deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
 -- | Sum type for holding the major organizing constructs of the
@@ -521,6 +522,7 @@ instance MarkupMarkup m => ToMarkup (SimpleCore m) where
   toMarkup (LinkC l) = toMarkup l
   toMarkup (InlineMathC im) = toMarkup im
   toMarkup (MarkupC m) = toMarkup m
+  toMarkup (CommentC _) = CP.mempty
 
 instance MarkupMarkup m => ToMarkup (Paragraph m) where
   toMarkup p_ = p ! class_ "idocParagraph" $
@@ -656,6 +658,7 @@ instance Markupy m => Texy (SimpleCore m) where
   texy (LinkC l) = texy l
   texy (InlineMathC im) = texy im
   texy (MarkupC m) = texy m
+  texy (CommentC _) = CP.mempty
 
 instance (Markupy m, Blocky m (b m)) => Texy (ComplexCore m b) where
   texy (ListC l) = texy l
