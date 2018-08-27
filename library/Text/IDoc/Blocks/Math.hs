@@ -94,57 +94,53 @@ instance BlockMarkup m Align where
 instance Markupy m => Blocky m Align where
   blocky _ _ msid (Align a_) = mLabel msid $ M.align [raw $ concatMap unToken a_]
 
-data Theorem m b = Theorem { _theoremStatement :: Vector (Core m b)
-                           , _theoremProof :: Maybe (Vector (Core m b)) }
+data Theorem m b = Theorem { _theoremStatement :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Theorem m b) where
-  blockMarkup _ t s (Theorem thm pf) = card
-                                       infoCardOptions
-                                       (mTitle "Theorem" t)
-                                       s
-                                       (icon "fa-star-o")
-                                       (vectorBlockToMarkup "idocTheoremProof" id <$> pf)
-                                       (vectorBlockToMarkup "idocTheoremStatement" id thm)
+  blockMarkup _ t s (Theorem thm) = card
+                                    infoCardOptions
+                                    (mTitle "Theorem" t)
+                                    s
+                                    (icon "fa-star-o")
+                                    Nothing
+                                    (vectorBlockToMarkup "idocTheoremStatement" id thm)
 
-data Lemma m b = Lemma { _lemmaStatement :: Vector (Core m b)
-                       , _lemmaProof :: Maybe (Vector (Core m b)) }
+data Lemma m b = Lemma { _lemmaStatement :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Lemma m b) where
-  blockMarkup _ t s (Lemma lem pf) = card
-                                     infoCardOptions
-                                     (mTitle "Lemma" t)
-                                     s
-                                     (icon "fa-star-o")
-                                     (vectorBlockToMarkup "idocLemmaProof" id <$> pf)
-                                     (vectorBlockToMarkup "idocLemmaStatement" id lem)
+  blockMarkup _ t s (Lemma lem) = card
+                                  infoCardOptions
+                                  (mTitle "Lemma" t)
+                                  s
+                                  (icon "fa-star-o")
+                                  Nothing
+                                  (vectorBlockToMarkup "idocLemmaStatement" id lem)
 
-data Corollary m b = Corollary { _corollaryStatement :: Vector (Core m b)
-                               , _corollaryProof :: Maybe (Vector (Core m b)) }
+data Corollary m b = Corollary { _corollaryStatement :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Corollary m b) where
-  blockMarkup _ t s (Corollary cor pf) = card
-                                         infoCardOptions
-                                         (mTitle "Corollary" t)
-                                         s
-                                         (icon "fa-star-o")
-                                         (vectorBlockToMarkup "idocCorollaryProof" id <$> pf)
-                                         (vectorBlockToMarkup "idocCorollaryStatement" id cor)
+  blockMarkup _ t s (Corollary cor) = card
+                                      infoCardOptions
+                                      (mTitle "Corollary" t)
+                                      s
+                                      (icon "fa-star-o")
+                                      Nothing
+                                      (vectorBlockToMarkup "idocCorollaryStatement" id cor)
 
-data Proposition m b = Proposition { _propositionStatement :: Vector (Core m b)
-                                   , _propositionProof :: Maybe (Vector (Core m b)) }
+data Proposition m b = Proposition { _propositionStatement :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
 instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Proposition m b) where
-  blockMarkup _ t s (Proposition prp pf) = card
-                                           infoCardOptions
-                                           (mTitle "Proposition" t)
-                                           s
-                                           (icon "fa-star-o")
-                                           (vectorBlockToMarkup "idocPropositionProof" id <$> pf)
-                                           (vectorBlockToMarkup "idocPropositionStatement" id prp)
+  blockMarkup _ t s (Proposition prp) = card
+                                        infoCardOptions
+                                        (mTitle "Proposition" t)
+                                        s
+                                        (icon "fa-star-o")
+                                        Nothing
+                                        (vectorBlockToMarkup "idocPropositionStatement" id prp)
 
 data Conjecture m b = Conjecture { _conjectureContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -204,24 +200,16 @@ alignP :: IDocParser m b Align
 alignP = Align <$> uninterpretedBlockP
 
 theoremP :: IDocParser m b (Theorem m b)
-theoremP = do
-  (s, p_) <- coreBlockWithOptionalP
-  return $ Theorem s p_
+theoremP = Theorem <$> coreBlockP
 
 lemmaP :: IDocParser m b (Lemma m b)
-lemmaP = do
-  (s, p_) <- coreBlockWithOptionalP
-  return $ Lemma s p_
+lemmaP = Lemma <$> coreBlockP
 
 corollaryP :: IDocParser m b (Corollary m b)
-corollaryP = do
-  (s, p_) <- coreBlockWithOptionalP
-  return $ Corollary s p_
+corollaryP = Corollary <$> coreBlockP
 
 propositionP :: IDocParser m b (Proposition m b)
-propositionP = do
-  (s, p_) <- coreBlockWithOptionalP
-  return $ Proposition s p_
+propositionP = Proposition <$> coreBlockP
 
 conjectureP :: IDocParser m b (Conjecture m b)
 conjectureP = Conjecture <$> coreBlockP
@@ -239,25 +227,23 @@ theoremBlock :: (LaTeXC l, Markupy m, Blocky m (b m)) =>
                 Maybe (BlockTitle m)
              -> Maybe (SetID m)
              -> Vector (Core m b)
-             -> Maybe (Vector (Core m b))
              -> String
              -> l
-theoremBlock _ msid thm mprf ttype = mLabel msid $
-                                     T.theorem ttype $
-                                     vectorTexy thm ++
-                                     maybe "" (T.proof Nothing . vectorTexy) mprf
+theoremBlock _ msid thm ttype = mLabel msid $
+                                T.theorem ttype $
+                                vectorTexy thm
 
 instance (Markupy m, Blocky m (b m)) => Blocky m (Theorem m b) where
-  blocky _ mt msid (Theorem thm mprf) = theoremBlock mt msid thm mprf "Theorem"
+  blocky _ mt msid (Theorem thm) = theoremBlock mt msid thm "Theorem"
 
 instance (Markupy m, Blocky m (b m)) => Blocky m (Lemma m b) where
-  blocky _ mt msid (Lemma thm mprf) = theoremBlock mt msid thm mprf "Lemma"
+  blocky _ mt msid (Lemma thm) = theoremBlock mt msid thm "Lemma"
 
 instance (Markupy m, Blocky m (b m)) => Blocky m (Corollary m b) where
-  blocky _ mt msid (Corollary thm mprf) = theoremBlock mt msid thm mprf "Corollary"
+  blocky _ mt msid (Corollary thm) = theoremBlock mt msid thm "Corollary"
 
 instance (Markupy m, Blocky m (b m)) => Blocky m (Proposition m b) where
-  blocky _ mt msid (Proposition thm mprf) = theoremBlock mt msid thm mprf "Proposition"
+  blocky _ mt msid (Proposition thm) = theoremBlock mt msid thm "Proposition"
 
 instance (Markupy m, Blocky m (b m)) => Blocky m (Conjecture m b) where
   blocky _ _ msid (Conjecture c) = mLabel msid $
