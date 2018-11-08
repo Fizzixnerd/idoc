@@ -2,7 +2,7 @@
 -- Author: Matt Walker
 -- License: https://opensource.org/licenses/BSD-2-Clause
 -- Created: Sep 02, 2017
--- Summary: 
+-- Summary:
 
 module Text.IDoc.Check where
 
@@ -16,24 +16,23 @@ import Control.Lens
 
 import qualified Text.IDoc.Syntax as S
 
--- | So in idoc we need to check a bunch of things to make sure the
--- input is well formed.  First of all, we have to check that every
--- link is legal according to the rules of idoc, where you can only
--- have blinks and ilinks except in specific places like
--- FurtherReadings and the Bibliography.  We also need to ensure
--- blinks actually point to things in the prerequisites.
+-- | So in ILS-flavored idoc we need to check a bunch of things to make sure the
+-- input is well formed. First of all, we have to check that every link is legal
+-- according to the rules of idoc, where you can only have blinks and ilinks
+-- except in specific places like FurtherReadings and the Bibliography. We also
+-- need to ensure blinks actually point to things in the prerequisites.
 --
--- We also need to ensure that there is a Prerex block as the first
--- thing in the Doc, as well as the first thing in a Connection.  We
--- must ensure that the Bibliography comes at the end of the Doc.
+-- We also need to ensure that there is a Prerex block as the first thing in the
+-- Doc, as well as the first thing in a Connection. We must ensure that the
+-- Bibliography comes at the end of the Doc.
 --
--- There should also be warnings, for things like not having a
--- Bibliography, Introduction, or Summary.
+-- There should also be warnings, for things like not having a Bibliography,
+-- Introduction, or Summary.
 --
--- The checker could maybe also merge nearby TextCs, though this
--- probably should be done in a separate pass to be honest.
+-- The checker could maybe also merge nearby TextCs, though this probably should
+-- be done in a separate pass to be honest.
 
-newtype PrerexConstraint = PrerexConstraint { unPC :: Text } 
+newtype PrerexConstraint = PrerexConstraint { unPC :: Text }
   deriving (Eq, Ord, Show)
 
 newtype Warning = Warning { unWarning :: Text }
@@ -53,7 +52,7 @@ data CheckError = NoSectionsError
                 | LinkNotAllowed S.Link
   deriving (Eq, Ord, Show)
 
-newtype Check a = Check { unCheck :: (ExceptT CheckError 
+newtype Check a = Check { unCheck :: (ExceptT CheckError
                                       (StateT CheckState Identity)) a }
   deriving (Functor, Applicative, Monad, MonadState CheckState,
             MonadError CheckError)
@@ -91,13 +90,13 @@ checkForPrerex d@(S.Doc { S._docSections = s }) = do
   CP.mapM_ checkConnectionForPrerex $ allConnections d
   return d
   where
-    isConnection (S.CC (S.BlockC (S.Block 
+    isConnection (S.CC (S.BlockC (S.Block
                                   { S._bType = S.ConnectionB _ }))) = True
     isConnection _ = False
     findConnectionsInSection s_ = filter isConnection $ s_^.S.secContents
     allConnections d_ = concat $ findConnectionsInSection <$> (d_^.S.docSections)
-    checkConnectionForPrerex (S.CC (S.BlockC 
-                                    (S.Block 
+    checkConnectionForPrerex (S.CC (S.BlockC
+                                    (S.Block
                                       { S._bType = S.ConnectionB c_ }))) = do
       when (null $ c_^.S.connectionContents) $
         throwError $ EmptyConnectionError c_
@@ -157,7 +156,7 @@ checkLinks d@(S.Doc { S._docSections = s }) = do
         S.ProofB (S.Proof p) -> checkCores ps allowOlinks p
         S.QuoteB (S.Quote q) -> checkSimpleCores ps allowOlinks q
         S.CodeB _ -> return ()
-        S.ImageB (S.Image (_, mys)) -> 
+        S.ImageB (S.Image (_, mys)) ->
           CP.mapM_ (checkSimpleCores ps allowOlinks) mys
         S.VideoB (S.Video (_, mys)) ->
           CP.mapM_ (checkSimpleCores ps allowOlinks) mys
