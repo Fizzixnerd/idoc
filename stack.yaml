@@ -3,7 +3,9 @@ extra-package-dbs: []
 packages:
 - .
 extra-deps:
-- base-noprelude-4.11.1.0
-resolver: nightly-2018-08-04
+- base-noprelude-4.12.0.0
+- HaTeX-3.19.0.0
+- wl-pprint-extras-3.5.0.5
+resolver: nightly-2018-11-09
 #resolver: nightly-2017-12-18
 allow-newer: true
