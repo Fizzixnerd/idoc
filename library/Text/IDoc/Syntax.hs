@@ -5,6 +5,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE TypeApplications #-}
 -- | Syntax.hs
 --
 -- Author: Matt Walker
@@ -20,6 +21,7 @@ module Text.IDoc.Syntax where
 import ClassyPrelude as CP hiding (span)
 
 import Data.Data
+import qualified Data.List.NonEmpty as NE
 
 import Data.Vinyl
 import Data.Vinyl.CoRec
@@ -38,6 +40,7 @@ import Text.LaTeX.Packages.Hyperref as H
 
 import Text.IDoc.Render.Tex
 
+import qualified Text.Megaparsec as MP
 import Text.Megaparsec.Stream
 import Text.Megaparsec.Pos
 
@@ -149,14 +152,15 @@ instance Stream IDocTokenStream where
   tokensToChunk _ = fromList
   chunkToTokens _ = toList
   chunkLength _ = length
-  advance1 _ _ (SourcePos {sourceName = sn}) (DebugToken { _dtInfo = info }) =
-    let (r, c) = _diEnd info
-    in
-      SourcePos { sourceName = sn
-                , sourceLine = mkPos $ fromIntegral r
-                , sourceColumn = mkPos $ fromIntegral c
-                }
-  advanceN pxy p_ sp ts = advance1 pxy p_ sp (V.last ts)
+  chunkEmpty _ = null
+  -- advance1 _ _ (SourcePos {sourceName = sn}) (DebugToken { _dtInfo = info }) =
+  --   let (r, c) = _diEnd info
+  --   in
+  --     SourcePos { sourceName = sn
+  --               , sourceLine = mkPos $ fromIntegral r
+  --               , sourceColumn = mkPos $ fromIntegral c
+  --               }
+  -- advanceN pxy p_ sp ts = advance1 pxy p_ sp (V.last ts)
   take1_ (IDocTokenStream ts) = if V.null ts then
                                   Nothing
                                 else
@@ -165,15 +169,53 @@ instance Stream IDocTokenStream where
   takeN_ _ (IDocTokenStream ts) | V.null ts = Nothing
   takeN_ n (IDocTokenStream ts) = Just $ IDocTokenStream <$> (V.splitAt n ts)
   takeWhile_ p_ (IDocTokenStream ts) = IDocTokenStream <$> (V.span p_ ts)
+  showTokens _ (x NE.:| xs) = show $ (\DebugToken {..} -> unToken _dtToken) <$> (x : xs)
+  reachOffset newOffset pstate =
+    let oldOffset = MP.pstateOffset pstate
+        oldSourcePos = MP.pstateSourcePos pstate
+        oldStream = MP.pstateInput pstate
+        getNewStream offset stream =
+          let mNewStreamTuple = takeN_ offset stream
+          in
+            maybe (V.empty, stream) CP.id mNewStreamTuple
+        getNewSourcePos stream old =
+          let mNextToken = fst <$> take1_ stream
+          in
+            maybe old (\dtoken ->
+                          old
+                          { sourceLine = mkPos $ fst $ _diStart $ _dtInfo dtoken
+                          , sourceColumn = mkPos $ snd $ _diStart $ _dtInfo dtoken
+                          }) mNextToken
+        (jumpedContent, newStream) = getNewStream (newOffset - oldOffset) oldStream
+        newlineIndices = V.findIndices (\dtoken ->
+                                          _dtToken dtoken == Newline) jumpedContent
+        lastIndex = if V.null newlineIndices
+                    then Nothing
+                    else Just $ V.last newlineIndices
+        prefix = maybe jumpedContent (\idx -> snd $ V.splitAt idx jumpedContent) lastIndex
+        restOfLine = fst $ takeWhile_ (\dtoken -> _dtToken dtoken /= Newline) newStream
+        wholeLine = prefix ++ restOfLine
+        printedLine = if V.null wholeLine
+                      then "<empty line>"
+                      else concatMap (unToken . _dtToken) wholeLine
+        newSourcePos = getNewSourcePos oldStream oldSourcePos
+        newPosState = pstate
+                      { MP.pstateInput = newStream
+                      , MP.pstateOffset = newOffset
+                      , MP.pstateSourcePos = newSourcePos
+                      }
+    in
+      (newSourcePos, unpack printedLine, newPosState)
 
--- | One of a `SimpleCore' or a `ComplexCore'; holds most -- constructs in the language.
+-- | One of a `SimpleCore' or a `ComplexCore'; holds most constructs in the
+-- language.
 data Core m b = SC (SimpleCore m)
               | CC (ComplexCore m b)
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
--- | Sum type for holding `Text', `QText' ("quoted text"), `Link's,
--- `InlineMath' or `Markup'.  Used inside `Paragraph's and titles (like
--- `Section' headings and so on).
+-- | Sum type for holding `Text', `QText' ("quoted text"), `Link's, `InlineMath'
+-- or `Markup'. Used inside `Paragraph's and titles (like `Section' headings and
+-- so on).
 data SimpleCore m =
     TextC Text
   | QTextC (QText m)
@@ -543,7 +585,7 @@ instance ( RecApplicative xs
          , MarkupMarkup m
          , AllAllSat '[BlockMarkup m] xs) =>
   BlockMarkup m (CoRec Data.Vinyl.Functor.Identity xs) where
-  blockMarkup a_ t s x = getIdentity $ onCoRec (Proxy :: Proxy '[BlockMarkup m]) (blockMarkup a_ t s) x
+  blockMarkup a_ t s x = onCoRec @(BlockMarkup m) (blockMarkup a_ t s) x
 
 instance ( RecApplicative xs
          , AllAllSat '[MarkupMarkup] xs) =>
