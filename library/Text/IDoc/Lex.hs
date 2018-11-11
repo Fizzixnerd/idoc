@@ -56,9 +56,9 @@ reservedPunctuationS = S.fromList reservedPunctuationL
 
 mkDTokenP :: Parsec (ErrorFancy Void) Text S.Token -> Parsec (ErrorFancy Void) Text DToken
 mkDTokenP p = do
-  MP.SourcePos _ r1 c1 <- MP.getPosition
+  MP.SourcePos _ r1 c1 <- MP.getSourcePos
   x <- p
-  MP.SourcePos _ r2 c2 <- MP.getPosition
+  MP.SourcePos _ r2 c2 <- MP.getSourcePos
   let di = DebugInfo (MP.unPos r1, MP.unPos c1) (MP.unPos r2, MP.unPos c2)
   return $ DebugToken di x
 

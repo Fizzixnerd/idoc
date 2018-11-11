@@ -83,8 +83,8 @@ checkBasicWellFormedness d@(S.Doc { S._docSections = s }) = do
 fetchPrerex :: S.IlsDoc -> Maybe (S.Prerex S.MarkupType)
 fetchPrerex d@(S.Doc {S._docSections = s}) = do
   preamble <- V.headM s
-  prerexCandidate <- preamble^.S.secContents.to V.headM -- FIXME: This doesn't do
-                                                        -- what you think it
+  prerexCandidate <- preamble^.S.secContents.to V.headM -- FIXME: This doesn't
+                                                        -- do what you think it
                                                         -- does. Change from
                                                         -- headM.
   case prerexCandidate of

@@ -6,6 +6,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 -- | Syntax.hs
 --
 -- Author: Matt Walker
@@ -25,7 +26,6 @@ import qualified Data.List.NonEmpty as NE
 
 import Data.Vinyl
 import Data.Vinyl.CoRec
-import Data.Vinyl.TypeLevel
 import Data.Vinyl.Functor
 
 import qualified Data.Vector as V
@@ -143,6 +143,7 @@ unToken Plus = "+"
 
 -- | Newtype around a Vector of `DToken's; represents lexed source.
 newtype IDocTokenStream = IDocTokenStream { unStream :: Vector DToken }
+  deriving (Show)
 
 -- | Megaparsec Stream instance so that this properly works with the
 -- rest of the library.
@@ -581,16 +582,14 @@ instance MarkupMarkup m => ToMarkup (DocTitle m) where
   toMarkup (DocTitle dt_) = h1 ! class_ "idocDocTitle" $
                             concatMap toMarkup dt_
 
-instance ( RecApplicative xs
-         , MarkupMarkup m
-         , AllAllSat '[BlockMarkup m] xs) =>
+instance ( MarkupMarkup m
+         , RPureConstrained (BlockMarkup m) xs) =>
   BlockMarkup m (CoRec Data.Vinyl.Functor.Identity xs) where
-  blockMarkup a_ t s x = onCoRec @(BlockMarkup m) (blockMarkup a_ t s) x
+  blockMarkup a_ t s x = getIdentity $ onCoRec @(BlockMarkup m) (fmap $ blockMarkup a_ t s) x
 
-instance ( RecApplicative xs
-         , AllAllSat '[MarkupMarkup] xs) =>
+instance RPureConstrained MarkupMarkup xs =>
   MarkupMarkup (CoRec Data.Vinyl.Functor.Identity xs) where
-  markupMarkup a_ s x = getIdentity $ onCoRec (Proxy :: Proxy '[MarkupMarkup]) (markupMarkup a_ s) x
+  markupMarkup a_ s x = getIdentity $ onCoRec @MarkupMarkup (fmap $ markupMarkup a_ s) x
 
 -- * Some Helper Functions
 vectorBlockToMarkup :: B.ToMarkup a =>
@@ -746,7 +745,7 @@ instance Markupy m => Texy (Link m) where
                 _ -> error $ "Invalid Out Link:\nProtocol: " ++ (show $ id_^.idProtocol) ++ "\nHash: " ++ (show $ id_^.idHash)
         in
           proto ++
-          (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++ 
+          (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase)) ++
           "#" ++ hash_
 
       fromInternal id_ = case id_^.idHash of
@@ -783,7 +782,7 @@ instance Markupy m => Texy (BlockTitle m) where
 instance Markupy m => Texy (List m) where
   texy (List li_) = enumerate $
                      concatMap (\li'_ ->
-                                  mLabel (li'_^.liSetID) $ 
+                                  mLabel (li'_^.liSetID) $
                                   L.item (textbf <$> texy <$> (li'_^.liLabel)) ++ (vectorTexy $ li'_^.liContents)) li_
 
 instance Markupy m => Texy (ListLabel m) where
@@ -793,13 +792,11 @@ instance Blocky m (b m) => Texy (Block m b) where
   texy b_ = blocky (b_^.bAttrs) (b_^.bTitle) (b_^.bSetID) (b_^.bType)
 
 -- Type-level magic!
-instance ( RecApplicative xs
-         , Markupy m
-         , AllAllSat '[Blocky m] xs) =>
+instance ( Markupy m
+         , RPureConstrained (Blocky m) xs) =>
   Blocky m (CoRec Data.Vinyl.Functor.Identity xs) where
-  blocky a_ t s x = getIdentity $ onCoRec (Proxy :: Proxy '[Blocky m]) (blocky a_ t s) x
+  blocky a_ t s x = getIdentity $ onCoRec @(Blocky m) (fmap $ blocky a_ t s) x
 
-instance ( RecApplicative xs
-         , AllAllSat '[Markupy] xs) =>
+instance RPureConstrained Markupy xs =>
   Markupy (CoRec Data.Vinyl.Functor.Identity xs) where
-  markupy a_ s x = getIdentity $ onCoRec (Proxy :: Proxy '[Markupy]) (markupy a_ s) x
+  markupy a_ s x = getIdentity $ onCoRec @Markupy (fmap $ markupy a_ s) x
