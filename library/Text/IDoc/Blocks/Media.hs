@@ -32,6 +32,11 @@ instance Markupy m => Blocky m (SimpleMediaB m) where
   blocky a_ t s (VideoB v)   = blocky a_ t s v
   blocky a_ t s (AudioB aud) = blocky a_ t s aud
 
+instance CheckLinks m b m => CheckLinks m b (SimpleMediaB m) where
+  checkLinks constraints container (ImageB i_) = checkLinks constraints container i_
+  checkLinks constraints container (VideoB v) = checkLinks constraints container v
+  checkLinks constraints container (AudioB aud) = checkLinks constraints container aud
+
 data Image m = Image { _imageLink :: Link m
                      , _imageCaption :: Maybe (Vector (SimpleCore m)) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -45,6 +50,10 @@ instance MarkupMarkup m => BlockMarkup m (Image m) where
                                      (vectorBlockToMarkup "idocImageCaption" id <$> cap)
                                      (img ! class_ "idocImage img-responsive"
                                           ! src (toValue il))
+
+instance CheckLinks m b m => CheckLinks m b (Image m) where
+  checkLinks constraints container (Image _ cap) =
+    maybe mempty (concatMap (checkLinks constraints container)) cap
 
 data Video m = Video { _videoLink :: Link m
                      , _videoCaption :: Maybe (Vector (SimpleCore m)) }
@@ -62,6 +71,10 @@ instance MarkupMarkup m => BlockMarkup m (Video m) where
                                             ! controls "true"
                                             ! src (toValue vl) $
                                             "")
+
+instance CheckLinks m b m => CheckLinks m b (Video m) where
+  checkLinks constraints container (Video _ cap) =
+    maybe mempty (concatMap (checkLinks constraints container)) cap
 
 data YouTube m = YouTube { _youTubeLink :: Link m
                          , _youTubeCaption :: Maybe (Vector (SimpleCore m)) }
@@ -82,6 +95,10 @@ instance MarkupMarkup m => BlockMarkup m (YouTube m) where
                                                    "")
     where allowFullscreen = customAttribute "allowfullscreen"
 
+instance CheckLinks m b m => CheckLinks m b (YouTube m) where
+  checkLinks constraints container (YouTube _ cap) =
+    maybe mempty (concatMap (checkLinks constraints container)) cap
+
 data Audio m = Audio
   { _audioLink :: Link m
   , _audioCaption :: Maybe (Vector (SimpleCore m))
@@ -99,6 +116,11 @@ instance MarkupMarkup m => BlockMarkup m (Audio m) where
                                                 ! controls "true"
                                                 ! src (toValue al) $
                                                 ""))
+
+instance CheckLinks m b m => CheckLinks m b (Audio m) where
+  checkLinks constraints container (Audio _ cap) =
+    maybe mempty (concatMap (checkLinks constraints container)) cap
+
 
 imageP :: IDocParser m b (Image m)
 imageP = do

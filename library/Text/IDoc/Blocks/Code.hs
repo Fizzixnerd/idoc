@@ -29,6 +29,9 @@ instance MarkupMarkup m => BlockMarkup m Code where
 instance Markupy m => Blocky m Code where
   blocky = codeBlock
 
+instance CheckLinks m b Code where
+  checkLinks _ _ _ = mempty
+
 codeBlock :: (LaTeXC l, Markupy m) => AttrMap -> Maybe (BlockTitle m) -> Maybe (SetID m) -> Code -> l
 codeBlock (AttrMap attrs) _ msid (Code c) = (mLabel msid $
                                              mkCode langName $

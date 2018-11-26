@@ -28,8 +28,10 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Connection m b)
 
 instance (Markupy m, Blocky m (b m)) => Blocky m (Connection m b) where
   blocky _ mt msid (Connection c) = (subsection $ mLabel msid title_) ++
-                                   vectorTexy c
+                                    vectorTexy c
     where title_ = mTitleT mt "Connection"
+
+-- | Languages must define their own Connection CheckLinks instance.
 
 connectionP :: IDocParser m b (Connection m b)
 connectionP = Connection <$> coreBlockP

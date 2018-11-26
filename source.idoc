@@ -1,5 +1,5 @@
 =idoc User Guide
-[[#idocUserGuide]]{idoc User Guide}
+[[#idocUserGuide]]
 
 @prerex
 ---
@@ -25,10 +25,9 @@ originally based on asciidoc, but has since diverged significantly.
 #Get the Source!
 ---
 You will probably want to examine the source for this document along
-with the rendered content.  It can be found
-<<http://www.independentlearning.science/source.idoc>>{here}.
+with the rendered content.  It can be found under the *edit* tab above.
 ---
-[[#sourceTip]]{Get the source!}
+[[#sourceTip]]
 
 idoc was created because no other existing markup language had the
 properties we needed for the website.  We describe these properties
@@ -97,10 +96,10 @@ Hopefully you can forgive us for forcing you to use an untested
 language!
 
 ==Features
-[[#features]]{Features}
+[[#features]]
 
 ===Basics
-[[#basics]]{Basics}
+[[#basics]]
 
 idoc is a _humane_ markup language, which basically means it doesn't
 suck to write in it.  For example, this is a *paragraph*.  You just
@@ -143,9 +142,9 @@ Another paragraph.  RAAAAAAAAAAAWR!
 would not display what you want correctly.  Subsections are the same
 deal: use `===Subsection Name`.
 
-Any line that begins with `//` denotes a comment. They will not be
-displayed in the final document.  These are not yet implemented, but
-will be soon.
+Any content outside of a block that begins with `\//` denotes a comment. They
+will // A secret comment! ` <- this backquote would break old version of idoc!
+not be displayed in the final document.
 
 // This is a comment line.  It will not be rendered.  Block
 // comments are not supported because they are a pain.
@@ -222,7 +221,7 @@ lists, ordered lists and labelled (description) lists.
 ---
 
 ==Blocks
-[[#blocks]]{Blocks}
+[[#blocks]]
 
 *Blocks* are a fundamental construct in idoc.  They all look the same,
 basically.  They begin with `@blocktype` on a line by itself,
@@ -238,7 +237,7 @@ syntax inside the block is block dependent, and we'll explore them all
 below.
 
 ===Math
-[[#math]]{Math}
+[[#math]]
 
 Inline math is done just using normal $\LaTeX$ syntax by doing enclosing
 text in dollar signs. $f(x) = \exp (-x^2)$.  Display mode is done by
@@ -247,9 +246,9 @@ using a `math` block, like so:
 @math
 #Look Ma', I Have Equations!
 ---
-f(x) = \int_x^\infty g(t) \mathrm{d}t
+f(x) = \int_{-\infty}^x g(t) \mathrm{d}t
 ---
-[[#eqnFDefn]]{Basic Math}
+[[#eqnFDefn]]
 
 [lang=idoc]
 @code
@@ -257,9 +256,9 @@ f(x) = \int_x^\infty g(t) \mathrm{d}t
  @math
  #Look Ma', I Have Equations!
  ---
- f(x) = \int_x^\infty g(t) \mathrm{d}t
+ f(x) = \int_{-\infty}^x g(t) \mathrm{d}t
  ---
- [[#eqnFDefn]]{Basic Math}
+ [[#eqnFDefn]]
 ---
 
 Note that that $d$ will not be upright as it should be.  We'll fix
@@ -358,7 +357,7 @@ x \cdot y = y \cdot x
 ---
 a *number* is an element of an field.
 ---
-[[#def-number]]{Definition: Number}
+[[#def-number]]
 
 [lang=idoc]
 @code
@@ -368,39 +367,29 @@ a *number* is an element of an field.
  ---
  a *number* is an element of an field.
  ---
- [[#def-number]]{Definition: Number}
+ [[#def-number]]
 ---
 
 @theorem
 ---
-
 @align
 ---
 (x + y)^2 = x^2 + 2 xy + y^2.
 ---
-
-+++
-
-Use geometry.
 ---
-[[#thm-foil]]{Theorem: FOIL}
+[[#thm-foil]]
 
 [lang=idoc]
 @code
 ---
  @theorem
  ---
-
  @align
  ---
  (x + y)^2 = x^2 + 2 xy + y^2.
  ---
-
- +++
-
- Use geometry.
  ---
- [[#thm-foil]]{Theorem: FOIL}
+ [[#thm-foil]]
 ---
 
 @lemma
@@ -408,18 +397,14 @@ Use geometry.
 ---
 This is a lemma.  It's pretty easy to prove.
 
-For $n > 2$ there exists no integer solutions to the equation:
+For $n > 2$ there exists no non-trivial integer solutions to the equation:
 
 @align
 ---
 x^n + y^n = z^n
 ---
-
-+++
-
-It's trivial.
 ---
-[[#lemEasyLemma]]{Lemma: Easy One}
+[[#lemEasyLemma]]
 
 @code
 ---
@@ -428,18 +413,14 @@ It's trivial.
  ---
  This is a lemma.  It's pretty easy to prove.
  
- For $n > 2$ there exists no integer solutions to the equation
+ For $n > 2$ there exists no non-trivial integer solutions to the equation
  
  @align
  ---
  x^n + y^n = z^n
  ---
- 
- +++
-
- It's trivial.
  ---
- [[#lemEasyLemma]]{Lemma: Easy One}
+ [[#lemEasyLemma]]
 ---
 
 @proposition
@@ -511,7 +492,7 @@ the text.  The first is the `quote` block, used for quotations.
 ---
 The internet is the most important invention since gravity.
 ---
-[[#qEinstein]]{Einstein Quote}
+[[#qEinstein]]
 
 [lang=idoc]
 @code
@@ -522,7 +503,7 @@ The internet is the most important invention since gravity.
  ---
  The internet is the most important invention since gravity.
  ---
- [[#qEinstein]]{Einstein Quote}
+ [[#qEinstein]]
 ---
 
 Notice in the `quote` block we added an author attribution above as an
@@ -539,8 +520,7 @@ perhaps it's unimportant... but then why is it there at all!?
 #Please be Aware:
 ---
 This content will be rendered off to the side of the document.  You are
-allowed any amount of complex content here.  An equation: $F =
-\frac{dp}{dt}$.
+allowed any amount of complex content here.  An equation: $F = \frac{dp}{dt}$.
 ---
 
 [lang=idoc]
@@ -565,7 +545,7 @@ specify the type of admonition.
 ---
 This will show a little warning symbol next to it.
 ---
-[[#warningBlock]]{Warning}
+[[#warningBlock]]
 
 [lang=idoc]
 @code
@@ -575,7 +555,7 @@ This will show a little warning symbol next to it.
  ---
  This will show a little warning symbol next to it.
  ---
- [[#warningBlock]]{Warning}
+ [[#warningBlock]]
 ---
 
 @info
@@ -583,7 +563,7 @@ This will show a little warning symbol next to it.
 ---
 This will show a little info symbol next to it.
 ---
-[[#infoBlock]]{Info}
+[[#infoBlock]]
 
 [lang=idoc]
 @code
@@ -593,7 +573,7 @@ This will show a little info symbol next to it.
  ---
  This will show a little info symbol next to it.
  ---
- [[#infoBlock]]{Info}
+ [[#infoBlock]]
 ---
 
 @caution
@@ -601,7 +581,7 @@ This will show a little info symbol next to it.
 ---
 This will show a little caution symbol next to it.
 ---
-[[#cautionBlock]]{Caution}
+[[#cautionBlock]]
 
 [lang=idoc]
 @code
@@ -611,7 +591,7 @@ This will show a little caution symbol next to it.
  ---
  This will show a little caution symbol next to it.
  ---
- [[#cautionBlock]]{Caution}
+ [[#cautionBlock]]
 ---
 
 @tip
@@ -619,7 +599,7 @@ This will show a little caution symbol next to it.
 ---
 This will show a little lightbulb symbol next to it.
 ---
-[[#tipBlock]]{Tip}
+[[#tipBlock]]
 
 [lang=idoc]
 @code
@@ -629,7 +609,7 @@ This will show a little lightbulb symbol next to it.
  ---
  This will show a little lightbulb symbol next to it.
  ---
- [[#tipBlock]]{Tip}
+ [[#tipBlock]]
 ---
 
 If you're worried about all the wasted space in the HTML output, don't
@@ -672,7 +652,7 @@ the web renderer creates _responsive_ html that is free to reorganize
 content to better match the devices size.  Therefore, *whenever you
 refer to something, please please please use an ID*.
 ---
-[[#renderingInfo]]{Rendering Info}
+[[#renderingInfo]]
 
 Connections are for when you want to connect with an outside idea, but
 don't want to have this interesting connection create new
@@ -688,7 +668,7 @@ needed to understand this small aside.
 When the site is complete, connections will start out open or closed
 depending on if the reader has the necessary prereqs or not.
 ---
-[[#myConnection]]{A Connection}
+[[#myConnection]]
 
 [lang=idoc]
 @code
@@ -720,7 +700,7 @@ depending on if the reader has the necessary prereqs or not.
  content to better match the devices size.  Therefore, *whenever you
  refer to something, please please please use an ID*.
  ---
- [[#renderingInfo]]{Rendering Info}
+ [[#renderingInfo]]
  
  Connections are for when you want to connect with an outside idea, but
  don't want to have this interesting connection create new
@@ -736,11 +716,12 @@ depending on if the reader has the necessary prereqs or not.
  When the site is complete, connections will start out open or closed
  depending on if the reader has the necessary prereqs or not.
  ---
- [[#myConnection]]{A Connection}
+ [[#myConnection]]
 ---
 
 @intuition
-#But What _is_ the Determinant?! -- An Example Intuition Block
+#But What _is_ the Determinant?! -- An Example Intuition Block%footnote{And
+a good example of when you *shouldn't* use them!}[[#footnote:Savage]]
 ---
 The determinant from a geometric point of view is used to talk about
 _volume_.  If you grok this, then everything else will fall into
@@ -789,7 +770,7 @@ The proof is pretty simple.  Try to follow along.
 
 First, assume not.  But that's not the case.  QED.
 ---
-[[#exExample]]{An Example}
+[[#exExample]]
 
 [lang=idoc]
 @code
@@ -804,7 +785,7 @@ First, assume not.  But that's not the case.  QED.
  
  First, assume not.  But that's not the case.  QED.
  ---
- [[#exExample]]{An Example}
+ [[#exExample]]
 ---
 
 @exercise
@@ -823,12 +804,12 @@ $5$ and $7$?
 ---
 
 ===Links
-[[#secLinks]]{Links}
+[[#secLinks]]
 
 Links come in three flavours.  The first is your standard link, called
 an *out link* or *olink* in idoc.  It's written like
 `<<http://www.example.com>>{this}` and appears like
-<<http://www.example.com>>{this}.  Note that the `http(s)://` part of
+<<http://www.example.com>>{this}.  Note that the `http(s):\/\/` part of
 the link is _mandatory_.  Olinks are restricted in idoc to appear in
 only very specific places, for example in `furtherreading` or
 `bibliography` blocks.  This is because the text of a doc should be
@@ -873,7 +854,7 @@ not abuse this feature.
 ---
 <<youtube://FdU8oqCbvzo>>
 ---
-[[#ytUnlimitedCorners]]{Unlimited Corners}
+[[#ytUnlimitedCorners]]
 
 ===Images
 
@@ -881,10 +862,19 @@ We can embed important images too.
 
 @image
 ---
-<<http://www.independentlearning.science/uusBbd5.jpg>>
+<<image://bunbun.jpg>>
 ---
 
 Bunnies make everything better.
+
+===Audio
+
+Audio might be important to include for historical reasons.
+
+@audio
+---
+<<audio://SampleAudio_0.7mb.mp3>>
+---
 
 ==Conclusion
 

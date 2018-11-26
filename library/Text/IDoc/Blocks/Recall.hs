@@ -33,6 +33,11 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Recall m b) where
     where
       title_ = mTitleT mt "Recall"
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Recall m b) where
+  checkLinks constraints container (Recall links core) =
+    (concatMap (checkLinks constraints container) links)
+    ++ (concatMap (checkLinks constraints container) core)
+
 recallP :: IDocParser m b (Recall m b)
 recallP = do
   (l, c) <- vectorLinkCoreBlockP

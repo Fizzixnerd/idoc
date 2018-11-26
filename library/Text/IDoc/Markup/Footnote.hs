@@ -33,5 +33,9 @@ instance MarkupMarkup m => MarkupMarkup (Footnote m) where
 instance Markupy m => Markupy (Footnote m) where
   markupy _ msid fn = mLabel msid $ footnote $ (texy $ fn^.footnoteSetID) ++ (concatMap texy $ fn^.footnoteContents)
 
+instance CheckLinks m b m => CheckLinks m b (Footnote m) where
+  checkLinks constraints container (Footnote fnc _) =
+    concatMap (checkLinks constraints container) fnc
+
 footnoteP :: IDocParser m b (Footnote m)
 footnoteP = uncurry Footnote <$> markupContentsWithSetIDP

@@ -314,6 +314,37 @@ data Link m = Link { _linkText :: Maybe (LinkText m)
                    }
   deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
 
+newtype LinkConstraint = LinkConstraint { unLinkConstraint :: Vector IDBase }
+  deriving (Eq, Ord, Show, Data, Typeable, Generic)
+
+data LinkConstraints = LinkAny
+                     | LinkNone
+                     | LinkConstraints (Set LinkConstraint)
+                     deriving (Eq, Ord, Show, Data, Typeable, Generic)
+
+instance Semigroup LinkConstraints where
+  LinkAny <> _ = LinkAny
+  _ <> LinkAny = LinkAny
+  x <> LinkNone = x
+  LinkNone <> x = x
+  LinkConstraints x <> LinkConstraints y = LinkConstraints (x `union` y)
+
+instance Monoid LinkConstraints where
+  mempty = LinkNone
+
+data Constraints = Constraints
+  { _lcBackConstraints :: LinkConstraints
+  , _lcOutConstraints :: LinkConstraints
+  } deriving (Eq, Ord, Show, Data, Typeable, Generic)
+
+data BadLink m b = BadLink
+  { _blLink :: Link m
+  , _blLocation :: Core m b
+  } deriving (Eq, Ord, Show, Data, Typeable, Generic)
+
+class CheckLinks m b a where
+  checkLinks :: Constraints -> Core m b -> a -> Vector (BadLink m b)
+
 -- | A reference to either an external website or a `SetID' somewhere
 -- in this or another `Doc'.  Protocol is usually "https:\/\/", but
 -- can also be "youtube:\/\/" or "image:\/\/" in certain cases (see
@@ -756,7 +787,7 @@ instance Markupy m => Texy (Link m) where
                           (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 
 instance Markupy m => Texy (LinkText m) where
-  texy (LinkText lt) = concatMap texy lt
+  texy (LinkText lt) = texy lt
 
 instance Markupy m => Texy (InlineMath m) where
   texy im = M.math $ concatMap texy $ im^.imContents
@@ -781,7 +812,7 @@ instance Markupy m => Texy (BlockTitle m) where
 
 instance Markupy m => Texy (List m) where
   texy (List li_) = enumerate $
-                     concatMap (\li'_ ->
+                    concatMap (\li'_ ->
                                   mLabel (li'_^.liSetID) $
                                   L.item (textbf <$> texy <$> (li'_^.liLabel)) ++ (vectorTexy $ li'_^.liContents)) li_
 
@@ -790,6 +821,99 @@ instance Markupy m => Texy (ListLabel m) where
 
 instance Blocky m (b m) => Texy (Block m b) where
   texy b_ = blocky (b_^.bAttrs) (b_^.bTitle) (b_^.bSetID) (b_^.bType)
+
+instance (CheckLinks m b (b m), CheckLinks m b m) => CheckLinks m b (Doc m b) where
+  checkLinks constraints container doc =
+    checkLinks constraints container (doc^.docTitle)
+    ++ concatMap (checkLinks constraints container) (doc^.docSections)
+
+instance CheckLinks m b m => CheckLinks m b (SectionTitle m) where
+  checkLinks constraints container (SectionTitle st) =
+    concatMap (checkLinks constraints container) st
+
+instance (CheckLinks m b (b m), CheckLinks m b m) => CheckLinks m b (Section m b) where
+  checkLinks constraints container sec_ =
+    (checkLinks constraints container (sec_^.secTitle))
+    ++ (concatMap (checkLinks constraints container) (sec_^.secContents))
+
+instance CheckLinks m b m => CheckLinks m b (DocTitle m) where
+  checkLinks constraints container (DocTitle dtc) =
+    concatMap (checkLinks constraints container) dtc
+
+instance (CheckLinks m b (b m), CheckLinks m b m) => CheckLinks m b (Core m b) where
+  checkLinks constraints _ c@(SC sc) = checkLinks constraints c sc
+  checkLinks constraints _ c@(CC cc) = checkLinks constraints c cc
+
+instance (CheckLinks m b (b m), CheckLinks m b m) => CheckLinks m b (ComplexCore m b) where
+  checkLinks constraints container (ListC l) = checkLinks constraints container l
+  checkLinks constraints container (BlockC b_) = checkLinks constraints container b_
+  checkLinks constraints container (ParagraphC p_) = checkLinks constraints container p_
+
+instance CheckLinks m b m => CheckLinks m b (Text.IDoc.Syntax.Markup m) where
+  checkLinks constraints container mu_ = checkLinks constraints container (mu_^.muType)
+
+instance CheckLinks m b m => CheckLinks m b (Paragraph m) where
+  checkLinks constraints container p_ =
+    concatMap (checkLinks constraints container) (p_^.paraContents)
+
+instance CheckLinks m b m => CheckLinks m b (List m) where
+  checkLinks constraints container (List list_) =
+    concatMap (\listItem ->
+                  (maybe mempty (checkLinks constraints container) (listItem^.liLabel))
+                  ++ (concatMap (checkLinks constraints container) (listItem^.liContents))) list_
+
+instance CheckLinks m b m => CheckLinks m b (ListLabel m) where
+  checkLinks constraints container (ListLabel llc) =
+    concatMap (checkLinks constraints container) llc
+
+instance (CheckLinks m b (b m), CheckLinks m b m) => CheckLinks m b (Block m b) where
+  checkLinks constraints container b_ =
+    (maybe mempty (checkLinks constraints container) (b_^.bTitle))
+    ++ (checkLinks constraints container (b_^.bType))
+
+instance CheckLinks m b (Link m) where
+  checkLinks _ _ (Link { _linkType = Internal }) = mempty
+  checkLinks (Constraints { _lcBackConstraints = LinkAny }) _ (Link { _linkType = Back _}) = mempty
+  checkLinks (Constraints { _lcBackConstraints = LinkNone }) container l@(Link { _linkType = Back _ }) =
+    singleton BadLink
+    { _blLink = l
+    , _blLocation = container
+    }
+  checkLinks (Constraints { _lcBackConstraints = LinkConstraints constraints }) container l@(Link { _linkType = Back _
+                                                                                                  , _linkLocation = location }) =
+    let ID { _idBase = idBase_ } = location
+    in
+      if LinkConstraint idBase_ `member` constraints
+      then singleton BadLink
+           { _blLink = l
+           , _blLocation = container
+           }
+      else mempty
+  checkLinks (Constraints { _lcOutConstraints = LinkAny }) _ (Link { _linkType = Out _ }) = mempty
+  checkLinks (Constraints { _lcOutConstraints = LinkNone }) container l@(Link { _linkType = Out _ }) =
+    singleton BadLink
+    { _blLink = l
+    , _blLocation = container
+    }
+  checkLinks (Constraints { _lcOutConstraints = LinkConstraints constraints }) container l@(Link { _linkType = Out _
+                                                                                                 , _linkLocation = location }) =
+    let ID { _idBase = idBase_ } = location
+    in
+      if LinkConstraint idBase_ `member` constraints
+      then singleton BadLink
+           { _blLink = l
+           , _blLocation = container
+           }
+      else mempty
+
+instance CheckLinks m b m => CheckLinks m b (SimpleCore m) where
+  checkLinks constraints container (LinkC l) = checkLinks constraints container l
+  checkLinks constraints container (MarkupC m) = checkLinks constraints container m
+  checkLinks _ _ _ = mempty
+
+instance CheckLinks m b m => CheckLinks m b (BlockTitle m) where
+  checkLinks constraints container (BlockTitle btc) =
+    concatMap (checkLinks constraints container) btc
 
 -- Type-level magic!
 instance ( Markupy m
@@ -800,3 +924,7 @@ instance ( Markupy m
 instance RPureConstrained Markupy xs =>
   Markupy (CoRec Data.Vinyl.Functor.Identity xs) where
   markupy a_ s x = getIdentity $ onCoRec @Markupy (fmap $ markupy a_ s) x
+
+instance RPureConstrained (CheckLinks m b) xs =>
+  CheckLinks m b (CoRec Data.Vinyl.Functor.Identity xs) where
+  checkLinks constraints container x = getIdentity $ onCoRec @(CheckLinks m b) (fmap $ checkLinks constraints container) x

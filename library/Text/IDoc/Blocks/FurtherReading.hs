@@ -32,6 +32,11 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (FurtherReading m b) where
     where
       title_ = mTitleT mt "Further Reading"
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (FurtherReading m b) where
+  checkLinks constraints container (FurtherReading frc) =
+    concatMap (checkLinks (constraints { _lcOutConstraints = LinkAny
+                                       , _lcBackConstraints = LinkAny }) container) frc
+
 furtherReadingP :: IDocParser m b (FurtherReading m b)
 furtherReadingP = FurtherReading <$> coreBlockP
 

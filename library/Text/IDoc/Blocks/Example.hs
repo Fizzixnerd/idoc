@@ -34,6 +34,11 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Example m b) where
     where
       title_ = mTitleT mt "Example"
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Example m b) where
+  checkLinks constraints container (Example q s) =
+    (concatMap (checkLinks constraints container) q)
+    ++ (concatMap (checkLinks constraints container) s)
+
 exampleP :: IDocParser m b (Example m b)
 exampleP = do
   (q_, s) <- doubleCoreBlockP

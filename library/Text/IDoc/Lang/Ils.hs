@@ -60,6 +60,22 @@ type IlsBlocks m = '[ AdmonitionB m BlockType
                     , Quote m
                     , Recall m BlockType ]
 
+instance ( CheckLinks m BlockType m
+         , CheckLinks m BlockType (BlockType m)) =>
+  CheckLinks m BlockType (Connection m BlockType) where
+  checkLinks constraints@(Constraints { _lcBackConstraints = backConstraints }) container (Connection c) =
+    let mPrerex = do
+          (CC (BlockC (Block { _bType = (BlockType bty) }))) <- headMay c
+          asA bty :: Maybe (Prerex m)
+        extraConstraints = maybe LinkNone toConstraints mPrerex
+        connectionConstraints = constraints
+                                { _lcBackConstraints =
+                                    backConstraints <> extraConstraints
+                                }
+    in
+      concatMap (checkLinks connectionConstraints container) c
+
+
 newtype BlockType m = BlockType { _unBlockType :: CoRec Identity (IlsBlocks m) }
   deriving (Eq, Show)
 
@@ -69,7 +85,10 @@ instance BlockMarkup MarkupType (BlockType MarkupType) where
 instance Blocky MarkupType (BlockType MarkupType) where
   blocky attrs title_ sid (BlockType coRec) = blocky attrs title_ sid coRec
 
-type IlsMarkup = '[ Footnote MarkupType 
+instance CheckLinks MarkupType BlockType (BlockType MarkupType) where
+  checkLinks constraints container (BlockType coRec) = checkLinks constraints container coRec
+
+type IlsMarkup = '[ Footnote MarkupType
                   , FootnoteRef
                   , Citation ]
 
@@ -81,6 +100,9 @@ instance MarkupMarkup MarkupType where
 
 instance Markupy MarkupType where
   markupy attrs sid (MarkupType coRec) = markupy attrs sid coRec
+
+instance CheckLinks MarkupType BlockType MarkupType where
+  checkLinks constraints container (MarkupType coRec) = checkLinks constraints container coRec
 
 type IlsDoc = Doc MarkupType BlockType
 
@@ -101,7 +123,7 @@ compileIls development t = compileIdoc markupTypeP blockTypeP
                (if development
                  then "https://localhost:3443/tiki/media/audio/"
                  else "https://www.independentlearning.science/tiki/media/audio/")
-  t
+               t
 
 compileIls' :: Bool -> Text -> Either (MP.ParseErrorBundle Text (MP.ErrorFancy Void))
                               (Either (MP.ParseErrorBundle IDocTokenStream (MP.ErrorFancy Void))
@@ -168,3 +190,4 @@ markupTypeP s = fail $ unpack $ "Did not recognize markup type: " ++ s
 
 makeLenses ''BlockType
 makeLenses ''MarkupType
+

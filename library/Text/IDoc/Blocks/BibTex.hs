@@ -50,6 +50,9 @@ instance Markupy m => Blocky m BibTex where
   blocky _ _ _ (BibTex b_) = fileContents "refs.bib" $
                              vectorTexy b_
 
+instance CheckLinks m b BibTex where
+  checkLinks _ _ _ = mempty
+
 itemToEntry :: BibItem -> IDocParser m b BibEntry
 itemToEntry bi = do
   case _itemType bi of

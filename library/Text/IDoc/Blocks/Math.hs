@@ -34,6 +34,9 @@ instance Markupy m => Blocky m DisplayMathB where
   blocky a_ t s (EquationB e) = blocky a_ t s e
   blocky a_ t s (AlignB al) = blocky a_ t s al
 
+instance CheckLinks m b DisplayMathB where
+  checkLinks _ _ _ = mempty
+
 data TheoremLikeB m b = TheoremB { _theorem :: Theorem m b}
                       | LemmaB { _lemma :: Lemma m b}
                       | CorollaryB { _corollary :: Corollary m b}
@@ -51,6 +54,12 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (TheoremLikeB m b) where
   blocky a_ t s (LemmaB lem) = blocky a_ t s lem
   blocky a_ t s (CorollaryB cor) = blocky a_ t s cor
   blocky a_ t s (PropositionB prop) = blocky a_ t s prop
+
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (TheoremLikeB m b) where
+  checkLinks constraints container (TheoremB thm) = checkLinks constraints container thm
+  checkLinks constraints container (LemmaB lem) = checkLinks constraints container lem
+  checkLinks constraints container (CorollaryB cor) = checkLinks constraints container cor
+  checkLinks constraints container (PropositionB prop) = checkLinks constraints container prop
 
 data Math = Math { _mathContents :: Vector Token }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -106,6 +115,10 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Theorem m b) wh
                                     Nothing
                                     (vectorBlockToMarkup "idocTheoremStatement" id thm)
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Theorem m b) where
+  checkLinks constraints container (Theorem ts) =
+    concatMap (checkLinks constraints container) ts
+
 data Lemma m b = Lemma { _lemmaStatement :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
@@ -117,6 +130,10 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Lemma m b) wher
                                   (icon "fa-star-o")
                                   Nothing
                                   (vectorBlockToMarkup "idocLemmaStatement" id lem)
+
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Lemma m b) where
+  checkLinks constraints container (Lemma ls) =
+    concatMap (checkLinks constraints container) ls
 
 data Corollary m b = Corollary { _corollaryStatement :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -130,6 +147,10 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Corollary m b) 
                                       Nothing
                                       (vectorBlockToMarkup "idocCorollaryStatement" id cor)
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Corollary m b) where
+  checkLinks constraints container (Corollary cs) =
+    concatMap (checkLinks constraints container) cs
+
 data Proposition m b = Proposition { _propositionStatement :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
@@ -141,6 +162,10 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Proposition m b
                                         (icon "fa-star-o")
                                         Nothing
                                         (vectorBlockToMarkup "idocPropositionStatement" id prp)
+
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Proposition m b) where
+  checkLinks constraints container (Proposition ps) =
+    concatMap (checkLinks constraints container) ps
 
 data Conjecture m b = Conjecture { _conjectureContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -154,6 +179,10 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Conjecture m b)
                                      Nothing
                                      (vectorBlockToMarkup "idocConjecture" id c)
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Conjecture m b) where
+  checkLinks constraints container (Conjecture cs) =
+    concatMap (checkLinks constraints container) cs
+
 data Proof m b = Proof { _proofContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
@@ -165,6 +194,10 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Proof m b) wher
                                  (icon "fa-star")
                                  Nothing
                                  (vectorBlockToMarkup "idocProof" id pf)
+
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Proof m b) where
+  checkLinks constraints container (Proof ps) =
+    concatMap (checkLinks constraints container) ps
 
 data Axiom m b = Axiom { _axiomContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -178,6 +211,10 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Axiom m b) wher
                                  Nothing
                                  (vectorBlockToMarkup "idocAxiom" id ax)
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Axiom m b) where
+  checkLinks constraints container (Axiom as) =
+    concatMap (checkLinks constraints container) as
+
 data Definition m b = Definition { _definitionContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
@@ -189,6 +226,10 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Text.IDoc.Block
                                                            (icon "fa-cube")
                                                            Nothing
                                                            (vectorBlockToMarkup "idocDefinition" id d)
+
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Text.IDoc.Blocks.Math.Definition m b) where
+  checkLinks constraints container (Text.IDoc.Blocks.Math.Definition ds) =
+    concatMap (checkLinks constraints container) ds
 
 mathP :: IDocParser m b Math
 mathP = Math <$> uninterpretedBlockP

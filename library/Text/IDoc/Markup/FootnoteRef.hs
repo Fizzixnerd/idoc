@@ -28,5 +28,8 @@ instance Markupy FootnoteRef where
     where
       footnotemark x = raw "\\footenotemark[" ++ x ++ raw "]"
 
+instance CheckLinks m b FootnoteRef where
+  checkLinks _ _ _ = mempty
+
 footnoteRefP :: IDocParser m b FootnoteRef
 footnoteRefP = FootnoteRef <$> markupIDHashP

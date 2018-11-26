@@ -32,6 +32,9 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Exercise m b) where
     where
       title_ = mTitleT mt "Exercise"
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Exercise m b) where
+  checkLinks constraints container (Exercise e) = concatMap (checkLinks constraints container) e
+
 exerciseP :: IDocParser m b (Exercise m b)
 exerciseP = Exercise <$> coreBlockP
 

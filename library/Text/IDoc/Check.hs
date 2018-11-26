@@ -7,13 +7,33 @@
 module Text.IDoc.Check where
 
 import ClassyPrelude as CP
-import Text.Printf
-import Control.Monad.State
-import Control.Monad.Except
+
+-- import qualified Data.Set as Set
+-- -- import Text.Printf
+-- import Control.Monad.State
+-- import Control.Monad.Except
 import qualified Data.Vector as V
 
 import Control.Lens
 import Data.Vinyl.CoRec
+
+-- import Text.IDoc.Blocks.Admonition
+-- import Text.IDoc.Blocks.BibTex
+-- import Text.IDoc.Blocks.Code
+-- import Text.IDoc.Blocks.Connection
+-- import Text.IDoc.Blocks.Example
+-- import Text.IDoc.Blocks.Exercise
+-- import Text.IDoc.Blocks.FurtherReading
+-- import Text.IDoc.Blocks.IntroOutro
+-- import Text.IDoc.Blocks.Intuition
+-- import Text.IDoc.Blocks.Math
+-- import Text.IDoc.Blocks.Media
+-- import Text.IDoc.Blocks.Prerex
+-- import Text.IDoc.Blocks.Quote
+-- import Text.IDoc.Blocks.Recall
+-- import Text.IDoc.Markup.Footnote
+-- import Text.IDoc.Markup.FootnoteRef
+-- import Text.IDoc.Markup.Citation
 
 import qualified Text.IDoc.Syntax as S
 import qualified Text.IDoc.Lang.Ils as S
@@ -35,14 +55,11 @@ import qualified Text.IDoc.Blocks.Prerex as S
 -- The checker could maybe also merge nearby TextCs, though this probably should
 -- be done in a separate pass to be honest.
 
-newtype PrerexConstraint = PrerexConstraint { unPC :: Text }
-  deriving (Eq, Ord, Show)
+-- newtype Warning = Warning { unWarning :: Text }
+--   deriving (Eq, Ord, Show)
 
-newtype Warning = Warning { unWarning :: Text }
-  deriving (Eq, Ord, Show)
-
-data CheckState = CheckState { warnings :: Vector Warning }
-  deriving (Eq, Ord, Show)
+-- data CheckState = CheckState { warnings :: Vector Warning }
+--   deriving (Eq, Ord, Show)
 
 data CheckError = NoSectionsError
                 | NoPreambleError
@@ -55,40 +72,90 @@ data CheckError = NoSectionsError
 --                | LinkNotAllowed S.Link
   deriving (Eq, Ord, Show)
 
-newtype Check a = Check { unCheck :: (ExceptT CheckError
-                                      (StateT CheckState Identity)) a }
-  deriving (Functor, Applicative, Monad, MonadState CheckState,
-            MonadError CheckError)
+-- newtype Check a = Check { unCheck :: (ExceptT CheckError
+--                                       (StateT CheckState Identity)) a }
+--   deriving (Functor, Applicative, Monad, MonadState CheckState,
+--             MonadError CheckError)
 
-emptyCheckState :: CheckState
-emptyCheckState = CheckState { warnings = empty }
+-- emptyCheckState :: CheckState
+-- emptyCheckState = CheckState { warnings = empty }
 
-runCheck :: Check a -> Either CheckError a
-runCheck c = fst $
-             runIdentity $
-             runStateT (runExceptT $ unCheck c) emptyCheckState
+-- runCheck :: Check a -> Either CheckError a
+-- runCheck c = fst $
+--              runIdentity $
+--              runStateT (runExceptT $ unCheck c) emptyCheckState
 
--- | Assumes nothing.
-checkBasicWellFormedness :: S.IlsDoc -> Check S.IlsDoc
-checkBasicWellFormedness d@(S.Doc { S._docSections = s }) = do
-  when (null s) $
-    throwError NoSectionsError
-  let preamble = V.head s
-  when (preamble^.S.secType /= S.Preamble) $
-    throwError NoPreambleError
-  -- when (null $ preamble^.S.secContents) $
-  --   throwError EmptyPreambleError
-  return d
+-- -- | Assumes nothing.
+-- checkBasicWellFormedness :: S.IlsDoc -> Check S.IlsDoc
+-- checkBasicWellFormedness d@(S.Doc { S._docSections = s }) = do
+--   when (null s) $
+--     throwError NoSectionsError
+--   let preamble = V.head s
+--   when (preamble^.S.secType /= S.Preamble) $
+--     throwError NoPreambleError
+--   -- when (null $ preamble^.S.secContents) $
+--   --   throwError EmptyPreambleError
+--   return d
 
 fetchPrerex :: S.IlsDoc -> Maybe (S.Prerex S.MarkupType)
-fetchPrerex d@(S.Doc {S._docSections = s}) = do
-  preamble <- V.headM s
-  prerexCandidate <- preamble^.S.secContents.to V.headM -- FIXME: This doesn't
-                                                        -- do what you think it
-                                                        -- does. Change from
-                                                        -- headM.
+fetchPrerex (S.Doc {S._docSections = s}) = do
+  preamble <- if null s then Nothing else Just $ V.head s
+  prerexCandidate <- if null $ preamble^.S.secContents then Nothing else Just $  preamble^.S.secContents.to V.head
   case prerexCandidate of
-    S.CC (S.BlockC (S.Block {S._bType = (S.BlockType bty) })) -> asA
+    S.CC (S.BlockC (S.Block {S._bType = (S.BlockType bty) })) -> asA bty
+    _ -> Nothing
+
+-- -- | False indicates the link does not fall within the constraints.
+-- checkLinkAgainstConstraints :: Constraints -> S.Link m -> Bool
+-- checkLinkAgainstConstraints constraints (S.Link { S._linkType = S.Internal
+--                                                 , S._linkLocation = location }) =
+--   let S.ID { S._idBase = idBase } = location
+--   in
+--     PrerexConstraint idBase `Set.member` constraints
+-- checkLinkAgainstConstraints _ _ = True
+
+-- checkLinks :: Set PrerexConstraint -> S.Core m b -> Vector (BadLink m b)
+-- checkLinks constraints c@(S.SC sc) = checkSimpleCoreLinks constraints c sc
+-- checkLinks constraints c@(S.CC (S.ListC (S.List listItems))) =
+--   let contents = concatMap (\li -> li^.S.liContents) listItems
+--   in
+--     concatMap (checkSimpleCoreLinks constraints c) contents
+-- checkLinks constraints c@(S.CC (S.BlockC block)) = checkBlockLinks constraints c block
+
+-- checkSimpleCoreLinks :: Set PrerexConstraint -> S.Core m b -> S.SimpleCore m -> Vector (BadLink m b)
+-- checkSimpleCoreLinks constraints container (S.LinkC l) = if checkLinkAgainstConstraints constraints l
+--                                                          then empty
+--                                                          else V.singleton BadLink
+--                                                               { _blLink = l
+--                                                               , _blLocation = container
+--                                                               }
+-- checkSimpleCoreLinks _ _ _ = empty
+
+-- checkBlockLinks :: Set PrerexConstraint
+--                 -> S.Core S.MarkupType S.BlockType
+--                 -> S.Block S.MarkupType S.BlockType
+--                 -> Vector (BadLink S.MarkupType S.BlockType)
+-- checkBlockLinks constraints container block =
+--   let blockTitleSimpleCores = maybe empty S.unBlockTitle (block^.S.bTitle)
+--       blockTitleBadLinks = concatMap (checkSimpleCoreLinks constraints container) blockTitleSimpleCores
+--       blockTypeBadLinks = match (block^.S.bType) $
+--         (H checkAdmonitionLinks)
+--         :& (H checkBibTexLinks)
+--         :& (H checkCodeLinks)
+--         :& (H checkConnectionLinks)
+--         :& (H checkExampleLinks)
+--         :& (H checkExerciseLinks)
+--         :& (H checkFurtherReadingLinks)
+--         :& (H checkIntroductionLinks)
+--         :& (H checkSummaryLinks)
+--         :& (H checkIntuitionLinks)
+--         :& (H checkDisplayMathLinks)
+--         :& (H checkTheoremLikeLinks)
+--         :& (H checkConjectureLinks)
+--         :& (H checkDefinitionLinks)
+--         :& (H checkProofLinks)
+--   in
+--     blockTitleBadLinks ++ blockTypeBadLinks
 
 -- -- | Assumes basic well-formedness.
 -- checkForPrerex :: S.Doc m b -> Check S.Doc

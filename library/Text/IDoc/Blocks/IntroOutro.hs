@@ -21,6 +21,10 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (IntroOutroB m b
   blockMarkup a_ t s (IntroductionB i_) = blockMarkup a_ t s i_
   blockMarkup a_ t s (SummaryB sum_) = blockMarkup a_ t s sum_
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (IntroOutroB m b) where
+  checkLinks constraints container (IntroductionB i_) = checkLinks constraints container i_
+  checkLinks constraints container (SummaryB sum_) = checkLinks constraints container sum_
+
 data Introduction m b = Introduction { _introductionContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
@@ -38,6 +42,10 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Introduction m b) where
   blocky _ mt msid (Introduction i_) = subsection (mLabel msid title_) ++ vectorTexy i_
     where
       title_ = mTitleT mt "Introduction"
+
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Introduction m b) where
+  checkLinks constraints container (Introduction ic) =
+    concatMap (checkLinks constraints container) ic
 
 introductionP :: IDocParser m b (Introduction m b)
 introductionP = Introduction <$> coreBlockP
@@ -60,6 +68,10 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Summary m b) where
                                 vectorTexy s
     where
       title_ = mTitleT mt "Summary"
+
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Summary m b) where
+  checkLinks constraints container (Summary s) =
+    concatMap (checkLinks constraints container) s
 
 summaryP :: IDocParser m b (Summary m b)
 summaryP = Summary <$> coreBlockP

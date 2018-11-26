@@ -33,6 +33,10 @@ instance Markupy m => Blocky m (Quote m) where
                                quote $
                                vectorTexy q_
 
+instance CheckLinks m b m => CheckLinks m b (Quote m) where
+  checkLinks constraints container (Quote qc) =
+    concatMap (checkLinks constraints container) qc
+
 quoteP :: IDocParser m b (Quote m)
 quoteP = Quote <$> simpleCoreBlockP
 

@@ -26,5 +26,8 @@ instance MarkupMarkup Citation where
 instance Markupy Citation where
   markupy _ msid c = mLabel msid $ L.cite $ texy $ c^.citationContents
 
+instance CheckLinks m b Citation where
+  checkLinks _ _ _ = mempty
+
 citationP :: IDocParser m b Citation
 citationP = Citation <$> markupIDHashP

@@ -24,7 +24,7 @@ data Program = Program { _source :: FilePath
                        , _action_ :: Action
                        }
 
-data Action = Parse | Html | Tex
+data Action = Parse | Html | Tex | CheckLinks
 
 makeLenses ''Program
 
@@ -43,9 +43,10 @@ program p =
                                Right x -> case x of
                                  Left e -> print e
                                  Right y -> m y outh)
-      action' Parse = doIt (\y outh -> TIO.hPutStr outh (fromString $ show y))
+      action' Parse = doIt (\y outh -> TIO.hPutStr outh (tshow y))
       action' Html  = doIt (\y outh -> TIO.hPutStr outh (pack $ unpack $ R.renderHtml $ B.toMarkup y))
       action' Tex   = doIt (\y outh -> TIO.hPutStr outh (L.render $ defaultDecorator (concatMap L.texy $ y^.S.docTitle.S.unDocTitle) $ (L.texy y :: L.LaTeX)))
+      action' CheckLinks = doIt (\y outh -> TIO.hPutStr outh (tshow $ (\(S.BadLink link _) -> link) <$> (S.checkLinks (S.Constraints mempty mempty) (undefined :: S.Core MarkupType BlockType) y)))
   in
     action' $ p^.action_
 
@@ -63,19 +64,22 @@ idoc =  Program
        <> metavar "OUTFILE"
        <> value ""
        <> help "File to which to write the output.  Will write to stdout if omitted." )
-    <*> subparser (parse <> html <> tex)
+    <*> subparser (parse <> html <> tex <> checklinks)
 
 
 parse :: Mod CommandFields Action
 parse = command "parse" (info (pure Parse) $
-                          (progDesc "Parse the input and dump the parse tree to the output."))
+                         progDesc "Parse the input and dump the parse tree to the output.")
 
 
 html :: Mod CommandFields Action
 html = command "html" (info (pure Html) $
-                        progDesc "Output the HTML representation of the input.")
+                       progDesc "Output the HTML representation of the input.")
 
 tex :: Mod CommandFields Action
 tex = command "tex" (info (pure Tex) $
-                      progDesc "Output the TeX representation of the input.")
+                     progDesc "Output the TeX representation of the input.")
 
+checklinks :: Mod CommandFields Action
+checklinks = command "checklinks" (info (pure CheckLinks) $
+                                   progDesc "Check the links and output the bad ones.")

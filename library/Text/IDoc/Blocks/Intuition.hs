@@ -24,6 +24,10 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Intuition m b) 
                                      Nothing
                                      (vectorBlockToMarkup "idocIntuition" id i_)
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Intuition m b) where
+  checkLinks constraints container (Intuition ic) =
+    concatMap (checkLinks constraints container) ic
+
 intuitionP :: IDocParser m b (Intuition m b)
 intuitionP = Intuition <$> coreBlockP
 

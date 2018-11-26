@@ -36,6 +36,13 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (AdmonitionB m b) where
   blocky a_ t s (WarningB w) = blocky a_ t s w
   blocky a_ t s (SideNoteB sn) = blocky a_ t s sn
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (AdmonitionB m b) where
+  checkLinks constraints container (InfoB i_) = checkLinks constraints container i_
+  checkLinks constraints container (TipB tip) = checkLinks constraints container tip
+  checkLinks constraints container (CautionB c) = checkLinks constraints container c
+  checkLinks constraints container (WarningB w) = checkLinks constraints container w
+  checkLinks constraints container (SideNoteB sn) = checkLinks constraints container sn
+
 decorateAdmonition :: CardType -> Html -> Html
 decorateAdmonition pt cnt = (B.span ! class_ 
                              ("fa " ++
@@ -66,6 +73,9 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Info m b) where
     where
       title_ = mTitleT mt "Info"
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Info m b) where
+  checkLinks constraints container (Info i_) = concatMap (checkLinks constraints container) i_
+
 infoP :: IDocParser m b (Info m b)
 infoP = Info <$> coreBlockP
 
@@ -85,6 +95,9 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Tip m b) where
   blocky _ mt msid (Tip t) = tipBlock (mLabel msid title_) (vectorTexy t)
     where
       title_ = mTitleT mt "Tip"
+
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Tip m b) where
+  checkLinks constraints container (Tip tip) = concatMap (checkLinks constraints container) tip
 
 tipP :: IDocParser m b (Tip m b)
 tipP = Tip <$> coreBlockP
@@ -106,6 +119,10 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Caution m b) where
     where
       title_ = mTitleT mt "Caution"
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Caution m b) where
+  checkLinks constraints container (Caution c) = concatMap (checkLinks constraints container) c
+
+
 cautionP :: IDocParser m b (Caution m b)
 cautionP = Caution <$> coreBlockP
 
@@ -126,6 +143,10 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (Warning m b) where
     where 
       title_ = mTitleT mt "Warning"
 
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Warning m b) where
+  checkLinks constraints container (Warning w) = concatMap (checkLinks constraints container) w
+
+
 warningP :: IDocParser m b (Warning m b)
 warningP = Warning <$> coreBlockP
 
@@ -139,6 +160,9 @@ instance (Markupy m, Blocky m (b m)) => Blocky m (SideNote m b) where
   blocky _ mt msid (SideNote s) = sideNoteBlock (mLabel msid title_) (vectorTexy s)
     where
       title_ = mTitleT mt "SideNote"
+
+instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (SideNote m b) where
+  checkLinks constraints container (SideNote sn) = concatMap (checkLinks constraints container) sn
 
 sideNoteP :: IDocParser m b (SideNote m b)
 sideNoteP = SideNote <$> coreBlockP

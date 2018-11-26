@@ -49,6 +49,17 @@ prerexItemP = do
                       , _prerexItemDescription = desc
                       }
 
+toConstraints :: Prerex m -> LinkConstraints
+toConstraints prerex =
+  let items = _prerexContents prerex
+  in
+    LinkConstraints $ setFromList $ toList $ (\(PrerexItem
+       { _prerexItemPath = Link
+                           { _linkLocation = ID
+                                             { _idBase = base_ }
+                           }
+       }) -> LinkConstraint base_) <$> items
+
 makeLenses ''Prerex
 makeLenses ''PrerexItem
 
@@ -62,6 +73,10 @@ instance Markupy m => Blocky m (Prerex m) where
   blocky _ mt msid (Prerex ps) = subsubsection (mLabel msid title_) ++ vectorTexy ps
     where
       title_ = mTitleT mt "Prerex"
+
+instance CheckLinks m b m => CheckLinks m b (Prerex m) where
+  checkLinks constraints container (Prerex pis) =
+    concatMap (checkLinks constraints container) pis
 
 instance MarkupMarkup m => ToMarkup (PrerexItem m) where
   toMarkup p_ = card (defaultCardOptions { cardType = CInfo
@@ -86,3 +101,6 @@ instance Markupy m => Texy (PrerexItem m) where
             newline
     where fromBack id_ = "/" ++ (concatMap _unIDBase $ intersperse (IDBase "/") (id_^.idBase))
 
+instance CheckLinks m b m => CheckLinks m b (PrerexItem m) where
+  checkLinks constraints container (PrerexItem _ pidesc) =
+    concatMap (checkLinks constraints container) pidesc
