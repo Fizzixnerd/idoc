@@ -49,6 +49,7 @@ library
                  , Text.IDoc.Lex
                  , Text.IDoc.Parse
                  , Text.IDoc.Syntax
+                 , Text.IDoc.Check
                  , Text.IDoc.Lang.Ils
                  , Text.IDoc.Blocks.Admonition
                  , Text.IDoc.Blocks.BibTex

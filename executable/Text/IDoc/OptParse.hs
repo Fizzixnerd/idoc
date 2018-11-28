@@ -46,7 +46,7 @@ program p =
       action' Parse = doIt (\y outh -> TIO.hPutStr outh (tshow y))
       action' Html  = doIt (\y outh -> TIO.hPutStr outh (pack $ unpack $ R.renderHtml $ B.toMarkup y))
       action' Tex   = doIt (\y outh -> TIO.hPutStr outh (L.render $ defaultDecorator (concatMap L.texy $ y^.S.docTitle.S.unDocTitle) $ (L.texy y :: L.LaTeX)))
-      action' CheckLinks = doIt (\y outh -> TIO.hPutStr outh (tshow $ (\(S.BadLink link _) -> link) <$> (S.checkLinks (S.Constraints mempty mempty) (undefined :: S.Core MarkupType BlockType) y)))
+      action' CheckLinks = doIt (\y outh -> TIO.hPutStr outh (tshow $ (\(S.BadLink link_ _) -> link_) <$> (S.checkLinks (S.Constraints mempty mempty) (Nothing :: Maybe (S.Core MarkupType BlockType)) y)))
   in
     action' $ p^.action_
 

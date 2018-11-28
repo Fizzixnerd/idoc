@@ -125,8 +125,8 @@ compileIls development t = compileIdoc markupTypeP blockTypeP
                  else "https://www.independentlearning.science/tiki/media/audio/")
                t
 
-compileIls' :: Bool -> Text -> Either (MP.ParseErrorBundle Text (MP.ErrorFancy Void))
-                              (Either (MP.ParseErrorBundle IDocTokenStream (MP.ErrorFancy Void))
+compileIls' :: Bool -> Text -> Either (MP.ParseErrorBundle Text Void)
+                              (Either (MP.ParseErrorBundle IDocTokenStream Void)
                                       IlsDoc)
 compileIls' development t = compileIdoc' markupTypeP blockTypeP
                             (if development

@@ -19,7 +19,7 @@ import qualified Text.IDoc.Lex as L
 
 import Control.Lens
 
-type IDocParseError = MP.ParseError S.DToken (MP.ErrorFancy Void)
+type IDocParseError = MP.ParseError S.DToken Void
 
 data IDocReadState m b = IDocReadState { _rel    :: Text
                                        , _imgRel :: Text
@@ -28,9 +28,9 @@ data IDocReadState m b = IDocReadState { _rel    :: Text
                                        , _bp     :: BlockParser m b
                                        }
 
-newtype IDocParser m b a = IDocParser { unIDocParser :: MP.ParsecT (MP.ErrorFancy Void) S.IDocTokenStream (ReaderT (IDocReadState m b) Identity)  a }
+newtype IDocParser m b a = IDocParser { unIDocParser :: MP.ParsecT Void S.IDocTokenStream (ReaderT (IDocReadState m b) Identity)  a }
   deriving (Functor, Applicative, Monad, MonadReader (IDocReadState m b), MonadPlus,
-            MP.MonadParsec (MP.ErrorFancy Void) S.IDocTokenStream, Alternative)
+            MP.MonadParsec Void S.IDocTokenStream, Alternative)
 
 type BlockTypeName = Text
 type InnerBlockParser m b = MarkupParser m b -> BlockTypeName -> IDocParser m b (b m)
@@ -679,16 +679,16 @@ compileIdoc m b rel_ imgRel_ audioRel_ text_ = case MP.parse L.dTokens "<idoc>" 
       Right y -> y
 
 compileIdoc' :: MarkupParser m b -> BlockParser m b -> Text -> Text -> Text -> Text
-             -> Either (MP.ParseErrorBundle Text (MP.ErrorFancy Void))
-                       (Either (MP.ParseErrorBundle S.IDocTokenStream (MP.ErrorFancy Void))
+             -> Either (MP.ParseErrorBundle Text Void)
+                       (Either (MP.ParseErrorBundle S.IDocTokenStream Void)
                                (S.Doc m b))
 compileIdoc' m b rel_ imgRel_ audioRel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
   Left eBundle -> Left eBundle
   Right x -> return $ runIdentity $ runReaderT (MP.runParserT (unIDocParser docP) "<idoc tokens>" x) (IDocReadState rel_ imgRel_ audioRel_ m b)
 
 parseIdoc' :: IDocParser m b p -> MarkupParser m b -> BlockParser m b -> Text -> Text -> Text -> Text
-             -> Either (MP.ParseErrorBundle Text (MP.ErrorFancy Void))
-                       (Either (MP.ParseErrorBundle S.IDocTokenStream (MP.ErrorFancy Void))
+             -> Either (MP.ParseErrorBundle Text Void)
+                       (Either (MP.ParseErrorBundle S.IDocTokenStream Void)
                                p)
 parseIdoc' p m b rel_ imgRel_ audioRel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
   Left e -> Left e

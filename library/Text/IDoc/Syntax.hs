@@ -154,14 +154,6 @@ instance Stream IDocTokenStream where
   chunkToTokens _ = toList
   chunkLength _ = length
   chunkEmpty _ = null
-  -- advance1 _ _ (SourcePos {sourceName = sn}) (DebugToken { _dtInfo = info }) =
-  --   let (r, c) = _diEnd info
-  --   in
-  --     SourcePos { sourceName = sn
-  --               , sourceLine = mkPos $ fromIntegral r
-  --               , sourceColumn = mkPos $ fromIntegral c
-  --               }
-  -- advanceN pxy p_ sp ts = advance1 pxy p_ sp (V.last ts)
   take1_ (IDocTokenStream ts) = if V.null ts then
                                   Nothing
                                 else
@@ -339,11 +331,20 @@ data Constraints = Constraints
 
 data BadLink m b = BadLink
   { _blLink :: Link m
-  , _blLocation :: Core m b
+  , _blLocation :: Maybe (Core m b)
   } deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
+linkPretty :: Link m -> Text
+linkPretty link_ =
+  let prettyIDBase = concat $ intersperse "/" $ _unIDBase <$> (_idBase $  _linkLocation link_)
+  in
+    prettyIDBase
+
+badLinkPretty :: BadLink m b -> Text
+badLinkPretty badLink = "Bad link to: " <> (linkPretty $ _blLink badLink) <> ".\n"
+
 class CheckLinks m b a where
-  checkLinks :: Constraints -> Core m b -> a -> Vector (BadLink m b)
+  checkLinks :: Constraints -> Maybe (Core m b) -> a -> Vector (BadLink m b)
 
 -- | A reference to either an external website or a `SetID' somewhere
 -- in this or another `Doc'.  Protocol is usually "https:\/\/", but
@@ -841,8 +842,8 @@ instance CheckLinks m b m => CheckLinks m b (DocTitle m) where
     concatMap (checkLinks constraints container) dtc
 
 instance (CheckLinks m b (b m), CheckLinks m b m) => CheckLinks m b (Core m b) where
-  checkLinks constraints _ c@(SC sc) = checkLinks constraints c sc
-  checkLinks constraints _ c@(CC cc) = checkLinks constraints c cc
+  checkLinks constraints _ c@(SC sc) = checkLinks constraints (Just c) sc
+  checkLinks constraints _ c@(CC cc) = checkLinks constraints (Just c) cc
 
 instance (CheckLinks m b (b m), CheckLinks m b m) => CheckLinks m b (ComplexCore m b) where
   checkLinks constraints container (ListC l) = checkLinks constraints container l
@@ -883,7 +884,7 @@ instance CheckLinks m b (Link m) where
                                                                                                   , _linkLocation = location }) =
     let ID { _idBase = idBase_ } = location
     in
-      if LinkConstraint idBase_ `member` constraints
+      if not $ LinkConstraint idBase_ `member` constraints
       then singleton BadLink
            { _blLink = l
            , _blLocation = container
@@ -899,7 +900,7 @@ instance CheckLinks m b (Link m) where
                                                                                                  , _linkLocation = location }) =
     let ID { _idBase = idBase_ } = location
     in
-      if LinkConstraint idBase_ `member` constraints
+      if not $ LinkConstraint idBase_ `member` constraints
       then singleton BadLink
            { _blLink = l
            , _blLocation = container

@@ -54,7 +54,7 @@ reservedPunctuationL = fst <$> M.toList reservedPunctuation
 reservedPunctuationS :: Set Char
 reservedPunctuationS = S.fromList reservedPunctuationL
 
-mkDTokenP :: Parsec (ErrorFancy Void) Text S.Token -> Parsec (ErrorFancy Void) Text DToken
+mkDTokenP :: Parsec Void Text S.Token -> Parsec Void Text DToken
 mkDTokenP p = do
   MP.SourcePos _ r1 c1 <- MP.getSourcePos
   x <- p
@@ -62,34 +62,34 @@ mkDTokenP p = do
   let di = DebugInfo (MP.unPos r1, MP.unPos c1) (MP.unPos r2, MP.unPos c2)
   return $ DebugToken di x
 
-puncT :: Parsec (ErrorFancy Void) Text S.Token
+puncT :: Parsec Void Text S.Token
 puncT = MP.label "Punctuation" $
         (\c -> fromJust $ lookup c reservedPunctuation) <$>
         oneOf reservedPunctuationL
 
-dPuncT :: Parsec (ErrorFancy Void) Text DToken
+dPuncT :: Parsec Void Text DToken
 dPuncT = MP.label "Punctuation" $ mkDTokenP puncT
 
-dashT :: Parsec (ErrorFancy Void) Text S.Token
+dashT :: Parsec Void Text S.Token
 dashT = MP.label "Dash" $
   const Dash <$> char '-'
 
-regularTextT :: Parsec (ErrorFancy Void) Text S.Token
+regularTextT :: Parsec Void Text S.Token
 regularTextT = TextT . fromString <$> (CP.some $ satisfy (`notElem` reservedPunctuationS))
 
-dRegularTextT :: Parsec (ErrorFancy Void) Text DToken
+dRegularTextT :: Parsec Void Text DToken
 dRegularTextT = mkDTokenP regularTextT
 
-token :: Parsec (ErrorFancy Void) Text S.Token
+token :: Parsec Void Text S.Token
 token =  MP.try puncT
      <|>        regularTextT
 
-dToken :: Parsec (ErrorFancy Void) Text DToken
+dToken :: Parsec Void Text DToken
 dToken =  MP.try dPuncT
       <|>        dRegularTextT
 
-tokens :: Parsec (ErrorFancy Void) Text (Vector S.Token)
+tokens :: Parsec Void Text (Vector S.Token)
 tokens = fromList <$> (CP.many Text.IDoc.Lex.token)
 
-dTokens :: Parsec (ErrorFancy Void) Text IDocTokenStream
+dTokens :: Parsec Void Text IDocTokenStream
 dTokens = IDocTokenStream <$> fromList <$> (CP.many dToken)
