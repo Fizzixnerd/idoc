@@ -44,8 +44,6 @@ import qualified Text.Megaparsec as MP
 import Text.Megaparsec.Stream
 import Text.Megaparsec.Pos
 
-import Text.Printf
-
 import Control.Lens hiding (cons, List)
 
 -- * Syntax
@@ -221,8 +219,7 @@ data SimpleCore m =
 -- | Sum type for holding the major organizing constructs of the
 -- language: `List's, `Block's and `Paragraph's.
 data ComplexCore m b =
-    ListC (List m)
-  | BlockC (Block m b)
+    BlockC (Block m b)
   | ParagraphC (Paragraph m)
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
@@ -366,36 +363,6 @@ newtype Protocol = Protocol Text deriving (Eq, Ord, Show, Data, Typeable, Generi
 -- "www.independentlearning.science\/tiki\/ArticleName".
 newtype IDBase = IDBase { _unIDBase :: Text } deriving (Eq, Ord, Show, Data, Typeable, Generic)
 
--- FIXME: Add a number to each constructor for nested lists.
--- | The type of a `List', whether "ordered", "unordered", or
--- "labelled".
-data ListType = Unordered
-              | Ordered
-              | Labelled
-  deriving (Eq, Ord, Show, Data, Typeable, Generic)
-
--- FIXME: Move `_liType' from `ListItem' to `List'
--- | A List of things, either `Ordered', `Unordered', or `Labelled'
--- (see `ListType').  Represents things like lists of bullet points,
--- numbered lists, or lists of definitions, etc.
-data List m = List { _listContents :: Vector (ListItem m) }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
-
--- | A label for a `ListItem' in `Labelled' `List's.
-newtype ListLabel m = ListLabel { unListLabel :: Vector (SimpleCore m) }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
-
--- | A single item in a `List'.  Can be `Link'ed to via its `SetID'.
--- Currently only contains `SimpleCore' contents.  (No nested lists,
--- I'm afraid.  This should change soon.)
-data ListItem m = ListItem { _liAttrs :: AttrMap
-                           , _liLabel :: Maybe (ListLabel m)
-                           , _liContents :: Vector (SimpleCore m)
-                           , _liSetID :: Maybe (SetID m)
-                           , _liType :: ListType
-                           }
-  deriving (Eq, Ord, Show, Data, Typeable, Generic, Functor)
-
 -- | Inline markup of text.  See `MarkupType' for the valid values of
 -- `_muType'.  May contain a non-empty `AttrMap'.
 data Markup m = Markup { _muType :: m
@@ -466,8 +433,6 @@ makeLenses ''SetID
 makeLenses ''Section
 makeLenses ''LinkText
 makeLenses ''Link
-makeLenses ''List
-makeLenses ''ListItem
 makeLenses ''Text.IDoc.Syntax.Markup
 makeLenses ''InlineMath
 makeLenses ''Block
@@ -502,28 +467,6 @@ instance MarkupMarkup m => ToMarkup (InlineMath m) where
 
 instance MarkupMarkup m => ToMarkup (Text.IDoc.Syntax.Markup m) where
   toMarkup mu_ = markupMarkup (mu_^.muAttrs) (mu_^.muSetID) (mu_^.muType)
-
-instance MarkupMarkup m => ToMarkup (ListItem m) where
-  toMarkup li_ = correctListItemHolder (li_^.liType) (li_^.liLabel) $
-                 concatMap toMarkup $ li_^.liContents
-    where
-      correctListItemHolder Labelled (Just l) =
-        (\x -> (dt ! class_ "idocLabel" $ toMarkup l) ++
-               (dd ! class_ "idocLabelledItem" $ x))
-      correctListItemHolder Ordered Nothing = li ! class_ "idocOrderedItem"
-      correctListItemHolder Unordered Nothing = li ! class_ "idocUnorderedItem"
-      correctListItemHolder _ _ = fail $ printf "Failed to match pattern in ToMarkup (ListItem m)."
-
-instance MarkupMarkup m => ToMarkup (ListLabel m) where
-  toMarkup (ListLabel ll_) = concatMap toMarkup ll_
-
-instance MarkupMarkup m => ToMarkup (List m) where
-  toMarkup (List l) = correctListHolder ((V.head l)^.liType) $
-                      concatMap toMarkup l
-    where
-      correctListHolder Unordered = ul ! class_ "idocUnorderedList"
-      correctListHolder Ordered = ol ! class_ "idocOrderedList"
-      correctListHolder Labelled = dl ! class_ "idocLabelledList"
 
 instance MarkupMarkup m => ToMarkup (Link m) where
   toMarkup l = a ! class_ (toValue $ l^.linkType)
@@ -603,7 +546,6 @@ instance MarkupMarkup m => ToMarkup (Paragraph m) where
                 concatMap toMarkup $ p_^.paraContents
 
 instance (MarkupMarkup m, BlockMarkup m (b m)) => ToMarkup (ComplexCore m b) where
-  toMarkup (ListC l) = toMarkup l
   toMarkup (BlockC b_) = toMarkup b_
   toMarkup (ParagraphC p_) = toMarkup p_
 
@@ -733,7 +675,6 @@ instance Markupy m => Texy (SimpleCore m) where
   texy (CommentC _) = CP.mempty
 
 instance (Markupy m, Blocky m (b m)) => Texy (ComplexCore m b) where
-  texy (ListC l) = texy l
   texy (BlockC b_) = texy b_
   texy (ParagraphC p_) = texy p_
 
@@ -811,15 +752,6 @@ instance Markupy m => Texy (Paragraph m) where
 instance Markupy m => Texy (BlockTitle m) where
   texy (BlockTitle bt) = concatMap texy bt
 
-instance Markupy m => Texy (List m) where
-  texy (List li_) = enumerate $
-                    concatMap (\li'_ ->
-                                  mLabel (li'_^.liSetID) $
-                                  L.item (textbf <$> texy <$> (li'_^.liLabel)) ++ (vectorTexy $ li'_^.liContents)) li_
-
-instance Markupy m => Texy (ListLabel m) where
-  texy (ListLabel ll_) = vectorTexy ll_
-
 instance Blocky m (b m) => Texy (Block m b) where
   texy b_ = blocky (b_^.bAttrs) (b_^.bTitle) (b_^.bSetID) (b_^.bType)
 
@@ -846,7 +778,6 @@ instance (CheckLinks m b (b m), CheckLinks m b m) => CheckLinks m b (Core m b) w
   checkLinks constraints _ c@(CC cc) = checkLinks constraints (Just c) cc
 
 instance (CheckLinks m b (b m), CheckLinks m b m) => CheckLinks m b (ComplexCore m b) where
-  checkLinks constraints container (ListC l) = checkLinks constraints container l
   checkLinks constraints container (BlockC b_) = checkLinks constraints container b_
   checkLinks constraints container (ParagraphC p_) = checkLinks constraints container p_
 
@@ -856,16 +787,6 @@ instance CheckLinks m b m => CheckLinks m b (Text.IDoc.Syntax.Markup m) where
 instance CheckLinks m b m => CheckLinks m b (Paragraph m) where
   checkLinks constraints container p_ =
     concatMap (checkLinks constraints container) (p_^.paraContents)
-
-instance CheckLinks m b m => CheckLinks m b (List m) where
-  checkLinks constraints container (List list_) =
-    concatMap (\listItem ->
-                  (maybe mempty (checkLinks constraints container) (listItem^.liLabel))
-                  ++ (concatMap (checkLinks constraints container) (listItem^.liContents))) list_
-
-instance CheckLinks m b m => CheckLinks m b (ListLabel m) where
-  checkLinks constraints container (ListLabel llc) =
-    concatMap (checkLinks constraints container) llc
 
 instance (CheckLinks m b (b m), CheckLinks m b m) => CheckLinks m b (Block m b) where
   checkLinks constraints container b_ =
