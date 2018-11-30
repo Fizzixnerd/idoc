@@ -22,6 +22,7 @@ import Text.IDoc.Blocks.Exercise
 import Text.IDoc.Blocks.FurtherReading
 import Text.IDoc.Blocks.IntroOutro
 import Text.IDoc.Blocks.Intuition
+import Text.IDoc.Blocks.Lists
 import Text.IDoc.Blocks.Math
 import Text.IDoc.Blocks.Media
 import Text.IDoc.Blocks.Prerex
@@ -48,6 +49,7 @@ type IlsBlocks m = '[ AdmonitionB m BlockType
                     , Introduction m BlockType
                     , Summary m BlockType
                     , Intuition m BlockType
+                    , List m BlockType
                     , DisplayMathB
                     , TheoremLikeB m BlockType
                     , Conjecture m BlockType
@@ -153,15 +155,15 @@ blockTypeP "tip" = mkBlockType $ TipB <$> tipP
 blockTypeP "caution" = mkBlockType $ CautionB <$> cautionP
 blockTypeP "warning" = mkBlockType $ WarningB <$> warningP
 blockTypeP "sidenote" = mkBlockType $ SideNoteB <$> sideNoteP
-blockTypeP "bibliography" = mkBlockType $ bibTexP
+blockTypeP "bibliography" = mkBlockType bibTexP
 blockTypeP "code" = mkBlockType codeP
-blockTypeP "connection" = mkBlockType $ connectionP
-blockTypeP "example" = mkBlockType $ exampleP
-blockTypeP "exercise" = mkBlockType $ exerciseP
-blockTypeP "furtherreading" = mkBlockType $ furtherReadingP
-blockTypeP "introduction" = mkBlockType $ introductionP
-blockTypeP "summary" = mkBlockType $ summaryP
-blockTypeP "intuition" = mkBlockType $ intuitionP
+blockTypeP "connection" = mkBlockType connectionP
+blockTypeP "example" = mkBlockType exampleP
+blockTypeP "exercise" = mkBlockType exerciseP
+blockTypeP "furtherreading" = mkBlockType furtherReadingP
+blockTypeP "introduction" = mkBlockType introductionP
+blockTypeP "summary" = mkBlockType summaryP
+blockTypeP "intuition" = mkBlockType intuitionP
 blockTypeP "math" = mkBlockType $ MathB <$> mathP
 blockTypeP "equation" = mkBlockType $ EquationB <$> equationP
 blockTypeP "align" = mkBlockType $ AlignB <$> alignP
@@ -169,17 +171,20 @@ blockTypeP "theorem" = mkBlockType $ TheoremB <$> theoremP
 blockTypeP "lemma" = mkBlockType $ LemmaB <$> lemmaP
 blockTypeP "corollary" = mkBlockType $ CorollaryB <$> corollaryP
 blockTypeP "proposition" = mkBlockType $ PropositionB <$> propositionP
-blockTypeP "conjecture" = mkBlockType $ conjectureP
-blockTypeP "definition" = mkBlockType $ definitionP
-blockTypeP "proof" = mkBlockType $ proofP
-blockTypeP "axiom" = mkBlockType $ axiomP
+blockTypeP "conjecture" = mkBlockType conjectureP
+blockTypeP "definition" = mkBlockType definitionP
+blockTypeP "proof" = mkBlockType proofP
+blockTypeP "axiom" = mkBlockType axiomP
 blockTypeP "image" = mkBlockType $ ImageB <$> imageP
 blockTypeP "video" = mkBlockType $ VideoB <$> videoP
 blockTypeP "audio" = mkBlockType $ AudioB <$> audioP
-blockTypeP "youtube" = mkBlockType $ youTubeP
-blockTypeP "prerex" = mkBlockType $ prerexP
-blockTypeP "quote" = mkBlockType $ quoteP
-blockTypeP "recall" = mkBlockType $ recallP
+blockTypeP "youtube" = mkBlockType youTubeP
+blockTypeP "prerex" = mkBlockType prerexP
+blockTypeP "quote" = mkBlockType quoteP
+blockTypeP "recall" = mkBlockType recallP
+blockTypeP "orderedlist" = mkBlockType $ OList <$> orderedListP
+blockTypeP "unorderedlist" = mkBlockType $ UList <$> unorderedListP
+blockTypeP "descriptionlist" = mkBlockType $ DList <$> descriptionListP
 blockTypeP s = fail $ unpack $ "Did not recognize block type: " ++ s
 
 markupTypeP :: MarkupTypeName -> IDocParser MarkupType b MarkupType

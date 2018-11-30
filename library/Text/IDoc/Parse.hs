@@ -326,42 +326,6 @@ linkP = MP.label "A Link" $ do
                 , S._linkType = ty
                 }
 
--- | Lists
-mkListItemP :: S.Token -> Bool -> S.ListType-> IDocParser m b (S.ListItem m)
-mkListItemP starter hasLabel ty = do
-  starterP
-  lbl <- if hasLabel then
-           Just <$> (someTill doubleStarterP simpleCoreP)
-         else
-           return Nothing
-  cnt <- someV $ do
-    MP.notFollowedBy $ newlineP >> some newlineP
-    simpleCoreP
-  return $ S.ListItem { S._liAttrs = S.AttrMap M.empty
-                      , S._liLabel = S.ListLabel <$> lbl
-                      , S._liContents = cnt
-                      , S._liSetID = Nothing
-                      -- FIXME: This should not be Nothing!
-                      , S._liType = ty
-                      }
-  where
-    starterP = void $ tokenP starter
-    doubleStarterP = starterP >> starterP
-
-unorderedItemP :: IDocParser m b (S.ListItem m)
-unorderedItemP = mkListItemP S.Dash False S.Unordered MP.<?> "An Unordered List Item"
-
-orderedItemP :: IDocParser m b (S.ListItem m)
-orderedItemP = mkListItemP S.Period False S.Ordered MP.<?> "An Ordered List Item"
-
-labelledItemP :: IDocParser m b (S.ListItem m)
-labelledItemP = mkListItemP S.Colon True S.Labelled MP.<?> "A Labelled List Item"
-
-listP :: IDocParser m b (S.List m)
-listP = MP.label "A List" $ S.List <$> (MP.try (sepEndBy1V unorderedItemP (some newlineP))
-                                   <|>  MP.try (sepEndBy1V orderedItemP   (some newlineP))
-                                   <|>         (sepEndBy1V labelledItemP  (some newlineP)))
-
 -- | Inline Math
 inlineMathP :: IDocParser m b (S.InlineMath m)
 inlineMathP = MP.label "Some Inline Math" $ do
@@ -541,8 +505,8 @@ coreBlockWithOptionalP :: IDocParser m b ( Vector (S.Core m b)
                                          , Maybe (Vector (S.Core m b)) )
 coreBlockWithOptionalP = do
   blockStarterP
-  (xs, e) <- someTill' 
-             (many newlineP >> 
+  (xs, e) <- someTill'
+             (many newlineP >>
               (MP.eitherP (MP.try blockContinuerP) blockEnderP)) coreP
   op_ <- case e of
     Left _ -> Just <$> someTill (many newlineP >> blockEnderP) coreP
@@ -628,7 +592,6 @@ simpleCoreP =  S.TextC       <$> MP.try escapedP
 
 coreP :: IDocParser m b (S.Core m b)
 coreP = S.CC <$> ((S.BlockC     <$> (MP.try defaultBlockP))
-             <|>  (S.ListC      <$> (MP.try listP))
              <|>  (S.ParagraphC <$>         paragraphP))
 
 docP :: IDocParser m b (S.Doc m b)
