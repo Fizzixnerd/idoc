@@ -141,7 +141,7 @@ unToken Plus = "+"
 
 -- | Newtype around a Vector of `DToken's; represents lexed source.
 newtype IDocTokenStream = IDocTokenStream { unStream :: Vector DToken }
-  deriving (Show)
+  deriving (Eq, Show)
 
 -- | Megaparsec Stream instance so that this properly works with the
 -- rest of the library.
@@ -573,8 +573,7 @@ vectorBlockToMarkup :: B.ToMarkup a =>
                     -> B.Html
 vectorBlockToMarkup cls dec vb = B.div B.! A.class_ cls $
                                  dec $
-                                 concatMap B.toMarkup
-                                 vb
+                                 concatMap B.toMarkup vb
 
 verbatimBlockToMarkup :: B.AttributeValue -- ^ Html class
                       -> (B.Html -> B.Html) -- ^ decorator

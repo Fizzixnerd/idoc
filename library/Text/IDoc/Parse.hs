@@ -202,8 +202,6 @@ attrValPairP = MP.label "Attribute-Value Pair" $ do
     equalsP
     S.AttrValue <$> actualTextP
   return (n, v)
-  where
-    equalsP = void $ tokenP S.Equals
 
 attrMapP :: IDocParser m b S.AttrMap
 attrMapP = MP.label "An AttrMap" $ do
@@ -541,15 +539,19 @@ linkBlockWithOptionalP = do
   return (x, op_)
 
 -- | Section
-sectionP :: IDocParser m b (S.Section m b)
-sectionP = do
-  am <- optionalAttrMapP
+
+sectionTitleP = do
   equalses <- some equalsP
   let ty = case length equalses of
              2 -> S.TopSection
              3 -> S.SubSection
              _ -> error "only `Section's and `Subsection's are allowed."
   title <- simpleLineP
+
+
+sectionP :: IDocParser m b (S.Section m b)
+sectionP = do
+  am <- optionalAttrMapP
   sid <- optional setIDP
   void $ many newlineP
   cnt <- manyV $ do
@@ -564,7 +566,6 @@ sectionP = do
                      , S._secSetID = sid
                      }
   where
-    equalsP = void $ tokenP S.Equals
     simpleLineP = someTill newlineP simpleCoreP
 
 escapedP :: IDocParser m b Text
@@ -594,9 +595,16 @@ coreP :: IDocParser m b (S.Core m b)
 coreP = S.CC <$> ((S.BlockC     <$> (MP.try defaultBlockP))
              <|>  (S.ParagraphC <$>         paragraphP))
 
+
+equalsP :: IDocParser m b ()
+equalsP = void $ tokenP S.Equals
+
+docTitleP :: IDocParser m b (Vector (S.SimpleCore m))
+docTitleP = someTween equalsP newlineP simpleCoreP
+
 docP :: IDocParser m b (S.Doc m b)
 docP = do
-  title <- someTween equalsP newlineP simpleCoreP
+  title <- docTitleP
   docSid <- optional setIDP
   void $ many newlineP
   preamble <- manyV $ do
@@ -615,8 +623,6 @@ docP = do
                  , S._docSections = preambleSection `V.cons` sections
                  , S._docSetID = docSid
                  }
-  where
-    equalsP = void $ tokenP S.Equals
 
 uninterpret :: Vector S.Token -> Text
 uninterpret = concatMap S.unToken

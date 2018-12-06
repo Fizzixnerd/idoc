@@ -118,9 +118,10 @@ test-suite idoc-test-suite
     , tasty
     , tasty-hspec
     , QuickCheck
-    , tasty-quickcheck
+--    , tasty-quickcheck
     , megaparsec
     , hspec
+    , containers
   other-modules:
       Text.IDoc.ParseSpec
   default-language: Haskell2010

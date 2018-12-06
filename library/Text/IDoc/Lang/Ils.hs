@@ -4,7 +4,9 @@ module Text.IDoc.Lang.Ils where
 
 import ClassyPrelude hiding (Identity)
 
-import Control.Lens hiding (Identity)
+import qualified Data.List.NonEmpty as NE
+
+import Control.Lens hiding (Identity, List)
 
 import Data.Vinyl.CoRec
 import Data.Vinyl.Functor
@@ -49,7 +51,7 @@ type IlsBlocks m = '[ AdmonitionB m BlockType
                     , Introduction m BlockType
                     , Summary m BlockType
                     , Intuition m BlockType
-                    , List m BlockType
+                    , ListB m BlockType
                     , DisplayMathB
                     , TheoremLikeB m BlockType
                     , Conjecture m BlockType
@@ -182,10 +184,10 @@ blockTypeP "youtube" = mkBlockType youTubeP
 blockTypeP "prerex" = mkBlockType prerexP
 blockTypeP "quote" = mkBlockType quoteP
 blockTypeP "recall" = mkBlockType recallP
-blockTypeP "orderedlist" = mkBlockType $ OList <$> orderedListP
-blockTypeP "unorderedlist" = mkBlockType $ UList <$> unorderedListP
-blockTypeP "descriptionlist" = mkBlockType $ DList <$> descriptionListP
-blockTypeP s = fail $ unpack $ "Did not recognize block type: " ++ s
+blockTypeP "orderedlist" = mkBlockType $ OListB <$> orderedListP
+blockTypeP "unorderedlist" = mkBlockType $ UListB <$> unorderedListP
+blockTypeP "descriptionlist" = mkBlockType $ DListB <$> descriptionListP
+blockTypeP s = MP.unexpected (MP.Label $ NE.fromList $ "Block type")
 
 markupTypeP :: MarkupTypeName -> IDocParser MarkupType b MarkupType
 markupTypeP "footnote" = mkMarkupType $ footnoteP

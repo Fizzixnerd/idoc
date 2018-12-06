@@ -1,28 +1,6 @@
 =List Test
 
-.This is a test list.
-+
-It is continued in this paragraph
-
-@list
+@orderedlist
 ---
-%item{I could also do it this way? But this would only allow simple content
- inside the items.}
----
-
-@list
----
-.This is an item.
-
-This is a continued item
-
-.
-
-// nested list
-@list
----
-.Another level
----
-
-.How would I continue items?
+.Hello
 ---
