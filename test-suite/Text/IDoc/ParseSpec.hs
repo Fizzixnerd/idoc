@@ -46,7 +46,7 @@ parseSpec = parallel $ do
     describe "docTitleP" $ do
       it "Parses a Doc Title." $ do
         parseFileAs (filePrefix ++ "docTitleP.idoc") docTitleP `shouldReturn`
-          (parsed $ DocTitle "Doc Title")
+          (parsed $ DocTitle $ fromList [ TextC "Doc Title" ])
 
     describe "actualTextP" $ do
       it "Turns TextT tokens into Text." $ do

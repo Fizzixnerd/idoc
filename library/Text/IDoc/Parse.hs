@@ -166,7 +166,9 @@ textP = S.unToken <$> anyTokenP
 
 mkQTextP :: S.Token -> S.TextType -> IDocParser m b (S.QText m)
 mkQTextP t tt = MP.label "Quoted Text" $ do
-  txt <- someTween tP tP simpleCoreP
+  txt <- do
+    MP.try tP
+    someTill tP simpleCoreP
   return $ S.QText { S._qtText = txt
                    , S._qtType = tt
                    }
@@ -188,11 +190,11 @@ subscriptP :: IDocParser m b (S.QText m)
 subscriptP = mkQTextP S.Tilde S.Subscript
 
 qTextP :: IDocParser m b (S.QText m)
-qTextP =  MP.try strongP
-      <|> MP.try emphasisP
-      <|> MP.try monospaceP
-      <|> MP.try superscriptP
-      <|>        subscriptP
+qTextP =  strongP
+      <|> emphasisP
+      <|> monospaceP
+      <|> superscriptP
+      <|> subscriptP
 
 -- | AttrMaps
 attrValPairP :: IDocParser m b (S.AttrName, Maybe S.AttrValue)
@@ -377,8 +379,10 @@ optionalMarkupContentsP = do
 defaultMarkupP :: IDocParser m b (S.Markup m)
 defaultMarkupP = do
   m <- view mp
-  am <- optionalAttrMapP
-  percentSignP
+  am <- MP.try $ do
+    am <- optionalAttrMapP
+    percentSignP
+    return am
   name <- textP
   cnt <- m name
   sid <- optional setIDP
@@ -441,9 +445,11 @@ optionalBlockTitle = optional $ fmap S.BlockTitle $ MP.label "A Block Title" $ d
 defaultBlockP :: IDocParser m b (S.Block m b)
 defaultBlockP = MP.label "A Block" $ do
   b <- view bp
-  am <- optionalAttrMapP
-  void $ optional newlineP
-  tyName <- blockTypeName
+  (am, tyName) <- MP.try $ do
+    am <- optionalAttrMapP
+    void $ optional newlineP
+    tyName <- blockTypeName
+    return (am, tyName)
   title <- optionalBlockTitle
   ty <- b tyName
   sid <- optional setIDP
@@ -540,18 +546,22 @@ linkBlockWithOptionalP = do
 
 -- | Section
 
+sectionTitleP :: IDocParser m b (S.SectionType, (Vector (S.SimpleCore m)))
 sectionTitleP = do
-  equalses <- some equalsP
-  let ty = case length equalses of
-             2 -> S.TopSection
-             3 -> S.SubSection
-             _ -> error "only `Section's and `Subsection's are allowed."
-  title <- simpleLineP
-
+  equalses <- MP.try $ some equalsP
+  ty <- case length equalses of
+    2 -> return S.TopSection
+    3 -> return S.SubSection
+    _ -> fail "only `Section's (==) and `Subsection's (===) are allowed."
+  line <- simpleLineP
+  return (ty, line)
+    where
+      simpleLineP = someTill newlineP simpleCoreP
 
 sectionP :: IDocParser m b (S.Section m b)
 sectionP = do
   am <- optionalAttrMapP
+  (ty, title) <- sectionTitleP
   sid <- optional setIDP
   void $ many newlineP
   cnt <- manyV $ do
@@ -565,8 +575,6 @@ sectionP = do
                      , S._secTitle = S.SectionTitle title
                      , S._secSetID = sid
                      }
-  where
-    simpleLineP = someTill newlineP simpleCoreP
 
 escapedP :: IDocParser m b Text
 escapedP = do
@@ -599,8 +607,8 @@ coreP = S.CC <$> ((S.BlockC     <$> (MP.try defaultBlockP))
 equalsP :: IDocParser m b ()
 equalsP = void $ tokenP S.Equals
 
-docTitleP :: IDocParser m b (Vector (S.SimpleCore m))
-docTitleP = someTween equalsP newlineP simpleCoreP
+docTitleP :: IDocParser m b (S.DocTitle m)
+docTitleP = S.DocTitle <$> (someTween equalsP newlineP simpleCoreP)
 
 docP :: IDocParser m b (S.Doc m b)
 docP = do
@@ -619,7 +627,7 @@ docP = do
                                   , S._secTitle = S.SectionTitle empty
                                   , S._secSetID = Nothing
                                   }
-  return $ S.Doc { S._docTitle = S.DocTitle title
+  return $ S.Doc { S._docTitle = title
                  , S._docSections = preambleSection `V.cons` sections
                  , S._docSetID = docSid
                  }
@@ -629,13 +637,15 @@ uninterpret = concatMap S.unToken
 
 errorDoc :: Show e => e -> S.Doc m b
 errorDoc e = S.Doc { S._docTitle = S.DocTitle $ singleton $ S.TextC "Error!"
-                   , S._docSections = singleton $ S.Section { S._secAttrs = S.AttrMap mempty
-                                                            , S._secContents = singleton $ S.CC $ S.ParagraphC $ S.Paragraph { _paraContents = singleton $ S.TextC $ fromString $ show e
-                                                                                                                             , _paraSetID = Nothing }
-                                                      , _secTitle = S.SectionTitle empty
-                                                      , _secSetID = Nothing
-                                                      , _secType = S.TopSection
-                                                      }
+                   , S._docSections = singleton $ S.Section
+                                      { S._secAttrs = S.AttrMap mempty
+                                      , S._secContents = singleton $ S.CC $ S.ParagraphC $ S.Paragraph
+                                                         { _paraContents = singleton $ S.TextC $ fromString $ show e
+                                                         , _paraSetID = Nothing }
+                                      , _secTitle = S.SectionTitle empty
+                                      , _secSetID = Nothing
+                                      , _secType = S.TopSection
+                                      }
                    , _docSetID = Nothing
                    }
 
