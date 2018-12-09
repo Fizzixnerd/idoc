@@ -841,9 +841,9 @@ knowledge from previous articles.  This restriction allows many of the
 features that the ILS website hopes to deliver, such as automatic
 prerequisite resolution for subjects you want to learn.
 
-In all types of links, you are free to leave out the text inside the
-`{}`.  This will just use the text inside the `<<>>` as the display
-text instead.  Normally this is not what you want, however.
+In all types of links, you are free to leave out the text inside the `{}`. This
+will just use the text inside the angle brackets as the display text instead.
+Normally this is not what you want, however.
 
 ===YouTube
 

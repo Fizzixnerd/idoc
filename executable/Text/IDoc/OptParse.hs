@@ -14,6 +14,7 @@ import qualified System.IO as IO
 import qualified Text.IDoc.Syntax as S
 import Text.IDoc.Lang.Ils
 import Text.IDoc.Render.Tex
+import Text.Megaparsec.Error
 
 import qualified Text.Blaze.Html5 as B
 import qualified Text.Blaze.Html.Renderer.Text as R
@@ -39,9 +40,9 @@ program p =
       doIt m = withFiles (\inh outh -> do
                              cnts <- TIO.hGetContents inh
                              case compileIls' False cnts of
-                               Left e -> print e
+                               Left e -> IO.hPutStr outh (errorBundlePretty e)
                                Right x -> case x of
-                                 Left e -> print e
+                                 Left e -> IO.hPutStr outh (errorBundlePretty e)
                                  Right y -> m y outh)
       action' Parse = doIt (\y outh -> TIO.hPutStr outh (tshow y))
       action' Html  = doIt (\y outh -> TIO.hPutStr outh (pack $ unpack $ R.renderHtml $ B.toMarkup y))

@@ -66,10 +66,21 @@ parseSpec = parallel $ do
       it "Parses Strong Text" $ do
         parseFileAs (filePrefix ++ "qTextP.strongText.idoc") qTextP `shouldReturn`
           (parsed $ QText { _qtText = fromList [ TextC $ "hello there"
-                                              , TextC $ "." 
-                                              ]
-                         , _qtType = Strong
-                         })
+                                               , TextC $ "." 
+                                               ]
+                          , _qtType = Strong
+                          })
+      it "Parses an SetID inside a monospace text as just text" $ do
+        parseFileAs (filePrefix ++ "qTextP.qSetID.idoc") qTextP `shouldReturn`
+          (parsed $ QText { _qtText = fromList [ TextC "["
+                                               , TextC "["
+                                               , TextC "#"
+                                               , TextC "anId"
+                                               , TextC "]"
+                                               , TextC "]"
+                                               ]
+                          ,_qtType = Monospace
+                          })
 
     describe "attrValPairP" $ do
       it "Parses a pair with an equals between them" $ do
