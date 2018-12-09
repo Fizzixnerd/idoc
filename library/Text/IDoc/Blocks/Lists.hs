@@ -49,15 +49,6 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (ListB m b) wher
   blockMarkup a_ t s (UListB ul_) = blockMarkup a_ t s ul_
   blockMarkup a_ t s (DListB dl_) = blockMarkup a_ t s dl_
 
-listMarkup :: ( MarkupMarkup m
-              , MonoFoldable mono
-              , ToMarkup (Element mono) ) =>
-              Maybe (SetID m) -> mono -> Html
-listMarkup mSetID cnts =
-  (maybe CP.id (\i_ -> (B.! A.id (B.toValue i_))) mSetID) $
-  (B.div B.! A.class_ ("mb-3 list-group idocList") $
-         concatMap toMarkup cnts)
-
 instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (OrderedList m b) where
   blockMarkup _ _ s (OrderedList cnts) =
     (maybe CP.id (\i_ -> (B.! A.id (B.toValue i_))) s) $
@@ -160,9 +151,11 @@ simpleListItemP :: S.Token -> (Vector (Core m b) -> a) -> IDocParser m b a
 simpleListItemP starter constructor = do
   MP.try $ void starterP
   contents_ <- someV $ do
-    MP.notFollowedBy $ (MP.try (void $ some newlineP >> starterP)
-                        MP.<|> (many newlineP >> blockEnderP))
-    coreP
+    MP.notFollowedBy $ (MP.try $ void starterP)
+      MP.<|> void blockEnderP
+    core <- coreP
+    void $ many newlineP
+    return core
   return $ constructor contents_
   where
     starterP = tokenP starter
@@ -181,9 +174,11 @@ descriptionItemP = MP.label "A Description List item" $ do
     simpleCoreP
   void $ starterP >> starterP
   contents_ <- someV $ do
-    MP.notFollowedBy $ (MP.try (void $ some newlineP >> starterP)
-                        MP.<|> (many newlineP >> blockEnderP))
-    coreP
+    MP.notFollowedBy $ (MP.try $ void starterP)
+      MP.<|> void blockEnderP
+    core <- coreP
+    void $ many newlineP
+    return core
   return $ DescriptionItem label_ contents_
   where
     starterP = tokenP S.Colon
