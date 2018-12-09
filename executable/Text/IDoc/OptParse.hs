@@ -8,6 +8,8 @@ import Control.Lens
 import ClassyPrelude
 import Options.Applicative as OP
 
+import Text.Show.Prettyprint
+
 import qualified Data.Text.IO as TIO
 import qualified System.IO as IO
 
@@ -40,14 +42,14 @@ program p =
       doIt m = withFiles (\inh outh -> do
                              cnts <- TIO.hGetContents inh
                              case compileIls' False cnts of
-                               Left e -> IO.hPutStr outh (errorBundlePretty e)
+                               Left e -> IO.hPutStrLn outh (errorBundlePretty e)
                                Right x -> case x of
-                                 Left e -> IO.hPutStr outh (errorBundlePretty e)
+                                 Left e -> IO.hPutStrLn outh (errorBundlePretty e)
                                  Right y -> m y outh)
-      action' Parse = doIt (\y outh -> TIO.hPutStr outh (tshow y))
-      action' Html  = doIt (\y outh -> TIO.hPutStr outh (pack $ unpack $ R.renderHtml $ B.toMarkup y))
-      action' Tex   = doIt (\y outh -> TIO.hPutStr outh (L.render $ defaultDecorator (concatMap L.texy $ y^.S.docTitle.S.unDocTitle) $ (L.texy y :: L.LaTeX)))
-      action' CheckLinks = doIt (\y outh -> TIO.hPutStr outh (tshow $ (\(S.BadLink link_ _) -> link_) <$> (S.checkLinks (S.Constraints mempty mempty) (Nothing :: Maybe (S.Core MarkupType BlockType)) y)))
+      action' Parse = doIt (\y outh -> IO.hPutStrLn outh (prettyShow y))
+      action' Html  = doIt (\y outh -> TIO.hPutStrLn outh (pack $ unpack $ R.renderHtml $ B.toMarkup y))
+      action' Tex   = doIt (\y outh -> TIO.hPutStrLn outh (L.render $ defaultDecorator (concatMap L.texy $ y^.S.docTitle.S.unDocTitle) $ (L.texy y :: L.LaTeX)))
+      action' CheckLinks = doIt (\y outh -> IO.hPutStrLn outh (prettyShow $ (\(S.BadLink link_ _) -> link_) <$> (S.checkLinks (S.Constraints mempty mempty) (Nothing :: Maybe (S.Core MarkupType BlockType)) y)))
   in
     action' $ p^.action_
 

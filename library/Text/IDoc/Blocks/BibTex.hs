@@ -511,7 +511,7 @@ stripSpaces x = reverse $ dropWhile isSpace $ reverse $ dropWhile isSpace x
 -- TODO: FIXME: This is awful.  Should change to regex matching or
 -- _something_.
 identifierP :: IDocParser m b Identifier
-identifierP = do
+identifierP = MP.label "A bibliography identifier" $ do
   t <- textP
   let t' = stripSpaces t
   if any (not . isAlphaNum) t' || null t'
@@ -519,7 +519,7 @@ identifierP = do
     else return $ Identifier t'
 
 typeP :: IDocParser m b Identifier
-typeP = do
+typeP = MP.label "A bibliography entry type" $ do
   t <- textP
   let t' = stripSpaces t
   if any (not . isAlpha) t' || null t'
@@ -529,7 +529,7 @@ typeP = do
     return $ Identifier t'
 
 fieldsP :: IDocParser m b Fields
-fieldsP = do
+fieldsP = MP.label "A list of bibliography fields" $ do
   ms <- sepBy1V (addField mempty) (tokenP Comma >> tokenP Newline)
   return $ Fields $ concat ms
   where
@@ -569,7 +569,7 @@ canonicalizeField (Identifier i_) (Value v) =
     _ -> fail $ printf "Do not understand bibliography field of type \"%s\"" i_
 
 entryTypeP :: IDocParser m b EntryType
-entryTypeP = do
+entryTypeP = MP.label "A bibliography entry type" $ do
   void $ tokenP AtSign
   text_ <- textP
   case T.toLower text_ of
@@ -589,7 +589,7 @@ entryTypeP = do
     _               -> fail $ printf "Do not understand bibliography entry of type \"%s\"" text_
 
 bibItemP :: IDocParser m b BibItem
-bibItemP = do
+bibItemP = MP.label "A bibliography item" $ do
   et <- entryTypeP
   void $ tokenP LBrace
   rn <- typeP
@@ -607,25 +607,26 @@ bibItemP = do
 --   return $ BibTex bibEntries
 
 bibTexP :: IDocParser m b BibTex
-bibTexP = do
+bibTexP = MP.label "A bibtex bibliography block body" $ do
   tokens_ <- uninterpretedBlockP
   let s = unpack $ uninterpret tokens_
       result :: Either P.ParseError [B.T] = (fmap B.lowerCaseFieldNames) <$> (P.runParser (B.skippingSpace B.file) () "<@bibliography>" s)
   case result of
     Left err -> fail $ printf "Parse Error in bibliography block: %s" (show err)
     Right entries -> do
-      BibTex <$> fromList <$> mapM (\B.Cons {..} ->
-                                       let fields' = Fields $ M.fromList $
-                                                     fmap (\(id_, val) ->
-                                                             (Identifier $ fromString id_, Value $ fromString val)) fields
-                                           identifier' = Identifier $ fromString identifier
-                                       in
-                                         case entryType of
-                                           "book" -> BookBE <$> (toBook identifier' fields')
-                                           "article" -> ArticleBE <$> (toArticle identifier' fields')
-                                           "misc" -> MiscBE <$> (toMisc identifier' fields')
-                                           x -> error $ printf "Can't parse bibliography entry: %s" x
-                                   ) entries
+      BibTex <$> fromList <$> mapM
+        (\B.Cons {..} ->
+            let fields' = Fields $ M.fromList $
+                          fmap (\(id_, val) ->
+                                   (Identifier $ fromString id_, Value $ fromString val)) fields
+                identifier' = Identifier $ fromString identifier
+            in
+              case entryType of
+                "book" -> BookBE <$> (toBook identifier' fields')
+                "article" -> ArticleBE <$> (toArticle identifier' fields')
+                "misc" -> MiscBE <$> (toMisc identifier' fields')
+                x -> error $ printf "Can't parse bibliography entry: %s" x
+        ) entries
 
 makeLenses ''BibTex
 makeLenses ''BibItem

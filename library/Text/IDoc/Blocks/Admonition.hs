@@ -6,6 +6,7 @@ import Text.IDoc.Render.Html5.Card
 import Text.IDoc.Render.Html5.Icons
 import Text.IDoc.Render.Tex
 
+import qualified Text.Megaparsec as MP
 import Text.Blaze.Html5 as B
 import Text.Blaze.Html5.Attributes as A hiding (id, icon)
 
@@ -77,7 +78,7 @@ instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Info m b) w
   checkLinks constraints container (Info i_) = concatMap (checkLinks constraints container) i_
 
 infoP :: IDocParser m b (Info m b)
-infoP = Info <$> coreBlockP
+infoP = MP.label "An info block body" $ Info <$> coreBlockP
 
 data Tip m b = Tip { _tipContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -100,7 +101,7 @@ instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Tip m b) wh
   checkLinks constraints container (Tip tip) = concatMap (checkLinks constraints container) tip
 
 tipP :: IDocParser m b (Tip m b)
-tipP = Tip <$> coreBlockP
+tipP = MP.label "A tip block body" $ Tip <$> coreBlockP
 
 data Caution m b = Caution { _cautionContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -124,7 +125,7 @@ instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Caution m b
 
 
 cautionP :: IDocParser m b (Caution m b)
-cautionP = Caution <$> coreBlockP
+cautionP = MP.label "A caution block body" $ Caution <$> coreBlockP
 
 data Warning m b = Warning { _warningContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -140,7 +141,7 @@ instance (MarkupMarkup m, BlockMarkup m (b m)) => BlockMarkup m (Warning m b) wh
 
 instance (Markupy m, Blocky m (b m)) => Blocky m (Warning m b) where
   blocky _ mt msid (Warning w) = warningBlock (mLabel msid title_) (vectorTexy w)
-    where 
+    where
       title_ = mTitleT mt "Warning"
 
 instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Warning m b) where
@@ -148,7 +149,7 @@ instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (Warning m b
 
 
 warningP :: IDocParser m b (Warning m b)
-warningP = Warning <$> coreBlockP
+warningP = MP.label "A warning block body" $ Warning <$> coreBlockP
 
 data SideNote m b = SideNote { _sideNoteContents :: Vector (Core m b) }
   deriving (Eq, Ord, Show, Data, Typeable, Generic)
@@ -165,7 +166,7 @@ instance (CheckLinks m b m, CheckLinks m b (b m)) => CheckLinks m b (SideNote m 
   checkLinks constraints container (SideNote sn) = concatMap (checkLinks constraints container) sn
 
 sideNoteP :: IDocParser m b (SideNote m b)
-sideNoteP = SideNote <$> coreBlockP
+sideNoteP = MP.label "A side note block body" $ SideNote <$> coreBlockP
 
 makeLenses ''AdmonitionB
 

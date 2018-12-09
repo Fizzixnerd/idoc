@@ -101,6 +101,7 @@ executable idoc
                 , lens
                 , megaparsec
                 , text
+                , show-prettyprint
   default-language: Haskell2010
   other-extensions: NoImplicitPrelude
                   , TemplateHaskell

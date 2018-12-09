@@ -464,15 +464,15 @@ defaultBlockP = MP.label "A Block" $ do
                    }
 
 blockStarterP :: IDocParser m b ()
-blockStarterP = do
+blockStarterP = MP.label "A block starter" $ do
   dashP >> dashP >> dashP >> newlineP
 
 blockEnderP :: IDocParser m b ()
-blockEnderP = do
+blockEnderP = MP.label "A block ender" $ do
   dashP >> dashP >> dashP >> newlineP
 
 blockContinuerP :: IDocParser m b ()
-blockContinuerP = do
+blockContinuerP = MP.label "A block continuer" $ do
   plusP >> plusP >> plusP >> newlineP
 
 blockEnderP' :: IDocParser m b ()
