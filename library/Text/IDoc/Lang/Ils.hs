@@ -120,13 +120,13 @@ compileIls :: Bool -> Text -> IlsDoc
 compileIls development t = compileIdoc markupTypeP blockTypeP
                (if development
                 then "https://localhost:3443/tiki/"
-                else "https://www.independentlearning.science/tiki/")
+                else "https://independentlearning.science/tiki/")
                (if development
                  then "https://localhost:3443/tiki/media/image/"
-                 else "https://www.independentlearning.science/tiki/media/image/")
+                 else "https://independentlearning.science/tiki/media/image/")
                (if development
                  then "https://localhost:3443/tiki/media/audio/"
-                 else "https://www.independentlearning.science/tiki/media/audio/")
+                 else "https://independentlearning.science/tiki/media/audio/")
                t
 
 compileIls' :: Bool -> Text -> Either (MP.ParseErrorBundle Text Void)
@@ -135,13 +135,13 @@ compileIls' :: Bool -> Text -> Either (MP.ParseErrorBundle Text Void)
 compileIls' development t = compileIdoc' markupTypeP blockTypeP
                             (if development
                              then "https://localhost:3443/tiki/"
-                             else "https://www.independentlearning.science/tiki/")
+                             else "https://independentlearning.science/tiki/")
                             (if development
                              then "https://localhost:3443/tiki/media/image/"
-                             else "https://www.independentlearning.science/tiki/media/image/")
+                             else "https://independentlearning.science/tiki/media/image/")
                             (if development
                              then "https://localhost:3443/tiki/media/audio/"
-                             else "https://www.independentlearning.science/tiki/media/audio/")
+                             else "https://independentlearning.science/tiki/media/audio/")
                             t
 
 compileIdocTexFile :: (Markupy m, Blocky m (b m), MonadIO n) => Doc m b -> FilePath -> n ()

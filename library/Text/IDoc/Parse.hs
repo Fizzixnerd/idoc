@@ -641,12 +641,12 @@ docP = do
 uninterpret :: Vector S.Token -> Text
 uninterpret = concatMap S.unToken
 
-errorDoc :: Show e => e -> S.Doc m b
+errorDoc :: String -> S.Doc m b
 errorDoc e = S.Doc { S._docTitle = S.DocTitle $ singleton $ S.TextC "Error!"
                    , S._docSections = singleton $ S.Section
                                       { S._secAttrs = S.AttrMap mempty
                                       , S._secContents = singleton $ S.CC $ S.ParagraphC $ S.Paragraph
-                                                         { _paraContents = singleton $ S.TextC $ fromString $ show e
+                                                         { _paraContents = singleton $ S.TextC $ fromString e
                                                          , _paraSetID = Nothing }
                                       , _secTitle = S.SectionTitle empty
                                       , _secSetID = Nothing
@@ -657,10 +657,10 @@ errorDoc e = S.Doc { S._docTitle = S.DocTitle $ singleton $ S.TextC "Error!"
 
 compileIdoc :: MarkupParser m b -> BlockParser m b -> Text -> Text -> Text -> Text -> S.Doc m b
 compileIdoc m b rel_ imgRel_ audioRel_ text_ = case MP.parse L.dTokens "<idoc>" text_ of
-  Left e -> errorDoc e
+  Left e -> errorDoc $ MP.errorBundlePretty e
   Right x -> do
     case runIdentity $ runReaderT (MP.runParserT (unIDocParser docP) "<idoc tokens>" x) (IDocReadState rel_ imgRel_ audioRel_ m b) of
-      Left e -> errorDoc e
+      Left e -> errorDoc $ MP.errorBundlePretty e
       Right y -> y
 
 compileIdoc' :: MarkupParser m b -> BlockParser m b -> Text -> Text -> Text -> Text

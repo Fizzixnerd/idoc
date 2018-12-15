@@ -33,6 +33,8 @@ idoc was created because no other existing markup language had the
 properties we needed for the website.  We describe these properties
 and how the extant humane markup languages failed to have them.
 
+@descriptionlist
+---
 :Prerequisite resolution::This is the big one.  The website is
 designed around the idea of prerequisites, and so prerequisite
 resolution is a necessary thing idoc has to be able to do.  It would
@@ -91,6 +93,7 @@ not matter _how_ good the implementation of it was.  Since we would
 have to write our own implementation of another markup language
 anyway, it was not a major extra investment to write an implementation
 of a new one instead.
+---
 
 Hopefully you can forgive us for forcing you to use an untested
 language!
@@ -172,14 +175,7 @@ lists, though this is subject to change.  This means you cannot nest
 lists.  You may only write a single paragraph.  We support unordered
 lists, ordered lists and labelled (description) lists.
 
--This is an unordered list.  It can contain paragraph contents.
-
--It will look like bullet points in the final render.
-
--Third main item.
-
-[lang=idoc]
-@code
+@unorderedlist
 ---
 -This is an unordered list.  It can contain paragraph contents.
 
@@ -188,36 +184,61 @@ lists, ordered lists and labelled (description) lists.
 -Third main item.
 ---
 
+[lang=idoc]
+@code
+---
+ @unorderedlist
+ ---
+ -This is an unordered list.  It can contain paragraph contents.
+
+ -It will look like bullet points in the final render.
+
+ -Third main item.
+ ---
+---
+
+@orderedlist
+---
 .This is a numbered list.
 
 .This is the second guy.
 
 .And so on...
+---
 
 [lang=idoc]
 @code
 ---
-.This is a numbered list.
+ @orderedlist
+ ---
+ .This is a numbered list.
 
-.This is the second guy.
+ .This is the second guy.
 
-.And so on...
+ .And so on...
+ ---
 ---
 
+@descriptionlist
+---
 :First Item::This is a list where the items have labels.
 
 :Second Item::Another item.
 
 :And So On::...
+---
 
 [lang=idoc]
 @code
 ---
-:First Item::This is a list where the items have labels.
+ @descriptionlist
+ ---
+ :First Item::This is a list where the items have labels.
 
-:Second Item::Another item.
+ :Second Item::Another item.
 
-:And So On::...
+ :And So On::...
+ ---
 ---
 
 ==Blocks
@@ -842,8 +863,8 @@ features that the ILS website hopes to deliver, such as automatic
 prerequisite resolution for subjects you want to learn.
 
 In all types of links, you are free to leave out the text inside the `{}`. This
-will just use the text inside the angle brackets as the display text instead.
-Normally this is not what you want, however.
+will just use the text inside the `\<\<>>` as the display text instead. Normally
+this is not what you want, however.
 
 ===YouTube
 
