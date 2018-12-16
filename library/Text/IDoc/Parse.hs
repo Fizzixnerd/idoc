@@ -622,9 +622,9 @@ docP = do
   docSid <- optional setIDP
   void $ many newlineP
   preamble <- manyV $ do
-    MP.notFollowedBy $ many newlineP >> equalsP >> equalsP
-    x <- coreP
-    return x
+    MP.notFollowedBy $ many newlineP >> optionalAttrMapP >> sectionTitleP
+    void $ many newlineP
+    coreP
   void $ many newlineP
   sections <- sepEndByV sectionP (many newlineP)
   let preambleSection = S.Section { S._secType = S.Preamble
